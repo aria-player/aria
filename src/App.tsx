@@ -25,28 +25,28 @@ function App() {
         <h1>Welcome to Tauri!</h1>
 
         <div className={styles.row}>
-          <a href="https://vitejs.dev" target="_blank">
+          <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
             <img
               src={viteLogo}
               className={`${styles.logo} ${styles.vite}`}
               alt="Vite logo"
             />
           </a>
-          <a href="https://tauri.app" target="_blank">
+          <a href="https://tauri.app" target="_blank" rel="noreferrer">
             <img
               src={tauriLogo}
               className={`${styles.logo} ${styles.tauri}`}
               alt="Tauri logo"
             />
           </a>
-          <a href="https://reactjs.org" target="_blank">
+          <a href="https://reactjs.org" target="_blank" rel="noreferrer">
             <img
               src={reactLogo}
               className={`${styles.logo} ${styles.react}`}
               alt="React logo"
             />
           </a>
-          <a href="https://redux.js.org/" target="_blank">
+          <a href="https://redux.js.org/" target="_blank" rel="noreferrer">
             <img
               src={reduxLogo}
               className={`${styles.logo} ${styles.redux}`}
