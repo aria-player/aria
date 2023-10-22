@@ -2,6 +2,7 @@ import { appWindow } from "@tauri-apps/api/window";
 import { useState, useCallback, useEffect } from "react";
 import { WindowsControlsIcons } from "./WindowsControlIcons";
 import styles from "./WindowsControls.module.css";
+import { isTauri } from "../../app/utils";
 
 export function WindowsControls() {
   const [isMaximized, setIsMaximized] = useState<boolean | null>(null);
@@ -11,7 +12,7 @@ export function WindowsControls() {
   }, []);
 
   useEffect(() => {
-    if (typeof window.__TAURI_IPC__ == "undefined") return;
+    if (!isTauri()) return;
 
     updateIsMaximized();
 

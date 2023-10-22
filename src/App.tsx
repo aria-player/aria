@@ -7,6 +7,7 @@ import { invoke } from "@tauri-apps/api/tauri";
 import { WindowsMenuBar } from "./components/windows/WindowsMenuBar";
 import { Counter } from "./features/counter/Counter";
 import styles from "./App.module.css";
+import { isTauri } from "./app/utils";
 
 function App() {
   const [greetMsg, setGreetMsg] = useState("");
@@ -19,7 +20,7 @@ function App() {
 
   return (
     <div className={styles.app}>
-      <WindowsMenuBar />
+      {isTauri() && <WindowsMenuBar />}
       <div className={styles.container}>
         <h1>Welcome to Tauri!</h1>
 
