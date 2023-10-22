@@ -5,8 +5,8 @@ import { persistReducer, persistStore } from "redux-persist";
 
 export const store = configureStore({
   reducer: {
-    counter: persistReducer({ key: "counter", storage }, counterReducer),
-  },
+    counter: persistReducer({ key: "counter", storage }, counterReducer)
+  }
 });
 
 export type AppDispatch = typeof store.dispatch;

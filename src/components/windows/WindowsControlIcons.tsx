@@ -66,5 +66,5 @@ export const WindowsControlsIcons = {
         fillOpacity="0.8956"
       />
     </svg>
-  ),
+  )
 };
