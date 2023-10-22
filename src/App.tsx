@@ -4,6 +4,7 @@ import tauriLogo from "./assets/tauri.svg";
 import viteLogo from "./assets/vite.svg";
 import { invoke } from "@tauri-apps/api/tauri";
 import { WindowsMenuBar } from "./components/windows/WindowsMenuBar";
+import styles from "./App.module.css";
 
 function App() {
   const [greetMsg, setGreetMsg] = useState("");
@@ -15,34 +16,45 @@ function App() {
   }
 
   return (
-    <div className="app">
+    <div className={styles.app}>
       <WindowsMenuBar />
-      <div className="container">
+      <div className={styles.container}>
         <h1>Welcome to Tauri!</h1>
 
-        <div className="row">
+        <div className={styles.row}>
           <a href="https://vitejs.dev" target="_blank">
-            <img src={viteLogo} className="logo vite" alt="Vite logo" />
+            <img
+              src={viteLogo}
+              className={`${styles.logo} ${styles.vite}`}
+              alt="Vite logo"
+            />
           </a>
           <a href="https://tauri.app" target="_blank">
-            <img src={tauriLogo} className="logo tauri" alt="Tauri logo" />
+            <img
+              src={tauriLogo}
+              className={`${styles.logo} ${styles.tauri}`}
+              alt="Tauri logo"
+            />
           </a>
           <a href="https://reactjs.org" target="_blank">
-            <img src={reactLogo} className="logo react" alt="React logo" />
+            <img
+              src={reactLogo}
+              className={`${styles.logo} ${styles.react}`}
+              alt="React logo"
+            />
           </a>
         </div>
 
         <p>Click on the Tauri, Vite, and React logos to learn more.</p>
 
         <form
-          className="row"
+          className={styles.row}
           onSubmit={(e) => {
             e.preventDefault();
             greet();
           }}
         >
           <input
-            id="greet-input"
             onChange={(e) => setName(e.currentTarget.value)}
             placeholder="Enter a name..."
           />
