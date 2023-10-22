@@ -1,5 +1,6 @@
 import { useState } from "react";
 import reactLogo from "./assets/react.svg";
+import reduxLogo from "./assets/redux.svg";
 import tauriLogo from "./assets/tauri.svg";
 import viteLogo from "./assets/vite.svg";
 import { invoke } from "@tauri-apps/api/tauri";
@@ -44,9 +45,16 @@ function App() {
               alt="React logo"
             />
           </a>
+          <a href="https://redux.js.org/" target="_blank">
+            <img
+              src={reduxLogo}
+              className={`${styles.logo} ${styles.redux}`}
+              alt="Redux logo"
+            />
+          </a>
         </div>
 
-        <p>Click on the Tauri, Vite, and React logos to learn more.</p>
+        <p>Click on the Tauri, Vite, React, and Redux logos to learn more.</p>
 
         <form
           className={styles.row}
