@@ -4,6 +4,7 @@ import tauriLogo from "./assets/tauri.svg";
 import viteLogo from "./assets/vite.svg";
 import { invoke } from "@tauri-apps/api/tauri";
 import { WindowsMenuBar } from "./components/windows/WindowsMenuBar";
+import { Counter } from "./features/counter/Counter";
 import styles from "./App.module.css";
 
 function App() {
@@ -62,6 +63,7 @@ function App() {
         </form>
 
         <p>{greetMsg}</p>
+        <Counter />
       </div>
     </div>
   );
