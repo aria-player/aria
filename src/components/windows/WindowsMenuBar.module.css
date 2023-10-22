@@ -1,0 +1,15 @@
+.menuBar {
+  display: flex;
+  height: 2em;
+  background-color: rgb(238, 238, 238);
+}
+
+@media (prefers-color-scheme: dark) {
+  .menuBar {
+    background-color: rgb(34, 34, 34);
+  }
+}
+
+.dragRegion {
+  width: 100%;
+}

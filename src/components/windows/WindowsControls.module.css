@@ -1,0 +1,42 @@
+.windowsControls {
+  display: flex;
+}
+
+.windowsControl {
+  width: 46px;
+  border: none;
+  background-color: transparent;
+  color: black;
+}
+
+.windowsControl:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.windowsControl:active {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+@media (prefers-color-scheme: dark) {
+  .windowsControl {
+    color: white;
+  }
+
+  .windowsControl:hover {
+    background-color: rgba(255, 255, 255, 0.06);
+  }
+
+  .windowsControl:active {
+    background-color: rgba(255, 255, 255, 0.04);
+  }
+}
+
+.windowsClose:hover {
+  background-color: #c42a1c;
+  color: white;
+}
+
+.windowsClose:active {
+  background-color: #c42a1cea;
+  color: white;
+}
