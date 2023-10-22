@@ -1,5 +1,7 @@
 # Vite, Tauri, React & Redux Template
 
+![Screenshot of app](image.png)
+
 This repository contains a preconfigured Tauri app including:
 
 - Basic ESLint/Prettier config
