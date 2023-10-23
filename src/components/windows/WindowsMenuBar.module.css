@@ -6,14 +6,42 @@
   background-color: rgb(238, 238, 238);
 }
 
-@media (prefers-color-scheme: dark) {
-  .menuBar {
-    background-color: rgb(34, 34, 34);
-  }
+.navigation {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
+.arrow {
+  height: 1.2em;
+  padding-left: 0.6em;
+  padding-top: 0.1em;
+  color: #3b3b3b;
+  cursor: pointer;
+}
+
+.arrowDisabled {
+  color: rgb(175, 175, 175);
+  cursor: default;
 }
 
 .dragRegion {
   width: 100%;
   height: 90%;
   bottom: 0;
+}
+
+@media (prefers-color-scheme: dark) {
+  .menuBar {
+    background-color: rgb(34, 34, 34);
+  }
+
+  .arrow {
+    color: rgb(236, 236, 236);
+  }
+
+  .arrowDisabled {
+    color: rgb(77, 77, 77);
+  }
 }
