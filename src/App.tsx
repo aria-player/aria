@@ -14,10 +14,12 @@ function App() {
   return (
     <div className={styles.window}>
       {isTauri() && <WindowsMenuBar />}
-      <Allotment>
-        <Allotment.Pane minSize={20} snap>
-          <Link to="/">Home</Link>
-          <Link to="/404">Test</Link>
+      <Allotment snap>
+        <Allotment.Pane minSize={20}>
+          <div className={styles.sideBar}>
+            <Link to="/">Home</Link>
+            <Link to="/404">Test</Link>
+          </div>
         </Allotment.Pane>
         <Allotment.Pane>
           <div className={styles.outlet}>
