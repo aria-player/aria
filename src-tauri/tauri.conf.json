@@ -49,7 +49,7 @@
         "decorations": false,
         "transparent": true,
         "title": "tauri-app-template",
-        "width": 800,
+        "width": 1000,
         "height": 600
       }
     ]

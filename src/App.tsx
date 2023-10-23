@@ -14,11 +14,15 @@ function App() {
   return (
     <div className={styles.window}>
       {isTauri() && <WindowsMenuBar />}
-      <Allotment snap>
-        <Allotment.Pane minSize={20}>
+      <Allotment snap proportionalLayout={false}>
+        <Allotment.Pane preferredSize={200}>
           <div className={styles.sideBar}>
-            <Link to="/">Home</Link>
-            <Link to="/404">Test</Link>
+            <Link to="/" className={styles.link}>
+              Home
+            </Link>
+            <Link to="/404" className={styles.link}>
+              Error Example
+            </Link>
           </div>
         </Allotment.Pane>
         <Allotment.Pane>
