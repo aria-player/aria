@@ -1,8 +1,13 @@
 import { appWindow } from "@tauri-apps/api/window";
 import { useState, useCallback, useEffect } from "react";
-import { WindowsControlsIcons } from "./WindowsControlIcons";
-import styles from "./WindowsControls.module.css";
 import { isTauri } from "../../app/utils";
+
+import Minimize from "../../assets/win-minimize.svg?react";
+import Maximize from "../../assets/win-maximize.svg?react";
+import Restore from "../../assets/win-restore.svg?react";
+import Close from "../../assets/win-close.svg?react";
+
+import styles from "./WindowsControls.module.css";
 
 export function WindowsControls() {
   const [isMaximized, setIsMaximized] = useState<boolean | null>(null);
@@ -36,7 +41,7 @@ export function WindowsControls() {
           appWindow.minimize();
         }}
       >
-        <WindowsControlsIcons.minimizeWin />
+        <Minimize />
       </button>
       <button
         className={styles.windowsControl}
@@ -44,11 +49,7 @@ export function WindowsControls() {
           appWindow.toggleMaximize();
         }}
       >
-        {isMaximized ? (
-          <WindowsControlsIcons.maximizeRestoreWin />
-        ) : (
-          <WindowsControlsIcons.maximizeWin />
-        )}
+        {isMaximized ? <Restore /> : <Maximize />}
       </button>
       <button
         className={`${styles.windowsControl} ${styles.windowsClose}`}
@@ -56,7 +57,7 @@ export function WindowsControls() {
           appWindow.close();
         }}
       >
-        <WindowsControlsIcons.closeWin />
+        <Close />
       </button>
     </div>
   );
