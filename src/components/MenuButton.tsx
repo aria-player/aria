@@ -27,9 +27,10 @@ const MENU_ID = "menu-id";
 
 export function MenuButton() {
   const dispatch = useAppDispatch();
-  const { show } = useContextMenu({
+  const { show, hideAll } = useContextMenu({
     id: MENU_ID
   });
+  const [open, setOpen] = useState(false);
   const [theme, setTheme] = useState(
     window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
   );
@@ -46,7 +47,15 @@ export function MenuButton() {
     };
   }, []);
 
+  const handleVisibilityChange = (isVisible: boolean) => {
+    setOpen(isVisible);
+  };
+
   const displayMenu = (e: React.MouseEvent) => {
+    if (open) {
+      hideAll();
+      return;
+    }
     const targetDiv = e.currentTarget as HTMLDivElement;
     const divRect = targetDiv.parentElement?.getBoundingClientRect();
     if (!divRect) return;
@@ -87,7 +96,12 @@ export function MenuButton() {
 
   return (
     <>
-      <Menu id={MENU_ID} animation={false} theme={theme}>
+      <Menu
+        id={MENU_ID}
+        animation={false}
+        theme={theme}
+        onVisibilityChange={handleVisibilityChange}
+      >
         {constructMenuFromSchema(menus)}
       </Menu>
       <MenuIcon
