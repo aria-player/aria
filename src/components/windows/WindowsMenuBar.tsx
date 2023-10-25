@@ -5,6 +5,7 @@ import { goBack, goForward } from "redux-first-history";
 import LeftArrow from "../../assets/arrow-left-solid.svg?react";
 import RightArrow from "../../assets/arrow-right-solid.svg?react";
 import { useEffect, useState } from "react";
+import { MenuButton } from "../MenuButton";
 
 export function WindowsMenuBar() {
   const dispatch = useAppDispatch();
@@ -23,6 +24,7 @@ export function WindowsMenuBar() {
   return (
     <div className={styles.menuBar}>
       <div className={styles.navigation}>
+        <MenuButton />
         <LeftArrow
           title="Back"
           className={`${styles.arrow} ${

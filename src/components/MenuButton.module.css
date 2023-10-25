@@ -1,0 +1,13 @@
+.menuButton {
+  height: 1.2em;
+  padding-left: 0.6em;
+  padding-top: 0.1em;
+  color: #3b3b3b;
+  cursor: pointer;
+}
+
+@media (prefers-color-scheme: dark) {
+  .menuButton {
+    color: rgb(236, 236, 236);
+  }
+}

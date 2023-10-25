@@ -4,6 +4,7 @@ import { isTauri } from "./app/utils";
 import { Link, Route, Routes } from "react-router-dom";
 import ErrorPage from "./routes/Error";
 import { Home } from "./routes/Home";
+import { MenuButton } from "./components/MenuButton";
 // Allotment types coming soon
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -17,6 +18,11 @@ function App() {
       <Allotment snap proportionalLayout={false}>
         <Allotment.Pane preferredSize={200}>
           <div className={styles.sideBar}>
+            {!isTauri() && (
+              <div>
+                <MenuButton />
+              </div>
+            )}
             <Link to="/" className={styles.link}>
               Home
             </Link>
