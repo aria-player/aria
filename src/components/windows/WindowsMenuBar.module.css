@@ -4,6 +4,7 @@
   flex-shrink: 0;
   align-items: flex-end;
   background-color: rgb(238, 238, 238);
+  padding-left: 0.5em;
 }
 
 .navigation {
@@ -15,15 +16,24 @@
 
 .arrow {
   height: 1.2em;
-  padding-left: 0.6em;
-  padding-top: 0.1em;
+  padding: 0.15em;
+  margin-left: 0.15em;
   color: #3b3b3b;
   cursor: pointer;
+}
+
+.arrow:hover {
+  background-color: #d8d8d8;
+  border-radius: 5px;
 }
 
 .arrowDisabled {
   color: rgb(175, 175, 175);
   cursor: default;
+}
+
+.arrowDisabled:hover {
+  background-color: transparent;
 }
 
 .dragRegion {
@@ -41,7 +51,15 @@
     color: rgb(236, 236, 236);
   }
 
+  .arrow:hover {
+    background-color: rgb(68, 68, 68);
+  }
+
   .arrowDisabled {
     color: rgb(77, 77, 77);
+  }
+
+  .arrowDisabled:hover {
+    background-color: transparent;
   }
 }
