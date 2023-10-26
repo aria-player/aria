@@ -1,21 +1,11 @@
 .menuButton {
   height: 1.2em;
   padding: 0.15em;
-  color: #3b3b3b;
+  color: var(--menubar-button);
   cursor: pointer;
 }
 
 .menuButton:hover {
-  background-color: #d8d8d8;
+  background-color: var(--menubar-button-background-hover);
   border-radius: 5px;
-}
-
-@media (prefers-color-scheme: dark) {
-  .menuButton {
-    color: rgb(236, 236, 236);
-  }
-
-  .menuButton:hover {
-    background-color: rgb(68, 68, 68);
-  }
 }

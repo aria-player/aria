@@ -42,14 +42,8 @@
   padding: 0.1em 0.2em;
   outline: none;
   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
-}
-
-@media (prefers-color-scheme: dark) {
-  .textbox {
-    color: rgba(246, 246, 246, 1);
-    background-color: rgba(61, 61, 61, 1);
-    border: 1px solid rgba(77, 77, 77, 1);
-  }
+  background-color: var(--input-background);
+  color: var(--primary-text);
 }
 
 .asyncButton {

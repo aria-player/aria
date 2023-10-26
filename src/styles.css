@@ -11,9 +11,33 @@ body {
 :root {
   --primary-background: #f6f6f6;
   --primary-text: #0f0f0f;
+  --sidebar-separator: rgb(238, 238, 238);
+  --menubar-background: rgb(238, 238, 238);
+  --menubar-button: #3b3b3b;
+  --menubar-button-disabled: rgb(175, 175, 175);
+  --menubar-button-background-hover: #d8d8d8;
+  --windows-control-background-hover: rgba(0, 0, 0, 0.05);
+  --windows-control-background-active: rgba(0, 0, 0, 0.03);
+  --button-text: #313131;
+  --button-background: rgb(247, 247, 247);
+  --button-background-hover: rgb(230, 230, 230);
+  --button-background-active: rgb(220, 220, 220);
+  --input-background: rgb(255, 255, 255);
 }
 
 [data-theme="dark"] {
   --primary-background: #2f2f2f;
   --primary-text: #f6f6f6;
+  --sidebar-separator: rgb(34, 34, 34);
+  --menubar-background: rgb(34, 34, 34);
+  --menubar-button: rgb(236, 236, 236);
+  --menubar-button-disabled: rgb(77, 77, 77);
+  --menubar-button-background-hover: rgb(68, 68, 68);
+  --windows-control-background-hover: rgba(255, 255, 255, 0.06);
+  --windows-control-background-active: rgba(255, 255, 255, 0.04);
+  --button-text: #f6f6f6;
+  --button-background: rgb(66, 66, 66);
+  --button-background-hover: rgb(76, 76, 76);
+  --button-background-active: rgb(86, 86, 86);
+  --input-background: rgb(40, 40, 40);
 }

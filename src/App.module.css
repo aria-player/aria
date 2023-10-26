@@ -19,7 +19,7 @@
 }
 
 .outlet {
-  border-left: 2px solid rgb(238, 238, 238);
+  border-left: 2px solid var(--sidebar-separator);
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -27,7 +27,7 @@
 }
 
 .sideBar {
-  border-right: 2px solid rgb(238, 238, 238);
+  border-right: 2px solid var(--sidebar-separator);
   height: 100%;
   padding: 0;
   display: flex;
@@ -37,11 +37,11 @@
 }
 
 .link {
-  color: #313131;
+  color: var(--button-text);
   cursor: pointer;
   text-decoration: none;
   display: block;
-  background-color: rgb(240, 240, 240);
+  background-color: var(--button-background);
   border-radius: 0.5em;
   padding: 0.5em;
   margin: 0.5em 0.5em 0.5em 0;
@@ -52,32 +52,11 @@
 }
 
 .link:hover {
-  background-color: rgb(230, 230, 230);
+  color: var(--button-text);
+  background-color: var(--button-background-hover);
 }
 
 .link:active {
-  background-color: rgb(220, 220, 220);
-}
-
-@media (prefers-color-scheme: dark) {
-  .sideBar {
-    border-right: 2px solid rgb(34, 34, 34);
-  }
-  .outlet {
-    border-left: 2px solid rgb(34, 34, 34);
-  }
-
-  .link {
-    color: #f6f6f6;
-    background-color: rgb(66, 66, 66);
-  }
-
-  .link:hover {
-    color: #f6f6f6;
-    background-color: rgb(76, 76, 76);
-  }
-
-  .link:active {
-    background-color: rgb(86, 86, 86);
-  }
+  color: var(--button-text);
+  background-color: var(--button-background-active);
 }
