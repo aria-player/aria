@@ -23,6 +23,8 @@ body {
   --button-background-hover: rgb(230, 230, 230);
   --button-background-active: rgb(220, 220, 220);
   --input-background: rgb(255, 255, 255);
+  --contexify-item-color: #0f0f0f;
+  --contexify-menu-bgColor: #f6f6f6;
 }
 
 [data-theme="dark"] {
@@ -40,4 +42,6 @@ body {
   --button-background-hover: rgb(76, 76, 76);
   --button-background-active: rgb(86, 86, 86);
   --input-background: rgb(40, 40, 40);
+  --contexify-item-color: #f6f6f6;
+  --contexify-menu-bgColor: #2f2f2f;
 }
