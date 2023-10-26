@@ -1,26 +1,4 @@
 :root {
-  font-family:
-    "Segoe UI",
-    -apple-system,
-    BlinkMacSystemFont,
-    Oxygen-Sans,
-    Ubuntu,
-    Cantarell,
-    "Helvetica Neue",
-    sans-serif;
-  font-size: 16px;
-  line-height: 24px;
-  font-weight: 400;
-
-  color: #0f0f0f;
-  background-color: #f6f6f6;
-
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  -webkit-text-size-adjust: 100%;
-
   /* Allotment */
   --separator-border: transparent;
   --sash-size: 10px;
@@ -30,9 +8,12 @@ body {
   margin: 0;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    color: #f6f6f6;
-    background-color: #2f2f2f;
-  }
+:root {
+  --primary-background: #f6f6f6;
+  --primary-text: #0f0f0f;
+}
+
+[data-theme="dark"] {
+  --primary-background: #2f2f2f;
+  --primary-text: #f6f6f6;
 }

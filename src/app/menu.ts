@@ -1,6 +1,7 @@
 import { goBack, goForward } from "redux-first-history";
 import { AppDispatch } from "./store";
 import { appWindow } from "@tauri-apps/api/window";
+import { Theme, setTheme } from "../features/config/configSlice";
 
 export const menus = [
   {
@@ -66,6 +67,15 @@ export async function handleMenuAction(dispatch: AppDispatch, action: string) {
       break;
     case "menubar_navigate_forward":
       dispatch(goForward());
+      break;
+    case "menubar_theme_system":
+      dispatch(setTheme(Theme.System));
+      break;
+    case "menubar_theme_light":
+      dispatch(setTheme(Theme.Light));
+      break;
+    case "menubar_theme_dark":
+      dispatch(setTheme(Theme.Dark));
       break;
     default:
       break;

@@ -13,7 +13,7 @@ import MenuIcon from "../assets/bars-solid.svg?react";
 
 import styles from "./MenuButton.module.css";
 import "react-contexify/dist/ReactContexify.css";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface MenuItemSchema {
   id: string;
@@ -31,21 +31,6 @@ export function MenuButton() {
     id: MENU_ID
   });
   const [open, setOpen] = useState(false);
-  const [theme, setTheme] = useState(
-    window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light"
-  );
-
-  useEffect(() => {
-    const handleChange = (e: MediaQueryListEvent) => {
-      setTheme(e.matches ? "dark" : "light");
-    };
-
-    const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
-    prefersDarkScheme.addEventListener("change", handleChange);
-    return () => {
-      prefersDarkScheme.removeEventListener("change", handleChange);
-    };
-  }, []);
 
   const handleVisibilityChange = (isVisible: boolean) => {
     setOpen(isVisible);
@@ -99,7 +84,6 @@ export function MenuButton() {
       <Menu
         id={MENU_ID}
         animation={false}
-        theme={theme}
         onVisibilityChange={handleVisibilityChange}
       >
         {constructMenuFromSchema(menus)}
