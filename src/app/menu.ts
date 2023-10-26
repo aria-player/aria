@@ -50,6 +50,10 @@ export const menus = [
           {
             id: "menubar_theme_dark",
             label: "Dark"
+          },
+          {
+            id: "menubar_theme_midnight",
+            label: "Midnight"
           }
         ]
       }
@@ -76,6 +80,9 @@ export async function handleMenuAction(dispatch: AppDispatch, action: string) {
       break;
     case "menubar_theme_dark":
       dispatch(setTheme(Theme.Dark));
+      break;
+    case "menubar_theme_midnight":
+      dispatch(setTheme(Theme.Midnight));
       break;
     default:
       break;

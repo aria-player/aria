@@ -4,7 +4,8 @@ import { RootState } from "../../app/store";
 export enum Theme {
   System = "system",
   Light = "light",
-  Dark = "dark"
+  Dark = "dark",
+  Midnight = "midnight"
 }
 
 export interface ConfigState {

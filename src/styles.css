@@ -45,3 +45,22 @@ body {
   --contexify-item-color: #f6f6f6;
   --contexify-menu-bgColor: #2f2f2f;
 }
+
+[data-theme="midnight"] {
+  --primary-background: #000000;
+  --primary-text: #e7e7e7;
+  --sidebar-separator: rgb(17, 17, 17);
+  --menubar-background: rgb(17, 17, 17);
+  --menubar-button: rgb(187, 187, 187);
+  --menubar-button-disabled: rgb(77, 77, 77);
+  --menubar-button-background-hover: rgb(68, 68, 68);
+  --windows-control-background-hover: rgba(255, 255, 255, 0.06);
+  --windows-control-background-active: rgba(255, 255, 255, 0.04);
+  --button-text: #e7e7e7;
+  --button-background: rgb(20, 20, 20);
+  --button-background-hover: rgb(36, 36, 36);
+  --button-background-active: rgb(53, 53, 53);
+  --input-background: rgb(17, 17, 17);
+  --contexify-item-color: #e7e7e7;
+  --contexify-menu-bgColor: #131313;
+}
