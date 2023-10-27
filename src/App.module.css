@@ -51,6 +51,10 @@
   white-space: nowrap;
 }
 
+.selected {
+  font-weight: 700;
+}
+
 .link:hover {
   color: var(--button-text);
   background-color: var(--button-background-hover);

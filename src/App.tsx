@@ -1,7 +1,7 @@
 import { WindowsMenuBar } from "./components/windows/WindowsMenuBar";
 import styles from "./App.module.css";
 import { isTauri } from "./app/utils";
-import { Link, Route, Routes } from "react-router-dom";
+import { NavLink, Route, Routes } from "react-router-dom";
 import ErrorPage from "./routes/Error";
 import { Home } from "./routes/Home";
 import { MenuButton } from "./components/MenuButton";
@@ -54,12 +54,22 @@ function App() {
                 <MenuButton />
               </div>
             )}
-            <Link to="/" className={styles.link}>
+            <NavLink
+              className={({ isActive }) =>
+                `${styles.link} ${isActive ? styles.selected : ""}`
+              }
+              to="/"
+            >
               Home
-            </Link>
-            <Link to="/404" className={styles.link}>
+            </NavLink>
+            <NavLink
+              to="/404"
+              className={({ isActive }) =>
+                `${styles.link} ${isActive ? styles.selected : ""}`
+              }
+            >
               Error Example
-            </Link>
+            </NavLink>
           </div>
         </Allotment.Pane>
         <Allotment.Pane>
