@@ -12,13 +12,15 @@ import { Allotment } from "allotment";
 import "allotment/dist/style.css";
 import { useAppSelector } from "./app/hooks";
 import { useEffect } from "react";
-import { Theme, selectTheme } from "./features/config/configSlice";
+import { selectTheme } from "./features/config/configSlice";
+import SettingsPage from "./routes/Settings";
+import { Themes } from "./app/themes";
 
 function App() {
   const theme = useAppSelector(selectTheme);
 
   useEffect(() => {
-    if (theme === Theme.System) {
+    if (theme === Themes.System.id) {
       const darkMode = window.matchMedia(
         "(prefers-color-scheme: dark)"
       ).matches;
@@ -29,7 +31,7 @@ function App() {
   }, [theme]);
 
   useEffect(() => {
-    if (theme !== Theme.System) return;
+    if (theme !== Themes.System.id) return;
     const handleChange = (e: MediaQueryListEvent) => {
       document.body.setAttribute("data-theme", e.matches ? "dark" : "light");
     };
@@ -64,6 +66,7 @@ function App() {
           <div className={styles.outlet}>
             <Routes>
               <Route path="/" Component={Home} />
+              <Route path="settings" Component={SettingsPage} />
               <Route path="*" Component={ErrorPage} />
             </Routes>
           </div>

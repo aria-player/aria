@@ -1,26 +1,20 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
-
-export enum Theme {
-  System = "system",
-  Light = "light",
-  Dark = "dark",
-  Midnight = "midnight"
-}
+import { Themes } from "../../app/themes";
 
 export interface ConfigState {
-  theme: Theme;
+  theme: string;
 }
 
 const initialState: ConfigState = {
-  theme: Theme.System
+  theme: Themes.System.id
 };
 
 export const configSlice = createSlice({
   name: "config",
   initialState,
   reducers: {
-    setTheme: (state, action: PayloadAction<Theme>) => {
+    setTheme: (state, action: PayloadAction<string>) => {
       state.theme = action.payload;
     }
   }

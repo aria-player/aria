@@ -1,7 +1,6 @@
-import { goBack, goForward } from "redux-first-history";
+import { goBack, goForward, push } from "redux-first-history";
 import { AppDispatch } from "./store";
 import { appWindow } from "@tauri-apps/api/window";
-import { Theme, setTheme } from "../features/config/configSlice";
 
 export const menus = [
   {
@@ -9,11 +8,25 @@ export const menus = [
     label: "File",
     submenu: [
       {
+        id: "menubar_file_settings",
+        label: "Settings..."
+      },
+      {
         id: "menubar_file_exit",
         label: "Exit",
         tauri: true
       }
     ]
+  },
+  {
+    id: "menubar_edit",
+    label: "Edit",
+    submenu: []
+  },
+  {
+    id: "menubar_view",
+    label: "View",
+    submenu: []
   },
   {
     id: "menubar_navigate",
@@ -32,32 +45,9 @@ export const menus = [
     ]
   },
   {
-    id: "menubar_view",
-    label: "View",
-    submenu: [
-      {
-        id: "menubar_theme",
-        label: "Theme",
-        submenu: [
-          {
-            id: "menubar_theme_system",
-            label: "System (default)"
-          },
-          {
-            id: "menubar_theme_light",
-            label: "Light"
-          },
-          {
-            id: "menubar_theme_dark",
-            label: "Dark"
-          },
-          {
-            id: "menubar_theme_midnight",
-            label: "Midnight"
-          }
-        ]
-      }
-    ]
+    id: "menubar_help",
+    label: "Help",
+    submenu: []
   }
 ];
 
@@ -66,23 +56,14 @@ export async function handleMenuAction(dispatch: AppDispatch, action: string) {
     case "menubar_file_exit":
       await appWindow.close();
       break;
+    case "menubar_file_settings":
+      dispatch(push("settings"));
+      break;
     case "menubar_navigate_back":
       dispatch(goBack());
       break;
     case "menubar_navigate_forward":
       dispatch(goForward());
-      break;
-    case "menubar_theme_system":
-      dispatch(setTheme(Theme.System));
-      break;
-    case "menubar_theme_light":
-      dispatch(setTheme(Theme.Light));
-      break;
-    case "menubar_theme_dark":
-      dispatch(setTheme(Theme.Dark));
-      break;
-    case "menubar_theme_midnight":
-      dispatch(setTheme(Theme.Midnight));
       break;
     default:
       break;
