@@ -6,7 +6,9 @@ import {
   useContextMenu,
   RightSlot
 } from "react-contexify";
-import { menus, handleMenuAction } from "../app/menu";
+import { handleMenuAction } from "../app/menu";
+import menus from "../../shared/menus.json";
+
 import { isTauri } from "../app/utils";
 
 import MenuIcon from "../assets/bars-solid.svg?react";

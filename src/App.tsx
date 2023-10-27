@@ -10,14 +10,34 @@ import { MenuButton } from "./components/MenuButton";
 // @ts-ignore
 import { Allotment } from "allotment";
 import "allotment/dist/style.css";
-import { useAppSelector } from "./app/hooks";
+import { useAppDispatch, useAppSelector } from "./app/hooks";
 import { useEffect } from "react";
 import { selectTheme } from "./features/config/configSlice";
 import SettingsPage from "./routes/Settings";
+import { listen } from "@tauri-apps/api/event";
 import { Themes } from "./app/themes";
+import { handleMenuAction } from "./app/menu";
 
 function App() {
+  const dispatch = useAppDispatch();
   const theme = useAppSelector(selectTheme);
+
+  useEffect(() => {
+    let unlisten: (() => void) | undefined;
+    async function init() {
+      if (isTauri()) {
+        unlisten = await listen<string>("menu_click", (event) => {
+          handleMenuAction(dispatch, event.payload);
+        });
+      }
+    }
+    init();
+    return () => {
+      if (unlisten) {
+        unlisten();
+      }
+    };
+  }, [dispatch]);
 
   useEffect(() => {
     if (theme === Themes.System.id) {
