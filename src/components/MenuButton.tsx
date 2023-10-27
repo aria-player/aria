@@ -55,7 +55,10 @@ export function MenuButton() {
   };
 
   function constructMenuFromSchema(schema: MenuItemSchema[]) {
-    if (!isTauri() && schema.every((item) => item.tauri === true)) {
+    if (
+      (!isTauri() && schema.every((item) => item.tauri === true)) ||
+      schema.length === 0
+    ) {
       return (
         <Item disabled>
           <i>(no actions)</i>
