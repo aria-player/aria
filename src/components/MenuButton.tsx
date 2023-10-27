@@ -66,6 +66,9 @@ export function MenuButton() {
       );
     }
     return schema.map((item: MenuItemSchema) => {
+      if (item.tauri && !isTauri()) {
+        return null;
+      }
       if (item.submenu) {
         return (
           <Submenu key={item.id} label={item.label}>
