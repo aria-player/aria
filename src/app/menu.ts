@@ -1,11 +1,11 @@
 import { goBack, goForward, push } from "redux-first-history";
 import { AppDispatch } from "./store";
-import { appWindow } from "@tauri-apps/api/window";
+import { invoke } from "@tauri-apps/api";
 
 export async function handleMenuAction(dispatch: AppDispatch, action: string) {
   switch (action) {
     case "menubar_file_exit":
-      await appWindow.close();
+      invoke("close");
       break;
     case "menubar_file_settings":
       dispatch(push("settings"));

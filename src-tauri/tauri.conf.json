@@ -49,6 +49,7 @@
         "resizable": true,
         "decorations": false,
         "transparent": true,
+        "visible": false,
         "title": "tauri-app-template",
         "width": 1000,
         "height": 600

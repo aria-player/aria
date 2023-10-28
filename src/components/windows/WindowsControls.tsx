@@ -8,6 +8,7 @@ import Restore from "../../assets/win-restore.svg?react";
 import Close from "../../assets/win-close.svg?react";
 
 import styles from "./WindowsControls.module.css";
+import { invoke } from "@tauri-apps/api";
 
 export function WindowsControls() {
   const [isMaximized, setIsMaximized] = useState<boolean | null>(null);
@@ -54,7 +55,7 @@ export function WindowsControls() {
       <button
         className={`${styles.windowsControl} ${styles.windowsClose}`}
         onClick={() => {
-          appWindow.close();
+          invoke("close");
         }}
       >
         <Close />

@@ -3,12 +3,19 @@
 
 use serde::{Deserialize, Serialize};
 use tauri::{CustomMenuItem, Manager, Menu, Submenu, WindowEvent};
+use tauri_plugin_window_state::{AppHandleExt, StateFlags};
 use window_shadows::set_shadow;
 
 // Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
 #[tauri::command]
 fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
+}
+
+#[tauri::command]
+fn close(app_handle: tauri::AppHandle) {
+    let _ = app_handle.save_window_state(StateFlags::all());
+    app_handle.exit(0);
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -56,6 +63,7 @@ fn main() {
     let schema = read_menu_schema();
     let menu = create_menu_from_schema(&schema);
     tauri::Builder::default()
+        .plugin(tauri_plugin_window_state::Builder::default().build())
         .menu(menu)
         .setup(|app| {
             let window = app.get_window("main").unwrap();
@@ -73,7 +81,7 @@ fn main() {
                 .emit("menu_click", Some(event.menu_item_id()))
                 .expect("failed to emit event");
         })
-        .invoke_handler(tauri::generate_handler![greet])
+        .invoke_handler(tauri::generate_handler![greet, close])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }
