@@ -14,13 +14,15 @@ import { useAppDispatch, useAppSelector } from "./app/hooks";
 import { useEffect } from "react";
 import {
   selectTheme,
-  selectWindowDecorations
+  selectWindowDecorations,
+  setWindowDecorations
 } from "./features/config/configSlice";
 import SettingsPage from "./routes/Settings";
 import { listen } from "@tauri-apps/api/event";
 import { Themes } from "./app/themes";
 import { handleMenuAction, selectMenuState } from "./app/menu";
 import { invoke } from "@tauri-apps/api";
+import { appWindow } from "@tauri-apps/api/window";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -74,6 +76,17 @@ function App() {
       prefersDarkScheme.removeEventListener("change", handleChange);
     };
   }, [theme]);
+
+  useEffect(() => {
+    async function updateLocalDecorated() {
+      const decorated = await appWindow.isDecorated();
+      if (!decorated && windowDecorations) {
+        // They're out of sync, so reset
+        dispatch(setWindowDecorations(false));
+      }
+    }
+    if (isTauri()) updateLocalDecorated();
+  }, [dispatch, windowDecorations]);
 
   return (
     <div className={styles.window}>
