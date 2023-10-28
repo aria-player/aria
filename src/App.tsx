@@ -12,7 +12,10 @@ import { Allotment } from "allotment";
 import "allotment/dist/style.css";
 import { useAppDispatch, useAppSelector } from "./app/hooks";
 import { useEffect } from "react";
-import { selectTheme } from "./features/config/configSlice";
+import {
+  selectTheme,
+  selectWindowDecorations
+} from "./features/config/configSlice";
 import SettingsPage from "./routes/Settings";
 import { listen } from "@tauri-apps/api/event";
 import { Themes } from "./app/themes";
@@ -21,6 +24,7 @@ import { handleMenuAction } from "./app/menu";
 function App() {
   const dispatch = useAppDispatch();
   const theme = useAppSelector(selectTheme);
+  const windowDecorations = useAppSelector(selectWindowDecorations);
 
   useEffect(() => {
     let unlisten: (() => void) | undefined;
@@ -65,7 +69,7 @@ function App() {
 
   return (
     <div className={styles.window}>
-      {isTauri() && <WindowsMenuBar />}
+      {isTauri() && !windowDecorations && <WindowsMenuBar />}
       <Allotment snap proportionalLayout={false}>
         <Allotment.Pane preferredSize={200}>
           <div className={styles.sideBar}>
