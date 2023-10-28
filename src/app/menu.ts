@@ -1,6 +1,12 @@
 import { goBack, goForward, push } from "redux-first-history";
-import { AppDispatch } from "./store";
+import { AppDispatch, RootState } from "./store";
 import { invoke } from "@tauri-apps/api";
+import { createSelector } from "@reduxjs/toolkit";
+
+export interface MenuItemState {
+  disabled?: boolean;
+  selected?: boolean;
+}
 
 export async function handleMenuAction(dispatch: AppDispatch, action: string) {
   switch (action) {
@@ -20,3 +26,20 @@ export async function handleMenuAction(dispatch: AppDispatch, action: string) {
       break;
   }
 }
+
+export const selectMenuState = createSelector(
+  [(state: RootState) => state.router],
+  () => {
+    return {
+      menubar_navigate_back: {
+        disabled: !(window.history.length > 1 && window.history.state.idx > 0)
+      },
+      menubar_navigate_forward: {
+        disabled: !(
+          window.history.length > 1 &&
+          window.history.length - 1 != window.history.state.idx
+        )
+      }
+    };
+  }
+);

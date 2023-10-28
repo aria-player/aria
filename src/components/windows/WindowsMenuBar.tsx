@@ -4,22 +4,14 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { goBack, goForward } from "redux-first-history";
 import LeftArrow from "../../assets/arrow-left-solid.svg?react";
 import RightArrow from "../../assets/arrow-right-solid.svg?react";
-import { useEffect, useState } from "react";
 import { MenuButton } from "../MenuButton";
+import { selectMenuState } from "../../app/menu";
 
 export function WindowsMenuBar() {
   const dispatch = useAppDispatch();
-  const history = useAppSelector((state) => state.router);
-  const [backEnabled, setBackEnabled] = useState(false);
-  const [forwardEnabled, setForwardEnabled] = useState(false);
-
-  useEffect(() => {
-    setBackEnabled(window.history.length > 1 && window.history.state.idx > 0);
-    setForwardEnabled(
-      window.history.length > 1 &&
-        window.history.length - 1 != window.history.state.idx
-    );
-  }, [history]);
+  const menuState = useAppSelector(selectMenuState);
+  const backEnabled = !menuState["menubar_navigate_back"]?.disabled;
+  const forwardEnabled = !menuState["menubar_navigate_forward"]?.disabled;
 
   return (
     <div className={styles.menuBar}>

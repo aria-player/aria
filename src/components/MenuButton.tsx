@@ -1,4 +1,4 @@
-import { useAppDispatch } from "../app/hooks";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
 import {
   Submenu,
   Item,
@@ -6,7 +6,7 @@ import {
   useContextMenu,
   RightSlot
 } from "react-contexify";
-import { handleMenuAction } from "../app/menu";
+import { handleMenuAction, selectMenuState } from "../app/menu";
 import menus from "../../shared/menus.json";
 
 import { isTauri } from "../app/utils";
@@ -33,6 +33,7 @@ export function MenuButton() {
     id: MENU_ID
   });
   const [open, setOpen] = useState(false);
+  const menuState = useAppSelector(selectMenuState);
 
   const handleVisibilityChange = (isVisible: boolean) => {
     setOpen(isVisible);
@@ -79,7 +80,14 @@ export function MenuButton() {
         );
       }
       return (
-        <Item onClick={() => handleMenuAction(dispatch, item.id)} key={item.id}>
+        <Item
+          onClick={() => {
+            handleMenuAction(dispatch, item.id);
+            hideAll();
+          }}
+          key={item.id}
+          disabled={menuState[item.id as keyof typeof menuState]?.disabled}
+        >
           {item.label}
           <RightSlot>{item.shortcut}</RightSlot>
         </Item>

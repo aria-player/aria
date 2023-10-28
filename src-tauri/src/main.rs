@@ -1,6 +1,8 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
+use std::collections::HashMap;
+
 use serde::{Deserialize, Serialize};
 use tauri::{CustomMenuItem, Manager, Menu, Submenu, WindowEvent};
 use tauri_plugin_window_state::{AppHandleExt, StateFlags};
@@ -16,6 +18,25 @@ fn greet(name: &str) -> String {
 fn close(app_handle: tauri::AppHandle) {
     let _ = app_handle.save_window_state(StateFlags::all());
     app_handle.exit(0);
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+struct MenuItemState {
+    disabled: Option<bool>,
+    selected: Option<bool>,
+}
+
+#[tauri::command]
+fn update_menu_state(window: tauri::Window, menu_state: HashMap<String, MenuItemState>) {
+    for (key, value) in menu_state.iter() {
+        let item = window.menu_handle().get_item(&key);
+        if let Some(disabled) = value.disabled {
+            let _ = item.set_enabled(!disabled);
+        }
+        if let Some(selected) = value.selected {
+            let _ = item.set_selected(selected);
+        }
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -81,7 +102,7 @@ fn main() {
                 .emit("menu_click", Some(event.menu_item_id()))
                 .expect("failed to emit event");
         })
-        .invoke_handler(tauri::generate_handler![greet, close])
+        .invoke_handler(tauri::generate_handler![greet, close, update_menu_state])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

@@ -19,12 +19,14 @@ import {
 import SettingsPage from "./routes/Settings";
 import { listen } from "@tauri-apps/api/event";
 import { Themes } from "./app/themes";
-import { handleMenuAction } from "./app/menu";
+import { handleMenuAction, selectMenuState } from "./app/menu";
+import { invoke } from "@tauri-apps/api";
 
 function App() {
   const dispatch = useAppDispatch();
   const theme = useAppSelector(selectTheme);
   const windowDecorations = useAppSelector(selectWindowDecorations);
+  const menuState = useAppSelector(selectMenuState);
 
   useEffect(() => {
     let unlisten: (() => void) | undefined;
@@ -42,6 +44,12 @@ function App() {
       }
     };
   }, [dispatch]);
+
+  useEffect(() => {
+    if (isTauri()) {
+      invoke("update_menu_state", { menuState });
+    }
+  }, [menuState]);
 
   useEffect(() => {
     if (theme === Themes.System.id) {
