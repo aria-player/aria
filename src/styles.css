@@ -1,28 +1,26 @@
-:root {
-  /* Allotment */
-  --separator-border: transparent;
-  --sash-size: 10px;
-}
-
 body {
   margin: 0;
+
+  /* Allotment overrides */
+  --separator-border: transparent;
+  --sash-size: 10px;
 }
 
 :root {
   --primary-background: #f6f6f6;
   --primary-text: #0f0f0f;
-  --sidebar-separator: rgb(238, 238, 238);
-  --menubar-background: rgb(238, 238, 238);
+  --sidebar-separator: rgb(238 238 238);
+  --menubar-background: rgb(238 238 238);
   --menubar-button: #3b3b3b;
-  --menubar-button-disabled: rgb(175, 175, 175);
+  --menubar-button-disabled: rgb(175 175 175);
   --menubar-button-background-hover: #d8d8d8;
-  --windows-control-background-hover: rgba(0, 0, 0, 0.05);
-  --windows-control-background-active: rgba(0, 0, 0, 0.03);
+  --windows-control-background-hover: rgb(0 0 0 / 5%);
+  --windows-control-background-active: rgb(0 0 0 / 3%);
   --button-text: #313131;
-  --button-background: rgb(247, 247, 247);
-  --button-background-hover: rgb(230, 230, 230);
-  --button-background-active: rgb(220, 220, 220);
-  --input-background: rgb(255, 255, 255);
+  --button-background: rgb(247 247 247);
+  --button-background-hover: rgb(230 230 230);
+  --button-background-active: rgb(220 220 220);
+  --input-background: rgb(255 255 255);
   --contexify-item-color: #0f0f0f;
   --contexify-menu-bgColor: #f6f6f6;
 }
@@ -30,37 +28,37 @@ body {
 [data-theme="dark"] {
   --primary-background: #2f2f2f;
   --primary-text: #f6f6f6;
-  --sidebar-separator: rgb(34, 34, 34);
-  --menubar-background: rgb(34, 34, 34);
-  --menubar-button: rgb(236, 236, 236);
-  --menubar-button-disabled: rgb(77, 77, 77);
-  --menubar-button-background-hover: rgb(68, 68, 68);
-  --windows-control-background-hover: rgba(255, 255, 255, 0.06);
-  --windows-control-background-active: rgba(255, 255, 255, 0.04);
+  --sidebar-separator: rgb(34 34 34);
+  --menubar-background: rgb(34 34 34);
+  --menubar-button: rgb(236 236 236);
+  --menubar-button-disabled: rgb(77 77 77);
+  --menubar-button-background-hover: rgb(68 68 68);
+  --windows-control-background-hover: rgb(255 255 255 / 6%);
+  --windows-control-background-active: rgb(255 255 255 / 4%);
   --button-text: #f6f6f6;
-  --button-background: rgb(66, 66, 66);
-  --button-background-hover: rgb(76, 76, 76);
-  --button-background-active: rgb(86, 86, 86);
-  --input-background: rgb(40, 40, 40);
+  --button-background: rgb(66 66 66);
+  --button-background-hover: rgb(76 76 76);
+  --button-background-active: rgb(86 86 86);
+  --input-background: rgb(40 40 40);
   --contexify-item-color: #f6f6f6;
   --contexify-menu-bgColor: #2f2f2f;
 }
 
 [data-theme="midnight"] {
-  --primary-background: #000000;
+  --primary-background: #000;
   --primary-text: #e7e7e7;
-  --sidebar-separator: rgb(17, 17, 17);
-  --menubar-background: rgb(17, 17, 17);
-  --menubar-button: rgb(187, 187, 187);
-  --menubar-button-disabled: rgb(77, 77, 77);
-  --menubar-button-background-hover: rgb(68, 68, 68);
-  --windows-control-background-hover: rgba(255, 255, 255, 0.06);
-  --windows-control-background-active: rgba(255, 255, 255, 0.04);
+  --sidebar-separator: rgb(17 17 17);
+  --menubar-background: rgb(17 17 17);
+  --menubar-button: rgb(187 187 187);
+  --menubar-button-disabled: rgb(77 77 77);
+  --menubar-button-background-hover: rgb(68 68 68);
+  --windows-control-background-hover: rgb(255 255 255 / 6%);
+  --windows-control-background-active: rgb(255 255 255 / 4%);
   --button-text: #e7e7e7;
-  --button-background: rgb(20, 20, 20);
-  --button-background-hover: rgb(36, 36, 36);
-  --button-background-active: rgb(53, 53, 53);
-  --input-background: rgb(17, 17, 17);
+  --button-background: rgb(20 20 20);
+  --button-background-hover: rgb(36 36 36);
+  --button-background-active: rgb(53 53 53);
+  --input-background: rgb(17 17 17);
   --contexify-item-color: #e7e7e7;
   --contexify-menu-bgColor: #131313;
 }

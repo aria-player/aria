@@ -11,8 +11,8 @@
 
 .button {
   font-size: 2em;
-  color: rgb(112, 76, 182);
-  background-color: rgba(112, 76, 182, 0.1);
+  color: rgb(112 76 182);
+  background-color: rgb(112 76 182 / 10%);
   cursor: pointer;
   transition: all 0.15s;
   margin: 0.2em;
@@ -20,16 +20,16 @@
   min-width: 1.5em;
   border: 2px solid transparent;
   border-radius: 0.2em;
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 2px rgb(0 0 0 / 20%);
 }
 
 .button:hover,
 .button:focus {
-  border: 2px solid rgba(112, 76, 182, 0.4);
+  border: 2px solid rgb(112 76 182 / 40%);
 }
 
 .button:active {
-  background-color: rgba(112, 76, 182, 0.2);
+  background-color: rgb(112 76 182 / 20%);
 }
 
 .textbox {
@@ -41,7 +41,7 @@
   margin: 0.2em;
   padding: 0.1em 0.2em;
   outline: none;
-  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 2px rgb(0 0 0 / 20%);
   background-color: var(--input-background);
   color: var(--primary-text);
 }
@@ -51,9 +51,9 @@
   position: relative;
 }
 
-.asyncButton:after {
+.asyncButton::after {
   content: "";
-  background-color: rgba(112, 76, 182, 0.15);
+  background-color: rgb(112 76 182 / 15%);
   position: absolute;
   width: 100%;
   height: 100%;
@@ -65,7 +65,7 @@
     opacity 0.5s ease 1s;
 }
 
-.asyncButton:active:after {
+.asyncButton:active::after {
   width: 0%;
   opacity: 1;
   transition: 0s;

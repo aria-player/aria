@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "tauri": "tauri",
     "test": "vitest",
-    "lint": "eslint . && prettier -c ."
+    "lint": "eslint . && prettier -c . && stylelint \"**/*.css\""
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.9.7",
@@ -41,6 +41,9 @@
     "eslint-plugin-react-hooks": "^4.6.0",
     "jsdom": "^22.1.0",
     "prettier": "^3.0.3",
+    "stylelint": "^15.11.0",
+    "stylelint-config-css-modules": "^4.3.0",
+    "stylelint-config-standard": "^34.0.0",
     "typescript": "^5.0.2",
     "vite": "^4.4.4",
     "vite-plugin-svgr": "^4.1.0",
