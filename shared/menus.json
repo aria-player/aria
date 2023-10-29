@@ -9,6 +9,10 @@
         "shortcut": "Ctrl+,"
       },
       {
+        "id": "separator",
+        "label": ""
+      },
+      {
         "id": "menubar_file_exit",
         "label": "Exit",
         "tauri": true

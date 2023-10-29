@@ -60,7 +60,16 @@ fn create_menu_from_schema(schema: &[MenuItem]) -> Menu {
 fn create_menu_item(item: &MenuItem) -> Submenu {
     let mut menu = Menu::new();
     if let Some(submenu_items) = &item.submenu {
-        for sub_item in submenu_items {
+        for (index, sub_item) in submenu_items.iter().enumerate() {
+            if sub_item.id == "separator" {
+                let valid_prev_item = index > 0 && submenu_items[index - 1].id != "separator";
+                let valid_next_item =
+                    index < submenu_items.len() - 1 && submenu_items[index + 1].id != "separator";
+                if valid_prev_item && valid_next_item {
+                    menu = menu.add_native_item(tauri::MenuItem::Separator);
+                }
+                continue;
+            }
             if sub_item.submenu.is_some() {
                 menu = menu.add_submenu(create_menu_item(sub_item));
             } else {
