@@ -5,7 +5,8 @@
     "submenu": [
       {
         "id": "menubar_file_settings",
-        "label": "Settings..."
+        "label": "Settings...",
+        "shortcut": "Ctrl+,"
       },
       {
         "id": "menubar_file_exit",

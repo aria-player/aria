@@ -23,12 +23,14 @@ import { Themes } from "./app/themes";
 import { handleMenuAction, selectMenuState } from "./app/menu";
 import { invoke } from "@tauri-apps/api";
 import { appWindow } from "@tauri-apps/api/window";
+import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 
 function App() {
   const dispatch = useAppDispatch();
   const theme = useAppSelector(selectTheme);
   const windowDecorations = useAppSelector(selectWindowDecorations);
   const menuState = useAppSelector(selectMenuState);
+  useKeyboardShortcuts();
 
   useEffect(() => {
     let unlisten: (() => void) | undefined;
