@@ -1,0 +1,21 @@
+.header {
+  margin: 1rem;
+  margin-left: 0;
+}
+
+.select {
+  width: 100%;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border-radius: 4px;
+  background-color: var(--input-background);
+  color: var(--text-color);
+  margin-bottom: 1.5rem;
+}
+
+.checkbox {
+  width: 20px;
+  height: 20px;
+  margin-right: 0.5rem;
+  cursor: pointer;
+}

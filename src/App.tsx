@@ -24,6 +24,8 @@ import { handleMenuAction, selectMenuState } from "./app/menu";
 import { invoke } from "@tauri-apps/api";
 import { appWindow } from "@tauri-apps/api/window";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
+import { AppearancePage } from "./routes/settings/AppearancePage";
+import { AboutPage } from "./routes/settings/AboutPage";
 
 function App() {
   const dispatch = useAppDispatch();
@@ -123,7 +125,10 @@ function App() {
           <div className={styles.outlet}>
             <Routes>
               <Route path="/" Component={Home} />
-              <Route path="settings" Component={SettingsPage} />
+              <Route path="settings" Component={SettingsPage}>
+                <Route index Component={AppearancePage} />
+                <Route path="about" Component={AboutPage} />
+              </Route>
               <Route path="*" Component={ErrorPage} />
             </Routes>
           </div>

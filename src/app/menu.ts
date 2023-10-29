@@ -22,7 +22,7 @@ export async function handleMenuAction(dispatch: AppDispatch, action: string) {
       invoke("close");
       break;
     case "menubar_file_settings":
-      dispatch(push("settings"));
+      dispatch(push("/settings"));
       break;
     case "menubar_navigate_back":
       dispatch(goBack());

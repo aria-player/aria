@@ -1,15 +1,40 @@
 .settings {
-  margin: 2rem;
-  font-size: 1.5rem;
-  text-align: center;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin-right: 10%;
 }
 
-.select {
-  padding: 0.2em;
-  margin: 0.2em;
-  margin-left: 0.5em;
-  background-color: var(--input-background);
-  color: var(--primary-text);
-  border-radius: 4px;
-  font-size: 0.8em;
+.outlet {
+  max-height: 25rem;
+  height: 60vh;
+  flex-grow: 1;
+  padding: 0 2rem;
+  max-width: 25rem;
+}
+
+.links {
+  max-height: 25rem;
+  height: 60vh;
+  display: flex;
+  flex-direction: column;
+  padding-left: 1rem;
+}
+
+.link {
+  color: var(--button-text);
+  text-decoration: none;
+  padding: 0.75rem 1rem;
+  min-width: 6rem;
+  margin: 0.5rem;
+  border-radius: 5px;
+}
+
+.link:hover {
+  background-color: var(--button-background-hover);
+}
+
+.selected {
+  font-weight: 500;
 }
