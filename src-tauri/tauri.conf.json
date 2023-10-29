@@ -53,7 +53,9 @@
         "visible": false,
         "title": "tauri-app-template",
         "width": 1000,
-        "height": 600
+        "height": 600,
+        "minWidth": 220,
+        "minHeight": 32
       }
     ]
   }
