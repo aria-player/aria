@@ -6,6 +6,7 @@ import LeftArrow from "../../assets/arrow-left-solid.svg?react";
 import RightArrow from "../../assets/arrow-right-solid.svg?react";
 import { MenuButton } from "../MenuButton";
 import { selectMenuState } from "../../app/menu";
+import { WindowsMenuBarButtons } from "./WindowsMenuBarButtons";
 
 export function WindowsMenuBar() {
   const dispatch = useAppDispatch();
@@ -15,7 +16,7 @@ export function WindowsMenuBar() {
 
   return (
     <div className={styles.menuBar}>
-      <div className={styles.navigation}>
+      <div className={styles.navigationShort}>
         <MenuButton />
         <LeftArrow
           title="Back"
@@ -35,6 +36,9 @@ export function WindowsMenuBar() {
             if (forwardEnabled) dispatch(goForward());
           }}
         />
+      </div>
+      <div className={styles.navigationLong}>
+        <WindowsMenuBarButtons />
       </div>
       <div className={styles.dragRegion} data-tauri-drag-region></div>
       <WindowsControls />

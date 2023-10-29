@@ -1,0 +1,17 @@
+.menuButton {
+  height: 75%;
+  color: var(--menubar-button);
+  background: transparent;
+  border-radius: 5px;
+  min-width: 3em;
+  padding: 0.2em 0.4em;
+  margin-left: 0.15em;
+  font-size: 0.9em;
+  justify-content: center;
+  align-items: center;
+  border: none;
+}
+
+.menuButton:hover {
+  background-color: var(--menubar-button-background-hover);
+}
