@@ -1,14 +1,27 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use std::collections::HashMap;
-
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 use tauri::{CustomMenuItem, Manager, Menu, Submenu, WindowEvent};
 use tauri_plugin_window_state::{AppHandleExt, StateFlags};
 use window_shadows::set_shadow;
 
-// Learn more about Tauri commands at https://tauri.app/v1/guides/features/command
+#[derive(Serialize, Deserialize, Debug)]
+struct MenuItem {
+    id: String,
+    label: String,
+    shortcut: Option<String>,
+    submenu: Option<Vec<MenuItem>>,
+    tauri: Option<bool>,
+}
+
+#[derive(Serialize, Deserialize, Debug)]
+struct MenuItemState {
+    disabled: Option<bool>,
+    selected: Option<bool>,
+}
+
 #[tauri::command]
 fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
@@ -18,12 +31,6 @@ fn greet(name: &str) -> String {
 fn close(app_handle: tauri::AppHandle) {
     let _ = app_handle.save_window_state(StateFlags::all());
     app_handle.exit(0);
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-struct MenuItemState {
-    disabled: Option<bool>,
-    selected: Option<bool>,
 }
 
 #[tauri::command]
@@ -39,27 +46,18 @@ fn update_menu_state(window: tauri::Window, menu_state: HashMap<String, MenuItem
     }
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-struct MenuItemSchema {
-    id: String,
-    label: String,
-    shortcut: Option<String>,
-    submenu: Option<Vec<MenuItemSchema>>,
-    tauri: Option<bool>,
-}
-
-fn read_menu_schema() -> Vec<MenuItemSchema> {
+fn read_menu_schema() -> Vec<MenuItem> {
     const MENUS: &str = include_str!("../../shared/menus.json");
     serde_json::from_str(MENUS).expect("JSON was not well-formatted")
 }
 
-fn create_menu_from_schema(schema: &[MenuItemSchema]) -> Menu {
+fn create_menu_from_schema(schema: &[MenuItem]) -> Menu {
     schema.iter().fold(Menu::new(), |menu, item| {
         menu.add_submenu(create_menu_item(item))
     })
 }
 
-fn create_menu_item(item: &MenuItemSchema) -> Submenu {
+fn create_menu_item(item: &MenuItem) -> Submenu {
     let mut menu = Menu::new();
     if let Some(submenu_items) = &item.submenu {
         for sub_item in submenu_items {

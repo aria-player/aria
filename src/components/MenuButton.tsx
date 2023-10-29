@@ -6,7 +6,7 @@ import {
   useContextMenu,
   RightSlot
 } from "react-contexify";
-import { handleMenuAction, selectMenuState } from "../app/menu";
+import { MenuItem, handleMenuAction, selectMenuState } from "../app/menu";
 import menus from "../../shared/menus.json";
 
 import { isTauri } from "../app/utils";
@@ -16,14 +16,6 @@ import MenuIcon from "../assets/bars-solid.svg?react";
 import styles from "./MenuButton.module.css";
 import "react-contexify/dist/ReactContexify.css";
 import { useState } from "react";
-
-interface MenuItemSchema {
-  id: string;
-  label: string;
-  shortcut?: string;
-  submenu?: MenuItemSchema[];
-  tauri?: boolean;
-}
 
 const MENU_ID = "menu-id";
 
@@ -57,7 +49,7 @@ export function MenuButton() {
     });
   };
 
-  function constructMenuFromSchema(schema: MenuItemSchema[]) {
+  function constructMenuFromSchema(schema: MenuItem[]) {
     if (
       (!isTauri() && schema.every((item) => item.tauri === true)) ||
       schema.length === 0
@@ -68,7 +60,7 @@ export function MenuButton() {
         </Item>
       );
     }
-    return schema.map((item: MenuItemSchema) => {
+    return schema.map((item: MenuItem) => {
       if (item.tauri && !isTauri()) {
         return null;
       }

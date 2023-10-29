@@ -3,6 +3,14 @@ import { AppDispatch, RootState } from "./store";
 import { invoke } from "@tauri-apps/api";
 import { createSelector } from "@reduxjs/toolkit";
 
+export interface MenuItem {
+  id: string;
+  label: string;
+  shortcut?: string;
+  submenu?: MenuItem[];
+  tauri?: boolean;
+}
+
 export interface MenuItemState {
   disabled?: boolean;
   selected?: boolean;
