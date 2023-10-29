@@ -30,6 +30,9 @@ export async function handleMenuAction(dispatch: AppDispatch, action: string) {
     case "menubar_navigate_forward":
       dispatch(goForward());
       break;
+    case "menubar_help_about":
+      dispatch(push("/settings/about"));
+      break;
     default:
       break;
   }

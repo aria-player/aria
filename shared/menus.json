@@ -44,6 +44,11 @@
   {
     "id": "menubar_help",
     "label": "Help",
-    "submenu": []
+    "submenu": [
+      {
+        "id": "menubar_help_about",
+        "label": "About..."
+      }
+    ]
   }
 ]
