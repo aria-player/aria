@@ -2,7 +2,16 @@ import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
 import counterReducer from "../features/counter/counterSlice";
 import configReducer from "../features/config/configSlice";
 import storage from "redux-persist/lib/storage";
-import { persistReducer, persistStore } from "redux-persist";
+import {
+  FLUSH,
+  PAUSE,
+  PERSIST,
+  PURGE,
+  REGISTER,
+  REHYDRATE,
+  persistReducer,
+  persistStore
+} from "redux-persist";
 import { combineReducers } from "redux";
 import { createReduxHistoryContext } from "redux-first-history";
 import { createBrowserHistory } from "history";
@@ -20,7 +29,11 @@ export const store = configureStore({
     config: persistReducer({ key: "config", storage }, configReducer)
   }),
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(routerMiddleware)
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER]
+      }
+    }).concat(routerMiddleware)
 });
 
 export type AppDispatch = typeof store.dispatch;
