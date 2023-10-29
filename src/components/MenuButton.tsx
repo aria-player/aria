@@ -21,9 +21,7 @@ const MENU_ID = "menu-id";
 
 export function MenuButton() {
   const dispatch = useAppDispatch();
-  const { show, hideAll } = useContextMenu({
-    id: MENU_ID
-  });
+  const { show, hideAll } = useContextMenu();
   const [open, setOpen] = useState(false);
   const menuState = useAppSelector(selectMenuState);
 
