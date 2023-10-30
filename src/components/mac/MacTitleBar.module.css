@@ -1,0 +1,7 @@
+.menuBar {
+  display: flex;
+  height: 1.6em;
+  flex-shrink: 0;
+  background-color: var(--menubar-background);
+  padding-left: 0.5em;
+}

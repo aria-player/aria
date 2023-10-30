@@ -11,7 +11,7 @@ import { MenuButton } from "./components/MenuButton";
 import { Allotment } from "allotment";
 import "allotment/dist/style.css";
 import { useAppDispatch, useAppSelector } from "./app/hooks";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
   selectTheme,
   selectWindowDecorations,
@@ -26,13 +26,56 @@ import { appWindow } from "@tauri-apps/api/window";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 import { AppearancePage } from "./routes/settings/AppearancePage";
 import { AboutPage } from "./routes/settings/AboutPage";
+import { MacTitleBar } from "./components/mac/MacTitleBar";
+import { type } from "@tauri-apps/api/os";
 
 function App() {
   const dispatch = useAppDispatch();
   const theme = useAppSelector(selectTheme);
   const windowDecorations = useAppSelector(selectWindowDecorations);
   const menuState = useAppSelector(selectMenuState);
+  const [isMac, setIsMac] = useState<boolean | null>(null);
+  const [fullscreen, setFullscreen] = useState<boolean | null>(null);
   useKeyboardShortcuts();
+
+  useEffect(() => {
+    async function initialise() {
+      if (fullscreen === null) {
+        const isFullscreen = await appWindow.isFullscreen();
+        setFullscreen(isFullscreen);
+      }
+      if (isMac === null) {
+        const osType = await type();
+        setIsMac(osType == "Darwin");
+      }
+      if (isMac) return;
+      const decorated = appWindow.isDecorated();
+      if (!decorated && windowDecorations) {
+        // They're out of sync, so reset
+        dispatch(setWindowDecorations(false));
+      }
+    }
+    if (isTauri()) initialise();
+  }, [dispatch, windowDecorations, isMac, fullscreen]);
+
+  useEffect(() => {
+    let unlisten: (() => void) | undefined;
+    async function init() {
+      if (isTauri()) {
+        unlisten = await appWindow.onResized(() => {
+          appWindow.isFullscreen().then((isFullscreen) => {
+            setFullscreen(isFullscreen);
+          });
+        });
+      }
+    }
+    init();
+    return () => {
+      if (unlisten) {
+        unlisten();
+      }
+    };
+  }, []);
 
   useEffect(() => {
     let unlisten: (() => void) | undefined;
@@ -81,20 +124,10 @@ function App() {
     };
   }, [theme]);
 
-  useEffect(() => {
-    async function updateLocalDecorated() {
-      const decorated = await appWindow.isDecorated();
-      if (!decorated && windowDecorations) {
-        // They're out of sync, so reset
-        dispatch(setWindowDecorations(false));
-      }
-    }
-    if (isTauri()) updateLocalDecorated();
-  }, [dispatch, windowDecorations]);
-
   return (
     <div className={styles.window}>
-      {isTauri() && !windowDecorations && <WindowsMenuBar />}
+      {isTauri() && isMac && !fullscreen && <MacTitleBar />}
+      {isTauri() && isMac === false && !windowDecorations && <WindowsMenuBar />}
       <Allotment snap proportionalLayout={false}>
         <Allotment.Pane preferredSize={200}>
           <div className={styles.sideBar}>
