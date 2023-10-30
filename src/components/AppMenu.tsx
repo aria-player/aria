@@ -35,7 +35,11 @@ export function AppMenu(props: {
 
         if (item.submenu) {
           return (
-            <Submenu key={item.id} label={item.label}>
+            <Submenu
+              key={item.id}
+              label={item.label}
+              disabled={menuState[item.id as keyof typeof menuState]?.disabled}
+            >
               <AppMenu schema={item.submenu} />
             </Submenu>
           );
