@@ -4,6 +4,24 @@ body {
   /* Allotment overrides */
   --separator-border: transparent;
   --sash-size: 10px;
+
+  /* Contexify overrides */
+  --contexify-menu-padding: 5px 5px;
+  --contexify-menu-radius: 6px;
+  --contexify-menu-minWidth: 160px;
+  --contexify-itemContent-padding: 2px 4px;
+  --contexify-menu-bgColor: var(--button-background);
+  --contexify-item-color: var(--button-text);
+  --contexify-rightSlot-color: var(--button-text);
+  --contexify-arrow-color: var(--button-text);
+  --contexify-activeItem-bgColor: var(--button-background-hover);
+  --contexify-activeItem-color: var(--button-text);
+  --contexify-activeRightSlot-color: var(--button-text);
+  --contexify-activeArrow-color: var(--button-text);
+
+  .contexify {
+    font-size: 0.9em;
+  }
 }
 
 :root {
@@ -21,8 +39,6 @@ body {
   --button-background-hover: rgb(230 230 230);
   --button-background-active: rgb(220 220 220);
   --input-background: rgb(255 255 255);
-  --contexify-item-color: #0f0f0f;
-  --contexify-menu-bgColor: #f6f6f6;
 }
 
 [data-theme="dark"] {
@@ -40,8 +56,6 @@ body {
   --button-background-hover: rgb(76 76 76);
   --button-background-active: rgb(86 86 86);
   --input-background: rgb(40 40 40);
-  --contexify-item-color: #f6f6f6;
-  --contexify-menu-bgColor: #2f2f2f;
 }
 
 [data-theme="midnight"] {
@@ -59,6 +73,4 @@ body {
   --button-background-hover: rgb(36 36 36);
   --button-background-active: rgb(53 53 53);
   --input-background: rgb(17 17 17);
-  --contexify-item-color: #e7e7e7;
-  --contexify-menu-bgColor: #131313;
 }
