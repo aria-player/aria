@@ -14,7 +14,8 @@ import { useAppSelector } from "./app/hooks";
 import { useContext, useEffect } from "react";
 import {
   selectTheme,
-  selectWindowDecorations
+  selectWindowDecorations,
+  selectWindowFullscreen
 } from "./features/config/configSlice";
 import SettingsPage from "./routes/Settings";
 import { Themes } from "./app/themes";
@@ -27,7 +28,8 @@ import { Platform, PlatformContext } from "./PlatformContext";
 function App() {
   const theme = useAppSelector(selectTheme);
   const windowDecorations = useAppSelector(selectWindowDecorations);
-  const { platform, isFullscreen } = useContext(PlatformContext);
+  const windowFullscreen = useAppSelector(selectWindowFullscreen);
+  const { platform } = useContext(PlatformContext);
   useKeyboardShortcuts();
 
   useEffect(() => {
@@ -56,7 +58,9 @@ function App() {
 
   return (
     <div className={styles.window}>
-      {platform == Platform.Mac && isFullscreen === false && <MacTitleBar />}
+      {isTauri() && platform == Platform.Mac && !windowFullscreen && (
+        <MacTitleBar />
+      )}
       {isTauri() && platform != Platform.Mac && !windowDecorations && (
         <WindowsMenuBar />
       )}

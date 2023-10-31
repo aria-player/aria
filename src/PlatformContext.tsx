@@ -7,7 +7,9 @@ import { selectMenuState, handleMenuAction } from "./app/menu";
 import { isTauri } from "./app/utils";
 import {
   selectWindowDecorations,
-  setWindowDecorations
+  selectWindowFullscreen,
+  setWindowDecorations,
+  setWindowFullscreen
 } from "./features/config/configSlice";
 
 export enum Platform {
@@ -18,20 +20,20 @@ export enum Platform {
   Linux = "Linux"
 }
 
-export const PlatformContext = createContext<{
-  platform: Platform;
-  isFullscreen: boolean | null;
-}>({ platform: Platform.Unknown, isFullscreen: null });
+export const PlatformContext = createContext<{ platform: Platform }>({
+  platform: Platform.Unknown
+});
 
 export function PlatformProvider({ children }: { children: ReactNode }) {
   const dispatch = useAppDispatch();
   const windowDecorations = useAppSelector(selectWindowDecorations);
+  const windowFullscreen = useAppSelector(selectWindowFullscreen);
   const menuState = useAppSelector(selectMenuState);
   const [platform, setPlatform] = useState<Platform>(Platform.Unknown);
-  const [isFullscreen, setIsFullscreen] = useState<boolean | null>(null);
 
   useEffect(() => {
     async function initialise() {
+      if (platform !== Platform.Unknown) return;
       if (!isTauri()) {
         setPlatform(Platform.Web);
         return;
@@ -50,20 +52,22 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
         default:
           break;
       }
-      if (isFullscreen === null) {
-        setIsFullscreen(await appWindow.isFullscreen());
-      }
-      if (osType == "Darwin") return;
-      const decorated = await appWindow.isDecorated();
-      if (!decorated && windowDecorations) {
-        // They're out of sync, so reset
-        dispatch(setWindowDecorations(false));
+      // Reset out of sync settings
+      if (osType == "Darwin") {
+        const fullscreen = await appWindow.isDecorated();
+        if (!fullscreen && windowFullscreen) {
+          dispatch(setWindowFullscreen(false));
+        }
+      } else {
+        const decorated = await appWindow.isDecorated();
+        if (!decorated && windowDecorations) {
+          dispatch(setWindowDecorations(false));
+        }
       }
     }
-    if (platform == Platform.Unknown) {
-      initialise();
-    }
-  }, [dispatch, windowDecorations, platform, isFullscreen]);
+
+    initialise();
+  }, [dispatch, platform, windowFullscreen, windowDecorations]);
 
   useEffect(() => {
     let unlisten: (() => void) | undefined;
@@ -71,7 +75,7 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
       if (isTauri()) {
         unlisten = await appWindow.onResized(() => {
           appWindow.isFullscreen().then((isFullscreen) => {
-            setIsFullscreen(isFullscreen);
+            dispatch(setWindowFullscreen(isFullscreen));
           });
         });
       }
@@ -82,7 +86,7 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
         unlisten();
       }
     };
-  }, []);
+  }, [dispatch]);
 
   useEffect(() => {
     let unlisten: (() => void) | undefined;
@@ -108,7 +112,7 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
   }, [menuState]);
 
   return (
-    <PlatformContext.Provider value={{ platform, isFullscreen }}>
+    <PlatformContext.Provider value={{ platform }}>
       {children}
     </PlatformContext.Provider>
   );
