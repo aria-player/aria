@@ -1,7 +1,7 @@
 import { invoke } from "@tauri-apps/api";
 import { type } from "@tauri-apps/api/os";
 import { appWindow } from "@tauri-apps/api/window";
-import { ReactNode, createContext, useEffect, useState } from "react";
+import { ReactNode, createContext, useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "./app/hooks";
 import { selectMenuState, handleMenuAction } from "./app/menu";
 import { isTauri } from "./app/utils";
@@ -30,6 +30,7 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
   const windowFullscreen = useAppSelector(selectWindowFullscreen);
   const menuState = useAppSelector(selectMenuState);
   const [platform, setPlatform] = useState<Platform>(Platform.Unknown);
+  const listeningToTauri = useRef(false);
 
   useEffect(() => {
     async function initialise() {
@@ -91,7 +92,8 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let unlisten: (() => void) | undefined;
     async function init() {
-      if (isTauri()) {
+      if (isTauri() && !listeningToTauri.current) {
+        listeningToTauri.current = true;
         unlisten = await appWindow.onMenuClicked(({ payload: menuId }) => {
           handleMenuAction(dispatch, menuId);
         });
