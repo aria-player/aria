@@ -1,5 +1,4 @@
 import { invoke } from "@tauri-apps/api";
-import { listen } from "@tauri-apps/api/event";
 import { type } from "@tauri-apps/api/os";
 import { appWindow } from "@tauri-apps/api/window";
 import { ReactNode, createContext, useEffect, useState } from "react";
@@ -65,8 +64,8 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
     let unlisten: (() => void) | undefined;
     async function init() {
       if (isTauri()) {
-        unlisten = await listen<string>("menu_click", (event) => {
-          handleMenuAction(dispatch, event.payload);
+        unlisten = await appWindow.onMenuClicked(({ payload: menuId }) => {
+          handleMenuAction(dispatch, menuId);
         });
       }
     }

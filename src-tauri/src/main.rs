@@ -103,12 +103,6 @@ fn main() {
                 std::thread::sleep(std::time::Duration::from_nanos(1));
             }
         })
-        .on_menu_event(|event| {
-            event
-                .window()
-                .emit("menu_click", Some(event.menu_item_id()))
-                .expect("failed to emit event");
-        })
         .invoke_handler(tauri::generate_handler![greet, close, update_menu_state])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
