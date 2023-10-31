@@ -22,12 +22,12 @@ import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 import { AppearancePage } from "./routes/settings/AppearancePage";
 import { AboutPage } from "./routes/settings/AboutPage";
 import { MacTitleBar } from "./components/mac/MacTitleBar";
-import { PlatformContext } from "./PlatformContext";
+import { Platform, PlatformContext } from "./PlatformContext";
 
 function App() {
   const theme = useAppSelector(selectTheme);
   const windowDecorations = useAppSelector(selectWindowDecorations);
-  const { isMac, isFullscreen } = useContext(PlatformContext);
+  const { platform, isFullscreen } = useContext(PlatformContext);
   useKeyboardShortcuts();
 
   useEffect(() => {
@@ -56,8 +56,10 @@ function App() {
 
   return (
     <div className={styles.window}>
-      {isTauri() && isMac && isFullscreen === false && <MacTitleBar />}
-      {isTauri() && isMac === false && !windowDecorations && <WindowsMenuBar />}
+      {platform == Platform.Mac && isFullscreen === false && <MacTitleBar />}
+      {isTauri() && platform != Platform.Mac && !windowDecorations && (
+        <WindowsMenuBar />
+      )}
       <Allotment snap proportionalLayout={false}>
         <Allotment.Pane preferredSize={200}>
           <div className={styles.sideBar}>

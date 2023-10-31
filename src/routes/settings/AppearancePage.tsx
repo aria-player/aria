@@ -10,13 +10,13 @@ import {
 } from "../../features/config/configSlice";
 import styles from "./AppearancePage.module.css";
 import { useContext } from "react";
-import { PlatformContext } from "../../PlatformContext";
+import { Platform, PlatformContext } from "../../PlatformContext";
 
 export function AppearancePage() {
   const dispatch = useAppDispatch();
   const currentTheme = useAppSelector(selectTheme);
   const windowDecorations = useAppSelector(selectWindowDecorations);
-  const { isMac } = useContext(PlatformContext);
+  const { platform } = useContext(PlatformContext);
 
   const handleThemeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     dispatch(setTheme(event.target.value));
@@ -41,7 +41,7 @@ export function AppearancePage() {
           </option>
         ))}
       </select>
-      {isTauri() && isMac === false && (
+      {isTauri() && platform != Platform.Mac && (
         <div>
           <input
             className={styles.checkbox}
