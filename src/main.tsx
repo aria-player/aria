@@ -6,13 +6,16 @@ import { PersistGate } from "redux-persist/integration/react";
 import { HistoryRouter } from "redux-first-history/rr6";
 import App from "./App";
 import "./styles.css";
+import { PlatformProvider } from "./PlatformContext";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <HistoryRouter history={history}>
-          <App />
+          <PlatformProvider>
+            <App />
+          </PlatformProvider>
         </HistoryRouter>
       </PersistGate>
     </Provider>
