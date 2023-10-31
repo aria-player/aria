@@ -2,7 +2,7 @@
   "tauri": {
     "windows": [
       {
-        "decorations": false
+        "decorations": true
       }
     ]
   }

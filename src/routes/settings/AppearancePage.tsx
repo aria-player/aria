@@ -41,7 +41,7 @@ export function AppearancePage() {
           </option>
         ))}
       </select>
-      {isTauri() && platform != Platform.Mac && (
+      {isTauri() && platform == Platform.Windows && (
         <div>
           <input
             className={styles.checkbox}

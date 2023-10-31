@@ -58,12 +58,8 @@ function App() {
 
   return (
     <div className={styles.window}>
-      {isTauri() && platform == Platform.Mac && !windowFullscreen && (
-        <MacTitleBar />
-      )}
-      {isTauri() && platform != Platform.Mac && !windowDecorations && (
-        <WindowsMenuBar />
-      )}
+      {platform == Platform.Mac && !windowFullscreen && <MacTitleBar />}
+      {platform == Platform.Windows && !windowDecorations && <WindowsMenuBar />}
       <Allotment snap proportionalLayout={false}>
         <Allotment.Pane preferredSize={200}>
           <div className={styles.sideBar}>

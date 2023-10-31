@@ -95,7 +95,7 @@ fn main() {
         .menu(menu)
         .setup(|app| {
             let window = app.get_window("main").unwrap();
-            set_shadow(&window, true).expect("Unsupported platform!");
+            let _ = set_shadow(&window, true).ok();
             Ok(())
         })
         .on_window_event(|e| {
