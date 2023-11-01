@@ -4,7 +4,10 @@
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::env::consts::OS;
-use tauri::{CustomMenuItem, Manager, Menu, Submenu, WindowEvent};
+use tauri::{
+    CustomMenuItem, Manager, Menu, Submenu, SystemTray, SystemTrayEvent, SystemTrayMenu,
+    SystemTrayMenuItem, WindowEvent,
+};
 use tauri_plugin_window_state::{AppHandleExt, StateFlags};
 use window_shadows::set_shadow;
 
@@ -148,9 +151,18 @@ fn create_menu_item(item: &MenuItem) -> Submenu {
 fn main() {
     let schema = read_menu_schema();
     let menu = create_menu_from_schema(&schema);
+    let quit = CustomMenuItem::new("exit".to_string(), "Exit");
+    let hide = CustomMenuItem::new("hide".to_string(), "Hide");
+    let tray_menu = SystemTrayMenu::new()
+        .add_item(hide)
+        .add_native_item(SystemTrayMenuItem::Separator)
+        .add_item(quit);
+
+    let system_tray = SystemTray::new().with_menu(tray_menu);
     tauri::Builder::default()
         .plugin(tauri_plugin_window_state::Builder::default().build())
         .menu(menu)
+        .system_tray(system_tray)
         .setup(|app| {
             let window = app.get_window("main").unwrap();
             let _ = set_shadow(&window, true).ok();
@@ -160,6 +172,25 @@ fn main() {
             if let WindowEvent::Resized(_) = e.event() {
                 std::thread::sleep(std::time::Duration::from_nanos(1));
             }
+        })
+        .on_system_tray_event(|app, event| match event {
+            SystemTrayEvent::MenuItemClick { id, .. } => match id.as_str() {
+                "exit" => {
+                    close(app.app_handle());
+                }
+                "hide" => {
+                    let window = app.get_window("main").unwrap();
+                    if window.is_visible().unwrap() {
+                        window.hide().unwrap();
+                        app.tray_handle().get_item(&id).set_title("Show").unwrap();
+                    } else {
+                        window.show().unwrap();
+                        app.tray_handle().get_item(&id).set_title("Hide").unwrap();
+                    }
+                }
+                _ => {}
+            },
+            _ => {}
         })
         .invoke_handler(tauri::generate_handler![greet, close, update_menu_state])
         .run(tauri::generate_context!())
