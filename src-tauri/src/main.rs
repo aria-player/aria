@@ -11,7 +11,7 @@ use window_shadows::set_shadow;
 #[derive(Serialize, Deserialize, Debug)]
 struct MenuItem {
     id: String,
-    label: String,
+    label: Option<String>,
     shortcut: Option<String>,
     submenu: Option<Vec<MenuItem>>,
     tauri: Option<bool>,
@@ -126,8 +126,10 @@ fn create_menu_item(item: &MenuItem) -> Submenu {
             if sub_item.submenu.is_some() {
                 menu = menu.add_submenu(create_menu_item(sub_item));
             } else {
+                let default_label = &String::new();
+                let label_value = sub_item.label.as_ref().unwrap_or(default_label);
                 let mut custom_menu_item =
-                    CustomMenuItem::new(sub_item.id.clone(), sub_item.label.clone());
+                    CustomMenuItem::new(sub_item.id.clone(), label_value.to_string());
                 if let Some(shortcut) = &sub_item.shortcut {
                     custom_menu_item.keyboard_accelerator = Some(shortcut.clone());
                 }
@@ -135,9 +137,12 @@ fn create_menu_item(item: &MenuItem) -> Submenu {
             }
         }
     } else {
-        menu = menu.add_item(CustomMenuItem::new(item.id.clone(), item.label.clone()));
+        menu = menu.add_item(CustomMenuItem::new(
+            item.id.clone(),
+            item.label.as_ref().unwrap_or(&String::new()),
+        ));
     }
-    Submenu::new(item.label.clone(), menu)
+    Submenu::new(item.label.as_ref().unwrap_or(&String::new()), menu)
 }
 
 fn main() {

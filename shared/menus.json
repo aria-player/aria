@@ -9,8 +9,7 @@
         "label": "Services"
       },
       {
-        "id": "separator",
-        "label": ""
+        "id": "separator"
       },
       {
         "id": "mac_hide",
@@ -27,8 +26,7 @@
         "label": "Show All"
       },
       {
-        "id": "separator",
-        "label": ""
+        "id": "separator"
       },
       {
         "id": "exit",
@@ -47,8 +45,7 @@
         "shortcut": "Ctrl+,"
       },
       {
-        "id": "separator",
-        "label": ""
+        "id": "separator"
       },
       {
         "id": "exit",

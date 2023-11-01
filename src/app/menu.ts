@@ -5,7 +5,7 @@ import { createSelector } from "@reduxjs/toolkit";
 
 export interface MenuItem {
   id: string;
-  label: string;
+  label?: string;
   shortcut?: string;
   submenu?: MenuItem[];
   maconly?: boolean;
