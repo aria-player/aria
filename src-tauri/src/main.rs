@@ -3,6 +3,7 @@
 
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+use std::env::consts::OS;
 use tauri::{CustomMenuItem, Manager, Menu, Submenu, WindowEvent};
 use tauri_plugin_window_state::{AppHandleExt, StateFlags};
 use window_shadows::set_shadow;
@@ -14,6 +15,8 @@ struct MenuItem {
     shortcut: Option<String>,
     submenu: Option<Vec<MenuItem>>,
     tauri: Option<bool>,
+    winlinuxonly: Option<bool>,
+    maconly: Option<bool>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
@@ -46,6 +49,16 @@ fn update_menu_state(window: tauri::Window, menu_state: HashMap<String, MenuItem
     }
 }
 
+fn should_include_item(item: &MenuItem) -> bool {
+    if item.maconly.map_or(false, |v| v.to_owned()) {
+        return OS == "macos";
+    }
+    if item.winlinuxonly.map_or(false, |v| v.to_owned()) {
+        return OS == "windows" || OS == "linux";
+    }
+    true
+}
+
 fn read_menu_schema() -> Vec<MenuItem> {
     const MENUS: &str = include_str!("../../shared/menus.json");
     serde_json::from_str(MENUS).expect("JSON was not well-formatted")
@@ -53,22 +66,62 @@ fn read_menu_schema() -> Vec<MenuItem> {
 
 fn create_menu_from_schema(schema: &[MenuItem]) -> Menu {
     schema.iter().fold(Menu::new(), |menu, item| {
-        menu.add_submenu(create_menu_item(item))
+        if should_include_item(item) {
+            menu.add_submenu(create_menu_item(item))
+        } else {
+            menu
+        }
     })
+}
+
+fn should_add_separator(index: usize, items: &[MenuItem]) -> bool {
+    let previous_item =
+        index > 0 && items[index - 1].id != "separator" && should_include_item(&items[index - 1]);
+    let next_item = index < items.len() - 1
+        && items[index + 1].id != "separator"
+        && should_include_item(&items[index + 1]);
+    previous_item && next_item
 }
 
 fn create_menu_item(item: &MenuItem) -> Submenu {
     let mut menu = Menu::new();
     if let Some(submenu_items) = &item.submenu {
         for (index, sub_item) in submenu_items.iter().enumerate() {
-            if sub_item.id == "separator" {
-                let valid_prev_item = index > 0 && submenu_items[index - 1].id != "separator";
-                let valid_next_item =
-                    index < submenu_items.len() - 1 && submenu_items[index + 1].id != "separator";
-                if valid_prev_item && valid_next_item {
-                    menu = menu.add_native_item(tauri::MenuItem::Separator);
-                }
+            if !should_include_item(sub_item) {
                 continue;
+            }
+            match sub_item.id.as_str() {
+                "separator" => {
+                    if should_add_separator(index, submenu_items) {
+                        menu = menu.add_native_item(tauri::MenuItem::Separator);
+                    }
+                    continue;
+                }
+                "mac_services" => {
+                    menu = menu.add_native_item(tauri::MenuItem::Services);
+                    continue;
+                }
+                "mac_hide" => {
+                    menu = menu.add_native_item(tauri::MenuItem::Hide);
+                    continue;
+                }
+                "mac_hide_others" => {
+                    menu = menu.add_native_item(tauri::MenuItem::HideOthers);
+                    continue;
+                }
+                "mac_show_all" => {
+                    menu = menu.add_native_item(tauri::MenuItem::ShowAll);
+                    continue;
+                }
+                "mac_minimize" => {
+                    menu = menu.add_native_item(tauri::MenuItem::Minimize);
+                    continue;
+                }
+                "mac_zoom" => {
+                    menu = menu.add_native_item(tauri::MenuItem::Zoom);
+                    continue;
+                }
+                _ => {}
             }
             if sub_item.submenu.is_some() {
                 menu = menu.add_submenu(create_menu_item(sub_item));

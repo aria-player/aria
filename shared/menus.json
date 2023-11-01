@@ -1,5 +1,43 @@
 [
   {
+    "id": "menubar_app",
+    "label": "App",
+    "maconly": true,
+    "submenu": [
+      {
+        "id": "mac_services",
+        "label": "Services"
+      },
+      {
+        "id": "separator",
+        "label": ""
+      },
+      {
+        "id": "mac_hide",
+        "label": "Hide App",
+        "shortcut": "Cmd+H"
+      },
+      {
+        "id": "mac_hide_others",
+        "label": "Hide Others",
+        "shortcut": "Option+Cmd+H"
+      },
+      {
+        "id": "mac_show_all",
+        "label": "Show All"
+      },
+      {
+        "id": "separator",
+        "label": ""
+      },
+      {
+        "id": "menubar_file_exit",
+        "label": "Quit App",
+        "shortcut": "Cmd+Q"
+      }
+    ]
+  },
+  {
     "id": "menubar_file",
     "label": "File",
     "submenu": [
@@ -15,7 +53,8 @@
       {
         "id": "menubar_file_exit",
         "label": "Exit",
-        "tauri": true
+        "shortcut": "Ctrl+Shift+Q",
+        "winlinuxonly": true
       }
     ]
   },
@@ -42,6 +81,23 @@
         "id": "menubar_navigate_forward",
         "label": "Forward",
         "shortcut": "Alt+Right"
+      }
+    ]
+  },
+  {
+    "id": "menubar_window",
+    "label": "Window",
+    "maconly": true,
+    "submenu": [
+      {
+        "id": "macos_minimize",
+        "label": "Minimize",
+        "shortcut": "Cmd+M"
+      },
+      {
+        "id": "macos_zoom",
+        "label": "Zoom",
+        "shortcut": "Ctrl+Cmd+Z"
       }
     ]
   },

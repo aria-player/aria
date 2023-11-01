@@ -9,7 +9,26 @@ export function AppMenu(props: {
 }) {
   const dispatch = useAppDispatch();
   const menuState = useAppSelector(selectMenuState);
-  const items = props.schema.filter((item) => !(item.tauri && !isTauri()));
+
+  const platformItems = props.schema.filter(
+    (item) => !item.maconly && (!item.winlinuxonly || isTauri())
+  );
+
+  function shouldAddSeparator(
+    item: MenuItem,
+    index: number,
+    items: MenuItem[]
+  ): boolean {
+    if (item.id !== "separator") return true;
+    const previousItem = index > 0 && items[index - 1].id !== "separator";
+    const nextItem =
+      index < items.length - 1 && items[index + 1].id !== "separator";
+    return previousItem && nextItem;
+  }
+
+  const items = platformItems.filter((item, index, self) =>
+    shouldAddSeparator(item, index, self)
+  );
 
   if (items.length === 0) {
     return (
@@ -22,17 +41,8 @@ export function AppMenu(props: {
     <>
       {items.map((item: MenuItem, index: number) => {
         if (item.id === "separator") {
-          const previousItem = index > 0 && items[index - 1].id !== "separator";
-          const nextItem =
-            index < items.length - 1 && items[index + 1].id !== "separator";
-
-          if (previousItem && nextItem) {
-            return <Separator key={index} />;
-          } else {
-            return null;
-          }
+          return <Separator key={index} />;
         }
-
         if (item.submenu) {
           return (
             <Submenu

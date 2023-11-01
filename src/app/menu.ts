@@ -8,7 +8,8 @@ export interface MenuItem {
   label: string;
   shortcut?: string;
   submenu?: MenuItem[];
-  tauri?: boolean;
+  maconly?: boolean;
+  winlinuxonly?: boolean;
 }
 
 export interface MenuItemState {

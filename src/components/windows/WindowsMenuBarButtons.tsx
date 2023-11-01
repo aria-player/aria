@@ -20,13 +20,15 @@ export function WindowsMenuBarButtons() {
       if (event.key === "Alt" && !event.repeat) {
         setAltHeld(true);
       } else if (event.key != "Alt" && event.altKey) {
-        menus.forEach((category) => {
-          if (
-            event.key.toLowerCase() === category.label.charAt(0).toLowerCase()
-          ) {
-            buttonRefs[category.id].current?.click();
-          }
-        });
+        menus
+          .filter((item) => !item.maconly)
+          .forEach((category) => {
+            if (
+              event.key.toLowerCase() === category.label.charAt(0).toLowerCase()
+            ) {
+              buttonRefs[category.id].current?.click();
+            }
+          });
       }
     };
 
@@ -82,43 +84,45 @@ export function WindowsMenuBarButtons() {
 
   return (
     <>
-      {menus.map((category) => {
-        if (!buttonRefs[category.id]) {
-          buttonRefs[category.id] = React.createRef<HTMLButtonElement>();
-        }
-        return (
-          <React.Fragment key={category.id}>
-            <Menu
-              id={category.id}
-              animation={false}
-              onVisibilityChange={handleVisibilityChange}
-            >
-              <AppMenu
-                schema={category.submenu}
-                onItemClick={() => {
-                  hideAll();
-                  setOpen(false);
-                }}
-              />
-            </Menu>
-            <button
-              ref={buttonRefs[category.id]}
-              className={styles.menuButton}
-              onClick={(e) => handleMenuClick(e, category.id)}
-              onMouseOver={(e) => handleMenuHover(e, category.id)}
-            >
-              {altHeld ? (
-                <>
-                  <u>{category.label.charAt(0)}</u>
-                  {category.label.slice(1)}
-                </>
-              ) : (
-                category.label
-              )}
-            </button>
-          </React.Fragment>
-        );
-      })}
+      {menus
+        .filter((item) => !item.maconly)
+        .map((category) => {
+          if (!buttonRefs[category.id]) {
+            buttonRefs[category.id] = React.createRef<HTMLButtonElement>();
+          }
+          return (
+            <React.Fragment key={category.id}>
+              <Menu
+                id={category.id}
+                animation={false}
+                onVisibilityChange={handleVisibilityChange}
+              >
+                <AppMenu
+                  schema={category.submenu}
+                  onItemClick={() => {
+                    hideAll();
+                    setOpen(false);
+                  }}
+                />
+              </Menu>
+              <button
+                ref={buttonRefs[category.id]}
+                className={styles.menuButton}
+                onClick={(e) => handleMenuClick(e, category.id)}
+                onMouseOver={(e) => handleMenuHover(e, category.id)}
+              >
+                {altHeld ? (
+                  <>
+                    <u>{category.label.charAt(0)}</u>
+                    {category.label.slice(1)}
+                  </>
+                ) : (
+                  category.label
+                )}
+              </button>
+            </React.Fragment>
+          );
+        })}
     </>
   );
 }
