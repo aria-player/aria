@@ -98,7 +98,7 @@ export function WindowsMenuBarButtons() {
                 onVisibilityChange={handleVisibilityChange}
               >
                 <AppMenu
-                  schema={category.submenu}
+                  items={category.submenu}
                   onItemClick={() => {
                     hideAll();
                     setOpen(false);

@@ -4,13 +4,13 @@ import { isTauri } from "../app/utils";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 
 export function AppMenu(props: {
-  schema: MenuItem[];
+  items: MenuItem[];
   onItemClick?: (id: string) => void;
 }) {
   const dispatch = useAppDispatch();
   const menuState = useAppSelector(selectMenuState);
 
-  const platformItems = props.schema.filter(
+  const platformItems = props.items.filter(
     (item) => !item.maconly && (!item.winlinuxonly || isTauri())
   );
 
@@ -50,7 +50,7 @@ export function AppMenu(props: {
               label={item.label}
               disabled={menuState[item.id as keyof typeof menuState]?.disabled}
             >
-              <AppMenu schema={item.submenu} />
+              <AppMenu items={item.submenu} />
             </Submenu>
           );
         }

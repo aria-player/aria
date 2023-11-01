@@ -41,7 +41,7 @@ export function MenuButton() {
         animation={false}
         onVisibilityChange={handleVisibilityChange}
       >
-        <AppMenu schema={menus} onItemClick={hideAll} />
+        <AppMenu items={menus} onItemClick={hideAll} />
       </Menu>
       <MenuIcon
         title="Menu"
