@@ -19,19 +19,19 @@ export interface MenuItemState {
 
 export async function handleMenuAction(dispatch: AppDispatch, action: string) {
   switch (action) {
-    case "menubar_file_exit":
+    case "exit":
       invoke("close");
       break;
-    case "menubar_file_settings":
+    case "settings":
       dispatch(push("/settings"));
       break;
-    case "menubar_navigate_back":
+    case "back":
       dispatch(goBack());
       break;
-    case "menubar_navigate_forward":
+    case "forward":
       dispatch(goForward());
       break;
-    case "menubar_help_about":
+    case "about":
       dispatch(push("/settings/about"));
       break;
     default:
@@ -43,10 +43,10 @@ export const selectMenuState = createSelector(
   [(state: RootState) => state.router],
   () => {
     return {
-      menubar_navigate_back: {
+      back: {
         disabled: !(window.history.length > 1 && window.history.state.idx > 0)
       },
-      menubar_navigate_forward: {
+      forward: {
         disabled: !(
           window.history.length > 1 &&
           window.history.length - 1 != window.history.state.idx

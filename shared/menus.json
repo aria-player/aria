@@ -31,7 +31,7 @@
         "label": ""
       },
       {
-        "id": "menubar_file_exit",
+        "id": "exit",
         "label": "Quit App",
         "shortcut": "Cmd+Q"
       }
@@ -42,7 +42,7 @@
     "label": "File",
     "submenu": [
       {
-        "id": "menubar_file_settings",
+        "id": "settings",
         "label": "Settings...",
         "shortcut": "Ctrl+,"
       },
@@ -51,7 +51,7 @@
         "label": ""
       },
       {
-        "id": "menubar_file_exit",
+        "id": "exit",
         "label": "Exit",
         "shortcut": "Ctrl+Shift+Q",
         "winlinuxonly": true
@@ -73,12 +73,12 @@
     "label": "Navigate",
     "submenu": [
       {
-        "id": "menubar_navigate_back",
+        "id": "back",
         "label": "Back",
         "shortcut": "Alt+Left"
       },
       {
-        "id": "menubar_navigate_forward",
+        "id": "forward",
         "label": "Forward",
         "shortcut": "Alt+Right"
       }
@@ -106,7 +106,7 @@
     "label": "Help",
     "submenu": [
       {
-        "id": "menubar_help_about",
+        "id": "about",
         "label": "About..."
       }
     ]

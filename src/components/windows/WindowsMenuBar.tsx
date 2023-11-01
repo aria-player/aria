@@ -11,8 +11,8 @@ import { WindowsMenuBarButtons } from "./WindowsMenuBarButtons";
 export function WindowsMenuBar() {
   const dispatch = useAppDispatch();
   const menuState = useAppSelector(selectMenuState);
-  const backEnabled = !menuState["menubar_navigate_back"]?.disabled;
-  const forwardEnabled = !menuState["menubar_navigate_forward"]?.disabled;
+  const backEnabled = !menuState.back?.disabled;
+  const forwardEnabled = !menuState.forward?.disabled;
 
   return (
     <div className={styles.menuBar}>
