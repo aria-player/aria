@@ -18,12 +18,16 @@ export const PlatformContext = createContext<{
   platform: Platform;
   fullscreen: boolean | null;
   decorations: boolean | null;
+  minimiseToTray: boolean | null;
   setDecorations: (decorations: boolean) => void;
+  setMinimiseToTray: (minimiseToTray: boolean) => void;
 }>({
   platform: Platform.Unknown,
   fullscreen: null,
   decorations: null,
-  setDecorations: () => {}
+  minimiseToTray: null,
+  setDecorations: () => {},
+  setMinimiseToTray: () => {}
 });
 
 export function PlatformProvider({ children }: { children: ReactNode }) {
@@ -34,6 +38,7 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
   const [platform, setPlatform] = useState<Platform>(Platform.Unknown);
   const [fullscreen, setFullscreen] = useState<boolean | null>(null);
   const [decorations, setDecorations] = useState<boolean | null>(null);
+  const [minimiseToTray, setMinimiseToTray] = useState<boolean | null>(null);
 
   useEffect(() => {
     async function initialise() {
@@ -76,6 +81,10 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
           appWindow.setDecorations(false);
         }
       }
+      const minimiseToTray = await invoke("get_app_config", {
+        configItem: "minimisetotray"
+      });
+      setMinimiseToTray(minimiseToTray as boolean);
     }
 
     initialise();
@@ -136,13 +145,23 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
     setDecorations(decorations);
   };
 
+  const setMinimiseToTrayConfig = async (minimiseToTray: boolean) => {
+    invoke("update_app_config", {
+      configItem: "minimisetotray",
+      newValue: minimiseToTray
+    });
+    setMinimiseToTray(minimiseToTray);
+  };
+
   return (
     <PlatformContext.Provider
       value={{
         platform,
         fullscreen,
         decorations,
-        setDecorations: setDecorationsConfig
+        minimiseToTray,
+        setDecorations: setDecorationsConfig,
+        setMinimiseToTray: setMinimiseToTrayConfig
       }}
     >
       {children}

@@ -20,6 +20,7 @@ import { AppearancePage } from "./routes/settings/AppearancePage";
 import { AboutPage } from "./routes/settings/AboutPage";
 import { MacTitleBar } from "./components/mac/MacTitleBar";
 import { Platform, PlatformContext } from "./PlatformContext";
+import { GeneralPage } from "./routes/settings/GeneralPage";
 
 function App() {
   const theme = useAppSelector(selectTheme);
@@ -87,7 +88,8 @@ function App() {
             <Routes>
               <Route path="/" Component={Home} />
               <Route path="settings" Component={SettingsPage}>
-                <Route index Component={AppearancePage} />
+                <Route index Component={GeneralPage} />
+                <Route path="appearance" Component={AppearancePage} />
                 <Route path="about" Component={AboutPage} />
               </Route>
               <Route path="*" Component={ErrorPage} />

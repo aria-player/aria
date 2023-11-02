@@ -12,6 +12,14 @@ export default function SettingsPage() {
           to={"/settings"}
           end
         >
+          General
+        </NavLink>
+        <NavLink
+          className={({ isActive }) =>
+            `${styles.link} ${isActive ? styles.selected : ""}`
+          }
+          to={"appearance"}
+        >
           Appearance
         </NavLink>
         <NavLink

@@ -44,8 +44,28 @@ fn greet(name: &str) -> String {
 
 #[tauri::command]
 fn close(app_handle: tauri::AppHandle) {
-    let _ = app_handle.save_window_state(StateFlags::all());
-    app_handle.exit(0);
+    let stores = app_handle.state::<StoreCollection<Wry>>();
+    let path = PathBuf::from(".app-config");
+    let minimise_to_tray = with_store(app_handle.to_owned(), stores, path, |store| {
+        Ok(store
+            .get("minimisetotray")
+            .and_then(|val| val.as_bool())
+            .unwrap_or(false))
+    })
+    .unwrap_or(false);
+
+    if minimise_to_tray {
+        let window = app_handle.get_window("main").unwrap();
+        window.hide().unwrap();
+        app_handle
+            .tray_handle()
+            .get_item("hide")
+            .set_title("Show")
+            .unwrap();
+    } else {
+        let _ = app_handle.save_window_state(StateFlags::all());
+        app_handle.exit(0);
+    }
 }
 
 #[tauri::command]
@@ -232,6 +252,10 @@ fn main() {
             if let WindowEvent::Resized(_) = e.event() {
                 std::thread::sleep(std::time::Duration::from_nanos(1));
             }
+            if let WindowEvent::CloseRequested { api, .. } = e.event() {
+                api.prevent_close();
+                close(e.window().app_handle());
+            }
         })
         .on_system_tray_event(|app, event| match event {
             SystemTrayEvent::DoubleClick {
@@ -249,7 +273,8 @@ fn main() {
             }
             SystemTrayEvent::MenuItemClick { id, .. } => match id.as_str() {
                 "exit" => {
-                    close(app.app_handle());
+                    let _ = app.save_window_state(StateFlags::all());
+                    app.exit(0);
                 }
                 "hide" => {
                     let window = app.get_window("main").unwrap();
