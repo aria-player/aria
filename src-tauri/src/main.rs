@@ -73,10 +73,6 @@ fn update_app_config(app_handle: tauri::AppHandle, config_item: String, new_valu
     let stores = app_handle.state::<StoreCollection<Wry>>();
     let path = PathBuf::from(".app-config");
     with_store(app_handle.to_owned(), stores, path, |store| {
-        if config_item == "decorations" && OS == "windows" {
-            let window = app_handle.get_window("main").unwrap();
-            let _ = window.set_decorations(new_value.as_bool().unwrap());
-        }
         store.insert(config_item, new_value).unwrap();
         store.save()
     })
@@ -239,14 +235,6 @@ fn main() {
             let path = PathBuf::from(".app-config");
             with_store(app.app_handle(), stores, path, |store| {
                 set_config_if_null(store, "minimisetotray", || json!(false));
-                #[cfg(target_os = "windows")]
-                set_config_if_null(store, "decorations", || {
-                    json!(window.is_decorated().unwrap())
-                });
-                #[cfg(target_os = "macos")]
-                set_config_if_null(store, "fullscreen", || {
-                    json!(window.is_fullscreen().unwrap())
-                });
                 store.save()
             })
             .unwrap();

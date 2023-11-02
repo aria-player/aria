@@ -62,29 +62,16 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
           break;
       }
       if (osType === "Darwin") {
-        const configFullscreen = await invoke("get_app_config", {
-          configItem: "fullscreen"
-        });
-        setFullscreen(configFullscreen as boolean);
-        const actualFullscreen = await appWindow.isFullscreen();
-        if (!actualFullscreen && configFullscreen === true) {
-          appWindow.setFullscreen(true);
-        }
+        setFullscreen(await appWindow.isFullscreen());
       }
       if (osType == "Windows_NT") {
-        const configDecorations = await invoke("get_app_config", {
-          configItem: "decorations"
-        });
-        setDecorations(configDecorations as boolean);
-        const actualDecorations = await appWindow.isDecorated();
-        if (actualDecorations && configDecorations === false) {
-          appWindow.setDecorations(false);
-        }
+        setDecorations(await appWindow.isDecorated());
       }
-      const minimiseToTray = await invoke("get_app_config", {
-        configItem: "minimisetotray"
-      });
-      setMinimiseToTray(minimiseToTray as boolean);
+      setMinimiseToTray(
+        (await invoke("get_app_config", {
+          configItem: "minimisetotray"
+        })) as boolean
+      );
     }
 
     initialise();
@@ -96,10 +83,6 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
       if (isTauri() && platform == Platform.Mac) {
         unlisten = await appWindow.onResized(() => {
           appWindow.isFullscreen().then((isFullscreen) => {
-            invoke("update_app_config", {
-              configItem: "fullscreen",
-              newValue: isFullscreen
-            });
             setFullscreen(isFullscreen);
           });
         });
@@ -138,10 +121,7 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
   }, [menuState]);
 
   const setDecorationsConfig = async (decorations: boolean) => {
-    invoke("update_app_config", {
-      configItem: "decorations",
-      newValue: decorations
-    });
+    await appWindow.setDecorations(decorations);
     setDecorations(decorations);
   };
 
