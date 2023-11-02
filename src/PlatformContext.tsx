@@ -5,12 +5,6 @@ import { ReactNode, createContext, useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "./app/hooks";
 import { selectMenuState, handleMenuAction } from "./app/menu";
 import { isTauri } from "./app/utils";
-import {
-  selectWindowDecorations,
-  selectWindowFullscreen,
-  setWindowDecorations,
-  setWindowFullscreen
-} from "./features/config/configSlice";
 
 export enum Platform {
   Unknown = "Unknown",
@@ -20,17 +14,26 @@ export enum Platform {
   Linux = "Linux"
 }
 
-export const PlatformContext = createContext<{ platform: Platform }>({
-  platform: Platform.Unknown
+export const PlatformContext = createContext<{
+  platform: Platform;
+  fullscreen: boolean | null;
+  decorations: boolean | null;
+  setDecorations: (decorations: boolean) => void;
+}>({
+  platform: Platform.Unknown,
+  fullscreen: null,
+  decorations: null,
+  setDecorations: () => {}
 });
 
 export function PlatformProvider({ children }: { children: ReactNode }) {
   const dispatch = useAppDispatch();
-  const windowDecorations = useAppSelector(selectWindowDecorations);
-  const windowFullscreen = useAppSelector(selectWindowFullscreen);
   const menuState = useAppSelector(selectMenuState);
-  const [platform, setPlatform] = useState<Platform>(Platform.Unknown);
+
   const listeningToTauri = useRef(false);
+  const [platform, setPlatform] = useState<Platform>(Platform.Unknown);
+  const [fullscreen, setFullscreen] = useState<boolean | null>(null);
+  const [decorations, setDecorations] = useState<boolean | null>(null);
 
   useEffect(() => {
     async function initialise() {
@@ -53,30 +56,42 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
         default:
           break;
       }
-      // Reset out of sync settings
-      if (osType == "Darwin") {
-        const fullscreen = await appWindow.isDecorated();
-        if (!fullscreen && windowFullscreen) {
-          dispatch(setWindowFullscreen(false));
+      if (osType === "Darwin") {
+        const configFullscreen = await invoke("get_app_config", {
+          configItem: "fullscreen"
+        });
+        setFullscreen(configFullscreen as boolean);
+        const actualFullscreen = await appWindow.isFullscreen();
+        if (!actualFullscreen && configFullscreen === true) {
+          appWindow.setFullscreen(true);
         }
-      } else {
-        const decorated = await appWindow.isDecorated();
-        if (!decorated && windowDecorations) {
-          dispatch(setWindowDecorations(false));
+      }
+      if (osType == "Windows_NT") {
+        const configDecorations = await invoke("get_app_config", {
+          configItem: "decorations"
+        });
+        setDecorations(configDecorations as boolean);
+        const actualDecorations = await appWindow.isDecorated();
+        if (actualDecorations && configDecorations === false) {
+          appWindow.setDecorations(false);
         }
       }
     }
 
     initialise();
-  }, [dispatch, platform, windowFullscreen, windowDecorations]);
+  }, [dispatch, platform]);
 
   useEffect(() => {
     let unlisten: (() => void) | undefined;
     async function init() {
-      if (isTauri()) {
+      if (isTauri() && platform == Platform.Mac) {
         unlisten = await appWindow.onResized(() => {
           appWindow.isFullscreen().then((isFullscreen) => {
-            dispatch(setWindowFullscreen(isFullscreen));
+            invoke("update_app_config", {
+              configItem: "fullscreen",
+              newValue: isFullscreen
+            });
+            setFullscreen(isFullscreen);
           });
         });
       }
@@ -87,7 +102,7 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
         unlisten();
       }
     };
-  }, [dispatch]);
+  }, [dispatch, platform]);
 
   useEffect(() => {
     let unlisten: (() => void) | undefined;
@@ -113,8 +128,23 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
     }
   }, [menuState]);
 
+  const setDecorationsConfig = async (decorations: boolean) => {
+    invoke("update_app_config", {
+      configItem: "decorations",
+      newValue: decorations
+    });
+    setDecorations(decorations);
+  };
+
   return (
-    <PlatformContext.Provider value={{ platform }}>
+    <PlatformContext.Provider
+      value={{
+        platform,
+        fullscreen,
+        decorations,
+        setDecorations: setDecorationsConfig
+      }}
+    >
       {children}
     </PlatformContext.Provider>
   );

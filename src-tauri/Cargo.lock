@@ -3226,6 +3226,7 @@ dependencies = [
  "tauri",
  "tauri-build",
  "tauri-plugin-single-instance",
+ "tauri-plugin-store",
  "tauri-plugin-window-state",
  "window-shadows",
 ]
@@ -3301,6 +3302,18 @@ dependencies = [
  "thiserror",
  "windows-sys 0.48.0",
  "zbus",
+]
+
+[[package]]
+name = "tauri-plugin-store"
+version = "0.0.0"
+source = "git+https://github.com/tauri-apps/plugins-workspace?branch=v1#8d6045421a553330e9da8b9e1e4405d419c5ea88"
+dependencies = [
+ "log",
+ "serde",
+ "serde_json",
+ "tauri",
+ "thiserror",
 ]
 
 [[package]]

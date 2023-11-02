@@ -12,11 +12,7 @@ import { Allotment } from "allotment";
 import "allotment/dist/style.css";
 import { useAppSelector } from "./app/hooks";
 import { useContext, useEffect } from "react";
-import {
-  selectTheme,
-  selectWindowDecorations,
-  selectWindowFullscreen
-} from "./features/config/configSlice";
+import { selectTheme } from "./features/config/configSlice";
 import SettingsPage from "./routes/Settings";
 import { Themes } from "./app/themes";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
@@ -27,9 +23,7 @@ import { Platform, PlatformContext } from "./PlatformContext";
 
 function App() {
   const theme = useAppSelector(selectTheme);
-  const windowDecorations = useAppSelector(selectWindowDecorations);
-  const windowFullscreen = useAppSelector(selectWindowFullscreen);
-  const { platform } = useContext(PlatformContext);
+  const { platform, fullscreen, decorations } = useContext(PlatformContext);
   useKeyboardShortcuts();
 
   useEffect(() => {
@@ -58,8 +52,10 @@ function App() {
 
   return (
     <div className={styles.window}>
-      {platform == Platform.Mac && !windowFullscreen && <MacTitleBar />}
-      {platform == Platform.Windows && !windowDecorations && <WindowsMenuBar />}
+      {platform == Platform.Mac && fullscreen === false && <MacTitleBar />}
+      {platform == Platform.Windows && decorations === false && (
+        <WindowsMenuBar />
+      )}
       <Allotment snap proportionalLayout={false}>
         <Allotment.Pane preferredSize={200}>
           <div className={styles.sideBar}>

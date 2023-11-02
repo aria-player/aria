@@ -2,12 +2,15 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
+use serde_json::json;
 use std::env::consts::OS;
+use std::{collections::HashMap, path::PathBuf};
 use tauri::{
     CustomMenuItem, Manager, Menu, Submenu, SystemTray, SystemTrayEvent, SystemTrayMenu,
-    SystemTrayMenuItem, WindowEvent,
+    SystemTrayMenuItem, WindowEvent, Wry,
 };
+use tauri_plugin_store::JsonValue;
+use tauri_plugin_store::{with_store, Store, StoreBuilder, StoreCollection};
 use tauri_plugin_window_state::{AppHandleExt, StateFlags};
 use window_shadows::set_shadow;
 
@@ -43,6 +46,33 @@ fn greet(name: &str) -> String {
 fn close(app_handle: tauri::AppHandle) {
     let _ = app_handle.save_window_state(StateFlags::all());
     app_handle.exit(0);
+}
+
+#[tauri::command]
+fn update_app_config(app_handle: tauri::AppHandle, config_item: String, new_value: JsonValue) {
+    let stores = app_handle.state::<StoreCollection<Wry>>();
+    let path = PathBuf::from(".app-config");
+    with_store(app_handle.to_owned(), stores, path, |store| {
+        if config_item == "decorations" && OS == "windows" {
+            let window = app_handle.get_window("main").unwrap();
+            let _ = window.set_decorations(new_value.as_bool().unwrap());
+        }
+        store.insert(config_item, new_value).unwrap();
+        store.save()
+    })
+    .unwrap();
+}
+
+#[tauri::command]
+fn get_app_config(
+    app_handle: tauri::AppHandle,
+    config_item: String,
+) -> Result<Option<JsonValue>, tauri_plugin_store::Error> {
+    let stores = app_handle.state::<StoreCollection<Wry>>();
+    let path = PathBuf::from(".app-config");
+    with_store(app_handle.to_owned(), stores, path, |store| {
+        Ok(store.get(&config_item).map(|val| val.clone()))
+    })
 }
 
 #[tauri::command]
@@ -154,6 +184,14 @@ fn create_menu_item(item: &MenuItem) -> Submenu {
     Submenu::new(item.label.as_ref().unwrap_or(&String::new()), menu)
 }
 
+fn set_config_if_null(store: &mut Store<Wry>, key: &str, default_value_fn: impl Fn() -> JsonValue) {
+    if store.get(key).is_none() {
+        let default_value = default_value_fn();
+        store.insert(key.to_string(), default_value).unwrap();
+        store.save().unwrap();
+    }
+}
+
 fn main() {
     let schema = read_menu_schema();
     let menu = create_menu_from_schema(&schema);
@@ -171,11 +209,23 @@ fn main() {
             app.emit_all("single-instance", Payload { args: argv, cwd })
                 .unwrap();
         }))
+        .plugin(tauri_plugin_store::Builder::default().build())
         .menu(menu)
         .system_tray(system_tray)
         .setup(|app| {
             let window = app.get_window("main").unwrap();
             let _ = set_shadow(&window, true).ok();
+
+            let mut store = StoreBuilder::new(app.handle(), ".app-config".parse()?).build();
+            #[cfg(target_os = "windows")]
+            set_config_if_null(&mut store, "decorations", || {
+                json!(window.is_decorated().unwrap())
+            });
+            #[cfg(target_os = "macos")]
+            set_config_if_null(&mut store, "fullscreen", || {
+                json!(window.is_fullscreen().unwrap())
+            });
+
             Ok(())
         })
         .on_window_event(|e| {
@@ -216,7 +266,13 @@ fn main() {
             },
             _ => {}
         })
-        .invoke_handler(tauri::generate_handler![greet, close, update_menu_state])
+        .invoke_handler(tauri::generate_handler![
+            greet,
+            close,
+            update_app_config,
+            get_app_config,
+            update_menu_state
+        ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

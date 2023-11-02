@@ -1,13 +1,7 @@
-import { appWindow } from "@tauri-apps/api/window";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { Themes } from "../../app/themes";
 import { isTauri } from "../../app/utils";
-import {
-  selectTheme,
-  selectWindowDecorations,
-  setTheme,
-  setWindowDecorations
-} from "../../features/config/configSlice";
+import { selectTheme, setTheme } from "../../features/config/configSlice";
 import styles from "./AppearancePage.module.css";
 import { useContext } from "react";
 import { Platform, PlatformContext } from "../../PlatformContext";
@@ -15,16 +9,16 @@ import { Platform, PlatformContext } from "../../PlatformContext";
 export function AppearancePage() {
   const dispatch = useAppDispatch();
   const currentTheme = useAppSelector(selectTheme);
-  const windowDecorations = useAppSelector(selectWindowDecorations);
-  const { platform } = useContext(PlatformContext);
+  const { platform, decorations, setDecorations } = useContext(PlatformContext);
 
   const handleThemeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     dispatch(setTheme(event.target.value));
   };
 
-  const handleCheckboxChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    dispatch(setWindowDecorations(event.target.checked));
-    appWindow.setDecorations(event.target.checked);
+  const handleCheckboxChange = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setDecorations(event.target.checked);
   };
 
   return (
@@ -46,7 +40,7 @@ export function AppearancePage() {
           <input
             className={styles.checkbox}
             type="checkbox"
-            checked={windowDecorations}
+            checked={decorations ?? false}
             onChange={handleCheckboxChange}
           />
           Use system window controls
