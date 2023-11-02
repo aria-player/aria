@@ -174,6 +174,19 @@ fn main() {
             }
         })
         .on_system_tray_event(|app, event| match event {
+            SystemTrayEvent::DoubleClick {
+                position: _,
+                size: _,
+                ..
+            } => {
+                let window = app.get_window("main").unwrap();
+                window.show().unwrap();
+                window.set_focus().unwrap();
+                app.tray_handle()
+                    .get_item("hide")
+                    .set_title("Hide")
+                    .unwrap();
+            }
             SystemTrayEvent::MenuItemClick { id, .. } => match id.as_str() {
                 "exit" => {
                     close(app.app_handle());
@@ -185,6 +198,7 @@ fn main() {
                         app.tray_handle().get_item(&id).set_title("Show").unwrap();
                     } else {
                         window.show().unwrap();
+                        window.set_focus().unwrap();
                         app.tray_handle().get_item(&id).set_title("Hide").unwrap();
                     }
                 }
