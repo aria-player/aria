@@ -10,7 +10,7 @@ use tauri::{
     SystemTrayMenuItem, WindowEvent, Wry,
 };
 use tauri_plugin_store::JsonValue;
-use tauri_plugin_store::{with_store, Store, StoreBuilder, StoreCollection};
+use tauri_plugin_store::{with_store, Store, StoreCollection};
 use tauri_plugin_window_state::{AppHandleExt, StateFlags};
 use window_shadows::set_shadow;
 
@@ -208,7 +208,6 @@ fn set_config_if_null(store: &mut Store<Wry>, key: &str, default_value_fn: impl 
     if store.get(key).is_none() {
         let default_value = default_value_fn();
         store.insert(key.to_string(), default_value).unwrap();
-        store.save().unwrap();
     }
 }
 
@@ -236,15 +235,21 @@ fn main() {
             let window = app.get_window("main").unwrap();
             let _ = set_shadow(&window, true).ok();
 
-            let mut store = StoreBuilder::new(app.handle(), ".app-config".parse()?).build();
-            #[cfg(target_os = "windows")]
-            set_config_if_null(&mut store, "decorations", || {
-                json!(window.is_decorated().unwrap())
-            });
-            #[cfg(target_os = "macos")]
-            set_config_if_null(&mut store, "fullscreen", || {
-                json!(window.is_fullscreen().unwrap())
-            });
+            let stores = app.state::<StoreCollection<Wry>>();
+            let path = PathBuf::from(".app-config");
+            with_store(app.app_handle(), stores, path, |store| {
+                set_config_if_null(store, "minimisetotray", || json!(false));
+                #[cfg(target_os = "windows")]
+                set_config_if_null(store, "decorations", || {
+                    json!(window.is_decorated().unwrap())
+                });
+                #[cfg(target_os = "macos")]
+                set_config_if_null(store, "fullscreen", || {
+                    json!(window.is_fullscreen().unwrap())
+                });
+                store.save()
+            })
+            .unwrap();
 
             Ok(())
         })
