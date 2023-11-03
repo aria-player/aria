@@ -210,14 +210,6 @@ fn set_config_if_null(store: &mut Store<Wry>, key: &str, default_value_fn: impl 
 fn main() {
     let schema = read_menu_schema();
     let menu = create_menu_from_schema(&schema);
-    let quit = CustomMenuItem::new("exit".to_string(), "Exit");
-    let hide = CustomMenuItem::new("hide".to_string(), "Hide");
-    let tray_menu = SystemTrayMenu::new()
-        .add_item(hide)
-        .add_native_item(SystemTrayMenuItem::Separator)
-        .add_item(quit);
-
-    let system_tray = SystemTray::new().with_menu(tray_menu);
     tauri::Builder::default()
         .plugin(tauri_plugin_window_state::Builder::default().build())
         .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
@@ -226,10 +218,20 @@ fn main() {
         }))
         .plugin(tauri_plugin_store::Builder::default().build())
         .menu(menu)
-        .system_tray(system_tray)
         .setup(|app| {
             let window = app.get_window("main").unwrap();
             let _ = set_shadow(&window, true).ok();
+
+            if OS != "macos" {
+                let quit = CustomMenuItem::new("exit".to_string(), "Exit");
+                let hide = CustomMenuItem::new("hide".to_string(), "Hide");
+                let tray_menu = SystemTrayMenu::new()
+                    .add_item(hide)
+                    .add_native_item(SystemTrayMenuItem::Separator)
+                    .add_item(quit);
+
+                SystemTray::new().with_menu(tray_menu).build(app).unwrap();
+            }
 
             let stores = app.state::<StoreCollection<Wry>>();
             let path = PathBuf::from(".app-config");
