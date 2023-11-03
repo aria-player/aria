@@ -1,17 +1,18 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
-use serde::{Deserialize, Serialize};
+mod commands;
+mod menu;
+mod utils;
+
 use serde_json::json;
 use std::env::consts::OS;
-use std::{collections::HashMap, path::PathBuf};
+use std::path::PathBuf;
 use tauri::{
-    CustomMenuItem, Manager, Menu, Submenu, SystemTray, SystemTrayEvent, SystemTrayMenu,
-    SystemTrayMenuItem, WindowEvent, Wry,
+    CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem,
+    WindowEvent, Wry,
 };
-use tauri_plugin_store::JsonValue;
-use tauri_plugin_store::{with_store, Store, StoreCollection};
-use tauri_plugin_window_state::{AppHandleExt, StateFlags};
+use tauri_plugin_store::{with_store, StoreCollection};
 use window_shadows::set_shadow;
 
 #[derive(Clone, serde::Serialize)]
@@ -20,217 +21,9 @@ struct Payload {
     cwd: String,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-struct MenuItem {
-    id: String,
-    label: Option<String>,
-    shortcut: Option<String>,
-    submenu: Option<Vec<MenuItem>>,
-    tauri: Option<bool>,
-    winlinuxonly: Option<bool>,
-    maconly: Option<bool>,
-}
-
-#[derive(Serialize, Deserialize, Debug)]
-struct MenuItemState {
-    disabled: Option<bool>,
-    selected: Option<bool>,
-}
-
-#[tauri::command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
-}
-
-#[tauri::command]
-fn exit(app_handle: tauri::AppHandle) {
-    let _ = app_handle.save_window_state(StateFlags::all());
-    app_handle.exit(0);
-}
-
-#[tauri::command]
-fn toggle_fullscreen(app_handle: tauri::AppHandle) {
-    let window = app_handle.get_window("main").unwrap();
-    let is_fullscreen = window.is_fullscreen().unwrap();
-    window.set_resizable(is_fullscreen).unwrap();
-    window.set_fullscreen(!is_fullscreen).unwrap();
-}
-
-#[tauri::command]
-fn close(app_handle: tauri::AppHandle) {
-    #[cfg(target_os = "macos")]
-    {
-        tauri::AppHandle::hide(&app_handle).unwrap();
-    }
-
-    #[cfg(not(target_os = "macos"))]
-    {
-        let stores = app_handle.state::<StoreCollection<Wry>>();
-        let path = PathBuf::from(".app-config");
-        let minimise_to_tray = with_store(app_handle.to_owned(), stores, path, |store| {
-            Ok(store
-                .get("minimisetotray")
-                .and_then(|val| val.as_bool())
-                .unwrap_or(false))
-        })
-        .unwrap_or(false);
-
-        if minimise_to_tray {
-            let window = app_handle.get_window("main").unwrap();
-            window.hide().unwrap();
-            app_handle
-                .tray_handle()
-                .get_item("hide")
-                .set_title("Show")
-                .unwrap();
-        } else {
-            exit(app_handle);
-        }
-    }
-}
-
-#[tauri::command]
-fn update_app_config(app_handle: tauri::AppHandle, config_item: String, new_value: JsonValue) {
-    let stores = app_handle.state::<StoreCollection<Wry>>();
-    let path = PathBuf::from(".app-config");
-    with_store(app_handle.to_owned(), stores, path, |store| {
-        store.insert(config_item, new_value).unwrap();
-        store.save()
-    })
-    .unwrap();
-}
-
-#[tauri::command]
-fn get_app_config(
-    app_handle: tauri::AppHandle,
-    config_item: String,
-) -> Result<Option<JsonValue>, tauri_plugin_store::Error> {
-    let stores = app_handle.state::<StoreCollection<Wry>>();
-    let path = PathBuf::from(".app-config");
-    with_store(app_handle.to_owned(), stores, path, |store| {
-        Ok(store.get(&config_item).map(|val| val.clone()))
-    })
-}
-
-#[tauri::command]
-fn update_menu_state(window: tauri::Window, menu_state: HashMap<String, MenuItemState>) {
-    for (key, value) in menu_state.iter() {
-        let item = window.menu_handle().get_item(&key);
-        if let Some(disabled) = value.disabled {
-            let _ = item.set_enabled(!disabled);
-        }
-        if let Some(selected) = value.selected {
-            let _ = item.set_selected(selected);
-        }
-    }
-}
-
-fn should_include_item(item: &MenuItem) -> bool {
-    if item.maconly.map_or(false, |v| v.to_owned()) {
-        return OS == "macos";
-    }
-    if item.winlinuxonly.map_or(false, |v| v.to_owned()) {
-        return OS == "windows" || OS == "linux";
-    }
-    true
-}
-
-fn read_menu_schema() -> Vec<MenuItem> {
-    const MENUS: &str = include_str!("../../shared/menus.json");
-    serde_json::from_str(MENUS).expect("JSON was not well-formatted")
-}
-
-fn create_menu_from_schema(schema: &[MenuItem]) -> Menu {
-    schema.iter().fold(Menu::new(), |menu, item| {
-        if should_include_item(item) {
-            menu.add_submenu(create_menu_item(item))
-        } else {
-            menu
-        }
-    })
-}
-
-fn should_add_separator(index: usize, items: &[MenuItem]) -> bool {
-    let previous_item =
-        index > 0 && items[index - 1].id != "separator" && should_include_item(&items[index - 1]);
-    let next_item = index < items.len() - 1
-        && items[index + 1].id != "separator"
-        && should_include_item(&items[index + 1]);
-    previous_item && next_item
-}
-
-fn create_menu_item(item: &MenuItem) -> Submenu {
-    let mut menu = Menu::new();
-    if let Some(submenu_items) = &item.submenu {
-        for (index, sub_item) in submenu_items.iter().enumerate() {
-            if !should_include_item(sub_item) {
-                continue;
-            }
-            match sub_item.id.as_str() {
-                "separator" => {
-                    if should_add_separator(index, submenu_items) {
-                        menu = menu.add_native_item(tauri::MenuItem::Separator);
-                    }
-                    continue;
-                }
-                "mac_services" => {
-                    menu = menu.add_native_item(tauri::MenuItem::Services);
-                    continue;
-                }
-                "mac_hide" => {
-                    menu = menu.add_native_item(tauri::MenuItem::Hide);
-                    continue;
-                }
-                "mac_hide_others" => {
-                    menu = menu.add_native_item(tauri::MenuItem::HideOthers);
-                    continue;
-                }
-                "mac_show_all" => {
-                    menu = menu.add_native_item(tauri::MenuItem::ShowAll);
-                    continue;
-                }
-                "mac_minimize" => {
-                    menu = menu.add_native_item(tauri::MenuItem::Minimize);
-                    continue;
-                }
-                "mac_zoom" => {
-                    menu = menu.add_native_item(tauri::MenuItem::Zoom);
-                    continue;
-                }
-                _ => {}
-            }
-            if sub_item.submenu.is_some() {
-                menu = menu.add_submenu(create_menu_item(sub_item));
-            } else {
-                let default_label = &String::new();
-                let label_value = sub_item.label.as_ref().unwrap_or(default_label);
-                let mut custom_menu_item =
-                    CustomMenuItem::new(sub_item.id.clone(), label_value.to_string());
-                if let Some(shortcut) = &sub_item.shortcut {
-                    custom_menu_item.keyboard_accelerator = Some(shortcut.clone());
-                }
-                menu = menu.add_item(custom_menu_item);
-            }
-        }
-    } else {
-        menu = menu.add_item(CustomMenuItem::new(
-            item.id.clone(),
-            item.label.as_ref().unwrap_or(&String::new()),
-        ));
-    }
-    Submenu::new(item.label.as_ref().unwrap_or(&String::new()), menu)
-}
-
-fn set_config_if_null(store: &mut Store<Wry>, key: &str, default_value_fn: impl Fn() -> JsonValue) {
-    if store.get(key).is_none() {
-        let default_value = default_value_fn();
-        store.insert(key.to_string(), default_value).unwrap();
-    }
-}
-
 fn main() {
-    let schema = read_menu_schema();
-    let menu = create_menu_from_schema(&schema);
+    let items = menu::read_menu_json();
+    let menu = menu::create_menu_from_json(&items);
     tauri::Builder::default()
         .plugin(tauri_plugin_window_state::Builder::default().build())
         .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
@@ -266,7 +59,7 @@ fn main() {
             let stores = app.state::<StoreCollection<Wry>>();
             let path = PathBuf::from(".app-config");
             with_store(app.app_handle(), stores, path, |store| {
-                set_config_if_null(store, "minimisetotray", || json!(false));
+                utils::set_config_if_null(store, "minimisetotray", || json!(false));
                 store.save()
             })
             .unwrap();
@@ -284,7 +77,7 @@ fn main() {
                 }
                 #[cfg(not(target_os = "macos"))]
                 {
-                    close(e.window().app_handle());
+                    commands::close(e.window().app_handle());
                 }
                 api.prevent_close();
             }
@@ -304,7 +97,7 @@ fn main() {
                     .unwrap();
             }
             SystemTrayEvent::MenuItemClick { id, .. } => match id.as_str() {
-                "exit" => exit(app.app_handle()),
+                "exit" => commands::exit(app.app_handle()),
                 "hide" => {
                     let window = app.get_window("main").unwrap();
                     if window.is_visible().unwrap() {
@@ -321,13 +114,13 @@ fn main() {
             _ => {}
         })
         .invoke_handler(tauri::generate_handler![
-            greet,
-            exit,
-            close,
-            toggle_fullscreen,
-            update_app_config,
-            get_app_config,
-            update_menu_state
+            commands::greet,
+            commands::exit,
+            commands::close,
+            commands::toggle_fullscreen,
+            commands::update_app_config,
+            commands::get_app_config,
+            commands::update_menu_state
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
