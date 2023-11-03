@@ -49,6 +49,14 @@ fn exit(app_handle: tauri::AppHandle) {
 }
 
 #[tauri::command]
+fn toggle_fullscreen(app_handle: tauri::AppHandle) {
+    let window = app_handle.get_window("main").unwrap();
+    let is_fullscreen = window.is_fullscreen().unwrap();
+    window.set_resizable(is_fullscreen).unwrap();
+    window.set_fullscreen(!is_fullscreen).unwrap();
+}
+
+#[tauri::command]
 fn close(app_handle: tauri::AppHandle) {
     #[cfg(target_os = "macos")]
     {
@@ -241,6 +249,10 @@ fn main() {
             let _ = set_shadow(&window, true).ok();
 
             if OS != "macos" {
+                if window.is_fullscreen().unwrap() {
+                    window.set_resizable(false).unwrap();
+                }
+
                 let quit = CustomMenuItem::new("exit".to_string(), "Exit");
                 let hide = CustomMenuItem::new("hide".to_string(), "Hide");
                 let tray_menu = SystemTrayMenu::new()
@@ -312,6 +324,7 @@ fn main() {
             greet,
             exit,
             close,
+            toggle_fullscreen,
             update_app_config,
             get_app_config,
             update_menu_state

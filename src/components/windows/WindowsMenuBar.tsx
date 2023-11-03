@@ -7,8 +7,12 @@ import RightArrow from "../../assets/arrow-right-solid.svg?react";
 import { MenuButton } from "../MenuButton";
 import { selectMenuState } from "../../app/menu";
 import { WindowsMenuBarButtons } from "./WindowsMenuBarButtons";
+import { useContext } from "react";
+import { PlatformContext } from "../../PlatformContext";
 
 export function WindowsMenuBar() {
+  const { fullscreen } = useContext(PlatformContext);
+
   const dispatch = useAppDispatch();
   const menuState = useAppSelector(selectMenuState);
   const backEnabled = !menuState.back?.disabled;
@@ -40,8 +44,10 @@ export function WindowsMenuBar() {
       <div className={styles.navigationLong}>
         <WindowsMenuBarButtons />
       </div>
-      <div className={styles.dragRegion} data-tauri-drag-region></div>
-      <WindowsControls />
+      {fullscreen === false && (
+        <div className={styles.dragRegion} data-tauri-drag-region></div>
+      )}
+      {fullscreen === false && <WindowsControls />}
     </div>
   );
 }

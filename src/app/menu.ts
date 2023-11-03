@@ -34,6 +34,9 @@ export async function handleMenuAction(dispatch: AppDispatch, action: string) {
     case "about":
       dispatch(push("/settings/about"));
       break;
+    case "fullscreen":
+      invoke("toggle_fullscreen");
+      break;
     default:
       break;
   }

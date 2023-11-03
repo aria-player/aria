@@ -63,7 +63,14 @@
   {
     "id": "menubar_view",
     "label": "View",
-    "submenu": []
+    "submenu": [
+      {
+        "id": "fullscreen",
+        "label": "Toggle Fullscreen",
+        "shortcut": "F11",
+        "winlinuxonly": true
+      }
+    ]
   },
   {
     "id": "menubar_navigate",

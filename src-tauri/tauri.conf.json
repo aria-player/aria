@@ -25,7 +25,8 @@
         "unmaximize": true,
         "unminimize": true,
         "startDragging": true,
-        "setDecorations": true
+        "setDecorations": true,
+        "setFullscreen": true
       },
       "os": {
         "all": true

@@ -61,9 +61,7 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
         default:
           break;
       }
-      if (osType === "Darwin") {
-        setFullscreen(await appWindow.isFullscreen());
-      }
+      setFullscreen(await appWindow.isFullscreen());
       if (osType == "Windows_NT") {
         setDecorations(await appWindow.isDecorated());
       }
@@ -80,7 +78,7 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let unlisten: (() => void) | undefined;
     async function init() {
-      if (isTauri() && platform == Platform.Mac) {
+      if (isTauri()) {
         unlisten = await appWindow.onResized(() => {
           appWindow.isFullscreen().then((isFullscreen) => {
             setFullscreen(isFullscreen);
