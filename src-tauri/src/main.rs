@@ -228,6 +228,11 @@ fn main() {
         .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
             app.emit_all("single-instance", Payload { args: argv, cwd })
                 .unwrap();
+            let window = app.get_window("main").unwrap();
+            if !window.is_visible().unwrap() {
+                window.show().unwrap();
+                window.set_focus().unwrap();
+            }
         }))
         .plugin(tauri_plugin_store::Builder::default().build())
         .menu(menu)
