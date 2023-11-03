@@ -1,10 +1,11 @@
 import { isTauri } from "../../app/utils";
 import styles from "./AppearancePage.module.css";
 import { useContext } from "react";
-import { PlatformContext } from "../../PlatformContext";
+import { Platform, PlatformContext } from "../../PlatformContext";
 
 export function GeneralPage() {
-  const { minimiseToTray, setMinimiseToTray } = useContext(PlatformContext);
+  const { platform, minimiseToTray, setMinimiseToTray } =
+    useContext(PlatformContext);
 
   const handleCheckboxChange = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -15,7 +16,7 @@ export function GeneralPage() {
   return (
     <div>
       <h4 className={styles.header}>General</h4>
-      {isTauri() ? (
+      {isTauri() && platform != Platform.Mac ? (
         <div>
           <input
             className={styles.checkbox}
