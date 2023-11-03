@@ -20,7 +20,7 @@ export interface MenuItemState {
 export async function handleMenuAction(dispatch: AppDispatch, action: string) {
   switch (action) {
     case "exit":
-      invoke("close");
+      invoke("exit");
       break;
     case "settings":
       dispatch(push("/settings"));
