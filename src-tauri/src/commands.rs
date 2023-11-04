@@ -26,6 +26,9 @@ pub fn exit(app_handle: tauri::AppHandle) {
 pub fn toggle_fullscreen(app_handle: tauri::AppHandle) {
     let window = app_handle.get_window("main").unwrap();
     let is_fullscreen = window.is_fullscreen().unwrap();
+    if !is_fullscreen {
+        window.unmaximize().unwrap();
+    }
     window.set_resizable(is_fullscreen).unwrap();
     window.set_fullscreen(!is_fullscreen).unwrap();
 }
