@@ -5,10 +5,13 @@ import styles from "./MenuButton.module.css";
 import "react-contexify/dist/ReactContexify.css";
 import { useState } from "react";
 import { AppMenu } from "./AppMenu";
+import { useTranslation } from "react-i18next";
 
 const MENU_ID = "menubar";
 
 export function MenuButton() {
+  const { t } = useTranslation();
+
   const { show, hideAll } = useContextMenu();
   const [open, setOpen] = useState(false);
 
@@ -44,7 +47,7 @@ export function MenuButton() {
         <AppMenu items={menus} onItemClick={hideAll} />
       </Menu>
       <MenuIcon
-        title="Menu"
+        title={t("labels.menu")}
         className={styles.menuButton}
         onClick={displayMenu}
       />

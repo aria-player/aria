@@ -1,4 +1,56 @@
 {
-  "home": "Home Test",
-  "error_example": "Error Example Test"
+  "nav": {
+    "home": "Home Test",
+    "error": "Error Example Test"
+  },
+  "settings": {
+    "sections": {
+      "general": "General Test",
+      "appearance": "Appearance Test",
+      "about": "About Test"
+    },
+    "general": {
+      "general": "General Test",
+      "minimiseToTray": "Close button minimizes app to system tray Test",
+      "selectLanguage": "Select language Test"
+    },
+    "appearance": {
+      "theme": "Theme Test",
+      "windowsControls": "Use system window controls Test"
+    },
+    "about": {
+      "version": "Version Test"
+    }
+  },
+  "home": {
+    "welcome": "Welcome to Tauri! Test",
+    "info": "Click on the Tauri, Vite, React, and Redux logos to learn more. Test",
+    "alt": {
+      "tauri": "Tauri logo Test",
+      "vite": "Vite logo Test",
+      "react": "React logo Test",
+      "redux": "Redux logo Test"
+    },
+    "inputPlaceholder": "Enter a name... Test",
+    "greet": "Greet Test"
+  },
+  "error": {
+    "title": "Error Test",
+    "notFound": "Page not found Test"
+  },
+  "counter": {
+    "ariaLabel": {
+      "increment": "Increment value Test",
+      "decrement": "Decrement value Test",
+      "setIncrement": "Set increment amount Test"
+    },
+    "addAmount": "Add Amount Test",
+    "addAsync": "Add Async Test",
+    "addOdd": "Add If Odd Test"
+  },
+  "labels": {
+    "menu": "Menu Test",
+    "forward": "Forward Test",
+    "back": "Back Test"
+  }
 }

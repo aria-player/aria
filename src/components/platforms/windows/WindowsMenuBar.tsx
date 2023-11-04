@@ -9,8 +9,10 @@ import { selectMenuState } from "../../../app/menu";
 import { WindowsMenuBarButtons } from "./WindowsMenuBarButtons";
 import { useContext } from "react";
 import { PlatformContext } from "../../../contexts/PlatformContext";
+import { useTranslation } from "react-i18next";
 
 export function WindowsMenuBar() {
+  const { t } = useTranslation();
   const { fullscreen } = useContext(PlatformContext);
 
   const dispatch = useAppDispatch();
@@ -23,7 +25,7 @@ export function WindowsMenuBar() {
       <div className={styles.navigationShort}>
         <MenuButton />
         <LeftArrow
-          title="Back"
+          title={t("labels.back")}
           className={`${styles.arrow} ${
             backEnabled ? "" : `${styles.arrowDisabled}`
           }`}
@@ -32,7 +34,7 @@ export function WindowsMenuBar() {
           }}
         />
         <RightArrow
-          title="Forward"
+          title={t("labels.forward")}
           className={`${styles.arrow} ${
             forwardEnabled ? "" : `${styles.arrowDisabled}`
           }`}

@@ -1,7 +1,10 @@
+import { useTranslation } from "react-i18next";
 import styles from "./Settings.module.css";
 import { NavLink, Outlet } from "react-router-dom";
 
 export default function SettingsPage() {
+  const { t } = useTranslation();
+
   return (
     <div className={styles.settings}>
       <div className={styles.links}>
@@ -12,7 +15,7 @@ export default function SettingsPage() {
           to={"/settings"}
           end
         >
-          General
+          {t("settings.sections.general")}
         </NavLink>
         <NavLink
           className={({ isActive }) =>
@@ -20,7 +23,7 @@ export default function SettingsPage() {
           }
           to={"appearance"}
         >
-          Appearance
+          {t("settings.sections.appearance")}
         </NavLink>
         <NavLink
           className={({ isActive }) =>
@@ -28,7 +31,7 @@ export default function SettingsPage() {
           }
           to={"about"}
         >
-          About
+          {t("settings.sections.about")}
         </NavLink>
       </div>
       <div className={styles.outlet}>

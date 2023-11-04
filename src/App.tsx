@@ -47,7 +47,7 @@ function App() {
               }
               to="/"
             >
-              {t("home")}
+              {t("nav.home")}
             </NavLink>
             <NavLink
               to="/404"
@@ -55,7 +55,7 @@ function App() {
                 `${styles.link} ${isActive ? styles.selected : ""}`
               }
             >
-              {t("error_example")}
+              {t("nav.error")}
             </NavLink>
           </div>
         </Allotment.Pane>

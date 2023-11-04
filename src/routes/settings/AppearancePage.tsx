@@ -5,8 +5,11 @@ import { selectTheme, setTheme } from "../../features/config/configSlice";
 import styles from "./AppearancePage.module.css";
 import { useContext } from "react";
 import { Platform, PlatformContext } from "../../contexts/PlatformContext";
+import { useTranslation } from "react-i18next";
 
 export function AppearancePage() {
+  const { t } = useTranslation();
+
   const dispatch = useAppDispatch();
   const currentTheme = useAppSelector(selectTheme);
   const { platform, decorations, setDecorations } = useContext(PlatformContext);
@@ -23,7 +26,7 @@ export function AppearancePage() {
 
   return (
     <div>
-      <h4 className={styles.header}>Theme</h4>
+      <h4 className={styles.header}>{t("settings.appearance.theme")}</h4>
       <select
         className={styles.select}
         value={currentTheme}
@@ -43,7 +46,7 @@ export function AppearancePage() {
             checked={decorations ?? false}
             onChange={handleCheckboxChange}
           />
-          Use system window controls
+          {t("settings.appearance.windowsControls")}
         </div>
       )}
     </div>

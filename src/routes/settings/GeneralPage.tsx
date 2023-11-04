@@ -5,7 +5,7 @@ import { Platform, PlatformContext } from "../../contexts/PlatformContext";
 import { useTranslation } from "react-i18next";
 
 export function GeneralPage() {
-  const { i18n } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { platform, minimiseToTray, setMinimiseToTray } =
     useContext(PlatformContext);
 
@@ -23,8 +23,8 @@ export function GeneralPage() {
 
   return (
     <div>
-      <h4 className={styles.header}>General</h4>
-      {isTauri() && platform != Platform.Mac ? (
+      <h4 className={styles.header}>{t("settings.general.general")}</h4>
+      {isTauri() && platform != Platform.Mac && (
         <div>
           <input
             className={styles.checkbox}
@@ -32,14 +32,12 @@ export function GeneralPage() {
             checked={minimiseToTray ?? false}
             onChange={handleCheckboxChange}
           />
-          Close button minimizes app to system tray
+          {t("settings.general.minimiseToTray")}
         </div>
-      ) : (
-        <i>This section is currently empty.</i>
       )}
       <select onChange={handleLanguageChange} defaultValue="">
         <option value="" disabled>
-          Select Language
+          {t("settings.general.selectLanguage")}
         </option>
         <option value="en-US">English (United States)</option>
         <option value="en-GB">English (United Kingdom)</option>

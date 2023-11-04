@@ -10,8 +10,10 @@ import {
   selectCount
 } from "./counterSlice";
 import styles from "./Counter.module.css";
+import { useTranslation } from "react-i18next";
 
 export function Counter() {
+  const { t } = useTranslation();
   const count = useAppSelector(selectCount);
   const dispatch = useAppDispatch();
   const [incrementAmount, setIncrementAmount] = useState("2");
@@ -23,7 +25,7 @@ export function Counter() {
       <div className={styles.row}>
         <button
           className={styles.button}
-          aria-label="Decrement value"
+          aria-label={t("counter.ariaLabel.decrement")}
           onClick={() => dispatch(decrement())}
         >
           -
@@ -31,7 +33,7 @@ export function Counter() {
         <span className={styles.value}>{count}</span>
         <button
           className={styles.button}
-          aria-label="Increment value"
+          aria-label={t("counter.ariaLabel.increment")}
           onClick={() => dispatch(increment())}
         >
           +
@@ -40,7 +42,7 @@ export function Counter() {
       <div className={styles.row}>
         <input
           className={styles.textbox}
-          aria-label="Set increment amount"
+          aria-label={t("counter.ariaLabel.setIncrement")}
           value={incrementAmount}
           onChange={(e) => setIncrementAmount(e.target.value)}
         />
@@ -48,19 +50,19 @@ export function Counter() {
           className={styles.button}
           onClick={() => dispatch(incrementByAmount(incrementValue))}
         >
-          Add Amount
+          {t("counter.addAmount")}
         </button>
         <button
           className={styles.asyncButton}
           onClick={() => dispatch(incrementAsync(incrementValue))}
         >
-          Add Async
+          {t("counter.addAsync")}
         </button>
         <button
           className={styles.button}
           onClick={() => dispatch(incrementIfOdd(incrementValue))}
         >
-          Add If Odd
+          {t("counter.addOdd")}
         </button>
       </div>
     </div>

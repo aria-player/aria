@@ -1,4 +1,56 @@
 {
-  "home": "Home",
-  "error_example": "Error Example"
+  "nav": {
+    "home": "Home",
+    "error": "Error Example"
+  },
+  "settings": {
+    "sections": {
+      "general": "General",
+      "appearance": "Appearance",
+      "about": "About"
+    },
+    "general": {
+      "general": "General",
+      "minimiseToTray": "Close button minimizes app to system tray",
+      "selectLanguage": "Select language"
+    },
+    "appearance": {
+      "theme": "Theme",
+      "windowsControls": "Use system window controls"
+    },
+    "about": {
+      "version": "Version"
+    }
+  },
+  "home": {
+    "welcome": "Welcome to Tauri!",
+    "info": "Click on the Tauri, Vite, React, and Redux logos to learn more.",
+    "alt": {
+      "tauri": "Tauri logo",
+      "vite": "Vite logo",
+      "react": "React logo",
+      "redux": "Redux logo"
+    },
+    "inputPlaceholder": "Enter a name...",
+    "greet": "Greet"
+  },
+  "error": {
+    "title": "Error",
+    "notFound": "Page not found"
+  },
+  "counter": {
+    "ariaLabel": {
+      "increment": "Increment value",
+      "decrement": "Decrement value",
+      "setIncrement": "Set increment amount"
+    },
+    "addAmount": "Add Amount",
+    "addAsync": "Add Async",
+    "addOdd": "Add If Odd"
+  },
+  "labels": {
+    "menu": "Menu",
+    "forward": "Forward",
+    "back": "Back"
+  }
 }
