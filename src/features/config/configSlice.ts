@@ -4,10 +4,12 @@ import { Themes } from "../../app/themes";
 
 export interface ConfigState {
   theme: string;
+  language: string | null;
 }
 
 const initialState: ConfigState = {
-  theme: Themes.System.id
+  theme: Themes.System.id,
+  language: null
 };
 
 export const configSlice = createSlice({
@@ -16,12 +18,16 @@ export const configSlice = createSlice({
   reducers: {
     setTheme: (state, action: PayloadAction<string>) => {
       state.theme = action.payload;
+    },
+    setLanguage: (state, action: PayloadAction<string | null>) => {
+      state.language = action.payload;
     }
   }
 });
 
-export const { setTheme } = configSlice.actions;
+export const { setTheme, setLanguage } = configSlice.actions;
 
 export const selectTheme = (state: RootState) => state.config.theme;
+export const selectLanguage = (state: RootState) => state.config.language;
 
 export default configSlice.reducer;

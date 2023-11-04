@@ -3,9 +3,14 @@ import styles from "./settings.module.css";
 import { useContext } from "react";
 import { Platform, PlatformContext } from "../../contexts/PlatformContext";
 import { useTranslation } from "react-i18next";
+import { supportedLanguages } from "../../i18n";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { selectLanguage, setLanguage } from "../../features/config/configSlice";
 
 export function GeneralPage() {
   const { t, i18n } = useTranslation();
+  const dispatch = useAppDispatch();
+  const language = useAppSelector(selectLanguage);
   const { platform, minimiseToTray, setMinimiseToTray } =
     useContext(PlatformContext);
 
@@ -18,7 +23,13 @@ export function GeneralPage() {
   const handleLanguageChange = (
     event: React.ChangeEvent<HTMLSelectElement>
   ) => {
+    if (event.target.value === "default") {
+      i18n.changeLanguage(window.navigator.language);
+      dispatch(setLanguage(null));
+      return;
+    }
     i18n.changeLanguage(event.target.value);
+    dispatch(setLanguage(event.target.value));
   };
 
   return (
@@ -27,13 +38,14 @@ export function GeneralPage() {
       <select
         className={styles.select}
         onChange={handleLanguageChange}
-        defaultValue=""
+        defaultValue={language}
       >
-        <option value="" disabled>
-          {t("settings.general.selectLanguage")}
-        </option>
-        <option value="en-US">English (United States)</option>
-        <option value="en-GB">English (United Kingdom)</option>
+        <option value="default">{t("settings.general.defaultLanguage")}</option>
+        {Object.entries(supportedLanguages).map(([langCode, { title }]) => (
+          <option key={langCode} value={langCode}>
+            {title}
+          </option>
+        ))}
       </select>
       {isTauri() && platform != Platform.Mac && (
         <>

@@ -11,7 +11,7 @@
     },
     "general": {
       "language": "Language Test",
-      "selectLanguage": "Select language Test",
+      "defaultLanguage": "System (default) Test",
       "behaviour": "Application behaviour Test",
       "minimiseToTray": "Close button minimizes app to system tray Test"
     },

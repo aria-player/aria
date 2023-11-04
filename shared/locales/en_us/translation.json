@@ -11,7 +11,7 @@
     },
     "general": {
       "language": "Language",
-      "selectLanguage": "Select language",
+      "defaultLanguage": "System (default)",
       "behaviour": "Application behaviour",
       "minimiseToTray": "Close button minimizes app to system tray"
     },
