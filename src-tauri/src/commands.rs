@@ -1,3 +1,5 @@
+use super::translation;
+
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, path::PathBuf};
 use tauri::{Manager, Wry};
@@ -70,6 +72,12 @@ pub fn close(app_handle: tauri::AppHandle) {
 pub fn update_app_config(app_handle: tauri::AppHandle, config_item: String, new_value: JsonValue) {
     let stores = app_handle.state::<StoreCollection<Wry>>();
     let path = PathBuf::from(".app-config");
+    if config_item == "language" {
+        translation::update_menu_language(
+            &app_handle.get_window("main").unwrap(),
+            new_value.as_str().unwrap(),
+        );
+    }
     with_store(app_handle.to_owned(), stores, path, |store| {
         store.insert(config_item, new_value).unwrap();
         store.save()
@@ -93,6 +101,10 @@ pub fn get_app_config(
 pub fn set_initial_language(app_handle: tauri::AppHandle, language: JsonValue) {
     let stores = app_handle.state::<StoreCollection<Wry>>();
     let path = PathBuf::from(".app-config");
+    translation::update_menu_language(
+        &app_handle.get_window("main").unwrap(),
+        &language.as_str().unwrap(),
+    );
     with_store(app_handle.to_owned(), stores, path, |store| {
         if let Some(_current_language) = store.get("language".to_string()) {
             Ok(())

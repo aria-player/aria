@@ -5,6 +5,7 @@ import { ReactNode, createContext, useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { selectMenuState, handleMenuAction } from "../app/menu";
 import { isTauri } from "../app/utils";
+import i18n from "../i18n";
 
 export enum Platform {
   Unknown = "Unknown",
@@ -120,7 +121,7 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (isTauri()) {
-      const language = window.navigator.language;
+      const language = i18n.language;
       invoke("set_initial_language", { language });
     }
   }, []);

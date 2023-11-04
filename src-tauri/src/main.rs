@@ -3,6 +3,7 @@
 
 mod commands;
 mod menu;
+mod translation;
 mod utils;
 
 use serde_json::json;
