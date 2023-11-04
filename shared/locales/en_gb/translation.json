@@ -52,5 +52,20 @@
     "menu": "Menu Test",
     "forward": "Forward Test",
     "back": "Back Test"
+  },
+  "menu": {
+    "no_actions": "(No actions) Test",
+    "menubar_file": "File Test",
+    "menubar_edit": "Edit Test",
+    "menubar_view": "View Test",
+    "menubar_navigate": "Navigate Test",
+    "menubar_window": "Window Test",
+    "menubar_help": "Help Test",
+    "exit": "Exit Test",
+    "settings": "Settings... Test",
+    "fullscreen": "Toggle Fullscreen Test",
+    "back": "Back Test",
+    "forward": "Forward Test",
+    "about": "About... Test"
   }
 }

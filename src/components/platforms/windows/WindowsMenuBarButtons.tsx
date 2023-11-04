@@ -4,8 +4,11 @@ import "react-contexify/dist/ReactContexify.css";
 import React, { useEffect, useState } from "react";
 import styles from "./WindowsMenuBarButtons.module.css";
 import { AppMenu } from "../../AppMenu";
+import { useTranslation } from "react-i18next";
 
 export function WindowsMenuBarButtons() {
+  const { t } = useTranslation();
+
   const { show, hideAll } = useContextMenu();
   const [open, setOpen] = useState(false);
   const [altHeld, setAltHeld] = useState(false);
@@ -24,7 +27,10 @@ export function WindowsMenuBarButtons() {
           .filter((item) => !item.maconly)
           .forEach((category) => {
             if (
-              event.key.toLowerCase() === category.label.charAt(0).toLowerCase()
+              event.key.toLowerCase() ===
+              t("menu." + category.id)
+                .charAt(0)
+                .toLowerCase()
             ) {
               buttonRefs[category.id].current?.click();
             }
@@ -44,7 +50,7 @@ export function WindowsMenuBarButtons() {
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("keyup", handleKeyUp);
     };
-  }, [buttonRefs]);
+  }, [t, buttonRefs]);
 
   const showMenu = (e: React.MouseEvent, menuId: string) => {
     const targetDiv = e.currentTarget as HTMLDivElement;
@@ -87,6 +93,7 @@ export function WindowsMenuBarButtons() {
       {menus
         .filter((item) => !item.maconly)
         .map((category) => {
+          const label = t("menu." + category.id);
           if (!buttonRefs[category.id]) {
             buttonRefs[category.id] = React.createRef<HTMLButtonElement>();
           }
@@ -113,11 +120,11 @@ export function WindowsMenuBarButtons() {
               >
                 {altHeld ? (
                   <>
-                    <u>{category.label.charAt(0)}</u>
-                    {category.label.slice(1)}
+                    <u>{label.charAt(0)}</u>
+                    {label.slice(1)}
                   </>
                 ) : (
-                  category.label
+                  label
                 )}
               </button>
             </React.Fragment>

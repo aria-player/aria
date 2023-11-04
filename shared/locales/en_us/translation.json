@@ -52,5 +52,19 @@
     "menu": "Menu",
     "forward": "Forward",
     "back": "Back"
+  },
+  "menu": {
+    "menubar_file": "File",
+    "menubar_edit": "Edit",
+    "menubar_view": "View",
+    "menubar_navigate": "Navigate",
+    "menubar_window": "Window",
+    "menubar_help": "Help",
+    "exit": "Exit",
+    "settings": "Settings...",
+    "fullscreen": "Toggle Fullscreen",
+    "back": "Back",
+    "forward": "Forward",
+    "about": "About..."
   }
 }

@@ -2,11 +2,14 @@ import { Item, Submenu, RightSlot, Separator } from "react-contexify";
 import { MenuItem, handleMenuAction, selectMenuState } from "../app/menu";
 import { isTauri } from "../app/utils";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
+import { useTranslation } from "react-i18next";
 
 export function AppMenu(props: {
   items: MenuItem[];
   onItemClick?: (id: string) => void;
 }) {
+  const { t } = useTranslation();
+
   const dispatch = useAppDispatch();
   const menuState = useAppSelector(selectMenuState);
 
@@ -33,7 +36,7 @@ export function AppMenu(props: {
   if (items.length === 0) {
     return (
       <Item disabled>
-        <i>(no actions)</i>
+        <i>{t("menu.no_actions")}</i>
       </Item>
     );
   }
@@ -47,7 +50,7 @@ export function AppMenu(props: {
           return (
             <Submenu
               key={item.id}
-              label={item.label}
+              label={t("menu." + item.id)}
               disabled={menuState[item.id as keyof typeof menuState]?.disabled}
             >
               <AppMenu items={item.submenu} />
@@ -63,7 +66,7 @@ export function AppMenu(props: {
             key={item.id}
             disabled={menuState[item.id as keyof typeof menuState]?.disabled}
           >
-            {item.label}
+            {t("menu." + item.id)}
             <RightSlot>{item.shortcut}</RightSlot>
           </Item>
         );
