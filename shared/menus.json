@@ -5,25 +5,21 @@
     "maconly": true,
     "submenu": [
       {
-        "id": "mac_services",
-        "label": "Services"
+        "id": "mac_services"
       },
       {
         "id": "separator"
       },
       {
         "id": "mac_hide",
-        "label": "Hide App",
         "shortcut": "Cmd+H"
       },
       {
         "id": "mac_hide_others",
-        "label": "Hide Others",
         "shortcut": "Option+Cmd+H"
       },
       {
-        "id": "mac_show_all",
-        "label": "Show All"
+        "id": "mac_show_all"
       },
       {
         "id": "separator"
