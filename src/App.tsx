@@ -10,46 +10,20 @@ import { MenuButton } from "./components/MenuButton";
 // @ts-ignore
 import { Allotment } from "allotment";
 import "allotment/dist/style.css";
-import { useAppSelector } from "./app/hooks";
-import { useContext, useEffect } from "react";
-import { selectTheme } from "./features/config/configSlice";
+import { useContext } from "react";
 import SettingsPage from "./routes/Settings";
-import { Themes } from "./app/themes";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 import { AppearancePage } from "./routes/settings/AppearancePage";
 import { AboutPage } from "./routes/settings/AboutPage";
 import { MacTitleBar } from "./components/platforms/mac/MacTitleBar";
 import { Platform, PlatformContext } from "./contexts/PlatformContext";
 import { GeneralPage } from "./routes/settings/GeneralPage";
+import { useTheme } from "./hooks/useTheme";
 
 function App() {
-  const theme = useAppSelector(selectTheme);
   const { platform, fullscreen, decorations } = useContext(PlatformContext);
   useKeyboardShortcuts();
-
-  useEffect(() => {
-    if (theme === Themes.System.id) {
-      const darkMode = window.matchMedia(
-        "(prefers-color-scheme: dark)"
-      ).matches;
-      document.body.setAttribute("data-theme", darkMode ? "dark" : "light");
-    } else {
-      document.body.setAttribute("data-theme", theme);
-    }
-  }, [theme]);
-
-  useEffect(() => {
-    if (theme !== Themes.System.id) return;
-    const handleChange = (e: MediaQueryListEvent) => {
-      document.body.setAttribute("data-theme", e.matches ? "dark" : "light");
-    };
-
-    const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
-    prefersDarkScheme.addEventListener("change", handleChange);
-    return () => {
-      prefersDarkScheme.removeEventListener("change", handleChange);
-    };
-  }, [theme]);
+  useTheme();
 
   return (
     <div className={styles.window}>
