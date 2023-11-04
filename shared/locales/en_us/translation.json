@@ -55,6 +55,7 @@
     "back": "Back"
   },
   "menu": {
+    "no_actions": "(No actions)",
     "menubar_file": "File",
     "menubar_edit": "Edit",
     "menubar_view": "View",
