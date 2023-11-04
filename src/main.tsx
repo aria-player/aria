@@ -6,7 +6,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import { HistoryRouter } from "redux-first-history/rr6";
 import App from "./App";
 import "./styles.css";
-import { PlatformProvider } from "./PlatformContext";
+import { PlatformProvider } from "./contexts/PlatformContext";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>

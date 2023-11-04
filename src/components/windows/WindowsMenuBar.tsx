@@ -8,7 +8,7 @@ import { MenuButton } from "../MenuButton";
 import { selectMenuState } from "../../app/menu";
 import { WindowsMenuBarButtons } from "./WindowsMenuBarButtons";
 import { useContext } from "react";
-import { PlatformContext } from "../../PlatformContext";
+import { PlatformContext } from "../../contexts/PlatformContext";
 
 export function WindowsMenuBar() {
   const { fullscreen } = useContext(PlatformContext);

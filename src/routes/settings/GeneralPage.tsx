@@ -1,7 +1,7 @@
 import { isTauri } from "../../app/utils";
 import styles from "./AppearancePage.module.css";
 import { useContext } from "react";
-import { Platform, PlatformContext } from "../../PlatformContext";
+import { Platform, PlatformContext } from "../../contexts/PlatformContext";
 
 export function GeneralPage() {
   const { platform, minimiseToTray, setMinimiseToTray } =

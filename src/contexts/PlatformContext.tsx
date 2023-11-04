@@ -2,9 +2,9 @@ import { invoke } from "@tauri-apps/api";
 import { type } from "@tauri-apps/api/os";
 import { appWindow } from "@tauri-apps/api/window";
 import { ReactNode, createContext, useEffect, useRef, useState } from "react";
-import { useAppDispatch, useAppSelector } from "./app/hooks";
-import { selectMenuState, handleMenuAction } from "./app/menu";
-import { isTauri } from "./app/utils";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
+import { selectMenuState, handleMenuAction } from "../app/menu";
+import { isTauri } from "../app/utils";
 
 export enum Platform {
   Unknown = "Unknown",

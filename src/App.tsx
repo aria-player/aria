@@ -19,7 +19,7 @@ import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 import { AppearancePage } from "./routes/settings/AppearancePage";
 import { AboutPage } from "./routes/settings/AboutPage";
 import { MacTitleBar } from "./components/mac/MacTitleBar";
-import { Platform, PlatformContext } from "./PlatformContext";
+import { Platform, PlatformContext } from "./contexts/PlatformContext";
 import { GeneralPage } from "./routes/settings/GeneralPage";
 
 function App() {

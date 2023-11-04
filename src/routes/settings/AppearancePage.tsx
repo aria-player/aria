@@ -4,7 +4,7 @@ import { isTauri } from "../../app/utils";
 import { selectTheme, setTheme } from "../../features/config/configSlice";
 import styles from "./AppearancePage.module.css";
 import { useContext } from "react";
-import { Platform, PlatformContext } from "../../PlatformContext";
+import { Platform, PlatformContext } from "../../contexts/PlatformContext";
 
 export function AppearancePage() {
   const dispatch = useAppDispatch();
