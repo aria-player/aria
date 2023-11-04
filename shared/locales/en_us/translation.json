@@ -10,9 +10,10 @@
       "about": "About"
     },
     "general": {
-      "general": "General",
-      "minimiseToTray": "Close button minimizes app to system tray",
-      "selectLanguage": "Select language"
+      "language": "Language",
+      "selectLanguage": "Select language",
+      "behaviour": "Application behaviour",
+      "minimiseToTray": "Close button minimizes app to system tray"
     },
     "appearance": {
       "theme": "Theme",

@@ -2,7 +2,7 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { Themes } from "../../app/themes";
 import { isTauri } from "../../app/utils";
 import { selectTheme, setTheme } from "../../features/config/configSlice";
-import styles from "./AppearancePage.module.css";
+import styles from "./settings.module.css";
 import { useContext } from "react";
 import { Platform, PlatformContext } from "../../contexts/PlatformContext";
 import { useTranslation } from "react-i18next";

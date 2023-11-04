@@ -10,9 +10,10 @@
       "about": "About Test"
     },
     "general": {
-      "general": "General Test",
-      "minimiseToTray": "Close button minimizes app to system tray Test",
-      "selectLanguage": "Select language Test"
+      "language": "Language Test",
+      "selectLanguage": "Select language Test",
+      "behaviour": "Application behaviour Test",
+      "minimiseToTray": "Close button minimizes app to system tray Test"
     },
     "appearance": {
       "theme": "Theme Test",

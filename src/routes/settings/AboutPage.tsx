@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import styles from "./AboutPage.module.css";
+import styles from "./settings.module.css";
 
 export function AboutPage() {
   const { t } = useTranslation();
