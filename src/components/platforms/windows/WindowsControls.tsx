@@ -1,11 +1,11 @@
 import { appWindow } from "@tauri-apps/api/window";
 import { useState, useCallback, useEffect } from "react";
-import { isTauri } from "../../app/utils";
+import { isTauri } from "../../../app/utils";
 
-import Minimize from "../../assets/win-minimize.svg?react";
-import Maximize from "../../assets/win-maximize.svg?react";
-import Restore from "../../assets/win-restore.svg?react";
-import Close from "../../assets/win-close.svg?react";
+import Minimize from "../../../assets/win-minimize.svg?react";
+import Maximize from "../../../assets/win-maximize.svg?react";
+import Restore from "../../../assets/win-restore.svg?react";
+import Close from "../../../assets/win-close.svg?react";
 
 import styles from "./WindowsControls.module.css";
 import { invoke } from "@tauri-apps/api";

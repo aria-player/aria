@@ -1,4 +1,4 @@
-import { WindowsMenuBar } from "./components/windows/WindowsMenuBar";
+import { WindowsMenuBar } from "./components/platforms/windows/WindowsMenuBar";
 import styles from "./App.module.css";
 import { isTauri } from "./app/utils";
 import { NavLink, Route, Routes } from "react-router-dom";
@@ -18,7 +18,7 @@ import { Themes } from "./app/themes";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 import { AppearancePage } from "./routes/settings/AppearancePage";
 import { AboutPage } from "./routes/settings/AboutPage";
-import { MacTitleBar } from "./components/mac/MacTitleBar";
+import { MacTitleBar } from "./components/platforms/mac/MacTitleBar";
 import { Platform, PlatformContext } from "./contexts/PlatformContext";
 import { GeneralPage } from "./routes/settings/GeneralPage";
 

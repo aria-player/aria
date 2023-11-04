@@ -1,9 +1,9 @@
 import { Menu, useContextMenu } from "react-contexify";
-import menus from "../../../shared/menus.json";
+import menus from "../../../../shared/menus.json";
 import "react-contexify/dist/ReactContexify.css";
 import React, { useEffect, useState } from "react";
 import styles from "./WindowsMenuBarButtons.module.css";
-import { AppMenu } from "../AppMenu";
+import { AppMenu } from "../../AppMenu";
 
 export function WindowsMenuBarButtons() {
   const { show, hideAll } = useContextMenu();
