@@ -90,6 +90,21 @@ pub fn get_app_config(
 }
 
 #[tauri::command]
+pub fn set_initial_language(app_handle: tauri::AppHandle, language: JsonValue) {
+    let stores = app_handle.state::<StoreCollection<Wry>>();
+    let path = PathBuf::from(".app-config");
+    with_store(app_handle.to_owned(), stores, path, |store| {
+        if let Some(_current_language) = store.get("language".to_string()) {
+            Ok(())
+        } else {
+            store.insert("language".to_string(), language)?;
+            store.save()
+        }
+    })
+    .unwrap()
+}
+
+#[tauri::command]
 pub fn update_menu_state(window: tauri::Window, menu_state: HashMap<String, MenuItemState>) {
     for (key, value) in menu_state.iter() {
         let item = window.menu_handle().get_item(&key);

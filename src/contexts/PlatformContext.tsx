@@ -118,6 +118,13 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
     }
   }, [menuState]);
 
+  useEffect(() => {
+    if (isTauri()) {
+      const language = window.navigator.language;
+      invoke("set_initial_language", { language });
+    }
+  }, []);
+
   const setDecorationsConfig = async (decorations: boolean) => {
     await appWindow.setDecorations(decorations);
     setDecorations(decorations);

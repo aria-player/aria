@@ -120,7 +120,8 @@ fn main() {
             commands::toggle_fullscreen,
             commands::update_app_config,
             commands::get_app_config,
-            commands::update_menu_state
+            commands::update_menu_state,
+            commands::set_initial_language
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
