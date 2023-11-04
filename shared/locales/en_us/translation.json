@@ -68,5 +68,10 @@
     "back": "Back",
     "forward": "Forward",
     "about": "About..."
+  },
+  "tray": {
+    "show": "Show",
+    "hide": "Hide",
+    "exit": "Exit"
   }
 }

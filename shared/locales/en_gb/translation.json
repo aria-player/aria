@@ -68,5 +68,10 @@
     "back": "Back Test",
     "forward": "Forward Test",
     "about": "About... Test"
+  },
+  "tray": {
+    "show": "Show Test",
+    "hide": "Hide Test",
+    "exit": "Exit Test"
   }
 }

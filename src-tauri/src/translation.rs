@@ -1,10 +1,11 @@
 use serde_json::Value;
-use tauri::Window;
+use tauri::{Manager, Window};
+use std::env::consts::OS;
 
 const EN_GB: &str = include_str!("../../shared/locales/en_gb/translation.json");
 const EN_US: &str = include_str!("../../shared/locales/en_us/translation.json");
 
-fn get_translations(lang_code: &str) -> Value {
+pub fn get_translations(lang_code: &str) -> Value {
     let json_str = match lang_code {
         "en-GB" => EN_GB,
         "en-US" => EN_US,
@@ -19,6 +20,21 @@ pub fn update_menu_language(window: &Window, lang_code: &str) {
         for (key, value) in menu_translations {
             if let Value::String(title) = value {
                 match window.menu_handle().try_get_item(key) {
+                    Some(menu_item_handle) => {
+                        menu_item_handle.set_title(title).unwrap();
+                    }
+                    None => {}
+                }
+            }
+        }
+    }
+    if OS == "macos" {
+        return;
+    }
+    if let Value::Object(tray_translations) = &translations["tray"] {
+        for (key, value) in tray_translations {
+            if let Value::String(title) = value {
+                match window.app_handle().tray_handle().try_get_item(key) {
                     Some(menu_item_handle) => {
                         menu_item_handle.set_title(title).unwrap();
                     }
