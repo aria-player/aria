@@ -19,8 +19,10 @@ import { MacTitleBar } from "./components/platforms/mac/MacTitleBar";
 import { Platform, PlatformContext } from "./contexts/PlatformContext";
 import { GeneralPage } from "./routes/settings/GeneralPage";
 import { useTheme } from "./hooks/useTheme";
+import { useTranslation } from "react-i18next";
 
 function App() {
+  const { t } = useTranslation();
   const { platform, fullscreen, decorations } = useContext(PlatformContext);
   useKeyboardShortcuts();
   useTheme();
@@ -45,7 +47,7 @@ function App() {
               }
               to="/"
             >
-              Home
+              {t("home")}
             </NavLink>
             <NavLink
               to="/404"
@@ -53,7 +55,7 @@ function App() {
                 `${styles.link} ${isActive ? styles.selected : ""}`
               }
             >
-              Error Example
+              {t("error_example")}
             </NavLink>
           </div>
         </Allotment.Pane>
