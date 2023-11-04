@@ -1,77 +1,77 @@
 {
   "nav": {
-    "home": "Home Test",
-    "error": "Error Example Test"
+    "home": "Home",
+    "error": "Error Example"
   },
   "settings": {
     "sections": {
-      "general": "General Test",
-      "appearance": "Appearance Test",
-      "about": "About Test"
+      "general": "General",
+      "appearance": "Appearance",
+      "about": "About"
     },
     "general": {
-      "language": "Language Test",
-      "defaultLanguage": "System (default) Test",
-      "behaviour": "Application behaviour Test",
-      "minimiseToTray": "Close button minimizes app to system tray Test"
+      "language": "Language",
+      "defaultLanguage": "System (default)",
+      "behaviour": "Application behaviour",
+      "minimiseToTray": "Close button minimises app to system tray"
     },
     "appearance": {
-      "theme": "Theme Test",
-      "windowsControls": "Use system window controls Test"
+      "theme": "Theme",
+      "windowsControls": "Use system window controls"
     },
     "about": {
-      "version": "Version Test"
+      "version": "Version"
     }
   },
   "home": {
-    "welcome": "Welcome to Tauri! Test",
-    "info": "Click on the Tauri, Vite, React, and Redux logos to learn more. Test",
+    "welcome": "Welcome to Tauri!",
+    "info": "Click on the Tauri, Vite, React, and Redux logos to learn more.",
     "alt": {
-      "tauri": "Tauri logo Test",
-      "vite": "Vite logo Test",
-      "react": "React logo Test",
-      "redux": "Redux logo Test"
+      "tauri": "Tauri logo",
+      "vite": "Vite logo",
+      "react": "React logo",
+      "redux": "Redux logo"
     },
-    "inputPlaceholder": "Enter a name... Test",
-    "greet": "Greet Test"
+    "inputPlaceholder": "Enter a name...",
+    "greet": "Greet"
   },
   "error": {
-    "title": "Error Test",
-    "notFound": "Page not found Test"
+    "title": "Error",
+    "notFound": "Page not found"
   },
   "counter": {
     "ariaLabel": {
-      "increment": "Increment value Test",
-      "decrement": "Decrement value Test",
-      "setIncrement": "Set increment amount Test"
+      "increment": "Increment value",
+      "decrement": "Decrement value",
+      "setIncrement": "Set increment amount"
     },
-    "addAmount": "Add Amount Test",
-    "addAsync": "Add Async Test",
-    "addOdd": "Add If Odd Test"
+    "addAmount": "Add Amount",
+    "addAsync": "Add Async",
+    "addOdd": "Add If Odd"
   },
   "labels": {
-    "menu": "Menu Test",
-    "forward": "Forward Test",
-    "back": "Back Test"
+    "menu": "Menu",
+    "forward": "Forward",
+    "back": "Back"
   },
   "menu": {
-    "no_actions": "(No actions) Test",
-    "menubar_file": "File Test",
-    "menubar_edit": "Edit Test",
-    "menubar_view": "View Test",
-    "menubar_navigate": "Navigate Test",
-    "menubar_window": "Window Test",
-    "menubar_help": "Help Test",
-    "exit": "Exit Test",
-    "settings": "Settings... Test",
-    "fullscreen": "Toggle Fullscreen Test",
-    "back": "Back Test",
-    "forward": "Forward Test",
-    "about": "About... Test"
+    "no_actions": "(No actions)",
+    "menubar_file": "File",
+    "menubar_edit": "Edit",
+    "menubar_view": "View",
+    "menubar_navigate": "Navigate",
+    "menubar_window": "Window",
+    "menubar_help": "Help",
+    "exit": "Exit",
+    "settings": "Settings...",
+    "fullscreen": "Toggle Fullscreen",
+    "back": "Back",
+    "forward": "Forward",
+    "about": "About..."
   },
   "tray": {
-    "show": "Show Test",
-    "hide": "Hide Test",
-    "exit": "Exit Test"
+    "show": "Show",
+    "hide": "Hide",
+    "exit": "Exit"
   }
 }

@@ -12,7 +12,7 @@
     "general": {
       "language": "Language",
       "defaultLanguage": "System (default)",
-      "behaviour": "Application behaviour",
+      "behaviour": "Application behavior",
       "minimiseToTray": "Close button minimizes app to system tray"
     },
     "appearance": {
