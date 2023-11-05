@@ -2,6 +2,7 @@ import { goBack, goForward, push } from "redux-first-history";
 import { AppDispatch, RootState } from "./store";
 import { invoke } from "@tauri-apps/api";
 import { createSelector } from "@reduxjs/toolkit";
+import { BASEPATH } from "./constants";
 
 export interface MenuItem {
   id: string;
@@ -23,7 +24,7 @@ export async function handleMenuAction(dispatch: AppDispatch, action: string) {
       invoke("exit");
       break;
     case "settings":
-      dispatch(push("/settings"));
+      dispatch(push(BASEPATH + "settings"));
       break;
     case "back":
       dispatch(goBack());
@@ -32,7 +33,7 @@ export async function handleMenuAction(dispatch: AppDispatch, action: string) {
       dispatch(goForward());
       break;
     case "about":
-      dispatch(push("/settings/about"));
+      dispatch(push(BASEPATH + "settings/about"));
       break;
     case "fullscreen":
       invoke("toggle_fullscreen");

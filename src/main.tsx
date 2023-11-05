@@ -7,13 +7,14 @@ import { HistoryRouter } from "redux-first-history/rr6";
 import App from "./App";
 import "./styles.css";
 import { PlatformProvider } from "./contexts/PlatformContext";
+import { BASEPATH } from "./app/constants";
 import "./i18n";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <HistoryRouter history={history}>
+        <HistoryRouter history={history} basename={BASEPATH}>
           <PlatformProvider>
             <App />
           </PlatformProvider>
