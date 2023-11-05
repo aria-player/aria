@@ -5,25 +5,30 @@ use std::env::consts::OS;
 const EN_GB: &str = include_str!("../../shared/locales/en_gb/translation.json");
 const EN_US: &str = include_str!("../../shared/locales/en_us/translation.json");
 
-pub fn get_translations(lang_code: &str) -> Value {
-    let json_str = match lang_code {
+pub fn get_translations(lang_code: &str) -> (Value, Value) {
+    let defaults: serde_json::Value =
+        serde_json::from_str(EN_US).expect("JSON was not well-formatted");
+    if lang_code == "en-US" {
+        return (defaults.clone(), defaults);
+    }
+    let translated_json = match lang_code {
         "en-GB" => EN_GB,
-        "en-US" => EN_US,
         _ => EN_US,
     };
-    serde_json::from_str(json_str).expect("JSON was not well-formatted")
+    let translations = serde_json::from_str(translated_json).expect("JSON was not well-formatted");
+    (translations, defaults)
 }
 
 pub fn update_menu_language(window: &Window, lang_code: &str) {
-    let translations = get_translations(lang_code);
+    let (translations, defaults) = get_translations(lang_code);
     if let Value::Object(menu_translations) = &translations["menu"] {
         for (key, value) in menu_translations {
-            if let Value::String(title) = value {
-                match window.menu_handle().try_get_item(key) {
-                    Some(menu_item_handle) => {
-                        menu_item_handle.set_title(title).unwrap();
-                    }
-                    None => {}
+            let title = value
+                .as_str()
+                .or_else(|| defaults["menu"].get(key).and_then(|v| v.as_str()));
+            if let Some(title) = title {
+                if let Some(menu_item_handle) = window.menu_handle().try_get_item(key) {
+                    menu_item_handle.set_title(title).unwrap();
                 }
             }
         }
@@ -33,12 +38,13 @@ pub fn update_menu_language(window: &Window, lang_code: &str) {
     }
     if let Value::Object(tray_translations) = &translations["tray"] {
         for (key, value) in tray_translations {
-            if let Value::String(title) = value {
-                match window.app_handle().tray_handle().try_get_item(key) {
-                    Some(menu_item_handle) => {
-                        menu_item_handle.set_title(title).unwrap();
-                    }
-                    None => {}
+            let title = value
+                .as_str()
+                .or_else(|| defaults["tray"].get(key).and_then(|v| v.as_str()));
+            if let Some(title) = title {
+                if let Some(tray_item_handle) = window.app_handle().tray_handle().try_get_item(key)
+                {
+                    tray_item_handle.set_title(title).unwrap();
                 }
             }
         }

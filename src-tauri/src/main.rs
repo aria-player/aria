@@ -90,8 +90,10 @@ fn main() {
                 ..
             } => {
                 let language = utils::get_language(app);
-                let translations = translation::get_translations(&language);
-                let hide_title = translations["tray"]["hide"].as_str().unwrap_or("Hide");
+                let (translations, defaults) = translation::get_translations(&language);
+                let hide_title = translations["tray"]["hide"]
+                    .as_str()
+                    .unwrap_or(defaults["tray"]["hide"].as_str().unwrap());
                 let window = app.get_window("main").unwrap();
                 window.show().unwrap();
                 window.set_focus().unwrap();
@@ -102,7 +104,7 @@ fn main() {
             }
             SystemTrayEvent::MenuItemClick { id, .. } => {
                 let language = utils::get_language(app);
-                let translations = translation::get_translations(&language);
+                let (translations, defaults) = translation::get_translations(&language);
                 match id.as_str() {
                     "exit" => commands::exit(app.app_handle()),
                     "hide" => {
@@ -110,14 +112,16 @@ fn main() {
                         let tray_handle = app.tray_handle();
                         if window.is_visible().unwrap() {
                             window.hide().unwrap();
-                            let show_title =
-                                translations["tray"]["show"].as_str().unwrap_or("Show");
+                            let show_title = translations["tray"]["show"]
+                                .as_str()
+                                .unwrap_or(defaults["tray"]["show"].as_str().unwrap());
                             tray_handle.get_item(&id).set_title(show_title).unwrap();
                         } else {
                             window.show().unwrap();
                             window.set_focus().unwrap();
-                            let hide_title =
-                                translations["tray"]["hide"].as_str().unwrap_or("Hide");
+                            let hide_title = translations["tray"]["hide"]
+                                .as_str()
+                                .unwrap_or(defaults["tray"]["hide"].as_str().unwrap());
                             tray_handle.get_item(&id).set_title(hide_title).unwrap();
                         }
                     }

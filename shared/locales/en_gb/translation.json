@@ -1,77 +1,8 @@
 {
-  "nav": {
-    "home": "Home",
-    "error": "Error Example"
-  },
   "settings": {
-    "sections": {
-      "general": "General",
-      "appearance": "Appearance",
-      "about": "About"
-    },
     "general": {
-      "language": "Language",
-      "defaultLanguage": "System (default)",
       "behaviour": "Application behaviour",
       "minimiseToTray": "Close button minimises app to system tray"
-    },
-    "appearance": {
-      "theme": "Theme",
-      "windowsControls": "Use system window controls"
-    },
-    "about": {
-      "version": "Version"
     }
-  },
-  "home": {
-    "welcome": "Welcome to Tauri!",
-    "info": "Click on the Tauri, Vite, React, and Redux logos to learn more.",
-    "alt": {
-      "tauri": "Tauri logo",
-      "vite": "Vite logo",
-      "react": "React logo",
-      "redux": "Redux logo"
-    },
-    "inputPlaceholder": "Enter a name...",
-    "greet": "Greet"
-  },
-  "error": {
-    "title": "Error",
-    "notFound": "Page not found"
-  },
-  "counter": {
-    "ariaLabel": {
-      "increment": "Increment value",
-      "decrement": "Decrement value",
-      "setIncrement": "Set increment amount"
-    },
-    "addAmount": "Add Amount",
-    "addAsync": "Add Async",
-    "addOdd": "Add If Odd"
-  },
-  "labels": {
-    "menu": "Menu",
-    "forward": "Forward",
-    "back": "Back"
-  },
-  "menu": {
-    "no_actions": "(No actions)",
-    "menubar_file": "File",
-    "menubar_edit": "Edit",
-    "menubar_view": "View",
-    "menubar_navigate": "Navigate",
-    "menubar_window": "Window",
-    "menubar_help": "Help",
-    "exit": "Exit",
-    "settings": "Settings...",
-    "fullscreen": "Toggle Fullscreen",
-    "back": "Back",
-    "forward": "Forward",
-    "about": "About..."
-  },
-  "tray": {
-    "show": "Show",
-    "hide": "Hide",
-    "exit": "Exit"
   }
 }
