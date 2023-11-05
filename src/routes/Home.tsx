@@ -7,6 +7,7 @@ import { invoke } from "@tauri-apps/api/tauri";
 import styles from "./Home.module.css";
 import { Counter } from "../features/counter/Counter";
 import { useTranslation } from "react-i18next";
+import { isTauri } from "../app/utils";
 
 export function Home() {
   const { t } = useTranslation();
@@ -55,21 +56,21 @@ export function Home() {
       </div>
 
       <p>{t("home.info")}</p>
-
-      <form
-        className={styles.row}
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
-        }}
-      >
-        <input
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder={t("home.inputPlaceholder")}
-        />
-        <button type="submit">{t("home.greet")}</button>
-      </form>
-
+      {isTauri() && (
+        <form
+          className={styles.row}
+          onSubmit={(e) => {
+            e.preventDefault();
+            greet();
+          }}
+        >
+          <input
+            onChange={(e) => setName(e.currentTarget.value)}
+            placeholder={t("home.inputPlaceholder")}
+          />
+          <button type="submit">{t("home.greet")}</button>
+        </form>
+      )}
       <p>{greetMsg}</p>
       <Counter />
     </div>
