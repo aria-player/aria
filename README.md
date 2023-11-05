@@ -2,12 +2,16 @@
 
 ![Screenshot of app](image.png)
 
-This repository contains a preconfigured Tauri app including:
+This repository contains a preconfigured Tauri app featuring:
 
-- Basic ESLint/Prettier config
-- Basic unit testing setup with Vitest
-- Custom Windows-style window controls
-- Redux store sample with [redux-persist](https://github.com/rt2zz/redux-persist) for saving application state
+- Interoperable app menu that works in-browser and with native system menus
+- Custom window controls on Windows (enable or disable in settings)
+- Redux store sample setup with [redux-persist](https://github.com/rt2zz/redux-persist) for saving state
+- React Router setup to manage navigation across the app
+- Configuration for [i18next](https://github.com/i18next/i18next) to make localisation easy
+- Basic ESLint, Prettier and Stylelint config
+- Unit testing setup with Vitest
+- Custom theme system
 
 ## Usage
 
