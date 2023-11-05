@@ -50,12 +50,12 @@ function App() {
               {t("nav.home")}
             </NavLink>
             <NavLink
-              to="/404"
+              to="/settings"
               className={({ isActive }) =>
                 `${styles.link} ${isActive ? styles.selected : ""}`
               }
             >
-              {t("nav.error")}
+              {t("nav.settings")}
             </NavLink>
           </div>
         </Allotment.Pane>
