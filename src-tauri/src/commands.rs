@@ -119,12 +119,13 @@ pub fn set_initial_language(app_handle: tauri::AppHandle, language: JsonValue) {
 #[tauri::command]
 pub fn update_menu_state(window: tauri::Window, menu_state: HashMap<String, MenuItemState>) {
     for (key, value) in menu_state.iter() {
-        let item = window.menu_handle().get_item(&key);
-        if let Some(disabled) = value.disabled {
-            let _ = item.set_enabled(!disabled);
-        }
-        if let Some(selected) = value.selected {
-            let _ = item.set_selected(selected);
+        if let Some(item) = window.menu_handle().try_get_item(key) {
+            if let Some(disabled) = value.disabled {
+                let _ = item.set_enabled(!disabled);
+            }
+            if let Some(selected) = value.selected {
+                let _ = item.set_selected(selected);
+            }
         }
     }
 }

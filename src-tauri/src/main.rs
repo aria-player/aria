@@ -23,9 +23,7 @@ struct Payload {
 }
 
 fn main() {
-    let items = menu::read_menu_json();
-    let menu = menu::create_menu_from_json(&items);
-    tauri::Builder::default()
+    let mut app_builder = tauri::Builder::default()
         .plugin(tauri_plugin_window_state::Builder::default().build())
         .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
             app.emit_all("single-instance", Payload { args: argv, cwd })
@@ -37,7 +35,6 @@ fn main() {
             }
         }))
         .plugin(tauri_plugin_store::Builder::default().build())
-        .menu(menu)
         .setup(|app| {
             let window = app.get_window("main").unwrap();
             let _ = set_shadow(&window, true).ok();
@@ -139,7 +136,13 @@ fn main() {
             commands::get_app_config,
             commands::update_menu_state,
             commands::set_initial_language
-        ])
+        ]);
+    if OS != "windows" {
+        let items = menu::read_menu_json();
+        let menu = menu::create_menu_from_json(&items);
+        app_builder = app_builder.menu(menu);
+    }
+    app_builder
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

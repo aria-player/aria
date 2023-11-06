@@ -13,7 +13,7 @@ import { useTranslation } from "react-i18next";
 
 export function WindowsMenuBar() {
   const { t } = useTranslation();
-  const { fullscreen } = useContext(PlatformContext);
+  const { fullscreen, decorations } = useContext(PlatformContext);
 
   const dispatch = useAppDispatch();
   const menuState = useAppSelector(selectMenuState);
@@ -21,7 +21,11 @@ export function WindowsMenuBar() {
   const forwardEnabled = !menuState.forward?.disabled;
 
   return (
-    <div className={styles.menuBar}>
+    <div
+      className={`${styles.menuBar} ${
+        decorations ? `${styles.menuBarSmall}` : ""
+      }`}
+    >
       <div className={styles.navigationShort}>
         <MenuButton />
         <LeftArrow
@@ -46,10 +50,10 @@ export function WindowsMenuBar() {
       <div className={styles.navigationLong}>
         <WindowsMenuBarButtons />
       </div>
-      {fullscreen === false && (
+      {fullscreen === false && decorations === false && (
         <div className={styles.dragRegion} data-tauri-drag-region></div>
       )}
-      {fullscreen === false && <WindowsControls />}
+      {fullscreen === false && decorations === false && <WindowsControls />}
     </div>
   );
 }

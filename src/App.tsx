@@ -23,16 +23,14 @@ import { useTranslation } from "react-i18next";
 
 function App() {
   const { t } = useTranslation();
-  const { platform, fullscreen, decorations } = useContext(PlatformContext);
+  const { platform, fullscreen } = useContext(PlatformContext);
   useKeyboardShortcuts();
   useTheme();
 
   return (
     <div className={styles.window}>
       {platform == Platform.Mac && fullscreen === false && <MacTitleBar />}
-      {platform == Platform.Windows && decorations === false && (
-        <WindowsMenuBar />
-      )}
+      {platform == Platform.Windows && <WindowsMenuBar />}
       <Allotment snap proportionalLayout={false}>
         <Allotment.Pane preferredSize={200}>
           <div className={styles.sideBar}>
