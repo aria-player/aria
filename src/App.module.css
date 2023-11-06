@@ -18,6 +18,11 @@
   color: var(--primary-text);
 }
 
+.loading {
+  background-color: var(--primary-background);
+  height: 100vh;
+}
+
 .outlet {
   border-left: 2px solid var(--sidebar-separator);
   height: 100%;

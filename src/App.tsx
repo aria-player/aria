@@ -27,6 +27,9 @@ function App() {
   useKeyboardShortcuts();
   useTheme();
 
+  if (platform === Platform.Unknown)
+    return <div className={styles.loading}></div>;
+
   return (
     <div className={styles.window}>
       {platform == Platform.Mac && fullscreen === false && <MacTitleBar />}
