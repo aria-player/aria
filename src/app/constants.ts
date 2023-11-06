@@ -1,1 +1,1 @@
-export const BASEPATH = import.meta.env.VITE_BASEPATH || "";
+export const BASEPATH = import.meta.env.VITE_BASEPATH || "/";
