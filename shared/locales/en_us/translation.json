@@ -25,16 +25,7 @@
   },
   "home": {
     "welcome": "Welcome to Tauri!",
-    "welcomeWeb": "Welcome to React!",
-    "info": "Click on the Tauri, Vite, React, and Redux logos to learn more.",
-    "alt": {
-      "tauri": "Tauri logo",
-      "vite": "Vite logo",
-      "react": "React logo",
-      "redux": "Redux logo"
-    },
-    "inputPlaceholder": "Enter a name...",
-    "greet": "Greet"
+    "welcomeWeb": "Welcome to React!"
   },
   "error": {
     "title": "Error",

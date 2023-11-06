@@ -1,5 +1,4 @@
 import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
-import counterReducer from "../features/counter/counterSlice";
 import configReducer from "../features/config/configSlice";
 import storage from "redux-persist/lib/storage";
 import {
@@ -25,7 +24,6 @@ const { createReduxHistory, routerMiddleware, routerReducer } =
 export const store = configureStore({
   reducer: combineReducers({
     router: routerReducer,
-    counter: persistReducer({ key: "counter", storage }, counterReducer),
     config: persistReducer({ key: "config", storage }, configReducer)
   }),
   middleware: (getDefaultMiddleware) =>
