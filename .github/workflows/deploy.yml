@@ -38,6 +38,8 @@ jobs:
       - name: Install dependencies
         run: npm install
       - name: Build
+        env:
+          VITE_BASEPATH: /tauri-react-big-template/
         run: npm run build
       - name: Setup Pages
         uses: actions/configure-pages@v3

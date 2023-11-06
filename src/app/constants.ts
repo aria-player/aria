@@ -1,1 +1,1 @@
-export const BASEPATH = "/tauri-react-big-template/";
+export const BASEPATH = import.meta.env.VITE_BASEPATH || "";
