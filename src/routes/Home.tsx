@@ -22,7 +22,7 @@ export function Home() {
 
   return (
     <div className={styles.container}>
-      <h1>{t("home.welcome")}</h1>
+      <h1>{isTauri() ? t("home.welcome") : t("home.welcomeWeb")}</h1>
 
       <div className={styles.row}>
         <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
