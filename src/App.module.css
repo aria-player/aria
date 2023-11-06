@@ -24,15 +24,14 @@
 }
 
 .outlet {
-  border-left: 2px solid var(--sidebar-separator);
   height: 100%;
   display: flex;
   flex-direction: column;
   overflow-y: auto;
+  border-left: 1px solid var(--sidebar-separator);
 }
 
 .sideBar {
-  border-right: 2px solid var(--sidebar-separator);
   height: 100%;
   padding: 0;
   display: flex;

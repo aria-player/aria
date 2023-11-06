@@ -3,7 +3,7 @@ body {
 
   /* Allotment overrides */
   --separator-border: transparent;
-  --sash-size: 10px;
+  --sash-size: 9px;
 
   /* Contexify overrides */
   --contexify-menu-padding: 5px 5px;
@@ -27,7 +27,7 @@ body {
 :root {
   --primary-background: #f6f6f6;
   --primary-text: #0f0f0f;
-  --sidebar-separator: rgb(238 238 238);
+  --sidebar-separator: #d2d7da;
   --menubar-background: rgb(238 238 238);
   --menubar-button: #3b3b3b;
   --menubar-button-disabled: rgb(175 175 175);

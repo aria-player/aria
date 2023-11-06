@@ -20,6 +20,7 @@ import { Platform, PlatformContext } from "./contexts/PlatformContext";
 import { GeneralPage } from "./routes/settings/GeneralPage";
 import { useTheme } from "./hooks/useTheme";
 import { useTranslation } from "react-i18next";
+import { Footer } from "./components/footer/Footer";
 
 function App() {
   const { t } = useTranslation();
@@ -74,6 +75,7 @@ function App() {
           </div>
         </Allotment.Pane>
       </Allotment>
+      <Footer />
     </div>
   );
 }
