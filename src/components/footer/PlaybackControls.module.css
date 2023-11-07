@@ -1,6 +1,6 @@
 .progress {
   margin: 0.4em 0;
-  background-color: #eee;
+  background-color: var(--player-slider-background);
   height: 6px;
   border-radius: 5px;
 }
@@ -23,7 +23,7 @@
 }
 
 .button {
-  color: #4c4c4c;
+  color: var(--player-controls);
   border: none;
   padding: 0;
   display: flex;

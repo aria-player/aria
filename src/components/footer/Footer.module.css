@@ -4,7 +4,7 @@
   height: 74px;
   border-top: 1px solid var(--sidebar-separator);
   align-items: center;
-  background-color: white;
+  background-color: var(--footer-background);
 }
 
 .left {
@@ -45,7 +45,7 @@
 }
 
 .volume {
-  background-color: #eee;
+  background-color: var(--player-slider-background);
   width: 6em;
   height: 6px;
   border-radius: 5px;
@@ -54,7 +54,7 @@
 
 .mute {
   width: 2em;
-  color: #4c4c4c;
+  color: var(--player-controls);
   border: none;
   background: none;
   padding: 0;

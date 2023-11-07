@@ -39,6 +39,9 @@ body {
   --button-background-hover: rgb(230 230 230);
   --button-background-active: rgb(220 220 220);
   --input-background: rgb(255 255 255);
+  --footer-background: #fff;
+  --player-controls: #4c4c4c;
+  --player-slider-background: #eee;
 }
 
 [data-theme="dark"] {
@@ -56,6 +59,9 @@ body {
   --button-background-hover: rgb(76 76 76);
   --button-background-active: rgb(86 86 86);
   --input-background: rgb(40 40 40);
+  --footer-background: rgb(43 42 42);
+  --player-controls: #ebebeb;
+  --player-slider-background: #414141;
 }
 
 [data-theme="midnight"] {
@@ -73,4 +79,7 @@ body {
   --button-background-hover: rgb(36 36 36);
   --button-background-active: rgb(53 53 53);
   --input-background: rgb(17 17 17);
+  --footer-background: rgb(2 2 2);
+  --player-controls: #ececec;
+  --player-slider-background: #1f1f1f;
 }
