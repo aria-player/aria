@@ -1,6 +1,63 @@
 .footer {
-  box-sizing: border-box;
-  height: 75px;
+  display: grid;
+  grid-template-columns: 25% 50% 25%;
+  height: 74px;
   border-top: 1px solid var(--sidebar-separator);
-  flex-shrink: 0;
+  align-items: center;
+  background-color: white;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+}
+
+.right {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  padding-right: 1em;
+}
+
+.art {
+  width: 74px;
+  height: 74px;
+  background-color: #bdc3c7;
+  color: #0e0e0e;
+}
+
+.metadata {
+  padding: 0 0.7em;
+  white-space: nowrap;
+  overflow: hidden;
+  flex-direction: column;
+  text-overflow: ellipsis;
+  line-height: 1.4em;
+}
+
+.title {
+  font-weight: 600;
+  font-size: 1em;
+}
+
+.artist {
+  font-size: 0.9em;
+}
+
+.volume {
+  background-color: #eee;
+  width: 6em;
+  height: 6px;
+  border-radius: 5px;
+  margin: 0 0.7em;
+}
+
+.mute {
+  width: 2em;
+  color: #4c4c4c;
+  border: none;
+  background: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
 }

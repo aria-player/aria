@@ -1,0 +1,47 @@
+.progress {
+  margin: 0.4em 0;
+  background-color: #eee;
+  height: 6px;
+  border-radius: 5px;
+}
+
+.playback {
+  display: flex;
+  align-items: center;
+}
+
+.time {
+  font-size: 0.9em;
+  margin: 0 6px;
+}
+
+.controls {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex: 1;
+}
+
+.button {
+  color: #4c4c4c;
+  border: none;
+  padding: 0;
+  display: flex;
+  background: none;
+}
+
+.button:first-child,
+.button:last-child {
+  width: 1.1em;
+  margin: 0 0.3em;
+}
+
+.button:nth-child(2),
+.button:nth-child(4) {
+  width: 1.8em;
+  margin: 0 1.4em;
+}
+
+.button:nth-child(3) {
+  width: 1.5em;
+}
