@@ -79,14 +79,14 @@ body {
   --menubar-background: #000;
   --menubar-button: rgb(187 187 187);
   --menubar-button-disabled: rgb(77 77 77);
-  --menubar-button-background-hover: rgb(41, 41, 41);
+  --menubar-button-background-hover: rgb(41 41 41);
   --windows-control-background-hover: rgb(255 255 255 / 6%);
   --windows-control-background-active: rgb(255 255 255 / 4%);
   --button-text: #e7e7e7;
   --button-text-selected: #fff;
   --button-background: rgb(20 20 20);
   --button-background-hover: rgb(36 36 36);
-  --button-background-active: rgb(53, 53, 53);
+  --button-background-active: rgb(53 53 53);
   --button-background-selected: #070568;
   --search-background: #0c0c0c;
   --search-background-active: #242424;

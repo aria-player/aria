@@ -1,10 +1,8 @@
 import { WindowsMenuBar } from "./components/platforms/windows/WindowsMenuBar";
 import styles from "./App.module.css";
-import { isTauri } from "./app/utils";
-import { NavLink, Route, Routes } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import ErrorPage from "./routes/Error";
 import { Home } from "./routes/Home";
-import { MenuButton } from "./components/MenuButton";
 // Allotment types coming soon
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -19,11 +17,10 @@ import { MacTitleBar } from "./components/platforms/mac/MacTitleBar";
 import { Platform, PlatformContext } from "./contexts/PlatformContext";
 import { GeneralPage } from "./routes/settings/GeneralPage";
 import { useTheme } from "./hooks/useTheme";
-import { useTranslation } from "react-i18next";
 import { Footer } from "./components/footer/Footer";
+import { Sidebar } from "./components/sidebar/Sidebar";
 
 function App() {
-  const { t } = useTranslation();
   const { platform, fullscreen } = useContext(PlatformContext);
   useKeyboardShortcuts();
   useTheme();
@@ -37,34 +34,7 @@ function App() {
       {platform == Platform.Windows && <WindowsMenuBar />}
       <Allotment snap proportionalLayout={false}>
         <Allotment.Pane preferredSize={200}>
-          <div className={styles.sideBar}>
-            {!isTauri() && (
-              <div className={styles.webMenu}>
-                <MenuButton />
-              </div>
-            )}
-            <input
-              className={styles.search}
-              type="text"
-              placeholder={t("nav.search")}
-            />
-            <NavLink
-              className={({ isActive }) =>
-                `${styles.link} ${isActive ? styles.selected : ""}`
-              }
-              to="/"
-            >
-              {t("nav.home")}
-            </NavLink>
-            <NavLink
-              to="/settings"
-              className={({ isActive }) =>
-                `${styles.link} ${isActive ? styles.selected : ""}`
-              }
-            >
-              {t("nav.settings")}
-            </NavLink>
-          </div>
+          <Sidebar />
         </Allotment.Pane>
         <Allotment.Pane>
           <div className={styles.outlet}>
