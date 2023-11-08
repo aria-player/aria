@@ -18,7 +18,7 @@ import { GeneralPage } from "./views/settings/GeneralPage";
 import { useTheme } from "./hooks/useTheme";
 import { Footer } from "./components/footer/Footer";
 import { Sidebar } from "./components/sidebar/Sidebar";
-import { TrackList } from "./components/TrackList";
+import { TrackList } from "./views/TrackList";
 
 function App() {
   const { platform, fullscreen } = useContext(PlatformContext);
