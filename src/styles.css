@@ -24,6 +24,65 @@ body {
   }
 }
 
+/* AG-Grid overrides */
+.ag-theme-balham {
+  --ag-header-background-color: var(--primary-background);
+  --ag-header-foreground-color: var(--column-text);
+  --ag-foreground-color: var(--primary-text);
+  --ag-background-color: var(--primary-background);
+  --ag-row-height: 33px;
+}
+
+.ag-root-wrapper {
+  border: none;
+
+  --ag-borders-critical: none;
+}
+
+.ag-header .ag-header-cell:hover {
+  font-weight: 700;
+}
+
+.ag-cell-label-container.ag-header-cell-sorted-asc,
+.ag-cell-label-container.ag-header-cell-sorted-desc {
+  color: var(--button-text);
+}
+
+.ag-body {
+  padding: 2px 5px;
+}
+
+.ag-row {
+  border: none;
+  border-radius: 4px;
+
+  --ag-odd-row-background-color: var(--odd-row-background);
+  --ag-row-background-color: black;
+}
+
+.ag-row-hover::before {
+  background-color: var(--button-background-hover) !important;
+  border-radius: 5px;
+}
+
+.ag-row-hover.ag-row-selected::before {
+  background-color: var(--button-background-selected) !important;
+  border-radius: 5px;
+}
+
+.ag-row-selected {
+  background-color: var(--button-background-selected) !important;
+  color: #fafafa !important;
+  border-bottom: 1px solid var(--primary-background);
+
+  --ag-selected-row-background-color: transparent;
+}
+
+.ag-row-hover {
+  border-radius: 5px;
+}
+
+/* Themes */
 :root {
   --primary-background: #fff;
   --primary-text: #0f0f0f;
@@ -46,6 +105,8 @@ body {
   --footer-background: #fff;
   --player-controls: #4c4c4c;
   --player-slider-background: #eee;
+  --odd-row-background: #f5f5f5;
+  --column-text: rgb(0 0 0 / 54%);
 }
 
 [data-theme="dark"] {
@@ -70,6 +131,8 @@ body {
   --footer-background: rgb(43 42 42);
   --player-controls: #ebebeb;
   --player-slider-background: #414141;
+  --odd-row-background: rgb(40 40 40);
+  --column-text: rgb(236 236 236);
 }
 
 [data-theme="midnight"] {
@@ -94,4 +157,6 @@ body {
   --footer-background: rgb(2 2 2);
   --player-controls: #ececec;
   --player-slider-background: #1f1f1f;
+  --odd-row-background: rgb(17 17 17);
+  --column-text: rgb(187 187 187);
 }

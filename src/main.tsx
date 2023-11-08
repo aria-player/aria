@@ -9,6 +9,10 @@ import "./styles.css";
 import { PlatformProvider } from "./contexts/PlatformContext";
 import { BASEPATH } from "./app/constants";
 import "./i18n";
+import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
+import { ModuleRegistry } from "@ag-grid-community/core";
+
+ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
