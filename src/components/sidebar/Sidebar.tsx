@@ -24,15 +24,7 @@ export function Sidebar() {
         }
         to="/"
       >
-        {t("nav.home")}
-      </NavLink>
-      <NavLink
-        to="/settings"
-        className={({ isActive }) =>
-          `${styles.link} ${isActive ? styles.selected : ""}`
-        }
-      >
-        {t("nav.settings")}
+        {t("nav.songs")}
       </NavLink>
     </div>
   );

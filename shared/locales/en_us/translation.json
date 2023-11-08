@@ -1,8 +1,7 @@
 {
   "nav": {
     "search": "Search",
-    "home": "Home",
-    "settings": "Settings"
+    "songs": "Songs"
   },
   "settings": {
     "sections": {

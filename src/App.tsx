@@ -2,7 +2,6 @@ import { WindowsMenuBar } from "./components/platforms/windows/WindowsMenuBar";
 import styles from "./App.module.css";
 import { Route, Routes } from "react-router-dom";
 import ErrorPage from "./routes/Error";
-import { Home } from "./routes/Home";
 // Allotment types coming soon
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -19,6 +18,7 @@ import { GeneralPage } from "./routes/settings/GeneralPage";
 import { useTheme } from "./hooks/useTheme";
 import { Footer } from "./components/footer/Footer";
 import { Sidebar } from "./components/sidebar/Sidebar";
+import { TrackList } from "./components/TrackList";
 
 function App() {
   const { platform, fullscreen } = useContext(PlatformContext);
@@ -39,7 +39,7 @@ function App() {
         <Allotment.Pane>
           <div className={styles.outlet}>
             <Routes>
-              <Route path="/" Component={Home} />
+              <Route path="/" Component={TrackList} />
               <Route path="settings" Component={SettingsPage}>
                 <Route index Component={GeneralPage} />
                 <Route path="appearance" Component={AppearancePage} />
