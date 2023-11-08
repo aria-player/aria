@@ -1,20 +1,20 @@
 import { WindowsMenuBar } from "./components/platforms/windows/WindowsMenuBar";
 import styles from "./App.module.css";
 import { Route, Routes } from "react-router-dom";
-import ErrorPage from "./routes/Error";
+import ErrorPage from "./views/Error";
 // Allotment types coming soon
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { Allotment } from "allotment";
 import "allotment/dist/style.css";
 import { useContext } from "react";
-import SettingsPage from "./routes/Settings";
+import SettingsPage from "./views/Settings";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
-import { AppearancePage } from "./routes/settings/AppearancePage";
-import { AboutPage } from "./routes/settings/AboutPage";
+import { AppearancePage } from "./views/settings/AppearancePage";
+import { AboutPage } from "./views/settings/AboutPage";
 import { MacTitleBar } from "./components/platforms/mac/MacTitleBar";
 import { Platform, PlatformContext } from "./contexts/PlatformContext";
-import { GeneralPage } from "./routes/settings/GeneralPage";
+import { GeneralPage } from "./views/settings/GeneralPage";
 import { useTheme } from "./hooks/useTheme";
 import { Footer } from "./components/footer/Footer";
 import { Sidebar } from "./components/sidebar/Sidebar";
