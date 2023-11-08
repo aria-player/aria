@@ -36,35 +36,54 @@
   padding: 0;
   display: flex;
   flex-direction: column;
-  padding-top: 0.5em;
-  padding-left: 0.5em;
+}
+
+.webMenu {
+  padding-top: 5px;
+  padding-left: 5px;
+}
+
+.search {
+  color: var(--button-text);
+  background-color: var(--search-background);
+  height: 32px;
+  line-height: 32px;
+  border-radius: 5px;
+  padding: 0 10px;
+  margin: 5px 5px 0;
+  outline: none;
+  border: none;
+  font-size: 0.9em;
+}
+
+.search:hover,
+.search:focus {
+  background-color: var(--search-background-active);
 }
 
 .link {
   color: var(--button-text);
-  cursor: pointer;
   text-decoration: none;
-  display: block;
-  background-color: var(--button-background);
-  border-radius: 0.5em;
-  padding: 0.5em;
-  margin: 0.5em 0.5em 0.5em 0;
-  box-shadow: 0 2px 2px rgb(0 0 0 / 20%);
   text-overflow: ellipsis;
   overflow: hidden;
   white-space: nowrap;
+  height: 32px;
+  line-height: 32px;
+  border-radius: 5px;
+  padding: 0 10px;
+  margin: 5px 5px 0;
+  font-size: 0.9em;
 }
 
-.selected {
-  font-weight: 700;
-}
-
-.link:hover {
-  color: var(--button-text);
+.link:hover:not(.selected) {
   background-color: var(--button-background-hover);
 }
 
-.link:active {
-  color: var(--button-text);
+.link:active:not(.selected) {
   background-color: var(--button-background-active);
+}
+
+.selected {
+  background-color: var(--button-background-selected);
+  color: var(--button-text-selected);
 }

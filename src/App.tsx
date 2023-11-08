@@ -39,10 +39,15 @@ function App() {
         <Allotment.Pane preferredSize={200}>
           <div className={styles.sideBar}>
             {!isTauri() && (
-              <div>
+              <div className={styles.webMenu}>
                 <MenuButton />
               </div>
             )}
+            <input
+              className={styles.search}
+              type="text"
+              placeholder={t("nav.search")}
+            />
             <NavLink
               className={({ isActive }) =>
                 `${styles.link} ${isActive ? styles.selected : ""}`

@@ -25,19 +25,23 @@ body {
 }
 
 :root {
-  --primary-background: #f6f6f6;
+  --primary-background: #fff;
   --primary-text: #0f0f0f;
   --sidebar-separator: #d2d7da;
-  --menubar-background: rgb(238 238 238);
+  --menubar-background: #fff;
   --menubar-button: #3b3b3b;
   --menubar-button-disabled: rgb(175 175 175);
-  --menubar-button-background-hover: #d8d8d8;
+  --menubar-button-background-hover: #e9e9e9;
   --windows-control-background-hover: rgb(0 0 0 / 5%);
   --windows-control-background-active: rgb(0 0 0 / 3%);
   --button-text: #313131;
+  --button-text-selected: #fff;
   --button-background: rgb(252 252 252);
-  --button-background-hover: rgb(230 230 230);
-  --button-background-active: rgb(220 220 220);
+  --button-background-hover: #f0f2f5;
+  --button-background-active: #e4e6eb;
+  --button-background-selected: #4c9de4;
+  --search-background: #f0f0f0;
+  --search-background-active: #ebebeb;
   --input-background: rgb(255 255 255);
   --footer-background: #fff;
   --player-controls: #4c4c4c;
@@ -55,9 +59,13 @@ body {
   --windows-control-background-hover: rgb(255 255 255 / 6%);
   --windows-control-background-active: rgb(255 255 255 / 4%);
   --button-text: #f6f6f6;
+  --button-text-selected: #fff;
   --button-background: rgb(66 66 66);
   --button-background-hover: rgb(76 76 76);
   --button-background-active: rgb(86 86 86);
+  --button-background-selected: #4c9de4;
+  --search-background: #252525;
+  --search-background-active: #1a1a1a;
   --input-background: rgb(40 40 40);
   --footer-background: rgb(43 42 42);
   --player-controls: #ebebeb;
@@ -68,16 +76,20 @@ body {
   --primary-background: #000;
   --primary-text: #e7e7e7;
   --sidebar-separator: rgb(17 17 17);
-  --menubar-background: rgb(17 17 17);
+  --menubar-background: #000;
   --menubar-button: rgb(187 187 187);
   --menubar-button-disabled: rgb(77 77 77);
-  --menubar-button-background-hover: rgb(68 68 68);
+  --menubar-button-background-hover: rgb(41, 41, 41);
   --windows-control-background-hover: rgb(255 255 255 / 6%);
   --windows-control-background-active: rgb(255 255 255 / 4%);
   --button-text: #e7e7e7;
+  --button-text-selected: #fff;
   --button-background: rgb(20 20 20);
   --button-background-hover: rgb(36 36 36);
-  --button-background-active: rgb(53 53 53);
+  --button-background-active: rgb(53, 53, 53);
+  --button-background-selected: #070568;
+  --search-background: #0c0c0c;
+  --search-background-active: #242424;
   --input-background: rgb(17 17 17);
   --footer-background: rgb(2 2 2);
   --player-controls: #ececec;
