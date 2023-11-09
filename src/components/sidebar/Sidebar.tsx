@@ -26,6 +26,14 @@ export function Sidebar() {
       >
         {t("nav.songs")}
       </NavLink>
+      <NavLink
+        className={({ isActive }) =>
+          `${styles.link} ${isActive ? styles.selected : ""}`
+        }
+        to="/albums"
+      >
+        {t("nav.albums")}
+      </NavLink>
     </div>
   );
 }

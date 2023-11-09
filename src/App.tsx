@@ -19,6 +19,7 @@ import { useTheme } from "./hooks/useTheme";
 import { Footer } from "./components/footer/Footer";
 import { Sidebar } from "./components/sidebar/Sidebar";
 import { TrackList } from "./views/TrackList";
+import { AlbumGrid } from "./views/AlbumGrid";
 
 function App() {
   const { platform, fullscreen } = useContext(PlatformContext);
@@ -40,6 +41,7 @@ function App() {
           <div className={styles.outlet}>
             <Routes>
               <Route path="/" Component={TrackList} />
+              <Route path="/albums" Component={AlbumGrid} />
               <Route path="settings" Component={SettingsPage}>
                 <Route index Component={GeneralPage} />
                 <Route path="appearance" Component={AppearancePage} />
