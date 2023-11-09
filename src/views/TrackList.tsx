@@ -49,6 +49,7 @@ export const TrackList = () => {
         suppressMoveWhenRowDragging
         rowDragEntireRow
         animateRows
+        alwaysShowVerticalScroll
       />
     </div>
   );
