@@ -3,6 +3,7 @@ import { AgGridReact } from "@ag-grid-community/react";
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-balham.css";
 import { RowClickedEvent } from "@ag-grid-community/core";
+import styles from "./TrackList.module.css";
 
 export const TrackList = () => {
   const [rowData, setRowData] = useState();
@@ -32,7 +33,7 @@ export const TrackList = () => {
   }, []);
 
   return (
-    <div className="ag-theme-balham" style={{ width: "100%", height: "100%" }}>
+    <div className={`${styles.tracklist} ag-theme-balham`}>
       <AgGridReact
         rowData={rowData}
         columnDefs={columnDefs}
