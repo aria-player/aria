@@ -6,10 +6,10 @@ body {
   --sash-size: 9px;
 
   /* Contexify overrides */
-  --contexify-menu-padding: 5px 5px;
-  --contexify-menu-radius: 6px;
-  --contexify-menu-minWidth: 160px;
-  --contexify-itemContent-padding: 2px 4px;
+  --contexify-menu-padding: 0.25rem 0.25rem;
+  --contexify-menu-radius: 0.4rem;
+  --contexify-menu-minWidth: 10rem;
+  --contexify-itemContent-padding: 0.25rem;
   --contexify-menu-bgColor: var(--button-background);
   --contexify-item-color: var(--button-text);
   --contexify-rightSlot-color: var(--button-text);
@@ -20,7 +20,7 @@ body {
   --contexify-activeArrow-color: var(--button-text);
 
   .contexify {
-    font-size: 0.9em;
+    font-size: 0.9rem;
   }
 }
 
@@ -49,12 +49,12 @@ body {
 }
 
 .ag-body {
-  padding: 2px 5px;
+  padding: 0.125rem 0.25rem;
 }
 
 .ag-row {
   border: none;
-  border-radius: 4px;
+  border-radius: 0.25rem;
 
   --ag-odd-row-background-color: var(--odd-row-background);
   --ag-row-background-color: black;
@@ -62,12 +62,12 @@ body {
 
 .ag-row-hover::before {
   background-color: var(--button-background-hover) !important;
-  border-radius: 5px;
+  border-radius: 0.25rem;
 }
 
 .ag-row-hover.ag-row-selected::before {
   background-color: var(--button-background-selected) !important;
-  border-radius: 5px;
+  border-radius: 0.25rem;
 }
 
 .ag-row-selected {
@@ -79,7 +79,7 @@ body {
 }
 
 .ag-row-hover {
-  border-radius: 5px;
+  border-radius: 0.25rem;
 }
 
 /* Themes */

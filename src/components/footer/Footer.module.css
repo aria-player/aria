@@ -1,7 +1,7 @@
 .footer {
   display: grid;
   grid-template-columns: 25% 50% 25%;
-  height: 74px;
+  height: 4.75rem;
   border-top: 1px solid var(--sidebar-separator);
   align-items: center;
   background-color: var(--footer-background);
@@ -16,48 +16,50 @@
   display: flex;
   justify-content: flex-end;
   align-items: center;
-  padding-right: 1em;
+  padding-right: 1rem;
 }
 
 .art {
-  width: 74px;
-  height: 74px;
+  width: 4.75rem;
+  height: 100%;
   background-color: #bdc3c7;
   color: #0e0e0e;
+  flex-shrink: 0;
 }
 
 .metadata {
-  padding: 0 0.7em;
+  padding: 0 0.7rem;
   white-space: nowrap;
   overflow: hidden;
   flex-direction: column;
   text-overflow: ellipsis;
-  line-height: 1.4em;
+  line-height: 1.4rem;
 }
 
 .title {
   font-weight: 600;
-  font-size: 1em;
+  font-size: 1rem;
 }
 
 .artist {
-  font-size: 0.9em;
+  font-size: 0.9rem;
 }
 
 .volume {
   background-color: var(--player-slider-background);
-  width: 6em;
+  width: 6rem;
   height: 6px;
   border-radius: 5px;
-  margin: 0 0.7em;
+  margin: 0 0.7rem;
 }
 
 .mute {
-  width: 2em;
+  width: 1.75rem;
   color: var(--player-controls);
   border: none;
   background: none;
   padding: 0;
   margin: 0;
   display: flex;
+  flex-shrink: 0;
 }

@@ -1,15 +1,15 @@
 .menuButton {
-  height: 75%;
+  height: 1.5rem;
   color: var(--menubar-button);
   background: transparent;
-  border-radius: 5px;
-  min-width: 3em;
-  padding: 0.2em 0.4em;
-  margin-left: 0.15em;
-  font-size: 0.9em;
+  border-radius: 0.25rem;
+  padding: 0.1rem 0.5rem;
+  margin-left: 0.1rem;
+  font-size: 0.9rem;
   justify-content: center;
   align-items: center;
   border: none;
+  line-height: normal;
 }
 
 .menuButton:hover {

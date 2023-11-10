@@ -41,7 +41,7 @@ export const TrackList = () => {
         rowSelection="multiple"
         onCellClicked={cellClickedListener}
         rowHeight={33}
-        headerHeight={39}
+        headerHeight={37}
         suppressCellFocus
         rowDragMultiRow
         suppressDragLeaveHidesColumns

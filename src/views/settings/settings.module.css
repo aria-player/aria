@@ -1,21 +1,23 @@
 .header {
   margin: 1rem;
   margin-left: 0;
+  font-size: 1rem;
+  line-height: normal;
 }
 
 .select {
   width: 100%;
   padding: 0.5rem 1rem;
-  font-size: 1rem;
-  border-radius: 4px;
+  border-radius: 0.25rem;
   background-color: var(--input-background);
   color: var(--text-color);
   margin-bottom: 1.5rem;
+  font-size: 0.9rem;
 }
 
 .checkbox {
-  width: 20px;
-  height: 20px;
+  width: 1.25rem;
+  height: 1.25rem;
   margin-right: 0.5rem;
   cursor: pointer;
 }
