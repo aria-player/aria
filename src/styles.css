@@ -30,6 +30,7 @@ body {
   --ag-header-foreground-color: var(--column-text);
   --ag-foreground-color: var(--primary-text);
   --ag-background-color: var(--primary-background);
+  --ag-modal-overlay-background-color: transparent;
   --ag-row-height: 33px;
 }
 
