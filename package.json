@@ -9,7 +9,7 @@
     "preview": "vite preview",
     "tauri": "tauri",
     "test": "vitest",
-    "lint": "eslint . && prettier -c . && stylelint \"**/*.css\""
+    "lint": "tsc && eslint ./src/** && prettier -c . && stylelint \"**/*.css\""
   },
   "dependencies": {
     "@ag-grid-community/client-side-row-model": "^30.2.1",

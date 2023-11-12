@@ -10,6 +10,7 @@ module.exports = {
     "plugin:react-hooks/recommended",
     "plugin:prettier/recommended"
   ],
+  ignorePatterns: ["**/*.css", "**/*.svg", "node_modules/"],
   overrides: [
     {
       env: {
