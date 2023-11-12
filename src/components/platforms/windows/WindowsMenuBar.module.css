@@ -6,6 +6,7 @@
   background-color: var(--menubar-background);
   padding-left: 0.5rem;
   border-bottom: 1px solid var(--sidebar-separator);
+  user-select: none;
 }
 
 .menuBarSmall {
