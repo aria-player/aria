@@ -16,7 +16,7 @@ import "react-contexify/dist/ReactContexify.css";
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-balham.css";
 
-import "./styles.css";
+import "./overrides.css";
 import "./themes/importThemes";
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
