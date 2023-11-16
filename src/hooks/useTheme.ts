@@ -1,31 +1,35 @@
 import { useEffect } from "react";
 import { useAppSelector } from "../app/hooks";
 import { selectTheme } from "../features/config/configSlice";
+import { Themes } from "../themes/themes";
 
 export const useTheme = () => {
   const theme = useAppSelector(selectTheme);
 
   useEffect(() => {
-    if (theme === "system") {
-      const darkMode = window.matchMedia(
-        "(prefers-color-scheme: dark)"
-      ).matches;
-      document.body.setAttribute("data-theme", darkMode ? "dark" : "light");
-    } else {
-      document.body.setAttribute("data-theme", theme);
-    }
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
+    const systemColorScheme = prefersDark.matches ? "dark" : "light";
+    const computedTheme = theme === "system" ? systemColorScheme : theme;
+    const themeColorScheme = Themes[computedTheme]?.base;
+
+    document.body.setAttribute("data-theme", computedTheme);
+    document.documentElement.style.colorScheme =
+      themeColorScheme || systemColorScheme;
   }, [theme]);
 
   useEffect(() => {
-    if (theme !== "system") return;
-    const handleChange = (e: MediaQueryListEvent) => {
-      document.body.setAttribute("data-theme", e.matches ? "dark" : "light");
+    if (theme !== "system" && Themes[theme]?.base) return;
+    const handleSystemChange = (e: MediaQueryListEvent) => {
+      const systemColorScheme = e.matches ? "dark" : "light";
+      const computedTheme = theme === "system" ? systemColorScheme : theme;
+      document.body.setAttribute("data-theme", computedTheme);
+      document.documentElement.style.colorScheme = systemColorScheme;
     };
 
-    const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)");
-    prefersDarkScheme.addEventListener("change", handleChange);
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
+    prefersDark.addEventListener("change", handleSystemChange);
     return () => {
-      prefersDarkScheme.removeEventListener("change", handleChange);
+      prefersDark.removeEventListener("change", handleSystemChange);
     };
   }, [theme]);
 };
