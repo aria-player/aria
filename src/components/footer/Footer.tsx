@@ -2,6 +2,7 @@ import styles from "./Footer.module.css";
 import MusicIcon from "../../assets/music.svg?react";
 import VolumeIcon from "../../assets/volume-high-solid.svg?react";
 import { PlaybackControls } from "./PlaybackControls";
+import { MediaSlider } from "soprano-ui";
 
 export function Footer() {
   return (
@@ -17,7 +18,14 @@ export function Footer() {
         <PlaybackControls />
       </section>
       <section className={styles.right}>
-        <div className={styles.volume}></div>
+        <div className={styles.volume}>
+          <MediaSlider
+            step={0.1}
+            keyboardStepMultiplier={10}
+            keyboardFocusOnly={true}
+            thumbAlignment={"center"}
+          />
+        </div>
         <button className={styles.mute}>
           <VolumeIcon />
         </button>

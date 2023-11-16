@@ -46,9 +46,7 @@
 }
 
 .volume {
-  background-color: var(--player-slider-background);
   width: 6rem;
-  height: 6px;
   border-radius: 5px;
   margin: 0 0.7rem;
 }

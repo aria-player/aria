@@ -1,11 +1,5 @@
-.progress {
-  margin: 0.4rem 0;
-  background-color: var(--player-slider-background);
-  height: 6px;
-  border-radius: 5px;
-}
-
 .playback {
+  padding-top: 0.1rem;
   display: flex;
   align-items: center;
 }

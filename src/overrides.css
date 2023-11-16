@@ -1,6 +1,13 @@
 body {
   margin: 0;
 
+  /* Soprano overrides */
+  --slider-thumb-size: 8px;
+  --slider-thumb-border-size: 3px;
+  --slider-track-thickness: 6px;
+  --slider-color: var(--button-background-selected);
+  --slider-track-color: var(--player-slider-background);
+
   /* Allotment overrides */
   --separator-border: transparent;
   --sash-size: 9px;
