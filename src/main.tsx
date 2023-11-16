@@ -6,6 +6,7 @@ import { PersistGate } from "redux-persist/integration/react";
 import { HistoryRouter } from "redux-first-history/rr6";
 import App from "./App";
 import "./styles.css";
+import "./themes/importThemes";
 import { PlatformProvider } from "./contexts/PlatformContext";
 import { BASEPATH } from "./app/constants";
 import "./i18n";

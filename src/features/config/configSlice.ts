@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
-import { Themes } from "../../app/themes";
+import { Themes } from "../../themes/themes";
 
 export interface ConfigState {
   theme: string;

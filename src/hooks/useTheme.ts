@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useAppSelector } from "../app/hooks";
-import { Themes } from "../app/themes";
+import { Themes } from "../themes/themes";
 import { selectTheme } from "../features/config/configSlice";
 
 export const useTheme = () => {

@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { Themes } from "../../app/themes";
+import { Themes } from "../../themes/themes";
 import { isTauri } from "../../app/utils";
 import { selectTheme, setTheme } from "../../features/config/configSlice";
 import styles from "./settings.module.css";
