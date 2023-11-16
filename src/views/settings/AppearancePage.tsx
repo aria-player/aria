@@ -32,9 +32,9 @@ export function AppearancePage() {
         value={currentTheme}
         onChange={handleThemeChange}
       >
-        {Object.values(Themes).map((theme) => (
-          <option key={theme.id} value={theme.id}>
-            {theme.label}
+        {Object.keys(Themes).map((theme) => (
+          <option key={theme} value={theme}>
+            {Themes[theme as keyof typeof Themes].label}
           </option>
         ))}
       </select>

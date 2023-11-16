@@ -1,13 +1,12 @@
 import { useEffect } from "react";
 import { useAppSelector } from "../app/hooks";
-import { Themes } from "../themes/themes";
 import { selectTheme } from "../features/config/configSlice";
 
 export const useTheme = () => {
   const theme = useAppSelector(selectTheme);
 
   useEffect(() => {
-    if (theme === Themes.System.id) {
+    if (theme === "system") {
       const darkMode = window.matchMedia(
         "(prefers-color-scheme: dark)"
       ).matches;
@@ -18,7 +17,7 @@ export const useTheme = () => {
   }, [theme]);
 
   useEffect(() => {
-    if (theme !== Themes.System.id) return;
+    if (theme !== "system") return;
     const handleChange = (e: MediaQueryListEvent) => {
       document.body.setAttribute("data-theme", e.matches ? "dark" : "light");
     };

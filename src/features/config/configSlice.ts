@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
-import { Themes } from "../../themes/themes";
 
 export interface ConfigState {
   theme: string;
@@ -8,7 +7,7 @@ export interface ConfigState {
 }
 
 const initialState: ConfigState = {
-  theme: Themes.System.id,
+  theme: "system",
   language: null
 };
 
