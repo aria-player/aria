@@ -4,10 +4,11 @@
   --button-text: #313131;
   --button-text-selected: #fff;
   --column-text: rgb(0 0 0 / 54%);
+  --menubar-button-text: #3b3b3b;
 
   /* Icons */
-  --menubar-button: #3b3b3b;
-  --menubar-button-disabled: rgb(175 175 175);
+  --menubar-button-icon: #3b3b3b;
+  --menubar-button-icon-disabled: rgb(175 175 175);
   --player-controls: #4c4c4c;
 
   /* Borders */

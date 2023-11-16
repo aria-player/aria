@@ -7,7 +7,7 @@
   width: 46px;
   border: none;
   background-color: transparent;
-  color: var(--menubar-button);
+  color: var(--menubar-button-icon);
 }
 
 .windowsControl:hover {

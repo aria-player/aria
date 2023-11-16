@@ -31,7 +31,7 @@
   height: 1.2rem;
   padding: 0.15rem;
   margin-left: 0.15rem;
-  color: var(--menubar-button);
+  color: var(--menubar-button-icon);
   cursor: pointer;
 }
 
@@ -41,7 +41,7 @@
 }
 
 .arrowDisabled {
-  color: var(--menubar-button-disabled);
+  color: var(--menubar-button-icon-disabled);
   cursor: default;
 }
 
