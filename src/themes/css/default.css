@@ -1,15 +1,24 @@
 :root {
-  --primary-background: #fff;
+  /* Text */
   --primary-text: #0f0f0f;
-  --sidebar-separator: #d2d7da;
-  --menubar-background: #fff;
+  --button-text: #313131;
+  --button-text-selected: #fff;
+  --column-text: rgb(0 0 0 / 54%);
+
+  /* Icons */
   --menubar-button: #3b3b3b;
   --menubar-button-disabled: rgb(175 175 175);
+  --player-controls: #4c4c4c;
+
+  /* Borders */
+  --sidebar-separator: #d2d7da;
+
+  /* Backgrounds */
+  --primary-background: #fff;
+  --menubar-background: #fff;
   --menubar-button-background-hover: #e9e9e9;
   --windows-control-background-hover: rgb(0 0 0 / 5%);
   --windows-control-background-active: rgb(0 0 0 / 3%);
-  --button-text: #313131;
-  --button-text-selected: #fff;
   --button-background: rgb(252 252 252);
   --button-background-hover: #f0f2f5;
   --button-background-active: #e4e6eb;
@@ -18,8 +27,6 @@
   --search-background-active: #ebebeb;
   --input-background: rgb(255 255 255);
   --footer-background: #fff;
-  --player-controls: #4c4c4c;
   --player-slider-background: #eee;
   --odd-row-background: #f5f5f5;
-  --column-text: rgb(0 0 0 / 54%);
 }

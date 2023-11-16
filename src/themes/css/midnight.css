@@ -1,15 +1,24 @@
 [data-theme="midnight"] {
-  --primary-background: #000;
+  /* Text */
   --primary-text: #e7e7e7;
-  --sidebar-separator: rgb(17 17 17);
-  --menubar-background: #000;
+  --button-text: #e7e7e7;
+  --button-text-selected: #fff;
+  --column-text: rgb(187 187 187);
+
+  /* Icons */
   --menubar-button: rgb(187 187 187);
   --menubar-button-disabled: rgb(77 77 77);
+  --player-controls: #ececec;
+
+  /* Borders */
+  --sidebar-separator: rgb(17 17 17);
+
+  /* Backgrounds */
+  --primary-background: #000;
+  --menubar-background: #000;
   --menubar-button-background-hover: rgb(41 41 41);
   --windows-control-background-hover: rgb(255 255 255 / 6%);
   --windows-control-background-active: rgb(255 255 255 / 4%);
-  --button-text: #e7e7e7;
-  --button-text-selected: #fff;
   --button-background: rgb(20 20 20);
   --button-background-hover: rgb(36 36 36);
   --button-background-active: rgb(53 53 53);
@@ -18,8 +27,6 @@
   --search-background-active: #242424;
   --input-background: rgb(17 17 17);
   --footer-background: rgb(2 2 2);
-  --player-controls: #ececec;
   --player-slider-background: #1f1f1f;
   --odd-row-background: rgb(17 17 17);
-  --column-text: rgb(187 187 187);
 }
