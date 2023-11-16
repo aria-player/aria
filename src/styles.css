@@ -22,63 +22,63 @@ body {
   .contexify {
     font-size: 0.9rem;
   }
-}
 
-/* AG-Grid overrides */
-.ag-theme-balham {
-  --ag-header-background-color: var(--primary-background);
-  --ag-header-foreground-color: var(--column-text);
-  --ag-foreground-color: var(--primary-text);
-  --ag-background-color: var(--primary-background);
-  --ag-modal-overlay-background-color: transparent;
-  --ag-row-height: 33px;
-}
+  /* AG-Grid overrides */
+  .ag-theme-balham {
+    --ag-header-background-color: var(--primary-background);
+    --ag-header-foreground-color: var(--column-text);
+    --ag-foreground-color: var(--primary-text);
+    --ag-background-color: var(--primary-background);
+    --ag-modal-overlay-background-color: transparent;
+    --ag-row-height: 33px;
+  }
 
-.ag-root-wrapper {
-  border: none;
+  .ag-root-wrapper {
+    border: none;
 
-  --ag-borders-critical: none;
-}
+    --ag-borders-critical: none;
+  }
 
-.ag-header .ag-header-cell:hover {
-  font-weight: 700;
-}
+  .ag-header .ag-header-cell:hover {
+    font-weight: 700;
+  }
 
-.ag-cell-label-container.ag-header-cell-sorted-asc,
-.ag-cell-label-container.ag-header-cell-sorted-desc {
-  color: var(--button-text);
-}
+  .ag-cell-label-container.ag-header-cell-sorted-asc,
+  .ag-cell-label-container.ag-header-cell-sorted-desc {
+    color: var(--button-text);
+  }
 
-.ag-body {
-  padding: 0.125rem 0.25rem;
-}
+  .ag-body {
+    padding: 0.125rem 0.25rem;
+  }
 
-.ag-row {
-  border: none;
-  border-radius: 0.25rem;
+  .ag-row {
+    border: none;
+    border-radius: 0.25rem;
 
-  --ag-odd-row-background-color: var(--odd-row-background);
-  --ag-row-background-color: black;
-}
+    --ag-odd-row-background-color: var(--odd-row-background);
+    --ag-row-background-color: black;
+  }
 
-.ag-row-hover::before {
-  background-color: var(--button-background-hover) !important;
-  border-radius: 0.25rem;
-}
+  .ag-row-hover::before {
+    background-color: var(--button-background-hover) !important;
+    border-radius: 0.25rem;
+  }
 
-.ag-row-hover.ag-row-selected::before {
-  background-color: var(--button-background-selected) !important;
-  border-radius: 0.25rem;
-}
+  .ag-row-hover.ag-row-selected::before {
+    background-color: var(--button-background-selected) !important;
+    border-radius: 0.25rem;
+  }
 
-.ag-row-selected {
-  background-color: var(--button-background-selected) !important;
-  color: #fafafa !important;
-  border-bottom: 1px solid var(--primary-background);
+  .ag-row-selected {
+    background-color: var(--button-background-selected) !important;
+    color: #fafafa !important;
+    border-bottom: 1px solid var(--primary-background);
 
-  --ag-selected-row-background-color: transparent;
-}
+    --ag-selected-row-background-color: transparent;
+  }
 
-.ag-row-hover {
-  border-radius: 0.25rem;
+  .ag-row-hover {
+    border-radius: 0.25rem;
+  }
 }

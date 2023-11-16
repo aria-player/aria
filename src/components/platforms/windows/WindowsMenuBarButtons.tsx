@@ -1,6 +1,5 @@
 import { Menu, useContextMenu } from "react-contexify";
 import menus from "../../../../shared/menus.json";
-import "react-contexify/dist/ReactContexify.css";
 import React, { useEffect, useState } from "react";
 import styles from "./WindowsMenuBarButtons.module.css";
 import { AppMenu } from "../../AppMenu";

@@ -6,7 +6,6 @@ import ErrorPage from "./views/Error";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { Allotment } from "allotment";
-import "allotment/dist/style.css";
 import { useContext } from "react";
 import SettingsPage from "./views/Settings";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";

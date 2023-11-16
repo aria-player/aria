@@ -1,7 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { AgGridReact } from "@ag-grid-community/react";
-import "@ag-grid-community/styles/ag-grid.css";
-import "@ag-grid-community/styles/ag-theme-balham.css";
 import { RowClickedEvent } from "@ag-grid-community/core";
 import styles from "./TrackList.module.css";
 
