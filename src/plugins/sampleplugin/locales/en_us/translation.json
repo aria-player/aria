@@ -1,0 +1,6 @@
+{
+  "config": {
+    "header": "Sample Plugin",
+    "button": "Send message to app"
+  }
+}
