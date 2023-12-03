@@ -1,19 +1,25 @@
 import { RootState, store } from "../../app/store";
 import { createListenerMiddleware } from "@reduxjs/toolkit";
-import { PluginId } from "./pluginsTypes";
+import { PluginCallbacks, PluginId } from "./pluginsTypes";
 import {
   pluginHandles,
   selectPluginsActive,
-  selectPluginsConfig
+  selectPluginsConfig,
+  setPluginConfig
 } from "./pluginsSlice";
 import { plugins } from "../../plugins/plugins";
 
 export const pluginsListener = createListenerMiddleware();
 
-const pluginCallbacks = {
-  pong: (message: string) => {
-    console.log(`Message received by app: ${message}`);
-  }
+const getPluginCallbacks = (plugin: PluginId): PluginCallbacks => {
+  return {
+    pong: (message: string) => {
+      console.log(`Message received by app: ${message}`);
+    },
+    updateConfig: (config: unknown) => {
+      store.dispatch(setPluginConfig({ plugin, config }));
+    }
+  };
 };
 
 const createPluginInstance = (plugin: PluginId) => {
@@ -25,7 +31,7 @@ const createPluginInstance = (plugin: PluginId) => {
     }
     pluginHandles[plugin] = plugins[plugin].create(
       config[plugin],
-      pluginCallbacks
+      getPluginCallbacks(plugin)
     );
     pluginHandles[plugin]?.ping?.("Hello");
   }

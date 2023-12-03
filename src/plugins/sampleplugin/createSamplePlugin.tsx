@@ -6,15 +6,21 @@ import i18n from "i18next";
 import { useTranslation } from "react-i18next";
 import en_us from "./locales/en_us/translation.json";
 
+type SamplePluginConfig = {
+  pings: number;
+};
+
 export function createSamplePlugin(
-  _config: unknown,
+  initialConfig: unknown,
   host: PluginCallbacks
 ): PluginHandle {
-  console.log("Created sampleplugin");
+  initialConfig = initialConfig as SamplePluginConfig;
   i18n.addResourceBundle("en-US", "sampleplugin", en_us);
+  console.log("Created sampleplugin with initial config: ", initialConfig);
 
   return {
-    Config() {
+    Config(props: { config: unknown }) {
+      const currentConfig = props.config as SamplePluginConfig;
       const { t } = useTranslation();
 
       return (
@@ -23,10 +29,14 @@ export function createSamplePlugin(
           <button
             onClick={() => {
               host.pong("ping");
+              host.updateConfig({
+                pings: currentConfig?.pings >= 0 ? currentConfig?.pings + 1 : 1
+              });
             }}
           >
             {t("sampleplugin:config.button")}
           </button>
+          {currentConfig?.pings ?? 0}
         </div>
       );
     },
