@@ -19,6 +19,7 @@ import { Footer } from "./components/footer/Footer";
 import { Sidebar } from "./components/sidebar/Sidebar";
 import { TrackList } from "./views/TrackList";
 import { AlbumGrid } from "./views/AlbumGrid";
+import { PluginsPage } from "./views/settings/PluginsPage";
 
 function App() {
   const { platform, fullscreen } = useContext(PlatformContext);
@@ -44,6 +45,7 @@ function App() {
               <Route path="settings" Component={SettingsPage}>
                 <Route index Component={GeneralPage} />
                 <Route path="appearance" Component={AppearancePage} />
+                <Route path="plugins" Component={PluginsPage} />
                 <Route path="about" Component={AboutPage} />
               </Route>
               <Route path="*" Component={ErrorPage} />

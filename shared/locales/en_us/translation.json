@@ -8,6 +8,7 @@
     "sections": {
       "general": "General",
       "appearance": "Appearance",
+      "plugins": "Plugins",
       "about": "About"
     },
     "general": {
@@ -19,6 +20,11 @@
     "appearance": {
       "theme": "Theme",
       "windowsControls": "Use system window controls"
+    },
+    "plugins": {
+      "availablePlugins": "Available plugins",
+      "confirmDisable": "Are you sure you want to disable '{{plugin}}'?",
+      "pluginConfig": "Plugin configuration"
     },
     "about": {
       "version": "Version"

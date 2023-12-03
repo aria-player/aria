@@ -29,6 +29,14 @@ export default function SettingsPage() {
           className={({ isActive }) =>
             `${styles.link} ${isActive ? styles.selected : ""}`
           }
+          to={"plugins"}
+        >
+          {t("settings.sections.plugins")}
+        </NavLink>
+        <NavLink
+          className={({ isActive }) =>
+            `${styles.link} ${isActive ? styles.selected : ""}`
+          }
           to={"about"}
         >
           {t("settings.sections.about")}
