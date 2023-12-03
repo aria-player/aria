@@ -10,7 +10,7 @@ type PluginsState = {
 export const pluginHandles: Partial<Record<PluginId, PluginHandle>> = {};
 
 const initialState: PluginsState = {
-  pluginsActive: ["sampleplugin"],
+  pluginsActive: ["webplayer"],
   pluginsConfig: {}
 };
 
