@@ -1,0 +1,50 @@
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { PluginHandle, PluginId } from "./pluginsTypes";
+import { RootState } from "../../app/store";
+
+type PluginsState = {
+  pluginsActive: PluginId[];
+  pluginsConfig: Partial<Record<PluginId, unknown>>;
+};
+
+export const pluginHandles: Partial<Record<PluginId, PluginHandle>> = {};
+
+const initialState: PluginsState = {
+  pluginsActive: ["sampleplugin"],
+  pluginsConfig: {}
+};
+
+export const pluginsSlice = createSlice({
+  name: "plugins",
+  initialState,
+  reducers: {
+    setPluginActive: (
+      state,
+      action: PayloadAction<{ plugin: PluginId; active: boolean }>
+    ) => {
+      const { plugin, active } = action.payload;
+      if (active && !state.pluginsActive.includes(plugin)) {
+        state.pluginsActive.push(plugin);
+      } else {
+        state.pluginsActive = state.pluginsActive.filter((p) => p !== plugin);
+        delete state.pluginsConfig[plugin];
+      }
+    },
+    setPluginConfig: (
+      state,
+      action: PayloadAction<{ plugin: PluginId; config: unknown }>
+    ) => {
+      const { plugin, config } = action.payload;
+      state.pluginsConfig[plugin] = config;
+    }
+  }
+});
+
+export const { setPluginActive, setPluginConfig } = pluginsSlice.actions;
+
+export const selectPluginsConfig = (state: RootState) =>
+  state.plugins.pluginsConfig;
+export const selectPluginsActive = (state: RootState) =>
+  state.plugins.pluginsActive;
+
+export default pluginsSlice.reducer;

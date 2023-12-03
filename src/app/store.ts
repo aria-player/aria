@@ -1,5 +1,6 @@
 import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
 import configReducer from "../features/config/configSlice";
+import pluginsReducer from "../features/plugins/pluginsSlice";
 import storage from "redux-persist/lib/storage";
 import {
   FLUSH,
@@ -14,6 +15,7 @@ import {
 import { combineReducers } from "redux";
 import { createReduxHistoryContext } from "redux-first-history";
 import { createBrowserHistory } from "history";
+import { pluginsListener } from "../features/plugins/pluginsListener";
 
 const { createReduxHistory, routerMiddleware, routerReducer } =
   createReduxHistoryContext({
@@ -24,14 +26,15 @@ const { createReduxHistory, routerMiddleware, routerReducer } =
 export const store = configureStore({
   reducer: combineReducers({
     router: routerReducer,
-    config: persistReducer({ key: "config", storage }, configReducer)
+    config: persistReducer({ key: "config", storage }, configReducer),
+    plugins: persistReducer({ key: "plugins", storage }, pluginsReducer)
   }),
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER]
       }
-    }).concat(routerMiddleware)
+    }).concat([routerMiddleware, pluginsListener.middleware])
 });
 
 export type AppDispatch = typeof store.dispatch;
