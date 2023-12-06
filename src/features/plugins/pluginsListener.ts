@@ -1,6 +1,12 @@
 import { RootState, store } from "../../app/store";
 import { createListenerMiddleware } from "@reduxjs/toolkit";
-import { PluginCallbacks, PluginId } from "./pluginsTypes";
+import {
+  BaseCallbacks,
+  BasePlugin,
+  PluginId,
+  SourceCallbacks,
+  SourcePlugin
+} from "./pluginsTypes";
 import {
   pluginHandles,
   selectPluginsActive,
@@ -11,25 +17,45 @@ import { plugins } from "../../plugins/plugins";
 
 export const pluginsListener = createListenerMiddleware();
 
-const getPluginCallbacks = (plugin: PluginId): PluginCallbacks => {
+const getBaseCallbacks = (pluginId: PluginId): BaseCallbacks => {
   return {
     updateConfig: (config: unknown) => {
-      store.dispatch(setPluginConfig({ plugin, config }));
+      store.dispatch(setPluginConfig({ plugin: pluginId, config }));
     }
   };
 };
 
-const createPluginInstance = (plugin: PluginId) => {
-  if (!pluginHandles[plugin]) {
+const getSourceCallbacks = (pluginId: PluginId): SourceCallbacks => {
+  return {
+    ...getBaseCallbacks(pluginId),
+    temp: () => {
+      console.log("temp");
+    }
+  };
+};
+
+const createPluginInstance = (pluginId: PluginId) => {
+  if (!pluginHandles[pluginId]) {
     const currentState = store.getState();
     const config = selectPluginsConfig(currentState);
-    if (!plugins[plugin]) {
-      throw new Error(`Plugin "${plugin}" not found`);
+    const plugin = plugins[pluginId];
+    if (!plugin) {
+      throw new Error(`Plugin "${pluginId}" not found`);
     }
-    pluginHandles[plugin] = plugins[plugin].create(
-      config[plugin],
-      getPluginCallbacks(plugin)
-    );
+    switch (plugin.type) {
+      case "base":
+        pluginHandles[pluginId] = (plugin as BasePlugin).create(
+          config[pluginId],
+          getBaseCallbacks(pluginId)
+        );
+        break;
+      case "source":
+        pluginHandles[pluginId] = (plugin as SourcePlugin).create(
+          config[pluginId],
+          getSourceCallbacks(pluginId)
+        );
+        break;
+    }
   }
 };
 

@@ -1,10 +1,7 @@
-import {
-  PluginCallbacks,
-  PluginHandle
-} from "../../features/plugins/pluginsTypes";
 import i18n from "i18next";
 import { useTranslation } from "react-i18next";
 import en_us from "./locales/en_us/translation.json";
+import { BaseCallbacks, BaseHandle } from "../../features/plugins/pluginsTypes";
 
 type SamplePluginConfig = {
   pings: number;
@@ -12,8 +9,8 @@ type SamplePluginConfig = {
 
 export function createSamplePlugin(
   initialConfig: unknown,
-  host: PluginCallbacks
-): PluginHandle {
+  host: BaseCallbacks
+): BaseHandle {
   initialConfig = initialConfig as SamplePluginConfig;
   i18n.addResourceBundle("en-US", "sampleplugin", en_us);
   console.log("Created sampleplugin with initial config: ", initialConfig);

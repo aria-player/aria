@@ -1,7 +1,7 @@
-import { PluginCallbacks } from "../../features/plugins/pluginsTypes";
+import { SourceCallbacks } from "../../features/plugins/pluginsTypes";
 import { WebPlayerConfig } from "./createWebPlayer";
 
-export function Config(props: { config: unknown; host: PluginCallbacks }) {
+export function Config(props: { config: unknown; host: SourceCallbacks }) {
   const webPlayerConfig = props.config as WebPlayerConfig;
 
   async function pickDirectory() {
