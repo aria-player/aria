@@ -10,11 +10,8 @@ export type Plugin<PluginHandle, PluginCallbacks> = {
 export type PluginHandle = {
   Config?: React.FC<{ config: unknown }>;
   dispose: () => void;
-
-  ping?: (message: string) => void;
 };
 
 export type PluginCallbacks = {
-  pong: (message: string) => void;
   updateConfig: (config: unknown) => void;
 };

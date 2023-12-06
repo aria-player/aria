@@ -28,7 +28,6 @@ export function createSamplePlugin(
           {t("sampleplugin:config.header")}
           <button
             onClick={() => {
-              host.pong("ping");
               host.updateConfig({
                 pings: currentConfig?.pings >= 0 ? currentConfig?.pings + 1 : 1
               });
@@ -39,10 +38,6 @@ export function createSamplePlugin(
           {currentConfig?.pings ?? 0}
         </div>
       );
-    },
-
-    ping(message: string) {
-      console.log("Message received by sampleplugin: ", message);
     },
 
     dispose() {

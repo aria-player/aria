@@ -13,9 +13,6 @@ export const pluginsListener = createListenerMiddleware();
 
 const getPluginCallbacks = (plugin: PluginId): PluginCallbacks => {
   return {
-    pong: (message: string) => {
-      console.log(`Message received by app: ${message}`);
-    },
     updateConfig: (config: unknown) => {
       store.dispatch(setPluginConfig({ plugin, config }));
     }
@@ -33,7 +30,6 @@ const createPluginInstance = (plugin: PluginId) => {
       config[plugin],
       getPluginCallbacks(plugin)
     );
-    pluginHandles[plugin]?.ping?.("Hello");
   }
 };
 
