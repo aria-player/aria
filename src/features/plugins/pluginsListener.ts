@@ -1,38 +1,15 @@
 import { RootState, store } from "../../app/store";
 import { createListenerMiddleware } from "@reduxjs/toolkit";
-import {
-  BaseCallbacks,
-  BasePlugin,
-  PluginId,
-  SourceCallbacks,
-  SourcePlugin
-} from "./pluginsTypes";
+import { BasePlugin, PluginId, SourcePlugin } from "./pluginsTypes";
 import {
   pluginHandles,
   selectPluginsActive,
-  selectPluginsConfig,
-  setPluginConfig
+  selectPluginsConfig
 } from "./pluginsSlice";
 import { plugins } from "../../plugins/plugins";
+import { getBaseCallbacks, getSourceCallbacks } from "./pluginsCallbacks";
 
 export const pluginsListener = createListenerMiddleware();
-
-const getBaseCallbacks = (pluginId: PluginId): BaseCallbacks => {
-  return {
-    updateConfig: (config: unknown) => {
-      store.dispatch(setPluginConfig({ plugin: pluginId, config }));
-    }
-  };
-};
-
-const getSourceCallbacks = (pluginId: PluginId): SourceCallbacks => {
-  return {
-    ...getBaseCallbacks(pluginId),
-    temp: () => {
-      console.log("temp");
-    }
-  };
-};
 
 const createPluginInstance = (pluginId: PluginId) => {
   if (!pluginHandles[pluginId]) {
