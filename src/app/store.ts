@@ -1,5 +1,6 @@
 import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
 import configReducer from "../features/config/configSlice";
+import libraryReducer from "../features/library/librarySlice";
 import pluginsReducer from "../features/plugins/pluginsSlice";
 import storage from "redux-persist/lib/storage";
 import {
@@ -27,6 +28,7 @@ export const store = configureStore({
   reducer: combineReducers({
     router: routerReducer,
     config: persistReducer({ key: "config", storage }, configReducer),
+    library: persistReducer({ key: "library", storage }, libraryReducer),
     plugins: persistReducer({ key: "plugins", storage }, pluginsReducer)
   }),
   middleware: (getDefaultMiddleware) =>

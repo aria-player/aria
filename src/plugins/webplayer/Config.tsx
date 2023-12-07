@@ -1,26 +1,21 @@
 import { SourceCallbacks } from "../../features/plugins/pluginsTypes";
 import { WebPlayerConfig } from "./createWebPlayer";
 
-export function Config(props: { config: unknown; host: SourceCallbacks }) {
+export function Config(props: {
+  config: unknown;
+  host: SourceCallbacks;
+  pickDirectory: () => void;
+}) {
   const webPlayerConfig = props.config as WebPlayerConfig;
-
-  async function pickDirectory() {
-    const directoryHandle = await window.showDirectoryPicker({
-      id: "libraryDirectory",
-      startIn: "music"
-    });
-    if (directoryHandle != undefined) {
-      props.host.updateConfig({ folder: directoryHandle.name });
-    }
-  }
 
   function removeFolder() {
     props.host.updateConfig({ folder: "" });
+    props.host.removeTracks();
   }
 
   return (
     <div>
-      <button onClick={() => pickDirectory()}>Set folder</button>
+      <button onClick={() => props.pickDirectory()}>Set folder</button>
       <p>
         Folder:
         {webPlayerConfig?.folder ? webPlayerConfig.folder : "None set"}

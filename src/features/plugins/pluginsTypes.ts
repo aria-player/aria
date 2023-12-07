@@ -1,3 +1,5 @@
+import { TrackMetadata, TrackUri } from "../library/libraryTypes";
+
 export type PluginId = string;
 
 export type PluginInfo<H, C> = {
@@ -18,11 +20,13 @@ export interface BaseCallbacks {
 }
 
 export interface SourceHandle extends BaseHandle {
-  temp: () => void;
+  loadAndPlayTrack: (uri: TrackUri) => void;
 }
 
 export interface SourceCallbacks extends BaseCallbacks {
-  temp: () => void;
+  addTracks: (metadata: TrackMetadata[]) => void;
+  removeTracks: (uris?: TrackUri[]) => void;
+  updateMetadata: (metadata: TrackMetadata[]) => void;
 }
 
 export type BasePlugin = PluginInfo<BaseHandle, BaseCallbacks>;

@@ -1,15 +1,20 @@
-import { useState, useEffect, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback } from "react";
 import { AgGridReact } from "@ag-grid-community/react";
 import { RowClickedEvent } from "@ag-grid-community/core";
 import styles from "./TrackList.module.css";
+import { useAppSelector } from "../app/hooks";
+import { selectAllTracks } from "../features/library/librarySlice";
+import {
+  pluginHandles,
+  selectPluginsActive
+} from "../features/plugins/pluginsSlice";
+import { SourceHandle } from "../features/plugins/pluginsTypes";
+import { plugins } from "../plugins/plugins";
 
 export const TrackList = () => {
-  const [rowData, setRowData] = useState();
-  const [columnDefs] = useState([
-    { field: "make" },
-    { field: "model" },
-    { field: "price" }
-  ]);
+  const rowData = useAppSelector(selectAllTracks);
+  const pluginsActive = useAppSelector(selectPluginsActive);
+  const [columnDefs] = useState([{ field: "uri" }, { field: "title" }]);
   const defaultColDef = useMemo(
     () => ({
       sortable: true,
@@ -20,15 +25,18 @@ export const TrackList = () => {
     []
   );
 
-  const cellClickedListener = useCallback((event: RowClickedEvent) => {
-    console.log("cellClicked", event);
-  }, []);
-
-  useEffect(() => {
-    fetch("https://www.ag-grid.com/example-assets/row-data.json")
-      .then((result) => result.json())
-      .then((rowData) => setRowData(rowData));
-  }, []);
+  // Temporary function for testing the loading/playing (TrackList shouldn't refer to plugins)
+  const handleCellDoubleClicked = useCallback(
+    (event: RowClickedEvent) => {
+      for (const pluginId of pluginsActive) {
+        if (plugins[pluginId].type === "source") {
+          const plugin = pluginHandles[pluginId] as SourceHandle;
+          plugin.loadAndPlayTrack(event.data.uri);
+        }
+      }
+    },
+    [pluginsActive]
+  );
 
   return (
     <div className={`${styles.tracklist} ag-theme-balham`}>
@@ -37,7 +45,7 @@ export const TrackList = () => {
         columnDefs={columnDefs}
         defaultColDef={defaultColDef}
         rowSelection="multiple"
-        onCellClicked={cellClickedListener}
+        onCellDoubleClicked={handleCellDoubleClicked}
         rowHeight={33}
         headerHeight={37}
         suppressCellFocus
