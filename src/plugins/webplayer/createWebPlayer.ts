@@ -4,6 +4,7 @@ import {
   SourceHandle
 } from "../../features/plugins/pluginsTypes";
 import { Config } from "./Config";
+import { getMetadata } from "./getMetadata";
 
 export type WebPlayerConfig = {
   folder: string;
@@ -34,9 +35,16 @@ export function createWebPlayer(
       const tracks = Object.keys(fileHandles).map((uri: TrackUri) => ({
         uri,
         title: fileHandles[uri].name,
+        datemodified: fileHandles[uri].lastModified,
+        filesize: fileHandles[uri].size,
+        album: uri.split("/").slice(-2, -1)[0],
         metadataloaded: false
       }));
       host.addTracks(tracks);
+      for (const track of tracks) {
+        const metadata = await getMetadata(track, fileHandles[track.uri]);
+        host.updateMetadata([metadata]);
+      }
     }
   }
 
