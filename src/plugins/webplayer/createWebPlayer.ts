@@ -36,6 +36,7 @@ export function createWebPlayer(
         uri,
         title: fileHandles[uri].name,
         datemodified: fileHandles[uri].lastModified,
+        dateadded: Date.now(),
         filesize: fileHandles[uri].size,
         album: uri.split("/").slice(-2, -1)[0],
         metadataloaded: false

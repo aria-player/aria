@@ -19,6 +19,7 @@ export interface TrackMetadata {
   disc?: number;
   filesize?: number;
   datemodified?: number;
+  dateadded?: number;
 }
 
 export interface Track extends TrackMetadata {

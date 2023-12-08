@@ -70,6 +70,15 @@ export const columnDefinitions: ColDef[] = [
     }
   },
   {
+    field: "dateadded",
+    headerName: "Date Added",
+    hide: false,
+    filter: false,
+    valueFormatter: (params: { value: number }) => {
+      return new Date(params.value).toUTCString();
+    }
+  },
+  {
     field: "filesize",
     headerName: "Size",
     hide: false,
