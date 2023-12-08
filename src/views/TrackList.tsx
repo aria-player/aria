@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from "react";
+import { useMemo, useCallback } from "react";
 import { AgGridReact } from "@ag-grid-community/react";
 import { RowClickedEvent } from "@ag-grid-community/core";
 import styles from "./TrackList.module.css";
@@ -10,11 +10,11 @@ import {
 } from "../features/plugins/pluginsSlice";
 import { SourceHandle } from "../features/plugins/pluginsTypes";
 import { plugins } from "../plugins/plugins";
+import { columnDefinitions } from "../features/library/libraryColumns";
 
 export const TrackList = () => {
   const rowData = useAppSelector(selectAllTracks);
   const pluginsActive = useAppSelector(selectPluginsActive);
-  const [columnDefs] = useState([{ field: "uri" }, { field: "title" }]);
   const defaultColDef = useMemo(
     () => ({
       sortable: true,
@@ -43,7 +43,7 @@ export const TrackList = () => {
       <AgGridReact
         getRowId={(params) => params.data.uri}
         rowData={rowData}
-        columnDefs={columnDefs}
+        columnDefs={columnDefinitions}
         defaultColDef={defaultColDef}
         rowSelection="multiple"
         onCellDoubleClicked={handleCellDoubleClicked}
