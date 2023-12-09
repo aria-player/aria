@@ -1,4 +1,4 @@
-import { TrackUri } from "../../features/library/libraryTypes";
+import { TrackMetadata, TrackUri } from "../../features/library/libraryTypes";
 import {
   SourceCallbacks,
   SourceHandle
@@ -42,10 +42,14 @@ export function createWebPlayer(
         metadataloaded: false
       }));
       host.addTracks(tracks);
-      for (const track of tracks) {
-        const metadata = await getMetadata(track, fileHandles[track.uri]);
-        host.updateMetadata([metadata]);
-      }
+      updateTracksMetadata(tracks);
+    }
+  }
+
+  async function updateTracksMetadata(tracks: TrackMetadata[]) {
+    for (const track of tracks) {
+      const metadata = await getMetadata(track, fileHandles[track.uri]);
+      host.updateMetadata([metadata]);
     }
   }
 
