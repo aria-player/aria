@@ -1,4 +1,5 @@
 .menuButton {
+  width: 1.2rem;
   height: 1.2rem;
   padding: 0.15rem;
   color: var(--menubar-button-icon);
