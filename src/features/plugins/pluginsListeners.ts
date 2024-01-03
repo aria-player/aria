@@ -1,18 +1,13 @@
-import { RootState, store } from "../../app/store";
+import { store } from "../../app/store";
 import { BasePlugin, PluginId, SourcePlugin } from "./pluginsTypes";
-import {
-  pluginHandles,
-  selectPluginsActive,
-  selectPluginsConfig
-} from "./pluginsSlice";
+import { pluginHandles } from "./pluginsSlice";
 import { plugins } from "../../plugins/plugins";
 import { getBaseCallbacks, getSourceCallbacks } from "./pluginsCallbacks";
 import { startListening } from "../../app/listener";
 
 const createPluginInstance = (pluginId: PluginId) => {
   if (!pluginHandles[pluginId]) {
-    const currentState = store.getState();
-    const config = selectPluginsConfig(currentState);
+    const config = store.getState().plugins.pluginsConfig;
     const plugin = plugins[pluginId];
     if (!plugin) {
       throw new Error(`Plugin "${pluginId}" not found`);
@@ -41,16 +36,15 @@ const disposePluginInstance = (plugin: PluginId) => {
 
 export function setupPluginListeners() {
   startListening({
-    predicate: (_action, currentState: RootState, previousState: RootState) => {
+    predicate: (_action, currentState, previousState) => {
       return (
         currentState.plugins.pluginsActive !==
         previousState.plugins.pluginsActive
       );
     },
     effect: (_action, api) => {
-      const state = api.getState();
-      const activePlugins = selectPluginsActive(state);
-      Object.keys(pluginHandles).forEach((plugin: PluginId) => {
+      const activePlugins = api.getState().plugins.pluginsActive;
+      Object.keys(pluginHandles).forEach((plugin) => {
         if (!activePlugins.includes(plugin)) {
           disposePluginInstance(plugin);
         }
