@@ -31,7 +31,7 @@ export const TrackList = () => {
       for (const pluginId of pluginsActive) {
         if (plugins[pluginId].type === "source") {
           const plugin = pluginHandles[pluginId] as SourceHandle;
-          plugin.loadAndPlayTrack(event.data.uri);
+          plugin.loadAndPlayTrack(event.data);
         }
       }
     },

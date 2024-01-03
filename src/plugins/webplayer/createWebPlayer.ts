@@ -1,4 +1,8 @@
-import { TrackMetadata, TrackUri } from "../../features/library/libraryTypes";
+import {
+  Track,
+  TrackMetadata,
+  TrackUri
+} from "../../features/library/libraryTypes";
 import {
   SourceCallbacks,
   SourceHandle
@@ -78,8 +82,8 @@ export function createWebPlayer(host: SourceCallbacks): SourceHandle {
   return {
     Config: (props) => Config({ ...props, host, pickDirectory }),
 
-    async loadAndPlayTrack(uri: TrackUri): Promise<void> {
-      let file = fileHandles[uri];
+    async loadAndPlayTrack(track: Track): Promise<void> {
+      let file = fileHandles[track.uri];
       if (!file) {
         const confirmed = await confirm(
           "This file hasn't been loaded. Please re-select the '" +
@@ -88,7 +92,7 @@ export function createWebPlayer(host: SourceCallbacks): SourceHandle {
         );
         if (!confirmed) return;
         await pickDirectory();
-        file = fileHandles[uri];
+        file = fileHandles[track.uri];
         if (!file) throw new Error("File not found after re-selection");
       }
 

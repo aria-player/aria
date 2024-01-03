@@ -22,7 +22,7 @@ export interface BaseCallbacks {
 }
 
 export interface SourceHandle extends BaseHandle {
-  loadAndPlayTrack: (uri: TrackUri) => void;
+  loadAndPlayTrack: (track: Track) => void;
   onTracksUpdate?: (tracks: Track[]) => void;
 }
 
