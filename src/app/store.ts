@@ -24,13 +24,15 @@ const { createReduxHistory, routerMiddleware, routerReducer } =
     reduxTravelling: true
   });
 
+const reducer = combineReducers({
+  router: routerReducer,
+  config: persistReducer({ key: "config", storage }, configReducer),
+  library: persistReducer({ key: "library", storage }, libraryReducer),
+  plugins: persistReducer({ key: "plugins", storage }, pluginsReducer)
+});
+
 export const store = configureStore({
-  reducer: combineReducers({
-    router: routerReducer,
-    config: persistReducer({ key: "config", storage }, configReducer),
-    library: persistReducer({ key: "library", storage }, libraryReducer),
-    plugins: persistReducer({ key: "plugins", storage }, pluginsReducer)
-  }),
+  reducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {

@@ -46,7 +46,7 @@ export function GeneralPage() {
       <select
         className={styles.select}
         onChange={handleLanguageChange}
-        defaultValue={language}
+        defaultValue={language ?? "default"}
       >
         <option value="default">{t("settings.general.defaultLanguage")}</option>
         {Object.entries(supportedLanguages).map(([langCode, { title }]) => (
