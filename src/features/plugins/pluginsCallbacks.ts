@@ -1,4 +1,5 @@
 import { store } from "../../app/store";
+import { getTrackId } from "../../app/utils";
 import {
   selectTrackIds,
   addTracks,
@@ -24,11 +25,11 @@ function handleAddTracks(source: PluginId, metadata: TrackMetadata[]) {
   const newTracks = metadata
     .filter(
       (track: TrackMetadata) =>
-        !libraryTrackIds.includes(source + ":" + track.uri)
+        !libraryTrackIds.includes(getTrackId(source, track.uri))
     )
     .map((track: TrackMetadata) => ({
       ...track,
-      id: source + ":" + track.uri,
+      id: getTrackId(source, track.uri),
       source: source
     }));
 
@@ -39,11 +40,11 @@ function handleUpdateMetadata(source: PluginId, metadata: TrackMetadata[]) {
   const libraryTrackIds = selectTrackIds(store.getState());
   const newTracks = metadata
     .filter((track: TrackMetadata) =>
-      libraryTrackIds.includes(source + ":" + track.uri)
+      libraryTrackIds.includes(getTrackId(source, track.uri))
     )
     .map((track: TrackMetadata) => ({
       ...track,
-      id: source + ":" + track.uri,
+      id: getTrackId(source, track.uri),
       source: source
     }));
 
@@ -54,7 +55,7 @@ function handleRemoveTracks(source: PluginId, uris?: TrackUri[]) {
   if (uris) {
     const delTracks: TrackId[] = [];
     uris.forEach((uri: TrackUri) => {
-      delTracks.push(source + ":" + uri);
+      delTracks.push(getTrackId(source, uri));
     });
     store.dispatch(removeTracks({ source, tracks: delTracks }));
   } else {
@@ -82,7 +83,7 @@ export const getSourceCallbacks = (pluginId: PluginId): SourceCallbacks => {
       return libraryTracks.filter((track: Track) => track.source === pluginId);
     },
     getTrackByUri: (uri: TrackUri) => {
-      return selectTrackById(store.getState(), pluginId + ":" + uri);
+      return selectTrackById(store.getState(), getTrackId(pluginId, uri));
     }
   };
 };

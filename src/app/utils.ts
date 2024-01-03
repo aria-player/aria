@@ -1,3 +1,6 @@
+import { TrackUri, TrackId } from "../features/library/libraryTypes";
+import { PluginId } from "../features/plugins/pluginsTypes";
+
 export function isTauri() {
   return window.__TAURI__ !== undefined;
 }
@@ -12,4 +15,8 @@ export function formatBytes(bytes: number) {
   const sizes = ["B", "KB", "MB", "GB", "TB"];
   const unit = Math.floor(Math.log(bytes) / Math.log(1024));
   return (bytes / Math.pow(1024, unit)).toFixed(2) + " " + sizes[unit];
+}
+
+export function getTrackId(source: PluginId, uri: TrackUri): TrackId {
+  return source + ":" + uri;
 }
