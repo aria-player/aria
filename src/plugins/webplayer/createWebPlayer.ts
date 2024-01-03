@@ -95,6 +95,10 @@ export function createWebPlayer(host: SourceCallbacks): SourceHandle {
         file = fileHandles[track.uri];
         if (!file) throw new Error("File not found after re-selection");
       }
+      if (!track.metadataloaded) {
+        const metadata = await getMetadata(track, fileHandles[track.uri]);
+        host.updateMetadata([metadata]);
+      }
 
       if (audio) {
         audio.pause();
