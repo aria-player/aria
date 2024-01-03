@@ -1,5 +1,4 @@
 import { RootState, store } from "../../app/store";
-import { createListenerMiddleware } from "@reduxjs/toolkit";
 import { BasePlugin, PluginId, SourcePlugin } from "./pluginsTypes";
 import {
   pluginHandles,
@@ -8,8 +7,7 @@ import {
 } from "./pluginsSlice";
 import { plugins } from "../../plugins/plugins";
 import { getBaseCallbacks, getSourceCallbacks } from "./pluginsCallbacks";
-
-export const pluginsListener = createListenerMiddleware();
+import { startListening } from "../../app/listener";
 
 const createPluginInstance = (pluginId: PluginId) => {
   if (!pluginHandles[pluginId]) {
@@ -41,20 +39,23 @@ const disposePluginInstance = (plugin: PluginId) => {
   delete pluginHandles[plugin];
 };
 
-pluginsListener.startListening({
-  predicate: (_action, currentState: RootState, previousState: RootState) => {
-    return (
-      currentState.plugins.pluginsActive !== previousState.plugins.pluginsActive
-    );
-  },
-  effect: (_action, api) => {
-    const state = api.getState();
-    const activePlugins = selectPluginsActive(state);
-    Object.keys(pluginHandles).forEach((plugin: PluginId) => {
-      if (!activePlugins.includes(plugin)) {
-        disposePluginInstance(plugin);
-      }
-    });
-    activePlugins.forEach(createPluginInstance);
-  }
-});
+export function setupPluginListeners() {
+  startListening({
+    predicate: (_action, currentState: RootState, previousState: RootState) => {
+      return (
+        currentState.plugins.pluginsActive !==
+        previousState.plugins.pluginsActive
+      );
+    },
+    effect: (_action, api) => {
+      const state = api.getState();
+      const activePlugins = selectPluginsActive(state);
+      Object.keys(pluginHandles).forEach((plugin: PluginId) => {
+        if (!activePlugins.includes(plugin)) {
+          disposePluginInstance(plugin);
+        }
+      });
+      activePlugins.forEach(createPluginInstance);
+    }
+  });
+}

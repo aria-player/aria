@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { PluginHandle, PluginId } from "./pluginsTypes";
 import { RootState } from "../../app/store";
+import { setupPluginListeners } from "./pluginsListeners";
 
 type PluginsState = {
   pluginsActive: PluginId[];
@@ -48,3 +49,5 @@ export const selectPluginsActive = (state: RootState) =>
   state.plugins.pluginsActive;
 
 export default pluginsSlice.reducer;
+
+setupPluginListeners();

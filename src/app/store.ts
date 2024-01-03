@@ -16,7 +16,7 @@ import {
 import { combineReducers } from "redux";
 import { createReduxHistoryContext } from "redux-first-history";
 import { createBrowserHistory } from "history";
-import { pluginsListener } from "../features/plugins/pluginsListener";
+import { listenerMiddleware } from "./listener";
 
 const { createReduxHistory, routerMiddleware, routerReducer } =
   createReduxHistoryContext({
@@ -36,7 +36,7 @@ export const store = configureStore({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER]
       }
-    }).concat([routerMiddleware, pluginsListener.middleware])
+    }).concat([routerMiddleware, listenerMiddleware.middleware])
 });
 
 export type AppDispatch = typeof store.dispatch;
