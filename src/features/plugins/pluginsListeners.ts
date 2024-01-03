@@ -1,4 +1,3 @@
-import { store } from "../../app/store";
 import { BasePlugin, PluginId, SourcePlugin } from "./pluginsTypes";
 import { pluginHandles } from "./pluginsSlice";
 import { plugins } from "../../plugins/plugins";
@@ -7,7 +6,6 @@ import { startListening } from "../../app/listener";
 
 const createPluginInstance = (pluginId: PluginId) => {
   if (!pluginHandles[pluginId]) {
-    const config = store.getState().plugins.pluginsConfig;
     const plugin = plugins[pluginId];
     if (!plugin) {
       throw new Error(`Plugin "${pluginId}" not found`);
@@ -15,13 +13,11 @@ const createPluginInstance = (pluginId: PluginId) => {
     switch (plugin.type) {
       case "base":
         pluginHandles[pluginId] = (plugin as BasePlugin).create(
-          config[pluginId],
           getBaseCallbacks(pluginId)
         );
         break;
       case "source":
         pluginHandles[pluginId] = (plugin as SourcePlugin).create(
-          config[pluginId],
           getSourceCallbacks(pluginId)
         );
         break;

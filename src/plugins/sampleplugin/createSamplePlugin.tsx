@@ -7,11 +7,8 @@ type SamplePluginConfig = {
   pings: number;
 };
 
-export function createSamplePlugin(
-  initialConfig: unknown,
-  host: BaseCallbacks
-): BaseHandle {
-  initialConfig = initialConfig as SamplePluginConfig;
+export function createSamplePlugin(host: BaseCallbacks): BaseHandle {
+  const initialConfig = host.getConfig() as SamplePluginConfig | null;
   i18n.addResourceBundle("en-US", "sampleplugin", en_us);
   console.log("Created sampleplugin with initial config: ", initialConfig);
 

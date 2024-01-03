@@ -7,7 +7,7 @@ export type PluginInfo<H, C> = {
   type: "base" | "source";
   name: string;
   needsTauri: boolean;
-  create: (initialConfig: unknown, callbacks: C) => H;
+  create: (callbacks: C) => H;
 };
 
 export interface BaseHandle {

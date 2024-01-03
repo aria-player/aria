@@ -10,13 +10,11 @@ export type WebPlayerConfig = {
   folder: string;
 };
 
-export function createWebPlayer(
-  initialConfig: unknown,
-  host: SourceCallbacks
-): SourceHandle {
+export function createWebPlayer(host: SourceCallbacks): SourceHandle {
+  const initialConfig = host.getConfig() as WebPlayerConfig | null;
   console.log("Created webplayer with initial config: ", initialConfig);
 
-  let folder = (initialConfig as WebPlayerConfig)?.folder;
+  let folder = initialConfig?.folder;
   let fileHandles: { [key: TrackUri]: File } = {};
   let audio: HTMLAudioElement | null;
 
