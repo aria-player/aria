@@ -50,6 +50,7 @@ export function createWebPlayer(host: SourceCallbacks): SourceHandle {
 
   async function updateTracksMetadata(tracks: TrackMetadata[]) {
     for (const track of tracks) {
+      if (host.getTrackByUri(track.uri)?.metadataloaded) continue;
       const metadata = await getMetadata(track, fileHandles[track.uri]);
       host.updateMetadata([metadata]);
     }

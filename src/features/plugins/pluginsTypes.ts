@@ -31,6 +31,7 @@ export interface SourceCallbacks extends BaseCallbacks {
   removeTracks: (uris?: TrackUri[]) => void;
   updateMetadata: (metadata: TrackMetadata[]) => void;
   getTracks: () => Track[];
+  getTrackByUri: (uri: TrackUri) => Track | undefined;
 }
 
 export type BasePlugin = PluginInfo<BaseHandle, BaseCallbacks>;

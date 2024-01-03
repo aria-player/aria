@@ -3,7 +3,8 @@ import {
   selectTrackIds,
   addTracks,
   removeTracks,
-  selectAllTracks
+  selectAllTracks,
+  selectTrackById
 } from "../library/librarySlice";
 import {
   Track,
@@ -79,6 +80,9 @@ export const getSourceCallbacks = (pluginId: PluginId): SourceCallbacks => {
     getTracks: () => {
       const libraryTracks = selectAllTracks(store.getState());
       return libraryTracks.filter((track: Track) => track.source === pluginId);
+    },
+    getTrackByUri: (uri: TrackUri) => {
+      return selectTrackById(store.getState(), pluginId + ":" + uri);
     }
   };
 };
