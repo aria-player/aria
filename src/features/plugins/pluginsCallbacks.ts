@@ -2,9 +2,15 @@ import { store } from "../../app/store";
 import {
   selectTrackIds,
   addTracks,
-  removeTracks
+  removeTracks,
+  selectAllTracks
 } from "../library/librarySlice";
-import { TrackId, TrackMetadata, TrackUri } from "../library/libraryTypes";
+import {
+  Track,
+  TrackId,
+  TrackMetadata,
+  TrackUri
+} from "../library/libraryTypes";
 import { setPluginConfig } from "./pluginsSlice";
 import { PluginId, BaseCallbacks, SourceCallbacks } from "./pluginsTypes";
 
@@ -57,7 +63,8 @@ function handleRemoveTracks(source: PluginId, uris?: TrackUri[]) {
 
 export const getBaseCallbacks = (pluginId: PluginId): BaseCallbacks => {
   return {
-    updateConfig: (config: unknown) => handleUpdateConfig(pluginId, config)
+    updateConfig: (config: unknown) => handleUpdateConfig(pluginId, config),
+    getConfig: () => store.getState().plugins.pluginsConfig[pluginId]
   };
 };
 
@@ -68,6 +75,10 @@ export const getSourceCallbacks = (pluginId: PluginId): SourceCallbacks => {
       handleAddTracks(pluginId, metadata),
     removeTracks: (uris?: TrackUri[]) => handleRemoveTracks(pluginId, uris),
     updateMetadata: (metadata: TrackMetadata[]) =>
-      handleUpdateMetadata(pluginId, metadata)
+      handleUpdateMetadata(pluginId, metadata),
+    getTracks: () => {
+      const libraryTracks = selectAllTracks(store.getState());
+      return libraryTracks.filter((track: Track) => track.source === pluginId);
+    }
   };
 };

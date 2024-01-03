@@ -7,6 +7,7 @@ import {
 import { Track, TrackId } from "./libraryTypes";
 import { PluginId } from "../plugins/pluginsTypes";
 import { RootState } from "../../app/store";
+import { setupLibraryListeners } from "./libraryListeners";
 
 const tracksAdapter = createEntityAdapter<Track>();
 
@@ -48,3 +49,5 @@ export const {
 } = tracksAdapter.getSelectors((state: RootState) => state.library.tracks);
 
 export default librarySlice.reducer;
+
+setupLibraryListeners();
