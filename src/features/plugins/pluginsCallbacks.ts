@@ -13,11 +13,11 @@ import {
   TrackMetadata,
   TrackUri
 } from "../library/libraryTypes";
-import { setPluginConfig } from "./pluginsSlice";
+import { setPluginData } from "./pluginsSlice";
 import { PluginId, BaseCallbacks, SourceCallbacks } from "./pluginsTypes";
 
-function handleUpdateConfig(pluginId: PluginId, config: object) {
-  store.dispatch(setPluginConfig({ plugin: pluginId, config }));
+function handleUpdateData(pluginId: PluginId, data: object) {
+  store.dispatch(setPluginData({ plugin: pluginId, data }));
 }
 
 function handleAddTracks(source: PluginId, metadata: TrackMetadata[]) {
@@ -65,8 +65,8 @@ function handleRemoveTracks(source: PluginId, uris?: TrackUri[]) {
 
 export const getBaseCallbacks = (pluginId: PluginId): BaseCallbacks => {
   return {
-    updateConfig: (config: object) => handleUpdateConfig(pluginId, config),
-    getConfig: () => store.getState().plugins.pluginsConfig[pluginId] ?? {}
+    updateData: (data: object) => handleUpdateData(pluginId, data),
+    getData: () => store.getState().plugins.pluginsData[pluginId] ?? {}
   };
 };
 

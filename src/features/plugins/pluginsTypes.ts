@@ -11,14 +11,14 @@ export type PluginInfo<H, C> = {
 };
 
 export interface BaseHandle {
-  Config?: React.FC<{ config: object }>;
-  onConfigUpdate?: (config: object) => void;
+  Config?: React.FC<{ data: object }>;
+  onDataUpdate?: (data: object) => void;
   dispose: () => void;
 }
 
 export interface BaseCallbacks {
-  updateConfig: (config: object) => void;
-  getConfig: () => object;
+  updateData: (data: object) => void;
+  getData: () => object;
 }
 
 export interface SourceHandle extends BaseHandle {

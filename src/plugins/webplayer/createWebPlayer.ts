@@ -10,14 +10,14 @@ import {
 import { Config } from "./Config";
 import { getMetadata } from "./getMetadata";
 
-export type WebPlayerConfig = {
+export type WebPlayerData = {
   folder: string;
   scanned: number;
   total: number;
 };
 
 export function createWebPlayer(host: SourceCallbacks): SourceHandle {
-  const initialConfig = host.getConfig() as WebPlayerConfig | null;
+  const initialConfig = host.getData() as WebPlayerData | null;
   console.log("Created webplayer with initial config: ", initialConfig);
 
   let folder = initialConfig?.folder;
@@ -35,7 +35,7 @@ export function createWebPlayer(host: SourceCallbacks): SourceHandle {
       }
       folder = directoryHandle.name;
       fileHandles = await getAudioFileHandlesWeb(directoryHandle);
-      host.updateConfig({
+      host.updateData({
         folder,
         scanned: host.getTracks().filter((track) => track.metadataloaded)
           .length,
@@ -61,8 +61,8 @@ export function createWebPlayer(host: SourceCallbacks): SourceHandle {
       if (host.getTrackByUri(track.uri)?.metadataloaded) continue;
       const metadata = await getMetadata(track, fileHandles[track.uri]);
       host.updateMetadata([metadata]);
-      host.updateConfig({
-        scanned: (host.getConfig() as WebPlayerConfig).scanned + 1
+      host.updateData({
+        scanned: (host.getData() as WebPlayerData).scanned + 1
       });
     }
   }
@@ -110,8 +110,8 @@ export function createWebPlayer(host: SourceCallbacks): SourceHandle {
       if (!track.metadataloaded) {
         const metadata = await getMetadata(track, fileHandles[track.uri]);
         host.updateMetadata([metadata]);
-        host.updateConfig({
-          scanned: (host.getConfig() as WebPlayerConfig).scanned + 1
+        host.updateData({
+          scanned: (host.getData() as WebPlayerData).scanned + 1
         });
       }
 

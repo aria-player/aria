@@ -8,7 +8,7 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   pluginHandles,
   selectPluginsActive,
-  selectPluginsConfig,
+  selectPluginsData,
   setPluginActive
 } from "../../features/plugins/pluginsSlice";
 
@@ -17,7 +17,7 @@ export function PluginsPage() {
 
   const dispatch = useAppDispatch();
   const pluginsActive = useAppSelector(selectPluginsActive);
-  const pluginsConfig = useAppSelector(selectPluginsConfig);
+  const pluginsData = useAppSelector(selectPluginsData);
 
   function shouldShowPlugin(plugin: PluginId) {
     return !(plugins[plugin].needsTauri && !isTauri());
@@ -68,7 +68,7 @@ export function PluginsPage() {
         return (
           <React.Fragment key={plugin}>
             {pluginHandle?.Config && (
-              <pluginHandle.Config config={pluginsConfig[plugin] ?? {}} />
+              <pluginHandle.Config data={pluginsData[plugin] ?? {}} />
             )}
           </React.Fragment>
         );

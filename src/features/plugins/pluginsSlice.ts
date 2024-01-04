@@ -5,14 +5,14 @@ import { setupPluginListeners } from "./pluginsListeners";
 
 type PluginsState = {
   pluginsActive: PluginId[];
-  pluginsConfig: Partial<Record<PluginId, object>>;
+  pluginsData: Partial<Record<PluginId, object>>;
 };
 
 export const pluginHandles: Partial<Record<PluginId, PluginHandle>> = {};
 
 const initialState: PluginsState = {
   pluginsActive: ["webplayer"],
-  pluginsConfig: {}
+  pluginsData: {}
 };
 
 export const pluginsSlice = createSlice({
@@ -28,26 +28,26 @@ export const pluginsSlice = createSlice({
         state.pluginsActive.push(plugin);
       } else {
         state.pluginsActive = state.pluginsActive.filter((p) => p !== plugin);
-        delete state.pluginsConfig[plugin];
+        delete state.pluginsData[plugin];
       }
     },
-    setPluginConfig: (
+    setPluginData: (
       state,
-      action: PayloadAction<{ plugin: PluginId; config: object }>
+      action: PayloadAction<{ plugin: PluginId; data: object }>
     ) => {
-      const { plugin, config } = action.payload;
-      state.pluginsConfig[plugin] = {
-        ...state.pluginsConfig[plugin],
-        ...config
+      const { plugin, data } = action.payload;
+      state.pluginsData[plugin] = {
+        ...state.pluginsData[plugin],
+        ...data
       };
     }
   }
 });
 
-export const { setPluginActive, setPluginConfig } = pluginsSlice.actions;
+export const { setPluginActive, setPluginData } = pluginsSlice.actions;
 
-export const selectPluginsConfig = (state: RootState) =>
-  state.plugins.pluginsConfig;
+export const selectPluginsData = (state: RootState) =>
+  state.plugins.pluginsData;
 export const selectPluginsActive = (state: RootState) =>
   state.plugins.pluginsActive;
 

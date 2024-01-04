@@ -1,19 +1,19 @@
 import { SourceCallbacks } from "../../features/plugins/pluginsTypes";
-import { WebPlayerConfig } from "./createWebPlayer";
+import { WebPlayerData } from "./createWebPlayer";
 
 export function Config(props: {
-  config: object;
+  data: object;
   host: SourceCallbacks;
   pickDirectory: () => void;
 }) {
-  const webPlayerConfig = props.config as WebPlayerConfig;
+  const webPlayerData = props.data as WebPlayerData;
 
   function removeFolder() {
-    props.host.updateConfig({
+    props.host.updateData({
       folder: "",
       scanned: 0,
       total: 0
-    } as WebPlayerConfig);
+    } as WebPlayerData);
     props.host.removeTracks();
   }
 
@@ -22,14 +22,14 @@ export function Config(props: {
       <button onClick={() => props.pickDirectory()}>Set folder</button>
       <p>
         Folder:
-        {webPlayerConfig?.folder ? webPlayerConfig.folder : "None set"}
+        {webPlayerData?.folder ? webPlayerData.folder : "None set"}
       </p>
-      {webPlayerConfig?.folder && (
+      {webPlayerData?.folder && (
         <button onClick={removeFolder}>Remove folder</button>
       )}
-      {webPlayerConfig?.scanned < webPlayerConfig?.total && (
+      {webPlayerData?.scanned < webPlayerData?.total && (
         <p>
-          Scanned {webPlayerConfig.scanned}/{webPlayerConfig.total} tracks
+          Scanned {webPlayerData.scanned}/{webPlayerData.total} tracks
         </p>
       )}
     </div>
