@@ -16,7 +16,7 @@ import {
 import { setPluginConfig } from "./pluginsSlice";
 import { PluginId, BaseCallbacks, SourceCallbacks } from "./pluginsTypes";
 
-function handleUpdateConfig(pluginId: PluginId, config: unknown) {
+function handleUpdateConfig(pluginId: PluginId, config: object) {
   store.dispatch(setPluginConfig({ plugin: pluginId, config }));
 }
 
@@ -65,8 +65,8 @@ function handleRemoveTracks(source: PluginId, uris?: TrackUri[]) {
 
 export const getBaseCallbacks = (pluginId: PluginId): BaseCallbacks => {
   return {
-    updateConfig: (config: unknown) => handleUpdateConfig(pluginId, config),
-    getConfig: () => store.getState().plugins.pluginsConfig[pluginId]
+    updateConfig: (config: object) => handleUpdateConfig(pluginId, config),
+    getConfig: () => store.getState().plugins.pluginsConfig[pluginId] ?? {}
   };
 };
 

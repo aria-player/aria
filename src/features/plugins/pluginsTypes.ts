@@ -11,14 +11,14 @@ export type PluginInfo<H, C> = {
 };
 
 export interface BaseHandle {
-  Config?: React.FC<{ config: unknown }>;
-  onConfigUpdate?: (config: unknown) => void;
+  Config?: React.FC<{ config: object }>;
+  onConfigUpdate?: (config: object) => void;
   dispose: () => void;
 }
 
 export interface BaseCallbacks {
-  updateConfig: (config: unknown) => void;
-  getConfig: () => unknown;
+  updateConfig: (config: object) => void;
+  getConfig: () => object;
 }
 
 export interface SourceHandle extends BaseHandle {

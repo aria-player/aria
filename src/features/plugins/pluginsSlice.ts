@@ -5,7 +5,7 @@ import { setupPluginListeners } from "./pluginsListeners";
 
 type PluginsState = {
   pluginsActive: PluginId[];
-  pluginsConfig: Partial<Record<PluginId, unknown>>;
+  pluginsConfig: Partial<Record<PluginId, object>>;
 };
 
 export const pluginHandles: Partial<Record<PluginId, PluginHandle>> = {};
@@ -33,12 +33,12 @@ export const pluginsSlice = createSlice({
     },
     setPluginConfig: (
       state,
-      action: PayloadAction<{ plugin: PluginId; config: unknown }>
+      action: PayloadAction<{ plugin: PluginId; config: object }>
     ) => {
       const { plugin, config } = action.payload;
       state.pluginsConfig[plugin] = {
-        ...(state.pluginsConfig[plugin] as object),
-        ...(config as object)
+        ...state.pluginsConfig[plugin],
+        ...config
       };
     }
   }

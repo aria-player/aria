@@ -13,7 +13,7 @@ export function createSamplePlugin(host: BaseCallbacks): BaseHandle {
   console.log("Created sampleplugin with initial config: ", initialConfig);
 
   return {
-    Config(props: { config: unknown }) {
+    Config(props: { config: object }) {
       const currentConfig = props.config as SamplePluginConfig;
       const { t } = useTranslation();
 

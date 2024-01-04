@@ -2,7 +2,7 @@ import { SourceCallbacks } from "../../features/plugins/pluginsTypes";
 import { WebPlayerConfig } from "./createWebPlayer";
 
 export function Config(props: {
-  config: unknown;
+  config: object;
   host: SourceCallbacks;
   pickDirectory: () => void;
 }) {

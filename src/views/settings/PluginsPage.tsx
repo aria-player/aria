@@ -68,7 +68,7 @@ export function PluginsPage() {
         return (
           <React.Fragment key={plugin}>
             {pluginHandle?.Config && (
-              <pluginHandle.Config config={pluginsConfig[plugin] as unknown} />
+              <pluginHandle.Config config={pluginsConfig[plugin] ?? {}} />
             )}
           </React.Fragment>
         );
