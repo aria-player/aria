@@ -33,7 +33,7 @@ function handleAddTracks(source: PluginId, metadata: TrackMetadata[]) {
       source: source
     }));
 
-  store.dispatch(addTracks(newTracks));
+  store.dispatch(addTracks({ source, tracks: newTracks }));
 }
 
 function handleUpdateMetadata(source: PluginId, metadata: TrackMetadata[]) {
@@ -48,7 +48,7 @@ function handleUpdateMetadata(source: PluginId, metadata: TrackMetadata[]) {
       source: source
     }));
 
-  store.dispatch(addTracks(newTracks));
+  store.dispatch(addTracks({ source, tracks: newTracks }));
 }
 
 function handleRemoveTracks(source: PluginId, uris?: TrackUri[]) {

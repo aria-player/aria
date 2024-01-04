@@ -23,8 +23,11 @@ const librarySlice = createSlice({
   name: "library",
   initialState,
   reducers: {
-    addTracks: (state, action: PayloadAction<Track[]>) => {
-      tracksAdapter.upsertMany(state.tracks, action.payload);
+    addTracks: (
+      state,
+      action: PayloadAction<{ source: PluginId; tracks?: Track[] }>
+    ) => {
+      tracksAdapter.upsertMany(state.tracks, action.payload.tracks ?? []);
     },
     removeTracks: (
       state,
