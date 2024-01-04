@@ -1,18 +1,18 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { PluginHandle, PluginId } from "./pluginsTypes";
-import { RootState } from "../../app/store";
 import { setupPluginListeners } from "./pluginsListeners";
+import { RootState } from "../../app/store";
 
 type PluginsState = {
-  pluginsActive: PluginId[];
-  pluginsData: Partial<Record<PluginId, object>>;
+  activePlugins: PluginId[];
+  pluginData: Partial<Record<PluginId, object>>;
 };
 
 export const pluginHandles: Partial<Record<PluginId, PluginHandle>> = {};
 
 const initialState: PluginsState = {
-  pluginsActive: ["webplayer"],
-  pluginsData: {}
+  activePlugins: ["webplayer"],
+  pluginData: {}
 };
 
 export const pluginsSlice = createSlice({
@@ -24,11 +24,11 @@ export const pluginsSlice = createSlice({
       action: PayloadAction<{ plugin: PluginId; active: boolean }>
     ) => {
       const { plugin, active } = action.payload;
-      if (active && !state.pluginsActive.includes(plugin)) {
-        state.pluginsActive.push(plugin);
+      if (active && !state.activePlugins.includes(plugin)) {
+        state.activePlugins.push(plugin);
       } else {
-        state.pluginsActive = state.pluginsActive.filter((p) => p !== plugin);
-        delete state.pluginsData[plugin];
+        state.activePlugins = state.activePlugins.filter((p) => p !== plugin);
+        delete state.pluginData[plugin];
       }
     },
     setPluginData: (
@@ -36,8 +36,8 @@ export const pluginsSlice = createSlice({
       action: PayloadAction<{ plugin: PluginId; data: object }>
     ) => {
       const { plugin, data } = action.payload;
-      state.pluginsData[plugin] = {
-        ...state.pluginsData[plugin],
+      state.pluginData[plugin] = {
+        ...state.pluginData[plugin],
         ...data
       };
     }
@@ -46,10 +46,9 @@ export const pluginsSlice = createSlice({
 
 export const { setPluginActive, setPluginData } = pluginsSlice.actions;
 
-export const selectPluginsData = (state: RootState) =>
-  state.plugins.pluginsData;
-export const selectPluginsActive = (state: RootState) =>
-  state.plugins.pluginsActive;
+export const selectActivePlugins = (state: RootState) =>
+  state.plugins.activePlugins;
+export const selectPluginData = (state: RootState) => state.plugins.pluginData;
 
 export default pluginsSlice.reducer;
 

@@ -34,12 +34,12 @@ export function setupPluginListeners() {
   startListening({
     predicate: (_action, currentState, previousState) => {
       return (
-        currentState.plugins.pluginsActive !==
-        previousState.plugins.pluginsActive
+        currentState.plugins.activePlugins !==
+        previousState.plugins.activePlugins
       );
     },
     effect: (_action, api) => {
-      const activePlugins = api.getState().plugins.pluginsActive;
+      const activePlugins = api.getState().plugins.activePlugins;
       Object.keys(pluginHandles).forEach((plugin) => {
         if (!activePlugins.includes(plugin)) {
           disposePluginInstance(plugin);

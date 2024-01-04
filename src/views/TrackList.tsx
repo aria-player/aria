@@ -6,7 +6,7 @@ import { useAppSelector } from "../app/hooks";
 import { selectAllTracks } from "../features/library/librarySlice";
 import {
   pluginHandles,
-  selectPluginsActive
+  selectActivePlugins
 } from "../features/plugins/pluginsSlice";
 import { SourceHandle } from "../features/plugins/pluginsTypes";
 import { plugins } from "../plugins/plugins";
@@ -14,7 +14,7 @@ import { columnDefinitions } from "../features/library/libraryColumns";
 
 export const TrackList = () => {
   const rowData = useAppSelector(selectAllTracks);
-  const pluginsActive = useAppSelector(selectPluginsActive);
+  const activePlugins = useAppSelector(selectActivePlugins);
   const defaultColDef = useMemo(
     () => ({
       sortable: true,
@@ -28,14 +28,14 @@ export const TrackList = () => {
   // Temporary function for testing the loading/playing (TrackList shouldn't refer to plugins)
   const handleCellDoubleClicked = useCallback(
     (event: RowClickedEvent) => {
-      for (const pluginId of pluginsActive) {
+      for (const pluginId of activePlugins) {
         if (plugins[pluginId].type === "source") {
           const plugin = pluginHandles[pluginId] as SourceHandle;
           plugin.loadAndPlayTrack(event.data);
         }
       }
     },
-    [pluginsActive]
+    [activePlugins]
   );
 
   return (

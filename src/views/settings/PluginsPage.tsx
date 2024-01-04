@@ -7,8 +7,8 @@ import React from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   pluginHandles,
-  selectPluginsActive,
-  selectPluginsData,
+  selectActivePlugins,
+  selectPluginData,
   setPluginActive
 } from "../../features/plugins/pluginsSlice";
 
@@ -16,8 +16,8 @@ export function PluginsPage() {
   const { t } = useTranslation();
 
   const dispatch = useAppDispatch();
-  const pluginsActive = useAppSelector(selectPluginsActive);
-  const pluginsData = useAppSelector(selectPluginsData);
+  const activePlugins = useAppSelector(selectActivePlugins);
+  const pluginData = useAppSelector(selectPluginData);
 
   function shouldShowPlugin(plugin: PluginId) {
     return !(plugins[plugin].needsTauri && !isTauri());
@@ -35,9 +35,9 @@ export function PluginsPage() {
               <input
                 type="checkbox"
                 readOnly
-                checked={pluginsActive.includes(plugin)}
+                checked={activePlugins.includes(plugin)}
                 onClick={async () => {
-                  if (pluginsActive.includes(plugin)) {
+                  if (activePlugins.includes(plugin)) {
                     const confirmed = await confirm(
                       t("settings.plugins.confirmDisable", {
                         plugin: plugins[plugin].name
@@ -50,7 +50,7 @@ export function PluginsPage() {
                   dispatch(
                     setPluginActive({
                       plugin: plugin,
-                      active: !pluginsActive.includes(plugin)
+                      active: !activePlugins.includes(plugin)
                     })
                   );
                 }}
@@ -60,15 +60,15 @@ export function PluginsPage() {
             </React.Fragment>
           )
       )}
-      {pluginsActive && pluginsActive.length > 0 && (
+      {activePlugins && activePlugins.length > 0 && (
         <h4 className={styles.header}>{t("settings.plugins.pluginConfig")}</h4>
       )}
-      {pluginsActive?.map((plugin: PluginId) => {
+      {activePlugins?.map((plugin: PluginId) => {
         const pluginHandle = pluginHandles[plugin];
         return (
           <React.Fragment key={plugin}>
             {pluginHandle?.Config && (
-              <pluginHandle.Config data={pluginsData[plugin] ?? {}} />
+              <pluginHandle.Config data={pluginData[plugin] ?? {}} />
             )}
           </React.Fragment>
         );

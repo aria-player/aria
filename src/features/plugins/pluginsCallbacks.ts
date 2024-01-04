@@ -66,7 +66,7 @@ function handleRemoveTracks(source: PluginId, uris?: TrackUri[]) {
 export const getBaseCallbacks = (pluginId: PluginId): BaseCallbacks => {
   return {
     updateData: (data: object) => handleUpdateData(pluginId, data),
-    getData: () => store.getState().plugins.pluginsData[pluginId] ?? {}
+    getData: () => store.getState().plugins.pluginData[pluginId] ?? {}
   };
 };
 
