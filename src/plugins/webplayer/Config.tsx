@@ -9,7 +9,11 @@ export function Config(props: {
   const webPlayerConfig = props.config as WebPlayerConfig;
 
   function removeFolder() {
-    props.host.updateConfig({ folder: "" });
+    props.host.updateConfig({
+      folder: "",
+      scanned: 0,
+      total: 0
+    } as WebPlayerConfig);
     props.host.removeTracks();
   }
 
@@ -22,6 +26,11 @@ export function Config(props: {
       </p>
       {webPlayerConfig?.folder && (
         <button onClick={removeFolder}>Remove folder</button>
+      )}
+      {webPlayerConfig?.scanned < webPlayerConfig?.total && (
+        <p>
+          Scanned {webPlayerConfig.scanned}/{webPlayerConfig.total} tracks
+        </p>
       )}
     </div>
   );

@@ -36,7 +36,10 @@ export const pluginsSlice = createSlice({
       action: PayloadAction<{ plugin: PluginId; config: unknown }>
     ) => {
       const { plugin, config } = action.payload;
-      state.pluginsConfig[plugin] = config;
+      state.pluginsConfig[plugin] = {
+        ...(state.pluginsConfig[plugin] as object),
+        ...(config as object)
+      };
     }
   }
 });

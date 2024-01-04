@@ -12,6 +12,8 @@ import { getMetadata } from "./getMetadata";
 
 export type WebPlayerConfig = {
   folder: string;
+  scanned: number;
+  total: number;
 };
 
 export function createWebPlayer(host: SourceCallbacks): SourceHandle {
@@ -32,8 +34,14 @@ export function createWebPlayer(host: SourceCallbacks): SourceHandle {
         host.removeTracks();
       }
       folder = directoryHandle.name;
-      host.updateConfig({ folder });
       fileHandles = await getAudioFileHandlesWeb(directoryHandle);
+      host.updateConfig({
+        folder,
+        scanned: host.getTracks().filter((track) => track.metadataloaded)
+          .length,
+        total: Object.keys(fileHandles).length
+      });
+
       const tracks = Object.keys(fileHandles).map((uri: TrackUri) => ({
         uri,
         title: fileHandles[uri].name,
@@ -53,6 +61,9 @@ export function createWebPlayer(host: SourceCallbacks): SourceHandle {
       if (host.getTrackByUri(track.uri)?.metadataloaded) continue;
       const metadata = await getMetadata(track, fileHandles[track.uri]);
       host.updateMetadata([metadata]);
+      host.updateConfig({
+        scanned: (host.getConfig() as WebPlayerConfig).scanned + 1
+      });
     }
   }
 
@@ -99,6 +110,9 @@ export function createWebPlayer(host: SourceCallbacks): SourceHandle {
       if (!track.metadataloaded) {
         const metadata = await getMetadata(track, fileHandles[track.uri]);
         host.updateMetadata([metadata]);
+        host.updateConfig({
+          scanned: (host.getConfig() as WebPlayerConfig).scanned + 1
+        });
       }
 
       if (audio) {
