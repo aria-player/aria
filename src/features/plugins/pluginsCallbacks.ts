@@ -13,14 +13,20 @@ import {
   TrackMetadata,
   TrackUri
 } from "../library/libraryTypes";
-import { setPluginData } from "./pluginsSlice";
+import { selectActivePlugins, setPluginData } from "./pluginsSlice";
 import { PluginId, BaseCallbacks, SourceCallbacks } from "./pluginsTypes";
+
+function isPluginActive(pluginId: PluginId): boolean {
+  const activePlugins = selectActivePlugins(store.getState());
+  return activePlugins.includes(pluginId);
+}
 
 function handleUpdateData(pluginId: PluginId, data: object) {
   store.dispatch(setPluginData({ plugin: pluginId, data }));
 }
 
 function handleAddTracks(source: PluginId, metadata: TrackMetadata[]) {
+  if (!isPluginActive(source)) return;
   const libraryTrackIds = selectTrackIds(store.getState());
   const newTracks = metadata
     .filter(
@@ -37,6 +43,7 @@ function handleAddTracks(source: PluginId, metadata: TrackMetadata[]) {
 }
 
 function handleUpdateMetadata(source: PluginId, metadata: TrackMetadata[]) {
+  if (!isPluginActive(source)) return;
   const libraryTrackIds = selectTrackIds(store.getState());
   const newTracks = metadata
     .filter((track: TrackMetadata) =>
