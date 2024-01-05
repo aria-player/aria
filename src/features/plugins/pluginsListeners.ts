@@ -3,6 +3,7 @@ import { pluginHandles } from "./pluginsSlice";
 import { plugins } from "../../plugins/plugins";
 import { getBaseCallbacks, getSourceCallbacks } from "./pluginsCallbacks";
 import { startListening } from "../../app/listener";
+import { removeTracks } from "../library/librarySlice";
 
 const createPluginInstance = (pluginId: PluginId) => {
   if (!pluginHandles[pluginId]) {
@@ -43,6 +44,7 @@ export function setupPluginListeners() {
       Object.keys(pluginHandles).forEach((plugin) => {
         if (!activePlugins.includes(plugin)) {
           disposePluginInstance(plugin);
+          api.dispatch(removeTracks({ source: plugin }));
         }
       });
       activePlugins.forEach(createPluginInstance);
