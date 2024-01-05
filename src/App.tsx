@@ -20,6 +20,7 @@ import { Sidebar } from "./components/sidebar/Sidebar";
 import { TrackList } from "./views/TrackList";
 import { AlbumGrid } from "./views/AlbumGrid";
 import { PluginsPage } from "./views/settings/PluginsPage";
+import { LibraryPage } from "./views/settings/LibraryPage";
 
 function App() {
   const { platform, fullscreen } = useContext(PlatformContext);
@@ -44,6 +45,7 @@ function App() {
               <Route path="/albums" Component={AlbumGrid} />
               <Route path="settings" Component={SettingsPage}>
                 <Route index Component={GeneralPage} />
+                <Route path="library" Component={LibraryPage} />
                 <Route path="appearance" Component={AppearancePage} />
                 <Route path="plugins" Component={PluginsPage} />
                 <Route path="about" Component={AboutPage} />

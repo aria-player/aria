@@ -23,6 +23,10 @@ export function PluginsPage() {
     return !(plugins[plugin].needsTauri && !isTauri());
   }
 
+  const activeNonSourcePlugins = activePlugins.filter(
+    (plugin: PluginId) => plugins[plugin].type != "source"
+  );
+
   return (
     <>
       <h4 className={styles.header}>
@@ -60,10 +64,13 @@ export function PluginsPage() {
             </React.Fragment>
           )
       )}
-      {activePlugins && activePlugins.length > 0 && (
+      <p>
+        <i>{t("settings.plugins.configureSources")}</i>
+      </p>
+      {activeNonSourcePlugins.length > 0 && (
         <h4 className={styles.header}>{t("settings.plugins.pluginConfig")}</h4>
       )}
-      {activePlugins?.map((plugin: PluginId) => {
+      {activeNonSourcePlugins?.map((plugin: PluginId) => {
         const pluginHandle = pluginHandles[plugin];
         return (
           <React.Fragment key={plugin}>

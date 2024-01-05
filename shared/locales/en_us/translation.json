@@ -7,6 +7,7 @@
   "settings": {
     "sections": {
       "general": "General",
+      "library": "Library",
       "appearance": "Appearance",
       "plugins": "Plugins",
       "about": "About"
@@ -17,12 +18,18 @@
       "behaviour": "Application behavior",
       "minimiseToTray": "Close button minimizes app to system tray"
     },
+    "library": {
+      "managePlugin": "Manage {{plugin}}",
+      "noSources": "No sources",
+      "noSourcesDetail": "No sources are enabled, please add a plugin that provides music."
+    },
     "appearance": {
       "theme": "Theme",
       "windowsControls": "Use system window controls"
     },
     "plugins": {
       "availablePlugins": "Available plugins",
+      "configureSources": "Configure enabled music sources from the 'Library' tab.",
       "confirmDisable": "Are you sure you want to disable '{{plugin}}'?",
       "pluginConfig": "Plugin configuration"
     },
