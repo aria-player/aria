@@ -9,7 +9,6 @@ import {
   selectActivePlugins
 } from "../features/plugins/pluginsSlice";
 import { SourceHandle } from "../features/plugins/pluginsTypes";
-import { plugins } from "../plugins/plugins";
 import { columnDefinitions } from "../features/library/libraryColumns";
 
 export const TrackList = () => {
@@ -25,11 +24,11 @@ export const TrackList = () => {
     []
   );
 
-  // Temporary function for testing the loading/playing (TrackList shouldn't refer to plugins)
+  // Temporary function for testing the loading/playing
   const handleCellDoubleClicked = useCallback(
     (event: RowClickedEvent) => {
       for (const pluginId of activePlugins) {
-        if (plugins[pluginId].type === "source") {
+        if (event.data.source === pluginId) {
           const plugin = pluginHandles[pluginId] as SourceHandle;
           plugin.loadAndPlayTrack(event.data);
         }
