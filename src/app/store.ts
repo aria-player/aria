@@ -2,7 +2,7 @@ import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
 import configReducer from "../features/config/configSlice";
 import libraryReducer from "../features/library/librarySlice";
 import pluginsReducer from "../features/plugins/pluginsSlice";
-import storage from "redux-persist/lib/storage";
+import localforage from "localforage";
 import {
   FLUSH,
   PAUSE,
@@ -17,6 +17,8 @@ import { combineReducers } from "redux";
 import { createReduxHistoryContext } from "redux-first-history";
 import { createBrowserHistory } from "history";
 import { listenerMiddleware } from "./listener";
+
+const storage = localforage;
 
 const { createReduxHistory, routerMiddleware, routerReducer } =
   createReduxHistoryContext({
