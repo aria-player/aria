@@ -92,7 +92,7 @@ export function createWebPlayer(host: SourceCallbacks): SourceHandle {
   }
 
   return {
-    Config: (props) => Config({ ...props, host, pickDirectory }),
+    Config: (props) => Config({ ...props, host, pickDirectory, fileHandles }),
 
     async loadAndPlayTrack(track: Track): Promise<void> {
       let file = fileHandles[track.uri];
