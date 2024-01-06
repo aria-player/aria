@@ -1,5 +1,6 @@
 import { configureStore, ThunkAction, Action } from "@reduxjs/toolkit";
 import configReducer from "../features/config/configSlice";
+import playerReducer from "../features/player/playerSlice";
 import libraryReducer from "../features/library/librarySlice";
 import pluginsReducer from "../features/plugins/pluginsSlice";
 import localforage from "localforage";
@@ -29,6 +30,14 @@ const { createReduxHistory, routerMiddleware, routerReducer } =
 const reducer = combineReducers({
   router: routerReducer,
   config: persistReducer({ key: "config", storage }, configReducer),
+  player: persistReducer(
+    {
+      key: "player",
+      storage,
+      blacklist: ["status"]
+    },
+    playerReducer
+  ),
   library: persistReducer({ key: "library", storage }, libraryReducer),
   plugins: persistReducer({ key: "plugins", storage }, pluginsReducer)
 });
