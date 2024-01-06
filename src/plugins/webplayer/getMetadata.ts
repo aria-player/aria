@@ -22,14 +22,15 @@ export const getMetadata = async (track: TrackMetadata, file: File) => {
       ? ID3v23Data.get("COMM").text
       : null;
     newTrack.year = ID3v23Data.get("TYER") as number;
-    newTrack.disc = Number(ID3v23Data.get("TPOS").split("/")[0]);
-    newTrack.track = Number(ID3v23Data.get("TRCK").split("/")[0]);
+    newTrack.disc = Number(ID3v23Data.get("TPOS")?.split("/")[0]);
+    newTrack.track = Number(ID3v23Data.get("TRCK")?.split("/")[0]);
   } else if (metadata.native && metadata.native.iTunes) {
     const iTunesData = new Map(
       metadata.native.iTunes.map((item) => [item.id, item.value])
     );
     const artists = iTunesData.get("\u00A9ART");
-    newTrack.artist = artists.includes("/") ? artists.split("/") : artists;
+    newTrack.artist =
+      artists && artists.includes("/") ? artists.split("/") : artists;
     newTrack.title = iTunesData.get("\u00A9nam") as string;
     newTrack.albumartist = iTunesData.get("aART") as string;
     newTrack.album = iTunesData.get("\u00A9alb") as string;
@@ -39,8 +40,8 @@ export const getMetadata = async (track: TrackMetadata, file: File) => {
     newTrack.composer = iTunesData.get("\u00A9wrt") as string;
     newTrack.comments = iTunesData.get("\u00A9cmt") as string;
     newTrack.year = iTunesData.get("\u00A9day") as number;
-    newTrack.disc = Number(iTunesData.get("disk").split("/")[0]);
-    newTrack.track = Number(iTunesData.get("trkn").split("/")[0]);
+    newTrack.disc = Number(iTunesData.get("disk")?.split("/")[0]);
+    newTrack.track = Number(iTunesData.get("trkn")?.split("/")[0]);
   } else {
     newTrack.title = metadata.common.title || newTrack.title;
     newTrack.artist =
