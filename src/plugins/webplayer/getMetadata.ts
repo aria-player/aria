@@ -4,7 +4,7 @@ import { TrackMetadata } from "../../features/library/libraryTypes";
 export const getMetadata = async (track: TrackMetadata, file: File) => {
   const metadata = await parseBlob(file);
   const newTrack = { ...track };
-  newTrack.duration = metadata.format.duration as number;
+  newTrack.duration = (metadata.format.duration ?? 0) * 1000;
   if (metadata.native && metadata.native["ID3v2.3"]) {
     const ID3v23Data = new Map(
       metadata.native["ID3v2.3"].map((item) => [item.id, item.value])
