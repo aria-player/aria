@@ -1,15 +1,13 @@
 import { startListening } from "../../app/listener";
 import { RootState } from "../../app/store";
-import { selectTrackById } from "../library/librarySlice";
 import { pluginHandles } from "../plugins/pluginsSlice";
 import { SourceHandle } from "../plugins/pluginsTypes";
-import { selectCurrentTrackId, selectStatus } from "./playerSlice";
+import { selectCurrentTrack } from "../sharedSelectors";
+import { selectStatus } from "./playerSlice";
 import { Status } from "./playerTypes";
 
 const getPlayingSource = (state: RootState): SourceHandle | null => {
-  const currentTrackId = selectCurrentTrackId(state);
-  if (!currentTrackId) return null;
-  const currentTrack = selectTrackById(state, currentTrackId);
+  const currentTrack = selectCurrentTrack(state);
   if (!currentTrack) return null;
   return pluginHandles[currentTrack.source] as SourceHandle;
 };
