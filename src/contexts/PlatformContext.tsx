@@ -67,9 +67,9 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
         setDecorations(await appWindow.isDecorated());
       }
       setMinimiseToTray(
-        (await invoke("get_app_config", {
+        await invoke("get_app_config", {
           configItem: "minimisetotray"
-        })) as boolean
+        })
       );
     }
 

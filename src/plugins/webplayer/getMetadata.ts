@@ -13,15 +13,15 @@ export const getMetadata = async (track: TrackMetadata, file: File) => {
       .filter((item) => item.id === "TPE1")
       .map((item) => item.value);
     newTrack.artist = artists.length > 1 ? artists : artists[0];
-    newTrack.title = ID3v23Data.get("TIT2") as string;
-    newTrack.albumartist = ID3v23Data.get("TPE2") as string;
-    newTrack.album = ID3v23Data.get("TALB") as string;
-    newTrack.genre = ID3v23Data.get("TCON") as string;
-    newTrack.composer = ID3v23Data.get("TCOM") as string;
+    newTrack.title = ID3v23Data.get("TIT2");
+    newTrack.albumartist = ID3v23Data.get("TPE2");
+    newTrack.album = ID3v23Data.get("TALB");
+    newTrack.genre = ID3v23Data.get("TCON");
+    newTrack.composer = ID3v23Data.get("TCOM");
     newTrack.comments = ID3v23Data.get("COMM")
       ? ID3v23Data.get("COMM").text
       : null;
-    newTrack.year = ID3v23Data.get("TYER") as number;
+    newTrack.year = ID3v23Data.get("TYER");
     newTrack.disc = Number(ID3v23Data.get("TPOS")?.split("/")[0]);
     newTrack.track = Number(ID3v23Data.get("TRCK")?.split("/")[0]);
   } else if (metadata.native && metadata.native.iTunes) {
@@ -31,15 +31,13 @@ export const getMetadata = async (track: TrackMetadata, file: File) => {
     const artists = iTunesData.get("\u00A9ART");
     newTrack.artist =
       artists && artists.includes("/") ? artists.split("/") : artists;
-    newTrack.title = iTunesData.get("\u00A9nam") as string;
-    newTrack.albumartist = iTunesData.get("aART") as string;
-    newTrack.album = iTunesData.get("\u00A9alb") as string;
-    newTrack.genre =
-      (iTunesData.get("gnre") as string) ||
-      (iTunesData.get("\u00A9gen") as string);
-    newTrack.composer = iTunesData.get("\u00A9wrt") as string;
-    newTrack.comments = iTunesData.get("\u00A9cmt") as string;
-    newTrack.year = iTunesData.get("\u00A9day") as number;
+    newTrack.title = iTunesData.get("\u00A9nam");
+    newTrack.albumartist = iTunesData.get("aART");
+    newTrack.album = iTunesData.get("\u00A9alb");
+    newTrack.genre = iTunesData.get("gnre") || iTunesData.get("\u00A9gen");
+    newTrack.composer = iTunesData.get("\u00A9wrt");
+    newTrack.comments = iTunesData.get("\u00A9cmt");
+    newTrack.year = iTunesData.get("\u00A9day");
     newTrack.disc = Number(iTunesData.get("disk")?.split("/")[0]);
     newTrack.track = Number(iTunesData.get("trkn")?.split("/")[0]);
   } else {

@@ -52,8 +52,7 @@ export function WindowsMenuBarButtons() {
   }, [t, buttonRefs]);
 
   const showMenu = (e: React.MouseEvent, menuId: string) => {
-    const targetDiv = e.currentTarget as HTMLDivElement;
-    const divRect = targetDiv?.getBoundingClientRect();
+    const divRect = e.currentTarget?.getBoundingClientRect();
     if (!divRect) return;
     show({
       id: menuId,

@@ -23,7 +23,7 @@ export function MenuButton() {
       hideAll();
       return;
     }
-    const targetDiv = e.currentTarget as HTMLDivElement;
+    const targetDiv = e.currentTarget;
     const divRect = targetDiv.parentElement?.getBoundingClientRect();
     if (!divRect) return;
     show({
