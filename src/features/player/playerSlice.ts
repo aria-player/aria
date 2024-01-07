@@ -1,4 +1,4 @@
-import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 import { Status } from "./playerTypes";
 import { TrackId } from "../library/libraryTypes";
@@ -19,14 +19,14 @@ const initialState: PlayerState = {
 
 export const loadAndPlayTrack = createAsyncThunk(
   "player/loadAndPlayTrack",
-  async (id: TrackId, { dispatch, getState }) => {
+  async (id: TrackId, { getState }) => {
     const track = selectTrackById(getState() as RootState, id);
     if (!track) {
       throw new Error("Track not found");
     }
     const plugin = pluginHandles[track?.source] as SourceHandle;
     await plugin.loadAndPlayTrack(track);
-    dispatch(playTrack(id));
+    return id;
   }
 );
 
@@ -34,10 +34,6 @@ export const playerSlice = createSlice({
   name: "player",
   initialState,
   reducers: {
-    playTrack: (state, action: PayloadAction<TrackId | null>) => {
-      state.status = Status.Playing;
-      state.currentTrackId = action.payload;
-    },
     pause: (state) => {
       state.status = Status.Paused;
     },
@@ -47,10 +43,16 @@ export const playerSlice = createSlice({
     stop: (state) => {
       state.status = Status.Stopped;
     }
+  },
+  extraReducers: (builder) => {
+    builder.addCase(loadAndPlayTrack.fulfilled, (state, action) => {
+      state.status = Status.Playing;
+      state.currentTrackId = action.payload;
+    });
   }
 });
 
-export const { playTrack, pause, resume, stop } = playerSlice.actions;
+export const { pause, resume, stop } = playerSlice.actions;
 
 export const selectStatus = (state: RootState) => state.player.status;
 export const selectCurrentTrackId = (state: RootState) =>
