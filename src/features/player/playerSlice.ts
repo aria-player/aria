@@ -5,6 +5,7 @@ import { TrackId } from "../library/libraryTypes";
 import { pluginHandles } from "../plugins/pluginsSlice";
 import { SourceHandle } from "../plugins/pluginsTypes";
 import { selectTrackById } from "../library/librarySlice";
+import { setupPlayerListeners } from "./playerListeners";
 
 interface PlayerState {
   status: Status;
@@ -36,14 +37,25 @@ export const playerSlice = createSlice({
     playTrack: (state, action: PayloadAction<TrackId | null>) => {
       state.status = Status.Playing;
       state.currentTrackId = action.payload;
+    },
+    pause: (state) => {
+      state.status = Status.Paused;
+    },
+    resume: (state) => {
+      state.status = Status.Playing;
+    },
+    stop: (state) => {
+      state.status = Status.Stopped;
     }
   }
 });
 
-export const { playTrack } = playerSlice.actions;
+export const { playTrack, pause, resume, stop } = playerSlice.actions;
 
 export const selectStatus = (state: RootState) => state.player.status;
 export const selectCurrentTrackId = (state: RootState) =>
   state.player.currentTrackId;
 
 export default playerSlice.reducer;
+
+setupPlayerListeners();

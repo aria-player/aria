@@ -6,11 +6,13 @@ import BackwardIcon from "../../assets/skip-back.svg?react";
 import RepeatIcon from "../../assets/repeat-solid.svg?react";
 import ShuffleIcon from "../../assets/shuffle-solid.svg?react";
 import { MediaSlider } from "soprano-ui";
-import { selectStatus } from "../../features/player/playerSlice";
-import { useAppSelector } from "../../app/hooks";
+import { pause, resume, selectStatus } from "../../features/player/playerSlice";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { Status } from "../../features/player/playerTypes";
 
 export function PlaybackControls() {
+  const dispatch = useAppDispatch();
+
   const status = useAppSelector(selectStatus);
   return (
     <>
@@ -29,7 +31,16 @@ export function PlaybackControls() {
           <button className={styles.button}>
             <BackwardIcon />
           </button>
-          <button className={styles.button}>
+          <button
+            className={styles.button}
+            onClick={() => {
+              if (status == Status.Playing) {
+                dispatch(pause());
+              } else if (status == Status.Paused) {
+                dispatch(resume());
+              }
+            }}
+          >
             {status === Status.Playing ? <PauseIcon /> : <PlayIcon />}
           </button>
           <button className={styles.button}>

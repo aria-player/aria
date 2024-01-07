@@ -134,6 +134,14 @@ export function createWebPlayer(host: SourceCallbacks): SourceHandle {
       });
     },
 
+    pause() {
+      audio?.pause();
+    },
+
+    resume() {
+      audio?.play();
+    },
+
     dispose() {
       console.log("Disposed webplayer");
     }

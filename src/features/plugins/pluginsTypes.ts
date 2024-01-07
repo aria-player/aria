@@ -24,6 +24,8 @@ export interface BaseCallbacks {
 export interface SourceHandle extends BaseHandle {
   loadAndPlayTrack: (track: Track) => void;
   onTracksUpdate?: (tracks: Track[]) => void;
+  pause: () => void;
+  resume: () => void;
 }
 
 export interface SourceCallbacks extends BaseCallbacks {
