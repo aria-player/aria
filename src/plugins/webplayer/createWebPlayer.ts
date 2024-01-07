@@ -124,14 +124,7 @@ export function createWebPlayer(host: SourceCallbacks): SourceHandle {
       audio.muted = host.getMuted();
       return new Promise<void>((resolve, reject) => {
         if (audio) {
-          audio.oncanplay = () => {
-            if (audio) {
-              audio.play().then(resolve).catch(reject);
-            }
-          };
-          audio.onerror = () => {
-            reject(new Error("Error loading audio"));
-          };
+          audio.play().then(resolve).catch(reject);
         }
       });
     },
