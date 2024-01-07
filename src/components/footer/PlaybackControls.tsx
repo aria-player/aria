@@ -9,10 +9,13 @@ import { MediaSlider } from "soprano-ui";
 import { pause, resume, selectStatus } from "../../features/player/playerSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { Status } from "../../features/player/playerTypes";
+import { selectCurrentTrack } from "../../features/sharedSelectors";
+import { formatDuration } from "../../app/utils";
 
 export function PlaybackControls() {
   const dispatch = useAppDispatch();
 
+  const metadata = useAppSelector(selectCurrentTrack);
   const status = useAppSelector(selectStatus);
   return (
     <>
@@ -50,7 +53,9 @@ export function PlaybackControls() {
             <RepeatIcon />
           </button>
         </div>
-        <div className={styles.time}>0:00</div>
+        <div className={styles.time}>
+          {metadata?.duration ? formatDuration(metadata?.duration) : "0:00"}
+        </div>
       </div>
     </>
   );
