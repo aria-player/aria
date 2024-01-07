@@ -5,12 +5,12 @@ import ForwardIcon from "../../assets/skip-forward.svg?react";
 import BackwardIcon from "../../assets/skip-back.svg?react";
 import RepeatIcon from "../../assets/repeat-solid.svg?react";
 import ShuffleIcon from "../../assets/shuffle-solid.svg?react";
-import { MediaSlider } from "soprano-ui";
 import { pause, resume, selectStatus } from "../../features/player/playerSlice";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { Status } from "../../features/player/playerTypes";
 import { selectCurrentTrack } from "../../features/sharedSelectors";
 import { formatDuration } from "../../app/utils";
+import { ProgressBar } from "./ProgressBar";
 
 export function PlaybackControls() {
   const dispatch = useAppDispatch();
@@ -19,12 +19,7 @@ export function PlaybackControls() {
   const status = useAppSelector(selectStatus);
   return (
     <>
-      <MediaSlider
-        step={0.1}
-        keyboardStepMultiplier={10}
-        keyboardFocusOnly={true}
-        thumbAlignment={"center"}
-      />
+      <ProgressBar />
       <div className={styles.playback}>
         <div className={styles.time}>0:00</div>
         <div className={styles.controls}>
