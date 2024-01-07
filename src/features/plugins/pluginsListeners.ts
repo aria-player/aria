@@ -2,7 +2,7 @@ import { BasePlugin, PluginId, SourcePlugin } from "./pluginsTypes";
 import { pluginHandles } from "./pluginsSlice";
 import { plugins } from "../../plugins/plugins";
 import { getBaseCallbacks, getSourceCallbacks } from "./pluginsCallbacks";
-import { startListening } from "../../app/listener";
+import { listenForChange } from "../../app/listener";
 import { removeTracks } from "../library/librarySlice";
 
 const createPluginInstance = (pluginId: PluginId) => {
@@ -32,22 +32,16 @@ const disposePluginInstance = (plugin: PluginId) => {
 };
 
 export function setupPluginListeners() {
-  startListening({
-    predicate: (_action, currentState, previousState) => {
-      return (
-        currentState.plugins.activePlugins !==
-        previousState.plugins.activePlugins
-      );
-    },
-    effect: (_action, api) => {
-      const activePlugins = api.getState().plugins.activePlugins;
+  listenForChange(
+    (state) => state.plugins.activePlugins,
+    (state, _action, dispatch) => {
       Object.keys(pluginHandles).forEach((plugin) => {
-        if (!activePlugins.includes(plugin)) {
+        if (!state.plugins.activePlugins.includes(plugin)) {
           disposePluginInstance(plugin);
-          api.dispatch(removeTracks({ source: plugin }));
+          dispatch(removeTracks({ source: plugin }));
         }
       });
-      activePlugins.forEach(createPluginInstance);
+      state.plugins.activePlugins.forEach(createPluginInstance);
     }
-  });
+  );
 }

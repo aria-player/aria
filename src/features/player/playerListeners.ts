@@ -1,4 +1,4 @@
-import { startListening } from "../../app/listener";
+import { listenForChange } from "../../app/listener";
 import { RootState } from "../../app/store";
 import { pluginHandles } from "../plugins/pluginsSlice";
 import { SourceHandle } from "../plugins/pluginsTypes";
@@ -6,46 +6,34 @@ import { selectCurrentTrack } from "../sharedSelectors";
 import { selectStatus } from "./playerSlice";
 import { Status } from "./playerTypes";
 
-const getPlayingSource = (state: RootState): SourceHandle | null => {
+const getCurrentSource = (state: RootState): SourceHandle | null => {
   const currentTrack = selectCurrentTrack(state);
   if (!currentTrack) return null;
   return pluginHandles[currentTrack.source] as SourceHandle;
 };
 
-export const setupPlayerListeners = () => {
-  startListening({
-    predicate: (_action, currentState: RootState, previousState: RootState) => {
-      return currentState.player.status !== previousState.player.status;
-    },
-    effect: (_action, api) => {
-      const state = api.getState();
-      const currentSource = getPlayingSource(state);
-      const status = selectStatus(state);
-      if (status === Status.Playing) {
-        currentSource?.resume();
-      } else {
-        currentSource?.pause();
-      }
+export function setupPlayerListeners() {
+  listenForChange(
+    (state) => state.player.status,
+    (state) => {
+      const currentSource = getCurrentSource(state);
+      selectStatus(state) === Status.Playing
+        ? currentSource?.resume()
+        : currentSource?.pause();
     }
-  });
+  );
 
-  startListening({
-    predicate: (_action, currentState: RootState, previousState: RootState) => {
-      return currentState.player.volume !== previousState.player.volume;
-    },
-    effect: (_action, api) => {
-      const state = api.getState();
-      getPlayingSource(state)?.setVolume(state.player.volume);
+  listenForChange(
+    (state) => state.player.volume,
+    (state) => {
+      getCurrentSource(state)?.setVolume(state.player.volume);
     }
-  });
+  );
 
-  startListening({
-    predicate: (_action, currentState: RootState, previousState: RootState) => {
-      return currentState.player.muted !== previousState.player.muted;
-    },
-    effect: (_action, api) => {
-      const state = api.getState();
-      getPlayingSource(state)?.setMuted(state.player.muted);
+  listenForChange(
+    (state) => state.player.muted,
+    (state) => {
+      getCurrentSource(state)?.setMuted(state.player.muted);
     }
-  });
-};
+  );
+}
