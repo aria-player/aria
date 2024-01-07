@@ -102,7 +102,7 @@ export function createWebPlayer(host: SourceCallbacks): SourceHandle {
             folder +
             "' folder."
         );
-        if (!confirmed) return;
+        if (!confirmed) throw new Error("Re-selection cancelled");
         await pickDirectory();
         file = fileHandles[track.uri];
         if (!file) throw new Error("File not found after re-selection");
