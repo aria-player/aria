@@ -91,6 +91,8 @@ export const getSourceCallbacks = (pluginId: PluginId): SourceCallbacks => {
     },
     getTrackByUri: (uri: TrackUri) => {
       return selectTrackById(store.getState(), getTrackId(pluginId, uri));
-    }
+    },
+    getVolume: () => store.getState().player.volume,
+    getMuted: () => store.getState().player.muted
   };
 };

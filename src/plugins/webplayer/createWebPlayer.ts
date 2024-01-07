@@ -120,6 +120,8 @@ export function createWebPlayer(host: SourceCallbacks): SourceHandle {
         audio.src = "";
       }
       audio = new Audio(await URL.createObjectURL(file));
+      audio.volume = host.getVolume() / 100;
+      audio.muted = host.getMuted();
       return new Promise<void>((resolve, reject) => {
         if (audio) {
           audio.oncanplay = () => {
@@ -140,6 +142,14 @@ export function createWebPlayer(host: SourceCallbacks): SourceHandle {
 
     resume() {
       audio?.play();
+    },
+
+    setVolume(volume: number) {
+      audio!.volume = volume / 100;
+    },
+
+    setMuted(muted: boolean) {
+      audio!.muted = muted;
     },
 
     dispose() {

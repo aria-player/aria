@@ -28,4 +28,24 @@ export const setupPlayerListeners = () => {
       }
     }
   });
+
+  startListening({
+    predicate: (_action, currentState: RootState, previousState: RootState) => {
+      return currentState.player.volume !== previousState.player.volume;
+    },
+    effect: (_action, api) => {
+      const state = api.getState();
+      getPlayingSource(state)?.setVolume(state.player.volume);
+    }
+  });
+
+  startListening({
+    predicate: (_action, currentState: RootState, previousState: RootState) => {
+      return currentState.player.muted !== previousState.player.muted;
+    },
+    effect: (_action, api) => {
+      const state = api.getState();
+      getPlayingSource(state)?.setMuted(state.player.muted);
+    }
+  });
 };

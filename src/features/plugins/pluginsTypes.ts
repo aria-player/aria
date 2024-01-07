@@ -26,6 +26,8 @@ export interface SourceHandle extends BaseHandle {
   onTracksUpdate?: (tracks: Track[]) => void;
   pause: () => void;
   resume: () => void;
+  setVolume: (volume: number) => void;
+  setMuted: (muted: boolean) => void;
 }
 
 export interface SourceCallbacks extends BaseCallbacks {
@@ -34,6 +36,8 @@ export interface SourceCallbacks extends BaseCallbacks {
   updateMetadata: (metadata: TrackMetadata[]) => void;
   getTracks: () => Track[];
   getTrackByUri: (uri: TrackUri) => Track | undefined;
+  getVolume: () => number;
+  getMuted: () => boolean;
 }
 
 export type BasePlugin = PluginInfo<BaseHandle, BaseCallbacks>;
