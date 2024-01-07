@@ -1,5 +1,5 @@
-<svg xmlns="http://www.w3.org/2000/svg" height="100%" width="100%" viewBox="0 0 320 512" fill="none">  <!--!
+<svg xmlns="http://www.w3.org/2000/svg" height="100%" width="100%" viewBox="0 0 400 448" fill="none">  <!--!
   Font Awesome Pro 6.4.0 by @fontawesome - https://fontawesome.com License -
   https://fontawesome.com/license (Commercial License) Copyright 2023 Fonticons, Inc. -->
-  <path d="M48 64C21.5 64 0 85.5 0 112V400c0 26.5 21.5 48 48 48H80c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48H48zm192 0c-26.5 0-48 21.5-48 48V400c0 26.5 21.5 48 48 48h32c26.5 0 48-21.5 48-48V112c0-26.5-21.5-48-48-48H240z" fill="currentColor" />
+  <path d="M 69.8,0 C 38.99375,0 14,25.083333 14,56 v 336 c 0,30.91667 24.99375,56 55.8,56 h 37.20001 C 137.80625,448 162.8,422.91667 162.8,392 V 56 C 162.8,25.083333 137.80625,0 107.00001,0 Z M 293,0 c -30.80625,0 -55.8,25.083333 -55.8,56 v 336 c 0,30.91667 24.99375,56 55.8,56 h 37.2 c 30.80625,0 55.8,-25.08333 55.8,-56 V 56 C 386,25.083333 361.00625,0 330.2,0 Z" fill="currentColor" />
 </svg>

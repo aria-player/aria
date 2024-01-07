@@ -1,5 +1,5 @@
 .playback {
-  padding-top: 0.1rem;
+  padding-top: 0.5rem;
   display: flex;
   align-items: center;
 }
@@ -37,5 +37,5 @@
 }
 
 .button:nth-child(3) {
-  width: 1.25rem;
+  width: 1.4rem;
 }
