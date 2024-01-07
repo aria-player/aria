@@ -34,7 +34,7 @@ const reducer = combineReducers({
     {
       key: "player",
       storage,
-      blacklist: ["status"]
+      blacklist: ["status", "currentTrackId"]
     },
     playerReducer
   ),
