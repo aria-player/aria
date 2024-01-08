@@ -28,6 +28,7 @@ export interface SourceHandle extends BaseHandle {
   resume: () => void;
   setVolume: (volume: number) => void;
   setMuted: (muted: boolean) => void;
+  setTime: (position: number) => void;
 }
 
 export interface SourceCallbacks extends BaseCallbacks {

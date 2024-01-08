@@ -11,17 +11,21 @@ import { Status } from "../../features/player/playerTypes";
 import { selectCurrentTrack } from "../../features/sharedSelectors";
 import { formatDuration } from "../../app/utils";
 import { ProgressBar } from "./ProgressBar";
+import { useState } from "react";
 
 export function PlaybackControls() {
   const dispatch = useAppDispatch();
 
   const metadata = useAppSelector(selectCurrentTrack);
   const status = useAppSelector(selectStatus);
+  const [progressValue, setProgressValue] = useState(0);
   return (
     <>
-      <ProgressBar />
+      <ProgressBar progressValueState={[progressValue, setProgressValue]} />
       <div className={styles.playback}>
-        <div className={styles.time}>0:00</div>
+        {status != Status.Stopped && (
+          <div className={styles.time}>{formatDuration(progressValue)}</div>
+        )}
         <div className={styles.controls}>
           <button className={styles.button}>
             <ShuffleIcon />
@@ -48,9 +52,11 @@ export function PlaybackControls() {
             <RepeatIcon />
           </button>
         </div>
-        <div className={styles.time}>
-          {metadata?.duration ? formatDuration(metadata?.duration) : "0:00"}
-        </div>
+        {status != Status.Stopped && (
+          <div className={styles.time}>
+            {metadata?.duration ? formatDuration(metadata?.duration) : "0:00"}
+          </div>
+        )}
       </div>
     </>
   );

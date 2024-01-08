@@ -145,6 +145,10 @@ export function createWebPlayer(host: SourceCallbacks): SourceHandle {
       audio!.muted = muted;
     },
 
+    setTime(position: number) {
+      audio!.currentTime = position / 1000;
+    },
+
     dispose() {
       console.log("Disposed webplayer");
     }
