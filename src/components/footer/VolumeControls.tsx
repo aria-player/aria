@@ -48,15 +48,13 @@ export function VolumeControls() {
           keyboardStepMultiplier={10}
           keyboardFocusOnly={true}
           thumbAlignment={"center"}
-          onPointerDown={() => {
-            if (muted) {
-              dispatch(setMuted(false));
-            }
-          }}
           onPointerUp={() => {
             dispatch(setVolume(localVolume));
           }}
           onValueChange={(value) => {
+            if (muted) {
+              dispatch(setMuted(false));
+            }
             setLocalVolume(value[0]);
           }}
         />
