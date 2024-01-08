@@ -12,12 +12,17 @@ import { selectCurrentTrack } from "../../features/sharedSelectors";
 import { formatDuration } from "../../app/utils";
 import { ProgressBar } from "./ProgressBar";
 import { useState } from "react";
+import {
+  selectDisplayRemainingTime,
+  setDisplayRemainingTime
+} from "../../features/config/configSlice";
 
 export function PlaybackControls() {
   const dispatch = useAppDispatch();
 
   const metadata = useAppSelector(selectCurrentTrack);
   const status = useAppSelector(selectStatus);
+  const displayRemainingTime = useAppSelector(selectDisplayRemainingTime);
   const [progressValue, setProgressValue] = useState(0);
   return (
     <>
@@ -53,9 +58,21 @@ export function PlaybackControls() {
           </button>
         </div>
         {status != Status.Stopped && (
-          <div className={styles.time}>
-            {metadata?.duration ? formatDuration(metadata?.duration) : "0:00"}
-          </div>
+          <button
+            className={`${styles.time} ${styles.durationButton}`}
+            onClick={() => {
+              dispatch(setDisplayRemainingTime(!displayRemainingTime));
+            }}
+          >
+            {metadata?.duration
+              ? (displayRemainingTime ? "-" : "") +
+                formatDuration(
+                  displayRemainingTime
+                    ? metadata?.duration - progressValue
+                    : metadata?.duration
+                )
+              : "0:00"}
+          </button>
         )}
       </div>
     </>

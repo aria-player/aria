@@ -6,7 +6,25 @@
 
 .time {
   font-size: 0.8rem;
-  margin: 0 6px;
+  padding: 0.2rem 0;
+  width: 3rem;
+  text-align: center;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  font-variant-numeric: tabular-nums;
+}
+
+.durationButton {
+  border: none;
+  font-family: inherit;
+  font-weight: inherit;
+  color: var(--player-controls);
+  background: none;
+}
+
+.durationButton:hover {
+  background-color: var(--button-background-hover);
+  border-radius: 0.25rem;
 }
 
 .controls {
