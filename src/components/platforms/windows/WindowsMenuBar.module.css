@@ -28,10 +28,12 @@
 }
 
 .arrow {
-  width: 1.2rem;
-  height: 1.2rem;
+  width: 1.5rem;
+  height: 1.5rem;
   padding: 0.15rem;
   margin-left: 0.15rem;
+  border: none;
+  background-color: transparent;
   color: var(--menubar-button-icon);
   cursor: pointer;
 }

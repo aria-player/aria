@@ -45,11 +45,13 @@ export function MenuButton() {
       >
         <AppMenu items={menus} onItemClick={hideAll} />
       </Menu>
-      <MenuIcon
+      <button
         title={t("labels.menu")}
         className={styles.menuButton}
         onClick={displayMenu}
-      />
+      >
+        <MenuIcon />
+      </button>
     </>
   );
 }

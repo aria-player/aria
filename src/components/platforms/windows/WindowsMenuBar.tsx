@@ -28,7 +28,7 @@ export function WindowsMenuBar() {
     >
       <div className={styles.navigationShort}>
         <MenuButton />
-        <LeftArrow
+        <button
           title={t("labels.back")}
           className={`${styles.arrow} ${
             backEnabled ? "" : `${styles.arrowDisabled}`
@@ -36,8 +36,10 @@ export function WindowsMenuBar() {
           onClick={() => {
             if (backEnabled) dispatch(goBack());
           }}
-        />
-        <RightArrow
+        >
+          <LeftArrow />
+        </button>
+        <button
           title={t("labels.forward")}
           className={`${styles.arrow} ${
             forwardEnabled ? "" : `${styles.arrowDisabled}`
@@ -45,7 +47,9 @@ export function WindowsMenuBar() {
           onClick={() => {
             if (forwardEnabled) dispatch(goForward());
           }}
-        />
+        >
+          <RightArrow />
+        </button>
       </div>
       <div className={styles.navigationLong}>
         <WindowsMenuBarButtons />
