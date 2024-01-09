@@ -1,6 +1,7 @@
 import { ColDef } from "@ag-grid-community/core";
 import { Track } from "./libraryTypes";
 import { formatBytes, formatDuration } from "../../app/utils";
+import { plugins } from "../../plugins/plugins";
 
 export const columnDefinitions: ColDef[] = [
   { field: "id", hide: true, filter: false },
@@ -87,5 +88,13 @@ export const columnDefinitions: ColDef[] = [
       return formatBytes(params.value);
     },
     type: "rightAligned"
+  },
+  {
+    field: "source",
+    headerName: "Source",
+    hide: false,
+    valueFormatter: (params: { value: string }) => {
+      return plugins[params.value].name;
+    }
   }
 ];
