@@ -2,6 +2,7 @@ import { RootState, store } from "../../app/store";
 import { pluginHandles } from "../plugins/pluginsSlice";
 import { SourceHandle } from "../plugins/pluginsTypes";
 import { selectCurrentTrack } from "../sharedSelectors";
+import { previousTrack } from "./playerSlice";
 
 let playing = false;
 let lastStartPosition = 0;
@@ -33,4 +34,12 @@ export function seek(position: number) {
   if (!currentTrack) return;
   const plugin = pluginHandles[currentTrack.source] as SourceHandle;
   plugin?.setTime(position);
+}
+
+export function restartOrPreviousTrack() {
+  if (getElapsedPlayerTime() > 2000) {
+    seek(0);
+  } else {
+    store.dispatch(previousTrack());
+  }
 }

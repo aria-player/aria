@@ -5,15 +5,13 @@ import styles from "./TrackList.module.css";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { selectAllTracks } from "../features/library/librarySlice";
 import { columnDefinitions } from "../features/library/libraryColumns";
-import {
-  loadAndPlayTrack,
-  selectCurrentTrackId
-} from "../features/player/playerSlice";
+import { setQueue } from "../features/player/playerSlice";
+import { selectCurrentTrack } from "../features/sharedSelectors";
 
 export const TrackList = () => {
   const dispatch = useAppDispatch();
 
-  const currentTrack = useAppSelector(selectCurrentTrackId);
+  const currentTrack = useAppSelector(selectCurrentTrack)?.id;
   const rowData = useAppSelector(selectAllTracks);
 
   const gridRef = useRef<AgGridReact>(null);
@@ -28,7 +26,12 @@ export const TrackList = () => {
   );
 
   const handleCellDoubleClicked = (event: RowClickedEvent) => {
-    dispatch(loadAndPlayTrack(event.data.id));
+    dispatch(
+      setQueue({
+        queue: rowData.map((track) => track.id),
+        queueIndex: event.rowIndex ?? 0
+      })
+    );
   };
 
   useEffect(() => {

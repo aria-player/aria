@@ -5,7 +5,13 @@ import ForwardIcon from "../../assets/skip-forward.svg?react";
 import BackwardIcon from "../../assets/skip-back.svg?react";
 import RepeatIcon from "../../assets/repeat-solid.svg?react";
 import ShuffleIcon from "../../assets/shuffle-solid.svg?react";
-import { pause, resume, selectStatus } from "../../features/player/playerSlice";
+import {
+  nextTrack,
+  pause,
+  resume,
+  selectStatus
+} from "../../features/player/playerSlice";
+import { restartOrPreviousTrack } from "../../features/player/playerTime";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { Status } from "../../features/player/playerTypes";
 import { selectCurrentTrack } from "../../features/sharedSelectors";
@@ -35,7 +41,12 @@ export function PlaybackControls() {
           <button className={styles.button}>
             <ShuffleIcon />
           </button>
-          <button className={styles.button}>
+          <button
+            className={styles.button}
+            onClick={() => {
+              restartOrPreviousTrack();
+            }}
+          >
             <BackwardIcon />
           </button>
           <button
@@ -48,9 +59,18 @@ export function PlaybackControls() {
               }
             }}
           >
-            {status === Status.Playing ? <PauseIcon /> : <PlayIcon />}
+            {status === Status.Playing || status === Status.Loading ? (
+              <PauseIcon />
+            ) : (
+              <PlayIcon />
+            )}
           </button>
-          <button className={styles.button}>
+          <button
+            className={styles.button}
+            onClick={() => {
+              dispatch(nextTrack());
+            }}
+          >
             <ForwardIcon />
           </button>
           <button className={styles.button}>

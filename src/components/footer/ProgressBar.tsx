@@ -1,12 +1,14 @@
 import { useState, useEffect } from "react";
-import { useAppSelector } from "../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { MediaSlider } from "soprano-ui";
 import { selectCurrentTrack } from "../../features/sharedSelectors";
 import { getElapsedPlayerTime, seek } from "../../features/player/playerTime";
+import { nextTrack } from "../../features/player/playerSlice";
 
 export function ProgressBar(props: {
   progressValueState: [number, (progressValue: number) => void];
 }) {
+  const dispatch = useAppDispatch();
   const duration = useAppSelector(selectCurrentTrack)?.duration;
   const [progressValue, setProgressValue] = props.progressValueState;
   const [dragging, setDragging] = useState(false);
@@ -15,13 +17,17 @@ export function ProgressBar(props: {
     let progressUpdateIntervalId: number;
     if (!dragging) {
       progressUpdateIntervalId = setInterval(() => {
-        setProgressValue(Math.min(duration ?? 0, getElapsedPlayerTime()));
+        const elapsedTime = getElapsedPlayerTime();
+        setProgressValue(Math.min(duration ?? 0, elapsedTime));
+        if (duration != null && elapsedTime >= duration) {
+          dispatch(nextTrack());
+        }
       }, 100) as unknown as number;
     }
     return () => {
       clearInterval(progressUpdateIntervalId);
     };
-  }, [setProgressValue, progressValue, dragging, duration]);
+  }, [dispatch, setProgressValue, progressValue, dragging, duration]);
 
   return (
     <MediaSlider

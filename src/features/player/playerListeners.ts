@@ -3,7 +3,13 @@ import { RootState } from "../../app/store";
 import { pluginHandles } from "../plugins/pluginsSlice";
 import { SourceHandle } from "../plugins/pluginsTypes";
 import { selectCurrentTrack } from "../sharedSelectors";
-import { loadAndPlayTrack, selectStatus } from "./playerSlice";
+import {
+  loadAndPlayTrack,
+  nextTrack,
+  previousTrack,
+  selectStatus,
+  setQueue
+} from "./playerSlice";
 import { Status } from "./playerTypes";
 import { resetTimer, startTimer, stopTimer } from "./playerTime";
 import { isAnyOf } from "@reduxjs/toolkit";
@@ -15,6 +21,21 @@ const getCurrentSource = (state: RootState): SourceHandle | null => {
 };
 
 export function setupPlayerListeners() {
+  listenForAction(
+    isAnyOf(previousTrack, nextTrack, setQueue),
+    (state, _action, dispatch) => {
+      stopTimer();
+      resetTimer();
+      if (state.player.queueIndex != null) {
+        dispatch(loadAndPlayTrack(state.player.queue[state.player.queueIndex]));
+      }
+    }
+  );
+
+  listenForAction(isAnyOf(loadAndPlayTrack.fulfilled), () => {
+    startTimer();
+  });
+
   listenForChange(
     (state) => state.player.status,
     (state) => {
@@ -28,10 +49,6 @@ export function setupPlayerListeners() {
       }
     }
   );
-
-  listenForAction(isAnyOf(loadAndPlayTrack.fulfilled), () => {
-    resetTimer();
-  });
 
   listenForChange(
     (state) => state.player.volume,
