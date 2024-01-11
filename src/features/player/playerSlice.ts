@@ -47,10 +47,14 @@ export const playerSlice = createSlice({
   initialState,
   reducers: {
     pause: (state) => {
-      state.status = Status.Paused;
+      if (state.status === Status.Playing) {
+        state.status = Status.Paused;
+      }
     },
     resume: (state) => {
-      state.status = Status.Playing;
+      if (state.status === Status.Paused) {
+        state.status = Status.Playing;
+      }
     },
     stop: (state) => {
       state.status = Status.Stopped;
