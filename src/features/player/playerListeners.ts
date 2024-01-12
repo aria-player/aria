@@ -1,6 +1,6 @@
 import { listenForAction, listenForChange } from "../../app/listener";
 import { RootState } from "../../app/store";
-import { pluginHandles } from "../plugins/pluginsSlice";
+import { pluginHandles, selectActivePlugins } from "../plugins/pluginsSlice";
 import { SourceHandle } from "../plugins/pluginsTypes";
 import { selectCurrentTrack } from "../sharedSelectors";
 import {
@@ -13,6 +13,7 @@ import {
 import { Status } from "./playerTypes";
 import { resetTimer, startTimer, stopTimer } from "./playerTime";
 import { isAnyOf } from "@reduxjs/toolkit";
+import { plugins } from "../../plugins/plugins";
 
 const getCurrentSource = (state: RootState): SourceHandle | null => {
   const currentTrack = selectCurrentTrack(state);
@@ -40,12 +41,22 @@ export function setupPlayerListeners() {
     (state) => state.player.status,
     (state) => {
       const currentSource = getCurrentSource(state);
-      if (selectStatus(state) === Status.Playing) {
+      const status = selectStatus(state);
+      const activePlugins = selectActivePlugins(state);
+      if (status === Status.Playing) {
         currentSource?.resume();
         startTimer();
-      } else if (selectStatus(state) === Status.Paused) {
+      } else if (status === Status.Paused) {
         currentSource?.pause();
         stopTimer();
+      } else if (status === Status.Stopped) {
+        stopTimer();
+        resetTimer();
+        for (const plugin of activePlugins) {
+          if (plugins[plugin].type === "source") {
+            (pluginHandles[plugin] as SourceHandle).pause();
+          }
+        }
       }
     }
   );
