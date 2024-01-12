@@ -12,8 +12,10 @@ interface PlayerState {
   volume: number;
   muted: boolean;
   queue: TrackId[];
+  queueUnshuffled: TrackId[];
   queueIndex: number | null;
   repeatMode: RepeatMode;
+  shuffle: boolean;
 }
 
 const initialState: PlayerState = {
@@ -21,9 +23,18 @@ const initialState: PlayerState = {
   volume: 100,
   muted: false,
   queue: [],
+  queueUnshuffled: [],
   queueIndex: null,
-  repeatMode: RepeatMode.Off
+  repeatMode: RepeatMode.Off,
+  shuffle: false
 };
+
+function shuffleQueue(queue: TrackId[], queueIndex: number) {
+  const firstTrack = queue[queueIndex];
+  const shuffledTracks = queue.filter((t) => t !== firstTrack);
+  shuffledTracks.sort(() => Math.random() - 0.5);
+  return [firstTrack, ...shuffledTracks];
+}
 
 export const loadAndPlayTrack = createAsyncThunk(
   "player/loadAndPlayTrack",
@@ -71,8 +82,14 @@ export const playerSlice = createSlice({
       state,
       action: PayloadAction<{ queue: TrackId[]; queueIndex: number }>
     ) => {
-      state.queue = action.payload.queue;
+      state.queueUnshuffled = action.payload.queue;
       state.queueIndex = action.payload.queueIndex;
+      if (state.shuffle) {
+        state.queue = shuffleQueue(state.queueUnshuffled, state.queueIndex);
+        state.queueIndex = 0;
+      } else {
+        state.queue = state.queueUnshuffled;
+      }
     },
     nextTrack: (state) => {
       if (state.queueIndex !== null) {
@@ -105,6 +122,19 @@ export const playerSlice = createSlice({
         (v) => !isNaN(Number(v))
       ).length;
       state.repeatMode = (state.repeatMode + 1) % modes;
+    },
+    toggleShuffle: (state) => {
+      state.shuffle = !state.shuffle;
+      if (state.queueIndex != null) {
+        const firstTrack = state.queue[state.queueIndex];
+        if (state.shuffle) {
+          state.queue = shuffleQueue(state.queue, state.queueIndex);
+          state.queueIndex = 0;
+        } else {
+          state.queue = state.queueUnshuffled;
+          state.queueIndex = state.queue.indexOf(firstTrack);
+        }
+      }
     }
   },
   extraReducers: (builder) => {
@@ -130,7 +160,8 @@ export const {
   setQueue,
   nextTrack,
   previousTrack,
-  cycleRepeatMode
+  cycleRepeatMode,
+  toggleShuffle
 } = playerSlice.actions;
 
 export const selectStatus = (state: RootState) => state.player.status;
@@ -139,6 +170,7 @@ export const selectMuted = (state: RootState) => state.player.muted;
 export const selectQueue = (state: RootState) => state.player.queue;
 export const selectQueueIndex = (state: RootState) => state.player.queueIndex;
 export const selectRepeatMode = (state: RootState) => state.player.repeatMode;
+export const selectShuffle = (state: RootState) => state.player.shuffle;
 
 export default playerSlice.reducer;
 

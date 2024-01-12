@@ -12,7 +12,9 @@ import {
   pause,
   resume,
   selectRepeatMode,
-  selectStatus
+  selectShuffle,
+  selectStatus,
+  toggleShuffle
 } from "../../features/player/playerSlice";
 import { restartOrPreviousTrack } from "../../features/player/playerTime";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
@@ -32,6 +34,7 @@ export function PlaybackControls() {
   const metadata = useAppSelector(selectCurrentTrack);
   const status = useAppSelector(selectStatus);
   const repeatMode = useAppSelector(selectRepeatMode);
+  const shuffle = useAppSelector(selectShuffle);
   const displayRemainingTime = useAppSelector(selectDisplayRemainingTime);
   const [progressValue, setProgressValue] = useState(0);
   return (
@@ -42,7 +45,12 @@ export function PlaybackControls() {
           <div className={styles.time}>{formatDuration(progressValue)}</div>
         )}
         <div className={styles.controls}>
-          <button className={styles.button}>
+          <button
+            className={`${styles.button} ${shuffle ? styles.selected : ""}`}
+            onClick={() => {
+              dispatch(toggleShuffle());
+            }}
+          >
             <ShuffleIcon />
           </button>
           <button
