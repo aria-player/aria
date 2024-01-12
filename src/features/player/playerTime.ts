@@ -34,6 +34,10 @@ export function seek(position: number) {
   if (!currentTrack) return;
   const plugin = pluginHandles[currentTrack.source] as SourceHandle;
   plugin?.setTime(position);
+  // In case the player automatically pauses at the end of a track
+  if (playing) {
+    plugin?.resume();
+  }
 }
 
 export function restartOrPreviousTrack() {

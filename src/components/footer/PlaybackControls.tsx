@@ -4,16 +4,19 @@ import PlayIcon from "../../assets/play.svg?react";
 import ForwardIcon from "../../assets/skip-forward.svg?react";
 import BackwardIcon from "../../assets/skip-back.svg?react";
 import RepeatIcon from "../../assets/repeat-solid.svg?react";
+import RepeatOneIcon from "../../assets/repeat-solid-one.svg?react";
 import ShuffleIcon from "../../assets/shuffle-solid.svg?react";
 import {
+  cycleRepeatMode,
   nextTrack,
   pause,
   resume,
+  selectRepeatMode,
   selectStatus
 } from "../../features/player/playerSlice";
 import { restartOrPreviousTrack } from "../../features/player/playerTime";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { Status } from "../../features/player/playerTypes";
+import { RepeatMode, Status } from "../../features/player/playerTypes";
 import { selectCurrentTrack } from "../../features/sharedSelectors";
 import { formatDuration } from "../../app/utils";
 import { ProgressBar } from "./ProgressBar";
@@ -28,6 +31,7 @@ export function PlaybackControls() {
 
   const metadata = useAppSelector(selectCurrentTrack);
   const status = useAppSelector(selectStatus);
+  const repeatMode = useAppSelector(selectRepeatMode);
   const displayRemainingTime = useAppSelector(selectDisplayRemainingTime);
   const [progressValue, setProgressValue] = useState(0);
   return (
@@ -73,8 +77,15 @@ export function PlaybackControls() {
           >
             <ForwardIcon />
           </button>
-          <button className={styles.button}>
-            <RepeatIcon />
+          <button
+            className={`${styles.button} ${
+              repeatMode != RepeatMode.Off ? styles.selected : ""
+            }`}
+            onClick={() => {
+              dispatch(cycleRepeatMode());
+            }}
+          >
+            {repeatMode == RepeatMode.One ? <RepeatOneIcon /> : <RepeatIcon />}
           </button>
         </div>
         {status != Status.Stopped && (

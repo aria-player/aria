@@ -65,7 +65,7 @@
   margin: 0;
 }
 
-.button:hover {
+.button:hover:not(.selected) {
   background-color: var(--button-background-hover);
 }
 
@@ -76,4 +76,9 @@
 .button:first-child:active svg,
 .button:last-child:active svg {
   transform: scale(0.9);
+}
+
+.selected {
+  color: var(--button-text-selected);
+  background-color: var(--button-background-selected);
 }

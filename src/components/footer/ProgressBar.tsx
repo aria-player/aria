@@ -3,13 +3,15 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { MediaSlider } from "soprano-ui";
 import { selectCurrentTrack } from "../../features/sharedSelectors";
 import { getElapsedPlayerTime, seek } from "../../features/player/playerTime";
-import { nextTrack } from "../../features/player/playerSlice";
+import { nextTrack, selectRepeatMode } from "../../features/player/playerSlice";
+import { RepeatMode } from "../../features/player/playerTypes";
 
 export function ProgressBar(props: {
   progressValueState: [number, (progressValue: number) => void];
 }) {
   const dispatch = useAppDispatch();
   const duration = useAppSelector(selectCurrentTrack)?.duration;
+  const repeatMode = useAppSelector(selectRepeatMode);
   const [progressValue, setProgressValue] = props.progressValueState;
   const [dragging, setDragging] = useState(false);
 
@@ -20,14 +22,25 @@ export function ProgressBar(props: {
         const elapsedTime = getElapsedPlayerTime();
         setProgressValue(Math.min(duration ?? 0, elapsedTime));
         if (duration != null && elapsedTime >= duration) {
-          dispatch(nextTrack());
+          if (repeatMode == RepeatMode.One) {
+            seek(0);
+          } else {
+            dispatch(nextTrack());
+          }
         }
       }, 100) as unknown as number;
     }
     return () => {
       clearInterval(progressUpdateIntervalId);
     };
-  }, [dispatch, setProgressValue, progressValue, dragging, duration]);
+  }, [
+    dispatch,
+    setProgressValue,
+    progressValue,
+    dragging,
+    duration,
+    repeatMode
+  ]);
 
   return (
     <MediaSlider

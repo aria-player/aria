@@ -4,3 +4,9 @@ export enum Status {
   Playing,
   Paused
 }
+
+export enum RepeatMode {
+  Off,
+  All,
+  One
+}

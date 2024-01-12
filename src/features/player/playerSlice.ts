@@ -1,6 +1,6 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
-import { Status } from "./playerTypes";
+import { RepeatMode, Status } from "./playerTypes";
 import { TrackId } from "../library/libraryTypes";
 import { pluginHandles } from "../plugins/pluginsSlice";
 import { SourceHandle } from "../plugins/pluginsTypes";
@@ -13,6 +13,7 @@ interface PlayerState {
   muted: boolean;
   queue: TrackId[];
   queueIndex: number | null;
+  repeatMode: RepeatMode;
 }
 
 const initialState: PlayerState = {
@@ -20,7 +21,8 @@ const initialState: PlayerState = {
   volume: 100,
   muted: false,
   queue: [],
-  queueIndex: null
+  queueIndex: null,
+  repeatMode: RepeatMode.Off
 };
 
 export const loadAndPlayTrack = createAsyncThunk(
@@ -76,8 +78,12 @@ export const playerSlice = createSlice({
       if (state.queueIndex !== null) {
         state.queueIndex += 1;
         if (state.queueIndex >= state.queue.length) {
-          state.queueIndex = null;
-          state.status = Status.Stopped;
+          if (state.repeatMode != RepeatMode.Off) {
+            state.queueIndex = 0;
+          } else {
+            state.queueIndex = null;
+            state.status = Status.Stopped;
+          }
         }
       }
     },
@@ -85,10 +91,20 @@ export const playerSlice = createSlice({
       if (state.queueIndex !== null) {
         state.queueIndex -= 1;
         if (state.queueIndex < 0) {
-          state.queueIndex = null;
-          state.status = Status.Stopped;
+          if (state.repeatMode != RepeatMode.Off) {
+            state.queueIndex = state.queue.length - 1;
+          } else {
+            state.queueIndex = null;
+            state.status = Status.Stopped;
+          }
         }
       }
+    },
+    cycleRepeatMode: (state) => {
+      const modes = Object.values(RepeatMode).filter(
+        (v) => !isNaN(Number(v))
+      ).length;
+      state.repeatMode = (state.repeatMode + 1) % modes;
     }
   },
   extraReducers: (builder) => {
@@ -113,7 +129,8 @@ export const {
   setMuted,
   setQueue,
   nextTrack,
-  previousTrack
+  previousTrack,
+  cycleRepeatMode
 } = playerSlice.actions;
 
 export const selectStatus = (state: RootState) => state.player.status;
@@ -121,6 +138,7 @@ export const selectVolume = (state: RootState) => state.player.volume;
 export const selectMuted = (state: RootState) => state.player.muted;
 export const selectQueue = (state: RootState) => state.player.queue;
 export const selectQueueIndex = (state: RootState) => state.player.queueIndex;
+export const selectRepeatMode = (state: RootState) => state.player.repeatMode;
 
 export default playerSlice.reducer;
 
