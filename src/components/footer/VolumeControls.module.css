@@ -1,16 +1,27 @@
 .volume {
   width: 6rem;
   border-radius: 5px;
-  margin: 0 0.7rem;
+  margin: 0 0.4rem;
 }
 
 .mute {
-  width: 1.75rem;
+  width: 2.3rem;
+  height: 2.3rem;
   color: var(--player-controls);
   border: none;
   background: none;
-  padding: 0;
+  padding: 0.3rem;
   margin: 0;
   display: flex;
   flex-shrink: 0;
+  transition: transform 0.1s ease;
+  border-radius: 0.25rem;
+}
+
+.mute:hover {
+  background-color: var(--button-background-hover);
+}
+
+.mute:active svg {
+  transform: scale(0.95);
 }
