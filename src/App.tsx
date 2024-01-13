@@ -21,11 +21,25 @@ import { TrackList } from "./views/TrackList";
 import { AlbumGrid } from "./views/AlbumGrid";
 import { PluginsPage } from "./views/settings/PluginsPage";
 import { LibraryPage } from "./views/settings/LibraryPage";
+import { useAppDispatch, useAppSelector } from "./app/hooks";
+import {
+  selectSidebarCollapsed,
+  selectSidebarWidth,
+  setSidebarConfig
+} from "./features/config/configSlice";
 
 function App() {
   const { platform, fullscreen } = useContext(PlatformContext);
   useKeyboardShortcuts();
   useTheme();
+
+  const dispatch = useAppDispatch();
+  const sidebarWidth = useAppSelector(selectSidebarWidth);
+  const sidebarCollapsed = useAppSelector(selectSidebarCollapsed);
+
+  const handleDragEnd = (sizes: number[]) => {
+    dispatch(setSidebarConfig({ width: sizes[0], collapsed: sizes[0] === 0 }));
+  };
 
   if (platform === Platform.Unknown)
     return <div className={styles.loading}></div>;
@@ -34,8 +48,11 @@ function App() {
     <div className={styles.window}>
       {platform == Platform.Mac && fullscreen === false && <MacTitleBar />}
       {platform == Platform.Windows && <WindowsMenuBar />}
-      <Allotment snap proportionalLayout={false}>
-        <Allotment.Pane preferredSize={200}>
+      <Allotment snap proportionalLayout={false} onDragEnd={handleDragEnd}>
+        <Allotment.Pane
+          preferredSize={sidebarWidth}
+          visible={!sidebarCollapsed}
+        >
           <Sidebar />
         </Allotment.Pane>
         <Allotment.Pane>
