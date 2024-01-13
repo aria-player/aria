@@ -81,7 +81,7 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
     async function init() {
       if (isTauri()) {
         unlisten = await appWindow.onResized(() => {
-          appWindow.isFullscreen().then((isFullscreen) => {
+          appWindow.isFullscreen().then((isFullscreen: boolean) => {
             setFullscreen(isFullscreen);
           });
         });
@@ -100,9 +100,11 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
     async function init() {
       if (isTauri() && !listeningToTauri.current) {
         listeningToTauri.current = true;
-        unlisten = await appWindow.onMenuClicked(({ payload: menuId }) => {
-          handleMenuAction(dispatch, menuId);
-        });
+        unlisten = await appWindow.onMenuClicked(
+          ({ payload: menuId }: { payload: string }) => {
+            handleMenuAction(dispatch, menuId);
+          }
+        );
       }
     }
     init();

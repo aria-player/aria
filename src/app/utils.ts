@@ -1,8 +1,12 @@
 import { TrackUri, TrackId } from "../features/library/libraryTypes";
 import { PluginId } from "../features/plugins/pluginsTypes";
 
+interface Window {
+  __TAURI__?: unknown;
+}
+
 export function isTauri() {
-  return window.__TAURI__ !== undefined;
+  return (window as Window).__TAURI__ !== undefined;
 }
 
 export function formatDuration(duration: number) {

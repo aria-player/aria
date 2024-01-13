@@ -2,9 +2,6 @@ import { WindowsMenuBar } from "./components/platforms/windows/WindowsMenuBar";
 import styles from "./App.module.css";
 import { Route, Routes } from "react-router-dom";
 import ErrorPage from "./views/Error";
-// Allotment types coming soon
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { Allotment } from "allotment";
 import { useContext } from "react";
 import SettingsPage from "./views/Settings";
