@@ -3,7 +3,7 @@ import { Track } from "./libraryTypes";
 import { formatBytes, formatDuration } from "../../app/utils";
 import { plugins } from "../../plugins/plugins";
 
-export const columnDefinitions: ColDef[] = [
+export const defaultColumnDefinitions: ColDef[] = [
   { field: "id", hide: true, filter: false },
   { field: "uri", hide: true, filter: false },
   {
