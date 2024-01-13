@@ -10,6 +10,7 @@ body {
 
   /* Allotment overrides */
   --separator-border: transparent;
+  --focus-border: var(--button-background-selected);
   --sash-size: 9px;
 
   /* Contexify overrides */
