@@ -7,6 +7,7 @@ import { selectAllTracks } from "../features/library/librarySlice";
 import { columnDefinitions } from "../features/library/libraryColumns";
 import { setQueue } from "../features/player/playerSlice";
 import { selectCurrentTrack } from "../features/sharedSelectors";
+import { TrackId } from "../features/library/libraryTypes";
 
 export const TrackList = () => {
   const dispatch = useAppDispatch();
@@ -26,12 +27,32 @@ export const TrackList = () => {
   );
 
   const handleCellDoubleClicked = (event: RowClickedEvent) => {
-    dispatch(
-      setQueue({
-        queue: rowData.map((track) => track.id),
-        queueIndex: event.rowIndex ?? 0
-      })
-    );
+    if (gridRef.current?.api) {
+      const queue = [] as TrackId[];
+      gridRef.current.api.forEachNodeAfterFilterAndSort((node) => {
+        queue.push(node.data.id);
+      });
+      dispatch(
+        setQueue({
+          queue,
+          queueIndex: event.rowIndex ?? 0
+        })
+      );
+    }
+  };
+
+  const handleSortChanged = () => {
+    if (gridRef.current?.api) {
+      const queue = [] as TrackId[];
+      gridRef.current.api.forEachNodeAfterFilterAndSort((node) => {
+        queue.push(node.data.id);
+      });
+      let queueIndex = 0;
+      if (currentTrack) {
+        queueIndex = queue.indexOf(currentTrack);
+      }
+      dispatch(setQueue({ queue, queueIndex }));
+    }
   };
 
   useEffect(() => {
@@ -48,6 +69,7 @@ export const TrackList = () => {
         defaultColDef={defaultColDef}
         rowSelection="multiple"
         onCellDoubleClicked={handleCellDoubleClicked}
+        onSortChanged={handleSortChanged}
         rowHeight={33}
         headerHeight={37}
         suppressCellFocus
