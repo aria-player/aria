@@ -47,7 +47,7 @@ export const TrackList = () => {
       gridRef.current.api.forEachNodeAfterFilterAndSort((node) => {
         queue.push(node.data.id);
       });
-      let queueIndex = 0;
+      let queueIndex = null;
       if (currentTrack) {
         queueIndex = queue.indexOf(currentTrack);
       }

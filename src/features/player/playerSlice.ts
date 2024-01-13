@@ -29,11 +29,14 @@ const initialState: PlayerState = {
   shuffle: false
 };
 
-function shuffleQueue(queue: TrackId[], queueIndex: number) {
-  const firstTrack = queue[queueIndex];
+function shuffleQueue(queue: TrackId[], queueIndex: number | null) {
+  const firstTrack = queueIndex != null ? queue[queueIndex] : null;
   const shuffledTracks = queue.filter((t) => t !== firstTrack);
   shuffledTracks.sort(() => Math.random() - 0.5);
-  return [firstTrack, ...shuffledTracks];
+  if (queueIndex != null) {
+    shuffledTracks.unshift(firstTrack as TrackId);
+  }
+  return shuffledTracks;
 }
 
 export const loadAndPlayTrack = createAsyncThunk(
@@ -80,13 +83,13 @@ export const playerSlice = createSlice({
     },
     setQueue: (
       state,
-      action: PayloadAction<{ queue: TrackId[]; queueIndex: number }>
+      action: PayloadAction<{ queue: TrackId[]; queueIndex: number | null }>
     ) => {
       state.queueUnshuffled = action.payload.queue;
       state.queueIndex = action.payload.queueIndex;
       if (state.shuffle) {
         state.queue = shuffleQueue(state.queueUnshuffled, state.queueIndex);
-        state.queueIndex = 0;
+        if (state.queueIndex != null) state.queueIndex = 0;
       } else {
         state.queue = state.queueUnshuffled;
       }
