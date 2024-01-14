@@ -118,7 +118,7 @@ export const TrackList = () => {
     <div className={`${styles.tracklist} ag-theme-balham`}>
       <AgGridReact
         ref={gridRef}
-        getRowId={(params) => params.data.uri}
+        getRowId={(params) => params.data.id}
         rowData={rowData}
         columnDefs={columnDefs as ColDef[]}
         defaultColDef={defaultColDef}
