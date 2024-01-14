@@ -80,5 +80,22 @@
     "show": "Show",
     "hide": "Hide",
     "exit": "Exit"
+  },
+  "columns": {
+    "title": "Title",
+    "duration": "Duration",
+    "artist": "Artist",
+    "albumartist": "Album Artist",
+    "album": "Album",
+    "genre": "Genre",
+    "year": "Year",
+    "composer": "Composer",
+    "comments": "Comments",
+    "track": "Track #",
+    "disc": "Disc #",
+    "datemodified": "Date Modified",
+    "dateadded": "Date Added",
+    "filesize": "Size",
+    "source": "Source"
   }
 }

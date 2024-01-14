@@ -19,6 +19,7 @@ import { setQueue } from "../features/player/playerSlice";
 import { selectCurrentTrack } from "../features/sharedSelectors";
 import { TrackId } from "../features/library/libraryTypes";
 import { GridContext } from "../contexts/GridContext";
+import { useTranslation } from "react-i18next";
 
 export const TrackList = () => {
   const dispatch = useAppDispatch();
@@ -28,6 +29,7 @@ export const TrackList = () => {
 
   const { gridRef } = useContext(GridContext);
 
+  const { t } = useTranslation();
   const columnState = useAppSelector(selectColumnState);
   const columnDefs = useMemo(() => {
     if (!columnState) return defaultColumnDefinitions;
@@ -43,7 +45,14 @@ export const TrackList = () => {
         };
         delete updatedColumnState.rowGroup;
         delete updatedColumnState.pivot;
-        return { ...colDef, ...updatedColumnState };
+        return {
+          ...colDef,
+          ...updatedColumnState,
+          headerName:
+            colDef.field != "id" && colDef.field != "uri"
+              ? t(`columns.${colDef.field}`)
+              : colDef.field
+        };
       })
       .sort((a, b) => {
         const indexA = columnState.findIndex(
@@ -54,7 +63,7 @@ export const TrackList = () => {
         );
         return indexA - indexB || 1;
       });
-  }, [columnState]);
+  }, [columnState, t]);
 
   const defaultColDef = useMemo(
     () => ({
