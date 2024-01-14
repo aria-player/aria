@@ -54,7 +54,13 @@
   {
     "id": "menubar_edit",
     "label": "Edit",
-    "submenu": []
+    "submenu": [
+      {
+        "id": "select_all",
+        "label": "Select All",
+        "shortcut": "Ctrl+A"
+      }
+    ]
   },
   {
     "id": "menubar_view",

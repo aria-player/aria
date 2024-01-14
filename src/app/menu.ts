@@ -3,6 +3,7 @@ import { createSelector } from "@reduxjs/toolkit";
 import { invoke } from "@tauri-apps/api";
 import { push, goBack, goForward } from "redux-first-history";
 import { BASEPATH } from "./constants";
+import { GridApi } from "@ag-grid-community/core";
 
 export interface MenuItem {
   id: string;
@@ -18,7 +19,11 @@ export interface MenuItemState {
   selected?: boolean;
 }
 
-export function handleMenuAction(action: string, dispatch: AppDispatch) {
+export function handleMenuAction(
+  action: string,
+  dispatch: AppDispatch,
+  gridApi?: GridApi
+) {
   switch (action) {
     case "exit":
       invoke("exit");
@@ -38,6 +43,9 @@ export function handleMenuAction(action: string, dispatch: AppDispatch) {
     case "fullscreen":
       invoke("toggle_fullscreen");
       break;
+    case "select_all":
+      gridApi?.selectAll();
+      break;
     default:
       break;
   }
@@ -45,7 +53,7 @@ export function handleMenuAction(action: string, dispatch: AppDispatch) {
 
 export const selectMenuState = createSelector(
   [(state: RootState) => state.router],
-  () => {
+  (state) => {
     return {
       back: {
         disabled: !(window.history.length > 1 && window.history.state.idx > 0)
@@ -55,6 +63,9 @@ export const selectMenuState = createSelector(
           window.history.length > 1 &&
           window.history.length - 1 != window.history.state.idx
         )
+      },
+      select_all: {
+        disabled: state.location?.pathname != BASEPATH
       }
     };
   }
