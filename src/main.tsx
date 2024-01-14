@@ -4,6 +4,7 @@ import { Provider } from "react-redux";
 import { persistor, history, store } from "./app/store";
 import { PersistGate } from "redux-persist/integration/react";
 import { HistoryRouter } from "redux-first-history/rr6";
+import { GridProvider } from "./contexts/GridContext";
 import { PlatformProvider } from "./contexts/PlatformContext";
 import { BASEPATH } from "./app/constants";
 import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
@@ -26,9 +27,11 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
         <HistoryRouter history={history} basename={BASEPATH}>
-          <PlatformProvider>
-            <App />
-          </PlatformProvider>
+          <GridProvider>
+            <PlatformProvider>
+              <App />
+            </PlatformProvider>
+          </GridProvider>
         </HistoryRouter>
       </PersistGate>
     </Provider>

@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useContext, useEffect, useMemo } from "react";
 import { AgGridReact } from "@ag-grid-community/react";
 import {
   ColDef,
@@ -18,6 +18,7 @@ import { defaultColumnDefinitions } from "../features/library/libraryColumns";
 import { setQueue } from "../features/player/playerSlice";
 import { selectCurrentTrack } from "../features/sharedSelectors";
 import { TrackId } from "../features/library/libraryTypes";
+import { GridContext } from "../contexts/GridContext";
 
 export const TrackList = () => {
   const dispatch = useAppDispatch();
@@ -25,7 +26,7 @@ export const TrackList = () => {
   const currentTrack = useAppSelector(selectCurrentTrack)?.id;
   const rowData = useAppSelector(selectAllTracks);
 
-  const gridRef = useRef<AgGridReact>(null);
+  const { gridRef } = useContext(GridContext);
 
   const columnState = useAppSelector(selectColumnState);
   const columnDefs = useMemo(() => {
@@ -73,7 +74,7 @@ export const TrackList = () => {
   };
 
   const handleCellDoubleClicked = (event: RowClickedEvent) => {
-    if (gridRef.current?.api) {
+    if (gridRef?.current?.api) {
       const queue = [] as TrackId[];
       gridRef.current.api.forEachNodeAfterFilterAndSort((node) => {
         queue.push(node.data.id);
@@ -88,7 +89,7 @@ export const TrackList = () => {
   };
 
   const handleSortChanged = () => {
-    if (gridRef.current?.api) {
+    if (gridRef?.current?.api) {
       const queue = [] as TrackId[];
       gridRef.current.api.forEachNodeAfterFilterAndSort((node) => {
         queue.push(node.data.id);
@@ -111,8 +112,8 @@ export const TrackList = () => {
   };
 
   useEffect(() => {
-    if (gridRef.current?.api) gridRef.current?.api.redrawRows();
-  }, [currentTrack]);
+    if (gridRef?.current?.api) gridRef.current?.api.redrawRows();
+  }, [gridRef, currentTrack]);
 
   return (
     <div className={`${styles.tracklist} ag-theme-balham`}>
