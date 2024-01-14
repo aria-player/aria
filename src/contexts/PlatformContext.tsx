@@ -2,10 +2,11 @@ import { invoke } from "@tauri-apps/api";
 import { type } from "@tauri-apps/api/os";
 import { appWindow } from "@tauri-apps/api/window";
 import { ReactNode, createContext, useEffect, useRef, useState } from "react";
-import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { selectMenuState, handleMenuAction } from "../app/menu";
+import { useAppSelector } from "../app/hooks";
+import { selectMenuState } from "../app/menu";
 import { isTauri } from "../app/utils";
 import i18n from "../i18n";
+import { useMenuActions } from "../hooks/useMenuActions";
 
 export enum Platform {
   Unknown = "Unknown",
@@ -32,8 +33,8 @@ export const PlatformContext = createContext<{
 });
 
 export function PlatformProvider({ children }: { children: ReactNode }) {
-  const dispatch = useAppDispatch();
   const menuState = useAppSelector(selectMenuState);
+  const { invokeMenuAction } = useMenuActions();
 
   const listeningToTauri = useRef(false);
   const [platform, setPlatform] = useState<Platform>(Platform.Unknown);
@@ -74,7 +75,7 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
     }
 
     initialise();
-  }, [dispatch, platform]);
+  }, [platform]);
 
   useEffect(() => {
     let unlisten: (() => void) | undefined;
@@ -93,7 +94,7 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
         unlisten();
       }
     };
-  }, [dispatch, platform]);
+  }, [platform]);
 
   useEffect(() => {
     let unlisten: (() => void) | undefined;
@@ -102,7 +103,7 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
         listeningToTauri.current = true;
         unlisten = await appWindow.onMenuClicked(
           ({ payload: menuId }: { payload: string }) => {
-            handleMenuAction(dispatch, menuId);
+            invokeMenuAction(menuId);
           }
         );
       }
@@ -113,7 +114,7 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
         unlisten();
       }
     };
-  }, [dispatch]);
+  }, [invokeMenuAction]);
 
   useEffect(() => {
     if (isTauri()) {

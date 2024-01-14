@@ -1,7 +1,7 @@
-import { goBack, goForward, push } from "redux-first-history";
 import { AppDispatch, RootState } from "./store";
-import { invoke } from "@tauri-apps/api";
 import { createSelector } from "@reduxjs/toolkit";
+import { invoke } from "@tauri-apps/api";
+import { push, goBack, goForward } from "redux-first-history";
 import { BASEPATH } from "./constants";
 
 export interface MenuItem {
@@ -18,7 +18,7 @@ export interface MenuItemState {
   selected?: boolean;
 }
 
-export async function handleMenuAction(dispatch: AppDispatch, action: string) {
+export function handleMenuAction(action: string, dispatch: AppDispatch) {
   switch (action) {
     case "exit":
       invoke("exit");

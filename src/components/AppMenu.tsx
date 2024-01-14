@@ -1,8 +1,9 @@
 import { Item, Submenu, RightSlot, Separator } from "react-contexify";
-import { MenuItem, handleMenuAction, selectMenuState } from "../app/menu";
+import { MenuItem, selectMenuState } from "../app/menu";
 import { isTauri } from "../app/utils";
-import { useAppDispatch, useAppSelector } from "../app/hooks";
+import { useAppSelector } from "../app/hooks";
 import { useTranslation } from "react-i18next";
+import { useMenuActions } from "../hooks/useMenuActions";
 
 export function AppMenu(props: {
   items: MenuItem[];
@@ -10,8 +11,8 @@ export function AppMenu(props: {
 }) {
   const { t } = useTranslation();
 
-  const dispatch = useAppDispatch();
   const menuState = useAppSelector(selectMenuState);
+  const { invokeMenuAction } = useMenuActions();
 
   const platformItems = props.items.filter(
     (item) => !item.maconly && (!item.winlinuxonly || isTauri())
@@ -60,7 +61,7 @@ export function AppMenu(props: {
         return (
           <Item
             onClick={() => {
-              handleMenuAction(dispatch, item.id);
+              invokeMenuAction(item.id);
               props.onItemClick?.(item.id);
             }}
             key={item.id}

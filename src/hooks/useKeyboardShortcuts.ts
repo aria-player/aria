@@ -1,12 +1,12 @@
 import { useEffect } from "react";
 import menus from "../../shared/menus.json";
-import { MenuItem, handleMenuAction } from "../app/menu";
+import { MenuItem } from "../app/menu";
 import { useContextMenu } from "react-contexify";
-import { useAppDispatch } from "../app/hooks";
+import { useMenuActions } from "./useMenuActions";
 
 export const useKeyboardShortcuts = () => {
-  const dispatch = useAppDispatch();
   const { hideAll } = useContextMenu();
+  const { invokeMenuAction } = useMenuActions();
 
   useEffect(() => {
     const shortcuts: Record<string, string> = {};
@@ -24,7 +24,7 @@ export const useKeyboardShortcuts = () => {
 
     extractShortcuts(menus);
 
-    const handleKeyDown = async (event: KeyboardEvent) => {
+    const handleKeyDown = (event: KeyboardEvent) => {
       const keys = [];
       if (event.altKey) keys.push("Alt");
       if (event.ctrlKey) keys.push("Ctrl");
@@ -35,7 +35,7 @@ export const useKeyboardShortcuts = () => {
       const action = shortcuts[shortcut];
       if (action) {
         event.preventDefault();
-        await handleMenuAction(dispatch, action);
+        invokeMenuAction(action);
         hideAll();
       }
     };
@@ -44,5 +44,5 @@ export const useKeyboardShortcuts = () => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [dispatch, hideAll]);
+  }, [invokeMenuAction, hideAll]);
 };
