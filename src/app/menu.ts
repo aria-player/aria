@@ -3,7 +3,7 @@ import { createSelector } from "@reduxjs/toolkit";
 import { invoke } from "@tauri-apps/api";
 import { push, goBack, goForward } from "redux-first-history";
 import { BASEPATH } from "./constants";
-import { GridApi } from "@ag-grid-community/core";
+import { AgGridReact } from "@ag-grid-community/react";
 
 export interface MenuItem {
   id: string;
@@ -22,7 +22,7 @@ export interface MenuItemState {
 export function handleMenuAction(
   action: string,
   dispatch: AppDispatch,
-  gridApi?: GridApi
+  grid?: AgGridReact | null
 ) {
   switch (action) {
     case "exit":
@@ -44,7 +44,7 @@ export function handleMenuAction(
       invoke("toggle_fullscreen");
       break;
     case "select_all":
-      gridApi?.selectAll();
+      grid?.api?.selectAll();
       break;
     default:
       break;

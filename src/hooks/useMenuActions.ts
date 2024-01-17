@@ -9,7 +9,7 @@ export function useMenuActions() {
 
   const invokeMenuAction = useCallback(
     (action: string) => {
-      handleMenuAction(action, dispatch, gridRef?.current?.api);
+      handleMenuAction(action, dispatch, gridRef?.current);
     },
     [dispatch, gridRef]
   );
