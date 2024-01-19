@@ -48,11 +48,25 @@ export function handleMenuAction(
     default:
       break;
   }
+  if (action.startsWith("columns.") && grid?.columnApi) {
+    const column = action.split(".")[1];
+    const isVisible = grid?.columnApi?.getColumn(column)?.isVisible();
+    grid?.columnApi.setColumnVisible(column, !isVisible);
+  }
 }
 
 export const selectMenuState = createSelector(
-  [(state: RootState) => state.router],
-  (state) => {
+  [(state: RootState) => state.router, (state: RootState) => state.library],
+  (router, library) => {
+    const columnVisibility = {} as { [key: string]: MenuItemState };
+    library.columnState?.forEach((c) => {
+      if (c.colId == "uri" || c.colId == "id") return;
+      columnVisibility["columns." + c.colId] = {
+        selected: !c.hide,
+        disabled: router.location?.pathname != BASEPATH
+      };
+    });
+
     return {
       back: {
         disabled: !(window.history.length > 1 && window.history.state.idx > 0)
@@ -64,8 +78,12 @@ export const selectMenuState = createSelector(
         )
       },
       select_all: {
-        disabled: state.location?.pathname != BASEPATH
-      }
+        disabled: router.location?.pathname != BASEPATH
+      },
+      columns: {
+        disabled: router.location?.pathname != BASEPATH
+      },
+      ...columnVisibility
     };
   }
 );

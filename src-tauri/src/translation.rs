@@ -1,6 +1,7 @@
+use crate::menu::{read_menu_json, MenuItem};
 use serde_json::Value;
-use tauri::{Manager, Window};
 use std::env::consts::OS;
+use tauri::{Manager, Window};
 
 const EN_GB: &str = include_str!("../../shared/locales/en_gb/translation.json");
 const EN_US: &str = include_str!("../../shared/locales/en_us/translation.json");
@@ -21,17 +22,9 @@ pub fn get_translations(lang_code: &str) -> (Value, Value) {
 
 pub fn update_menu_language(window: &Window, lang_code: &str) {
     let (translations, defaults) = get_translations(lang_code);
-    if let Value::Object(menu_translations) = &translations["menu"] {
-        for (key, value) in menu_translations {
-            let title = value
-                .as_str()
-                .or_else(|| defaults["menu"].get(key).and_then(|v| v.as_str()));
-            if let Some(title) = title {
-                if let Some(menu_item_handle) = window.menu_handle().try_get_item(key) {
-                    menu_item_handle.set_title(title).unwrap();
-                }
-            }
-        }
+    let menu_items = read_menu_json();
+    for item in menu_items {
+        update_menu_item_language(window, &item, &translations, &defaults);
     }
     if OS == "macos" {
         return;
@@ -49,4 +42,39 @@ pub fn update_menu_language(window: &Window, lang_code: &str) {
             }
         }
     }
+}
+
+fn update_menu_item_language(
+    window: &Window,
+    item: &MenuItem,
+    translations: &Value,
+    defaults: &Value,
+) {
+    let title = if item.id.contains('.') {
+        let parts: Vec<&str> = item.id.split('.').collect();
+        translations
+            .get(parts[0])
+            .and_then(|t| t.get(parts[1]).and_then(|v| v.as_str()))
+            .or_else(|| {
+                defaults
+                    .get(parts[0])
+                    .and_then(|d| d.get(parts[1]).and_then(|v| v.as_str()))
+            })
+    } else {
+        translations["menu"][&item.id]
+            .as_str()
+            .or_else(|| defaults["menu"][&item.id].as_str())
+    };
+
+    if let Some(title) = title {
+        if let Some(menu_item_handle) = window.menu_handle().try_get_item(&item.id) {
+            menu_item_handle.set_title(title).unwrap();
+        }
+    }
+
+    item.submenu.as_ref().map(|submenu_items| {
+        submenu_items.iter().for_each(|sub_item| {
+            update_menu_item_language(window, sub_item, translations, defaults);
+        });
+    });
 }

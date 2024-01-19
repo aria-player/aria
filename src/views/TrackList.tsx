@@ -137,6 +137,7 @@ export const TrackList = () => {
         onSortChanged={handleSortChanged}
         onColumnMoved={handleColumnMovedOrResized}
         onColumnResized={handleColumnMovedOrResized}
+        onColumnVisible={updateColumnState}
         rowHeight={33}
         headerHeight={37}
         suppressCellFocus

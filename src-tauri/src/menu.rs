@@ -4,12 +4,12 @@ use tauri::{CustomMenuItem, Menu, Submenu};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct MenuItem {
-    id: String,
-    shortcut: Option<String>,
-    submenu: Option<Vec<MenuItem>>,
-    tauri: Option<bool>,
-    winlinuxonly: Option<bool>,
-    maconly: Option<bool>,
+    pub id: String,
+    pub shortcut: Option<String>,
+    pub submenu: Option<Vec<MenuItem>>,
+    pub tauri: Option<bool>,
+    pub winlinuxonly: Option<bool>,
+    pub maconly: Option<bool>,
 }
 
 pub fn read_menu_json() -> Vec<MenuItem> {
@@ -54,9 +54,14 @@ fn create_menu_item(item: &MenuItem, labels: &serde_json::Value) -> Submenu {
             if !should_include_item(sub_item) {
                 continue;
             }
-            let sub_item_label = labels["menu"][&sub_item.id]
-                .as_str()
-                .unwrap_or(&sub_item.id);
+            let sub_item_label = if sub_item.id.contains('.') {
+                let parts: Vec<&str> = sub_item.id.split('.').collect();
+                labels[parts[0]][parts[1]].as_str().unwrap_or(&sub_item.id)
+            } else {
+                labels["menu"][&sub_item.id]
+                    .as_str()
+                    .unwrap_or(&sub_item.id)
+            };
             match sub_item.id.as_str() {
                 "separator" => {
                     if should_add_separator(index, submenu_items) {

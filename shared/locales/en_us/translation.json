@@ -75,7 +75,8 @@
     "fullscreen": "Toggle Fullscreen",
     "back": "Back",
     "forward": "Forward",
-    "about": "About..."
+    "about": "About...",
+    "columns": "Columns"
   },
   "tray": {
     "show": "Show",

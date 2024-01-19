@@ -59,6 +59,27 @@
     "id": "menubar_view",
     "submenu": [
       {
+        "id": "columns",
+        "label": "Columns",
+        "submenu": [
+          { "id": "columns.title" },
+          { "id": "columns.duration" },
+          { "id": "columns.artist" },
+          { "id": "columns.albumartist" },
+          { "id": "columns.album" },
+          { "id": "columns.genre" },
+          { "id": "columns.year" },
+          { "id": "columns.composer" },
+          { "id": "columns.comments" },
+          { "id": "columns.track" },
+          { "id": "columns.disc" },
+          { "id": "columns.datemodified" },
+          { "id": "columns.dateadded" },
+          { "id": "columns.filesize" },
+          { "id": "columns.source" }
+        ]
+      },
+      {
         "id": "fullscreen",
         "shortcut": "F11",
         "winlinuxonly": true

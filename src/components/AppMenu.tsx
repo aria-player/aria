@@ -1,5 +1,5 @@
 import { Item, Submenu, RightSlot, Separator } from "react-contexify";
-import { MenuItem, selectMenuState } from "../app/menu";
+import { MenuItem, MenuItemState, selectMenuState } from "../app/menu";
 import { isTauri } from "../app/utils";
 import { useAppSelector } from "../app/hooks";
 import { useTranslation } from "react-i18next";
@@ -11,7 +11,8 @@ export function AppMenu(props: {
 }) {
   const { t } = useTranslation();
 
-  const menuState = useAppSelector(selectMenuState);
+  const menuState: { [key: string]: MenuItemState } =
+    useAppSelector(selectMenuState);
   const { invokeMenuAction } = useMenuActions();
 
   const platformItems = props.items.filter(
@@ -47,11 +48,12 @@ export function AppMenu(props: {
         if (item.id === "separator") {
           return <Separator key={index} />;
         }
+        const label = item.id.includes(".") ? t(item.id) : t("menu." + item.id);
         if (item.submenu) {
           return (
             <Submenu
               key={item.id}
-              label={t("menu." + item.id)}
+              label={label}
               disabled={menuState[item.id as keyof typeof menuState]?.disabled}
             >
               <AppMenu items={item.submenu} />
@@ -66,8 +68,10 @@ export function AppMenu(props: {
             }}
             key={item.id}
             disabled={menuState[item.id as keyof typeof menuState]?.disabled}
+            closeOnClick={!item.id.includes("columns.")}
           >
-            {t("menu." + item.id)}
+            {menuState[item.id as keyof typeof menuState]?.selected ? "✔" : ""}
+            {label}
             <RightSlot>{item.shortcut}</RightSlot>
           </Item>
         );
