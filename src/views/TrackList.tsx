@@ -20,6 +20,7 @@ import { selectCurrentTrack } from "../features/sharedSelectors";
 import { TrackId } from "../features/library/libraryTypes";
 import { GridContext } from "../contexts/GridContext";
 import { useTranslation } from "react-i18next";
+import { TriggerEvent, useContextMenu } from "react-contexify";
 
 export const TrackList = () => {
   const dispatch = useAppDispatch();
@@ -28,6 +29,9 @@ export const TrackList = () => {
   const rowData = useAppSelector(selectAllTracks);
 
   const { gridRef } = useContext(GridContext);
+  const { show: showHeaderContextMenu } = useContextMenu({
+    id: "tracklistheader"
+  });
 
   const { t } = useTranslation();
   const columnState = useAppSelector(selectColumnState);
@@ -123,6 +127,25 @@ export const TrackList = () => {
   useEffect(() => {
     if (gridRef?.current?.api) gridRef.current?.api.redrawRows();
   }, [gridRef, currentTrack]);
+
+  useEffect(() => {
+    const headerContextArea = document.querySelector(".ag-header");
+    const handleContextMenu = (e: Event) => {
+      e.preventDefault();
+      showHeaderContextMenu({
+        event: e as TriggerEvent
+      });
+    };
+
+    if (headerContextArea) {
+      headerContextArea.addEventListener("contextmenu", handleContextMenu);
+    }
+    return () => {
+      if (headerContextArea) {
+        headerContextArea.removeEventListener("contextmenu", handleContextMenu);
+      }
+    };
+  }, [showHeaderContextMenu]);
 
   return (
     <div className={`${styles.tracklist} ag-theme-balham`}>

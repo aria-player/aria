@@ -24,6 +24,7 @@ import {
   selectSidebarWidth,
   setSidebarConfig
 } from "./features/config/configSlice";
+import { ContextMenuContainer } from "./components/contextmenu/ContextMenuContainer";
 
 function App() {
   const { platform, fullscreen } = useContext(PlatformContext);
@@ -43,6 +44,7 @@ function App() {
 
   return (
     <div className={styles.window}>
+      <ContextMenuContainer />
       {platform == Platform.Mac && fullscreen === false && <MacTitleBar />}
       {platform == Platform.Windows && <WindowsMenuBar />}
       <Allotment snap proportionalLayout={false} onDragEnd={handleDragEnd}>
