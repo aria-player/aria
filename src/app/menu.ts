@@ -7,7 +7,6 @@ import { AgGridReact } from "@ag-grid-community/react";
 
 export interface MenuItem {
   id: string;
-  label?: string;
   shortcut?: string;
   submenu?: MenuItem[];
   maconly?: boolean;

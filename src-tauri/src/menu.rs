@@ -5,7 +5,6 @@ use tauri::{CustomMenuItem, Menu, Submenu};
 #[derive(Serialize, Deserialize, Debug)]
 pub struct MenuItem {
     id: String,
-    label: Option<String>,
     shortcut: Option<String>,
     submenu: Option<Vec<MenuItem>>,
     tauri: Option<bool>,
@@ -18,10 +17,10 @@ pub fn read_menu_json() -> Vec<MenuItem> {
     serde_json::from_str(MENUS).expect("JSON was not well-formatted")
 }
 
-pub fn create_menu_from_json(items: &[MenuItem]) -> Menu {
+pub fn create_menu_from_json(items: &[MenuItem], labels: &serde_json::Value) -> Menu {
     items.iter().fold(Menu::new(), |menu, item| {
         if should_include_item(item) {
-            menu.add_submenu(create_menu_item(item))
+            menu.add_submenu(create_menu_item(item, labels))
         } else {
             menu
         }
@@ -47,13 +46,17 @@ fn should_add_separator(index: usize, items: &[MenuItem]) -> bool {
     previous_item && next_item
 }
 
-fn create_menu_item(item: &MenuItem) -> Submenu {
+fn create_menu_item(item: &MenuItem, labels: &serde_json::Value) -> Submenu {
     let mut menu = Menu::new();
+    let parent_label = labels["menu"][&item.id].as_str().unwrap_or(&item.id);
     if let Some(submenu_items) = &item.submenu {
         for (index, sub_item) in submenu_items.iter().enumerate() {
             if !should_include_item(sub_item) {
                 continue;
             }
+            let sub_item_label = labels["menu"][&sub_item.id]
+                .as_str()
+                .unwrap_or(&sub_item.id);
             match sub_item.id.as_str() {
                 "separator" => {
                     if should_add_separator(index, submenu_items) {
@@ -88,12 +91,10 @@ fn create_menu_item(item: &MenuItem) -> Submenu {
                 _ => {}
             }
             if sub_item.submenu.is_some() {
-                menu = menu.add_submenu(create_menu_item(sub_item));
+                menu = menu.add_submenu(create_menu_item(sub_item, labels));
             } else {
-                let default_label = &String::new();
-                let label_value = sub_item.label.as_ref().unwrap_or(default_label);
                 let mut custom_menu_item =
-                    CustomMenuItem::new(sub_item.id.clone(), label_value.to_string());
+                    CustomMenuItem::new(sub_item.id.clone(), sub_item_label.to_string());
                 if let Some(shortcut) = &sub_item.shortcut {
                     custom_menu_item.keyboard_accelerator = Some(shortcut.clone());
                 }
@@ -103,8 +104,8 @@ fn create_menu_item(item: &MenuItem) -> Submenu {
     } else {
         menu = menu.add_item(CustomMenuItem::new(
             item.id.clone(),
-            item.label.as_ref().unwrap_or(&String::new()),
+            parent_label.to_string(),
         ));
     }
-    Submenu::new(item.label.as_ref().unwrap_or(&String::new()), menu)
+    Submenu::new(parent_label.to_string(), menu)
 }

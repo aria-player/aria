@@ -14,6 +14,7 @@ use tauri::{
     WindowEvent, Wry,
 };
 use tauri_plugin_store::{with_store, StoreCollection};
+use translation::update_menu_language;
 use window_shadows::set_shadow;
 
 #[derive(Clone, serde::Serialize)]
@@ -61,6 +62,9 @@ fn main() {
                 store.save()
             })
             .unwrap();
+
+            let language_code = utils::get_language(&app.app_handle());
+            update_menu_language(&window, &language_code);
 
             Ok(())
         })
@@ -138,8 +142,9 @@ fn main() {
             commands::set_initial_language
         ]);
     if OS != "windows" {
+        let (default_labels, _) = translation::get_translations("en-US");
         let items = menu::read_menu_json();
-        let menu = menu::create_menu_from_json(&items);
+        let menu = menu::create_menu_from_json(&items, &default_labels);
         app_builder = app_builder.menu(menu);
     }
     app_builder

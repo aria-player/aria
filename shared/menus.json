@@ -1,7 +1,6 @@
 [
   {
     "id": "menubar_app",
-    "label": "App",
     "maconly": true,
     "submenu": [
       {
@@ -26,18 +25,15 @@
       },
       {
         "id": "exit",
-        "label": "Quit App",
         "shortcut": "Cmd+Q"
       }
     ]
   },
   {
     "id": "menubar_file",
-    "label": "File",
     "submenu": [
       {
         "id": "settings",
-        "label": "Settings...",
         "shortcut": "Ctrl+,"
       },
       {
@@ -45,7 +41,6 @@
       },
       {
         "id": "exit",
-        "label": "Exit",
         "shortcut": "Ctrl+Shift+Q",
         "winlinuxonly": true
       }
@@ -53,22 +48,18 @@
   },
   {
     "id": "menubar_edit",
-    "label": "Edit",
     "submenu": [
       {
         "id": "select_all",
-        "label": "Select All",
         "shortcut": "Ctrl+A"
       }
     ]
   },
   {
     "id": "menubar_view",
-    "label": "View",
     "submenu": [
       {
         "id": "fullscreen",
-        "label": "Toggle Fullscreen",
         "shortcut": "F11",
         "winlinuxonly": true
       }
@@ -76,44 +67,36 @@
   },
   {
     "id": "menubar_navigate",
-    "label": "Navigate",
     "submenu": [
       {
         "id": "back",
-        "label": "Back",
         "shortcut": "Alt+Left"
       },
       {
         "id": "forward",
-        "label": "Forward",
         "shortcut": "Alt+Right"
       }
     ]
   },
   {
     "id": "menubar_window",
-    "label": "Window",
     "maconly": true,
     "submenu": [
       {
         "id": "macos_minimize",
-        "label": "Minimize",
         "shortcut": "Cmd+M"
       },
       {
         "id": "macos_zoom",
-        "label": "Zoom",
         "shortcut": "Ctrl+Cmd+Z"
       }
     ]
   },
   {
     "id": "menubar_help",
-    "label": "Help",
     "submenu": [
       {
-        "id": "about",
-        "label": "About..."
+        "id": "about"
       }
     ]
   }

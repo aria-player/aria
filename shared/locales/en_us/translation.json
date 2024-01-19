@@ -62,6 +62,7 @@
   },
   "menu": {
     "no_actions": "(No actions)",
+    "menubar_app": "App",
     "menubar_file": "File",
     "menubar_edit": "Edit",
     "menubar_view": "View",
