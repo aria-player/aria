@@ -39,7 +39,7 @@ export function AppMenu(props: {
   if (items.length === 0) {
     return (
       <Item disabled>
-        <i>{t("menu.no_actions")}</i>
+        <i>{t("menu.noActions")}</i>
       </Item>
     );
   }

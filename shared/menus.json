@@ -1,24 +1,24 @@
 [
   {
-    "id": "menubar_app",
+    "id": "app",
     "maconly": true,
     "submenu": [
       {
-        "id": "mac_services"
+        "id": "macServices"
       },
       {
         "id": "separator"
       },
       {
-        "id": "mac_hide",
+        "id": "macHide",
         "shortcut": "Cmd+H"
       },
       {
-        "id": "mac_hide_others",
+        "id": "macHideOthers",
         "shortcut": "Option+Cmd+H"
       },
       {
-        "id": "mac_show_all"
+        "id": "macShowAll"
       },
       {
         "id": "separator"
@@ -30,7 +30,7 @@
     ]
   },
   {
-    "id": "menubar_file",
+    "id": "file",
     "submenu": [
       {
         "id": "settings",
@@ -47,16 +47,16 @@
     ]
   },
   {
-    "id": "menubar_edit",
+    "id": "edit",
     "submenu": [
       {
-        "id": "select_all",
+        "id": "selectAll",
         "shortcut": "Ctrl+A"
       }
     ]
   },
   {
-    "id": "menubar_view",
+    "id": "view",
     "submenu": [
       {
         "id": "columns",
@@ -90,7 +90,7 @@
     ]
   },
   {
-    "id": "menubar_navigate",
+    "id": "navigate",
     "submenu": [
       {
         "id": "back",
@@ -103,21 +103,21 @@
     ]
   },
   {
-    "id": "menubar_window",
+    "id": "window",
     "maconly": true,
     "submenu": [
       {
-        "id": "macos_minimize",
+        "id": "macosMinimize",
         "shortcut": "Cmd+M"
       },
       {
-        "id": "macos_zoom",
+        "id": "macosZoom",
         "shortcut": "Ctrl+Cmd+Z"
       }
     ]
   },
   {
-    "id": "menubar_help",
+    "id": "help",
     "submenu": [
       {
         "id": "about"

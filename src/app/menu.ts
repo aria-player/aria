@@ -43,7 +43,7 @@ export function handleMenuAction(
     case "fullscreen":
       invoke("toggle_fullscreen");
       break;
-    case "select_all":
+    case "selectAll":
       grid?.api?.selectAll();
       break;
     default:
@@ -78,7 +78,7 @@ export const selectMenuState = createSelector(
           window.history.length - 1 != window.history.state.idx
         )
       },
-      select_all: {
+      selectAll: {
         disabled: router.location?.pathname != BASEPATH
       },
       columns: {

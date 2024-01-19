@@ -69,27 +69,27 @@ fn create_menu_item(item: &MenuItem, labels: &serde_json::Value) -> Submenu {
                     }
                     continue;
                 }
-                "mac_services" => {
+                "macServices" => {
                     menu = menu.add_native_item(tauri::MenuItem::Services);
                     continue;
                 }
-                "mac_hide" => {
+                "macHide" => {
                     menu = menu.add_native_item(tauri::MenuItem::Hide);
                     continue;
                 }
-                "mac_hide_others" => {
+                "macHideOthers" => {
                     menu = menu.add_native_item(tauri::MenuItem::HideOthers);
                     continue;
                 }
-                "mac_show_all" => {
+                "macShowAll" => {
                     menu = menu.add_native_item(tauri::MenuItem::ShowAll);
                     continue;
                 }
-                "mac_minimize" => {
+                "macMinimize" => {
                     menu = menu.add_native_item(tauri::MenuItem::Minimize);
                     continue;
                 }
-                "mac_zoom" => {
+                "macZoom" => {
                     menu = menu.add_native_item(tauri::MenuItem::Zoom);
                     continue;
                 }
