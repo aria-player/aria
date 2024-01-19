@@ -41,23 +41,23 @@ export const defaultColumnDefinitions: ColDef[] = [
   },
   { field: "genre" },
   { field: "year" },
-  { field: "composer", hide: false },
-  { field: "comments", hide: false },
+  { field: "composer", hide: true },
+  { field: "comments", hide: true },
   {
     field: "track",
-    hide: false,
+    hide: true,
     filter: false,
     type: "rightAligned"
   },
   {
     field: "disc",
-    hide: false,
+    hide: true,
     filter: false,
     type: "rightAligned"
   },
   {
     field: "datemodified",
-    hide: false,
+    hide: true,
     filter: false,
     valueFormatter: (params: { value: number }) => {
       return new Date(params.value).toUTCString();
@@ -65,7 +65,7 @@ export const defaultColumnDefinitions: ColDef[] = [
   },
   {
     field: "dateadded",
-    hide: false,
+    hide: true,
     filter: false,
     valueFormatter: (params: { value: number }) => {
       return new Date(params.value).toUTCString();
@@ -73,7 +73,7 @@ export const defaultColumnDefinitions: ColDef[] = [
   },
   {
     field: "filesize",
-    hide: false,
+    hide: true,
     filter: false,
     valueFormatter: (params: { value: number }) => {
       return formatBytes(params.value);
@@ -82,7 +82,7 @@ export const defaultColumnDefinitions: ColDef[] = [
   },
   {
     field: "source",
-    hide: false,
+    hide: true,
     valueFormatter: (params: { value: string }) => {
       return plugins[params.value].name;
     }
