@@ -7,9 +7,9 @@ pub struct MenuItem {
     pub id: String,
     pub shortcut: Option<String>,
     pub submenu: Option<Vec<MenuItem>>,
-    pub tauri: Option<bool>,
-    pub winlinuxonly: Option<bool>,
     pub maconly: Option<bool>,
+    pub winlinuxonly: Option<bool>,
+    pub keepopen: Option<bool>,
 }
 
 pub fn read_menu_json() -> Vec<MenuItem> {

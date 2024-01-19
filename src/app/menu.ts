@@ -11,6 +11,7 @@ export interface MenuItem {
   submenu?: MenuItem[];
   maconly?: boolean;
   winlinuxonly?: boolean;
+  keepopen?: boolean;
 }
 
 export interface MenuItemState {
