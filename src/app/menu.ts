@@ -5,6 +5,7 @@ import { push, goBack, goForward } from "redux-first-history";
 import { BASEPATH } from "./constants";
 import { AgGridReact } from "@ag-grid-community/react";
 import { setColumnState } from "../features/library/librarySlice";
+import { defaultColumnDefinitions } from "../features/library/libraryColumns";
 
 export interface MenuItem {
   id: string;
@@ -64,13 +65,23 @@ export const selectMenuState = createSelector(
   [(state: RootState) => state.router, (state: RootState) => state.library],
   (router, library) => {
     const columnVisibility = {} as { [key: string]: MenuItemState };
-    library.columnState?.forEach((c) => {
-      if (c.colId == "uri" || c.colId == "id") return;
-      columnVisibility["columns." + c.colId] = {
-        selected: !c.hide,
-        disabled: router.location?.pathname != BASEPATH
-      };
-    });
+    if (library.columnState && library.columnState.length > 0) {
+      library.columnState?.forEach((c) => {
+        if (c.colId == "uri" || c.colId == "id") return;
+        columnVisibility["columns." + c.colId] = {
+          selected: !c.hide,
+          disabled: router.location?.pathname != BASEPATH
+        };
+      });
+    } else {
+      defaultColumnDefinitions.forEach((c) => {
+        if (c.field == "uri" || c.field == "id") return;
+        columnVisibility["columns." + c.field] = {
+          selected: !c.hide,
+          disabled: router.location?.pathname != BASEPATH
+        };
+      });
+    }
 
     return {
       back: {
