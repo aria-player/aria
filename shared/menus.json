@@ -80,6 +80,9 @@
         ]
       },
       {
+        "id": "separator"
+      },
+      {
         "id": "fullscreen",
         "shortcut": "F11",
         "winlinuxonly": true
