@@ -62,7 +62,8 @@
     "back": "Back",
     "forward": "Forward",
     "about": "About...",
-    "columns": "Columns"
+    "columns": "Columns",
+    "resetColumns": "Reset to default layout"
   },
   "tray": {
     "show": "Show",

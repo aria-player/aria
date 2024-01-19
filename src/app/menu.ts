@@ -4,6 +4,7 @@ import { invoke } from "@tauri-apps/api";
 import { push, goBack, goForward } from "redux-first-history";
 import { BASEPATH } from "./constants";
 import { AgGridReact } from "@ag-grid-community/react";
+import { setColumnState } from "../features/library/librarySlice";
 
 export interface MenuItem {
   id: string;
@@ -45,6 +46,9 @@ export function handleMenuAction(
       break;
     case "selectAll":
       grid?.api?.selectAll();
+      break;
+    case "resetColumns":
+      dispatch(setColumnState([]));
       break;
     default:
       break;

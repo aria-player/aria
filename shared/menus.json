@@ -76,7 +76,9 @@
           { "id": "columns.datemodified", "keepopen": true },
           { "id": "columns.dateadded", "keepopen": true },
           { "id": "columns.filesize", "keepopen": true },
-          { "id": "columns.source", "keepopen": true }
+          { "id": "columns.source", "keepopen": true },
+          { "id": "separator" },
+          { "id": "resetColumns" }
         ]
       },
       {
