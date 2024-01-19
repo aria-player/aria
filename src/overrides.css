@@ -14,10 +14,10 @@ body {
   --sash-size: 9px;
 
   /* Contexify overrides */
-  --contexify-menu-padding: 0.25rem 0.25rem;
+  --contexify-menu-padding: 0.25rem;
   --contexify-menu-radius: 0.4rem;
-  --contexify-menu-minWidth: 10rem;
-  --contexify-itemContent-padding: 0.25rem;
+  --contexify-menu-minWidth: 12.5rem;
+  --contexify-itemContent-padding: 0.25rem 1.5rem;
   --contexify-menu-bgColor: var(--button-background);
   --contexify-item-color: var(--button-text);
   --contexify-rightSlot-color: var(--button-text);

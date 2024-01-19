@@ -4,6 +4,7 @@ import { isTauri } from "../app/utils";
 import { useAppSelector } from "../app/hooks";
 import { useTranslation } from "react-i18next";
 import { useMenuActions } from "../hooks/useMenuActions";
+import styles from "./AppMenu.module.css";
 
 export function AppMenu(props: {
   items: MenuItem[];
@@ -49,12 +50,13 @@ export function AppMenu(props: {
           return <Separator key={index} />;
         }
         const label = item.id.includes(".") ? t(item.id) : t("menu." + item.id);
+        const menuStateId = item.id as keyof typeof menuState;
         if (item.submenu) {
           return (
             <Submenu
               key={item.id}
               label={label}
-              disabled={menuState[item.id as keyof typeof menuState]?.disabled}
+              disabled={menuState[menuStateId]?.disabled}
             >
               <AppMenu items={item.submenu} />
             </Submenu>
@@ -67,10 +69,12 @@ export function AppMenu(props: {
               props.onItemClick?.(item.id);
             }}
             key={item.id}
-            disabled={menuState[item.id as keyof typeof menuState]?.disabled}
+            disabled={menuState[menuStateId]?.disabled}
             closeOnClick={!item.id.includes("columns.")}
           >
-            {menuState[item.id as keyof typeof menuState]?.selected ? "✔" : ""}
+            <span className={styles.tick}>
+              {menuState[menuStateId]?.selected ? "✔" : ""}
+            </span>
             {label}
             <RightSlot>{item.shortcut}</RightSlot>
           </Item>

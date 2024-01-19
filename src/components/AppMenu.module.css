@@ -1,0 +1,7 @@
+.tick {
+  position: absolute;
+  top: 50%;
+  left: 0.25rem;
+  transform: translateY(-50%);
+  margin-left: 0;
+}
