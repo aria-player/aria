@@ -76,7 +76,7 @@ export function AppMenu(props: {
               {menuState[menuStateId]?.selected ? "✔" : ""}
             </span>
             {label}
-            <RightSlot>{item.shortcut}</RightSlot>
+            <RightSlot>{item.shortcut?.replace("Arrow", "")}</RightSlot>
           </Item>
         );
       })}
