@@ -76,7 +76,7 @@ export const playerSlice = createSlice({
       state.status = Status.Stopped;
     },
     setVolume: (state, action) => {
-      state.volume = action.payload;
+      state.volume = Math.min(Math.max(action.payload, 0), 100);
     },
     setMuted: (state, action) => {
       state.muted = action.payload;
