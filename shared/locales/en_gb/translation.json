@@ -3,6 +3,12 @@
     "general": {
       "behaviour": "Application behaviour",
       "minimiseToTray": "Close button minimises app to system tray"
+    },
+    "appearance": {
+      "accent": "Accent colour"
     }
+  },
+  "accentColors": {
+    "gray": "Grey"
   }
 }

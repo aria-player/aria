@@ -25,7 +25,8 @@
     },
     "appearance": {
       "theme": "Theme",
-      "windowsControls": "Use system window controls"
+      "windowsControls": "Use system window controls",
+      "accent": "Accent color"
     },
     "plugins": {
       "availablePlugins": "Available plugins",
@@ -95,5 +96,19 @@
     "dateadded": "Date Added",
     "filesize": "Size",
     "source": "Source"
+  },
+  "accentColors": {
+    "blue": "Blue",
+    "teal": "Teal",
+    "green": "Green",
+    "lime": "Lime",
+    "yellow": "Yellow",
+    "orange": "Orange",
+    "red": "Red",
+    "pink": "Pink",
+    "grape": "Grape",
+    "violet": "Violet",
+    "indigo": "Indigo",
+    "gray": "Gray"
   }
 }

@@ -21,3 +21,21 @@
   margin-right: 0.5rem;
   cursor: pointer;
 }
+
+.accentContainer {
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 16rem;
+}
+
+.accentButton {
+  border: none;
+  border-radius: 50%;
+  width: 2rem;
+  height: 2rem;
+  margin: 0.3rem;
+}
+
+.accentButton.selected {
+  outline: 2px solid gray; 
+}

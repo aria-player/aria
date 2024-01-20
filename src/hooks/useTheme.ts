@@ -1,10 +1,19 @@
 import { useEffect } from "react";
 import { useAppSelector } from "../app/hooks";
-import { selectTheme } from "../features/config/configSlice";
-import { Themes } from "../themes/themes";
+import { selectAccentColor, selectTheme } from "../features/config/configSlice";
+import { AccentColors, Themes } from "../themes/themes";
 
 export const useTheme = () => {
   const theme = useAppSelector(selectTheme);
+  const accentColor = useAppSelector(selectAccentColor);
+
+  useEffect(() => {
+    if (!Themes[theme]?.supportsAccent) return;
+    document.documentElement.style.setProperty(
+      "--button-background-selected",
+      AccentColors[accentColor]
+    );
+  }, [theme, accentColor]);
 
   useEffect(() => {
     const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");

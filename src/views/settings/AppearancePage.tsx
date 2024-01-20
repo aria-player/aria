@@ -1,7 +1,12 @@
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { Themes } from "../../themes/themes";
+import { AccentColors, Themes } from "../../themes/themes";
 import { isTauri } from "../../app/utils";
-import { selectTheme, setTheme } from "../../features/config/configSlice";
+import {
+  selectAccentColor,
+  selectTheme,
+  setAccentColor,
+  setTheme
+} from "../../features/config/configSlice";
 import styles from "./settings.module.css";
 import { useContext } from "react";
 import { Platform, PlatformContext } from "../../contexts/PlatformContext";
@@ -12,10 +17,15 @@ export function AppearancePage() {
 
   const dispatch = useAppDispatch();
   const currentTheme = useAppSelector(selectTheme);
+  const currentAccentColor = useAppSelector(selectAccentColor);
   const { platform, decorations, setDecorations } = useContext(PlatformContext);
 
   const handleThemeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     dispatch(setTheme(event.target.value));
+  };
+
+  const handleAccentChange = (color: string) => {
+    dispatch(setAccentColor(color));
   };
 
   const handleCheckboxChange = async (
@@ -49,6 +59,18 @@ export function AppearancePage() {
           {t("settings.appearance.windowsControls")}
         </div>
       )}
+      <h4 className={styles.header}>{t("settings.appearance.accent")}</h4>
+      <div className={styles.accentContainer}>
+        {Object.keys(AccentColors).map((color) => (
+          <button
+            key={color}
+            title={t(`accentColors.${color}`)}
+            style={{ backgroundColor: AccentColors[color] }}
+            className={`${styles.accentButton} ${currentAccentColor === color ? styles.selected : ""}`}
+            onClick={() => handleAccentChange(color)}
+          ></button>
+        ))}
+      </div>
     </div>
   );
 }

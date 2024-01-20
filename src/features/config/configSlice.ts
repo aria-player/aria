@@ -1,8 +1,10 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
+import { AccentColors } from "../../themes/themes";
 
 export interface ConfigState {
   theme: string;
+  accentColor: string;
   language: string | null;
   displayRemainingTime: boolean;
   sidebarWidth: number;
@@ -11,6 +13,7 @@ export interface ConfigState {
 
 const initialState: ConfigState = {
   theme: "system",
+  accentColor: AccentColors["blue"],
   language: null,
   displayRemainingTime: false,
   sidebarWidth: 220,
@@ -23,6 +26,9 @@ export const configSlice = createSlice({
   reducers: {
     setTheme: (state, action: PayloadAction<string>) => {
       state.theme = action.payload;
+    },
+    setAccentColor: (state, action: PayloadAction<string>) => {
+      state.accentColor = action.payload;
     },
     setLanguage: (state, action: PayloadAction<string | null>) => {
       state.language = action.payload;
@@ -42,12 +48,14 @@ export const configSlice = createSlice({
 
 export const {
   setTheme,
+  setAccentColor,
   setLanguage,
   setDisplayRemainingTime,
   setSidebarConfig
 } = configSlice.actions;
 
 export const selectTheme = (state: RootState) => state.config.theme;
+export const selectAccentColor = (state: RootState) => state.config.accentColor;
 export const selectLanguage = (state: RootState) => state.config.language;
 export const selectDisplayRemainingTime = (state: RootState) =>
   state.config.displayRemainingTime;
