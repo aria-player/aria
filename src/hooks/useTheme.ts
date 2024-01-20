@@ -11,7 +11,7 @@ export const useTheme = () => {
     if (!Themes[theme]?.supportsAccent) return;
     document.documentElement.style.setProperty(
       "--accent-color",
-      AccentColors[accentColor]
+      AccentColors[accentColor] || AccentColors["blue"]
     );
   }, [theme, accentColor]);
 
