@@ -34,6 +34,8 @@ export function AppearancePage() {
     setDecorations(event.target.checked);
   };
 
+  const accentsEnabled = Themes[currentTheme].supportsAccent;
+
   return (
     <div>
       <h4 className={styles.header}>{t("settings.appearance.theme")}</h4>
@@ -59,7 +61,11 @@ export function AppearancePage() {
           {t("settings.appearance.windowsControls")}
         </div>
       )}
-      <h4 className={styles.header}>{t("settings.appearance.accent")}</h4>
+      <h4
+        className={`${styles.header} ${!accentsEnabled ? styles.disabledSection : ""}`}
+      >
+        {t("settings.appearance.accent")}
+      </h4>
       <div className={styles.accentContainer}>
         {Object.keys(AccentColors).map((color) => (
           <button
@@ -67,7 +73,8 @@ export function AppearancePage() {
             title={t(`accentColors.${color}`)}
             style={{ backgroundColor: AccentColors[color] }}
             className={`${styles.accentButton} ${currentAccentColor === color ? styles.selected : ""}`}
-            onClick={() => handleAccentChange(color)}
+            onClick={() => (accentsEnabled ? handleAccentChange(color) : null)}
+            disabled={!accentsEnabled}
           ></button>
         ))}
       </div>

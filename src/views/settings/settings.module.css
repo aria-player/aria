@@ -36,6 +36,11 @@
   margin: 0.3rem;
 }
 
+.disabledSection,
+.accentButton:disabled {
+  opacity: 0.5;
+}
+
 .accentButton.selected {
-  outline: 2px solid gray; 
+  outline: 2px solid gray;
 }
