@@ -13,6 +13,7 @@
 
   /* Borders */
   --sidebar-separator: rgb(17 17 17);
+  --focus-outline: #e0e0e0;
 
   /* Backgrounds */
   --primary-background: #000;

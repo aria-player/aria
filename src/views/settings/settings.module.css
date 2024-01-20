@@ -42,5 +42,5 @@
 }
 
 .accentButton.selected {
-  outline: 2px solid gray;
+  border: 2px solid var(--focus-outline);
 }
