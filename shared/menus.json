@@ -92,6 +92,49 @@
     ]
   },
   {
+    "id": "playback",
+    "submenu": [
+      {
+        "id": "togglePlay",
+        "shortcut": "Space"
+      },
+      {
+        "id": "next",
+        "shortcut": "Ctrl+ArrowRight"
+      },
+      {
+        "id": "previous",
+        "shortcut": "Ctrl+ArrowLeft"
+      },
+      {
+        "id": "separator"
+      },
+      {
+        "id": "toggleShuffle",
+        "shortcut": "Ctrl+S"
+      },
+      {
+        "id": "toggleRepeat",
+        "shortcut": "Ctrl+R"
+      },
+      {
+        "id": "separator"
+      },
+      {
+        "id": "volumeUp",
+        "shortcut": "Ctrl+ArrowUp"
+      },
+      {
+        "id": "volumeDown",
+        "shortcut": "Ctrl+ArrowDown"
+      },
+      {
+        "id": "toggleMute",
+        "shortcut": "Ctrl+M"
+      }
+    ]
+  },
+  {
     "id": "navigate",
     "submenu": [
       {

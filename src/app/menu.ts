@@ -1,4 +1,4 @@
-import { AppDispatch, RootState } from "./store";
+import { AppDispatch, RootState, store } from "./store";
 import { createSelector } from "@reduxjs/toolkit";
 import { invoke } from "@tauri-apps/api";
 import { push, goBack, goForward } from "redux-first-history";
@@ -6,6 +6,17 @@ import { BASEPATH } from "./constants";
 import { AgGridReact } from "@ag-grid-community/react";
 import { setColumnState } from "../features/library/librarySlice";
 import { defaultColumnDefinitions } from "../features/library/libraryColumns";
+import { Status } from "../features/player/playerTypes";
+import {
+  cycleRepeatMode,
+  nextTrack,
+  pause,
+  resume,
+  setMuted,
+  setVolume,
+  toggleShuffle
+} from "../features/player/playerSlice";
+import { restartOrPreviousTrack } from "../features/player/playerTime";
 
 export interface MenuItem {
   id: string;
@@ -26,6 +37,7 @@ export function handleMenuAction(
   dispatch: AppDispatch,
   grid?: AgGridReact | null
 ) {
+  const state = store.getState();
   switch (action) {
     case "exit":
       invoke("exit");
@@ -51,6 +63,34 @@ export function handleMenuAction(
     case "resetColumns":
       dispatch(setColumnState([]));
       break;
+    case "togglePlay":
+      if (state.player.status == Status.Playing) {
+        dispatch(pause());
+      } else if (state.player.status == Status.Paused) {
+        dispatch(resume());
+      }
+      break;
+    case "next":
+      dispatch(nextTrack());
+      break;
+    case "previous":
+      restartOrPreviousTrack();
+      break;
+    case "toggleShuffle":
+      dispatch(toggleShuffle());
+      break;
+    case "toggleRepeat":
+      dispatch(cycleRepeatMode());
+      break;
+    case "volumeUp":
+      dispatch(setVolume(state.player.volume + 10));
+      break;
+    case "volumeDown":
+      dispatch(setVolume(state.player.volume - 10));
+      break;
+    case "toggleMute":
+      dispatch(setMuted(!state.player.muted));
+      break;
     default:
       break;
   }
@@ -62,8 +102,12 @@ export function handleMenuAction(
 }
 
 export const selectMenuState = createSelector(
-  [(state: RootState) => state.router, (state: RootState) => state.library],
-  (router, library) => {
+  [
+    (state: RootState) => state.router,
+    (state: RootState) => state.library,
+    (state: RootState) => state.player
+  ],
+  (router, library, player) => {
     const columnVisibility = {} as { [key: string]: MenuItemState };
     if (library.columnState && library.columnState.length > 0) {
       library.columnState?.forEach((c) => {
@@ -99,7 +143,16 @@ export const selectMenuState = createSelector(
       columns: {
         disabled: router.location?.pathname != BASEPATH
       },
-      ...columnVisibility
+      ...columnVisibility,
+      togglePlay: {
+        disabled: player.status == Status.Stopped
+      },
+      next: {
+        disabled: player.status == Status.Stopped
+      },
+      previous: {
+        disabled: player.status == Status.Stopped
+      }
     };
   }
 );

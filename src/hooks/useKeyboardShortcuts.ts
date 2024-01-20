@@ -29,7 +29,9 @@ export const useKeyboardShortcuts = () => {
       if (event.altKey) keys.push("Alt");
       if (event.ctrlKey) keys.push("Ctrl");
       if (event.shiftKey) keys.push("Shift");
-      keys.push(event.key.toUpperCase());
+      const keyName =
+        event.key.length === 1 ? event.key.toUpperCase() : event.key;
+      keys.push(keyName === " " ? "Space" : keyName);
       const shortcut = keys.join("+");
 
       const action = shortcuts[shortcut];

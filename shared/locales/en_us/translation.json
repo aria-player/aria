@@ -52,6 +52,7 @@
     "file": "File",
     "edit": "Edit",
     "view": "View",
+    "playback": "Playback",
     "navigate": "Navigate",
     "window": "Window",
     "help": "Help",
@@ -63,7 +64,15 @@
     "forward": "Forward",
     "about": "About...",
     "columns": "Columns",
-    "resetColumns": "Reset to default layout"
+    "resetColumns": "Reset to default layout",
+    "togglePlay": "Play/Pause",
+    "next": "Next",
+    "previous": "Previous",
+    "toggleShuffle": "Toggle Shuffle",
+    "toggleRepeat": "Toggle Repeat",
+    "volumeUp": "Volume Up",
+    "volumeDown": "Volume Down",
+    "toggleMute": "Mute/Unmute"
   },
   "tray": {
     "show": "Show",
