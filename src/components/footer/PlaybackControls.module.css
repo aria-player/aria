@@ -80,5 +80,5 @@
 
 .selected {
   color: var(--button-text-selected);
-  background-color: var(--button-background-selected);
+  background-color: var(--accent-color);
 }

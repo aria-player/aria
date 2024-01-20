@@ -5,12 +5,12 @@ body {
   --slider-thumb-size: 8px;
   --slider-thumb-border-size: 3px;
   --slider-track-thickness: 6px;
-  --slider-color: var(--button-background-selected);
+  --slider-color: var(--accent-color);
   --slider-track-color: var(--player-slider-background);
 
   /* Allotment overrides */
   --separator-border: transparent;
-  --focus-border: var(--button-background-selected);
+  --focus-border: var(--accent-color);
   --sash-size: 9px;
 
   /* Contexify overrides */
@@ -79,12 +79,12 @@ body {
   }
 
   .ag-row-hover.ag-row-selected::before {
-    background-color: var(--button-background-selected) !important;
+    background-color: var(--accent-color) !important;
     border-radius: 0.25rem;
   }
 
   .ag-row-selected {
-    background-color: var(--button-background-selected) !important;
+    background-color: var(--accent-color) !important;
     color: #fafafa !important;
     border-bottom: 1px solid var(--primary-background);
 

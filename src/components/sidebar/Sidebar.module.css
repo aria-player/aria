@@ -52,6 +52,6 @@
 }
 
 .selected {
-  background-color: var(--button-background-selected);
+  background-color: var(--accent-color);
   color: var(--button-text-selected);
 }

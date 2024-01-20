@@ -10,7 +10,7 @@ export const useTheme = () => {
   useEffect(() => {
     if (!Themes[theme]?.supportsAccent) return;
     document.documentElement.style.setProperty(
-      "--button-background-selected",
+      "--accent-color",
       AccentColors[accentColor]
     );
   }, [theme, accentColor]);
