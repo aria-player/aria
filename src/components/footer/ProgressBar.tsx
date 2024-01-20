@@ -64,8 +64,9 @@ export function ProgressBar(props: {
       onValueChange={(value) => {
         setProgressValue(value[0]);
       }}
-      onKeyDown={() => {
+      onKeyDown={(e) => {
         setDragging(true);
+        e.stopPropagation();
       }}
       onKeyUp={(e) => {
         if (

@@ -48,6 +48,9 @@ export function VolumeControls() {
           keyboardStepMultiplier={10}
           keyboardFocusOnly={true}
           thumbAlignment={"center"}
+          onKeyDown={(e) => {
+            e.stopPropagation();
+          }}
           onPointerUp={() => {
             dispatch(setVolume(localVolume));
           }}
