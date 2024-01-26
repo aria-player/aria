@@ -25,6 +25,7 @@ import {
   setSidebarConfig
 } from "./features/config/configSlice";
 import { ContextMenuContainer } from "./components/contextmenu/ContextMenuContainer";
+import { BASEPATH } from "./app/constants";
 
 function App() {
   const { platform, fullscreen } = useContext(PlatformContext);
@@ -34,7 +35,7 @@ function App() {
   const dispatch = useAppDispatch();
   const sidebarWidth = useAppSelector(selectSidebarWidth);
   const sidebarCollapsed = useAppSelector(selectSidebarCollapsed);
-
+  const location = useAppSelector((state) => state.router.location);
   const handleDragEnd = (sizes: number[]) => {
     dispatch(setSidebarConfig({ width: sizes[0], collapsed: sizes[0] === 0 }));
   };
@@ -57,7 +58,7 @@ function App() {
         <Allotment.Pane>
           <div className={styles.outlet}>
             <Routes>
-              <Route path="/" Component={TrackList} />
+              <Route path="/" Component={() => <></>} />
               <Route path="/albums" Component={AlbumGrid} />
               <Route path="settings" Component={SettingsPage}>
                 <Route index Component={GeneralPage} />
@@ -68,6 +69,15 @@ function App() {
               </Route>
               <Route path="*" Component={ErrorPage} />
             </Routes>
+            <div
+              style={{
+                height: "100%",
+                width: "100%",
+                display: location?.pathname == BASEPATH ? "block" : "none"
+              }}
+            >
+              <TrackList />
+            </div>
           </div>
         </Allotment.Pane>
       </Allotment>
