@@ -103,18 +103,18 @@ export function handleMenuAction(
 
 export const selectMenuState = createSelector(
   [
-    (state: RootState) => state.router,
-    (state: RootState) => state.library,
-    (state: RootState) => state.player
+    (state: RootState) => state.router.location,
+    (state: RootState) => state.library.columnState,
+    (state: RootState) => state.player.status
   ],
-  (router, library, player) => {
+  (location, columnState, status) => {
     const columnVisibility = {} as { [key: string]: MenuItemState };
-    if (library.columnState && library.columnState.length > 0) {
-      library.columnState?.forEach((c) => {
+    if (columnState && columnState.length > 0) {
+      columnState?.forEach((c) => {
         if (c.colId == "uri" || c.colId == "id") return;
         columnVisibility["columns." + c.colId] = {
           selected: !c.hide,
-          disabled: router.location?.pathname != BASEPATH
+          disabled: location?.pathname != BASEPATH
         };
       });
     } else {
@@ -122,7 +122,7 @@ export const selectMenuState = createSelector(
         if (c.field == "uri" || c.field == "id") return;
         columnVisibility["columns." + c.field] = {
           selected: !c.hide,
-          disabled: router.location?.pathname != BASEPATH
+          disabled: location?.pathname != BASEPATH
         };
       });
     }
@@ -138,20 +138,20 @@ export const selectMenuState = createSelector(
         )
       },
       selectAll: {
-        disabled: router.location?.pathname != BASEPATH
+        disabled: location?.pathname != BASEPATH
       },
       columns: {
-        disabled: router.location?.pathname != BASEPATH
+        disabled: location?.pathname != BASEPATH
       },
       ...columnVisibility,
       togglePlay: {
-        disabled: player.status == Status.Stopped
+        disabled: status == Status.Stopped
       },
       next: {
-        disabled: player.status == Status.Stopped
+        disabled: status == Status.Stopped
       },
       previous: {
-        disabled: player.status == Status.Stopped
+        disabled: status == Status.Stopped
       }
     };
   }
