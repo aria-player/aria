@@ -1,11 +1,28 @@
 import styles from "./Sidebar.module.css";
 import { isTauri } from "../../app/utils";
-import { NavLink } from "react-router-dom";
 import { MenuButton } from "../MenuButton";
 import { useTranslation } from "react-i18next";
+import { SectionTree } from "soprano-ui";
+import { useRef } from "react";
 
 export function Sidebar() {
   const { t } = useTranslation();
+  const sectionTreeRef = useRef(null);
+  const sections = [
+    {
+      id: "views",
+      name: "Library",
+      emptyMessage: "No views enabled",
+      children: []
+    },
+    {
+      id: "playlists",
+      name: "Playlists",
+      emptyMessage: "No playlists",
+      children: []
+    }
+  ];
+
   return (
     <div className={styles.sideBar}>
       {!isTauri() && (
@@ -18,22 +35,14 @@ export function Sidebar() {
         type="text"
         placeholder={t("nav.search")}
       />
-      <NavLink
-        className={({ isActive }) =>
-          `${styles.link} ${isActive ? styles.selected : ""}`
-        }
-        to="/"
-      >
-        {t("nav.songs")}
-      </NavLink>
-      <NavLink
-        className={({ isActive }) =>
-          `${styles.link} ${isActive ? styles.selected : ""}`
-        }
-        to="/albums"
-      >
-        {t("nav.albums")}
-      </NavLink>
+      <SectionTree
+        ref={sectionTreeRef}
+        FolderOpenIcon={() => <div>V</div>}
+        FolderClosedIcon={() => <div>&gt;</div>}
+        OptionsButtonIcon={() => <div>*</div>}
+        DoneButtonIcon={() => <div>!</div>}
+        sections={sections}
+      />
     </div>
   );
 }
