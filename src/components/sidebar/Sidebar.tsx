@@ -4,22 +4,28 @@ import { MenuButton } from "../MenuButton";
 import { useTranslation } from "react-i18next";
 import { SectionTree } from "soprano-ui";
 import { useRef } from "react";
+import { useAppSelector } from "../../app/hooks";
+import { selectLibraryLayout } from "../../features/library/librarySlice";
+import { selectPlaylistsLayout } from "../../features/playlists/playlistsSlice";
 
 export function Sidebar() {
   const { t } = useTranslation();
   const sectionTreeRef = useRef(null);
+  const libraryLayout = useAppSelector(selectLibraryLayout);
+  const playlistsLayout = useAppSelector(selectPlaylistsLayout);
+
   const sections = [
     {
       id: "views",
       name: "Library",
       emptyMessage: "No views enabled",
-      children: []
+      children: libraryLayout
     },
     {
       id: "playlists",
       name: "Playlists",
       emptyMessage: "No playlists",
-      children: []
+      children: playlistsLayout
     }
   ];
 

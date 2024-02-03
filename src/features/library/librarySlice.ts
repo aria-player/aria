@@ -9,17 +9,27 @@ import { PluginId } from "../plugins/pluginsTypes";
 import { RootState } from "../../app/store";
 import { setupLibraryListeners } from "./libraryListeners";
 import { ColumnState } from "@ag-grid-community/core";
+import { Item, moveTreeNode, updateTreeNode } from "soprano-ui";
 
 const tracksAdapter = createEntityAdapter<Track>();
 
 interface LibraryState {
   tracks: EntityState<Track>;
   columnState: ColumnState[] | null;
+  layout: Item[];
 }
 
 const initialState: LibraryState = {
   tracks: tracksAdapter.getInitialState(),
-  columnState: null
+  columnState: null,
+  layout: [
+    { id: "songs", name: "Songs" },
+    { id: "albums", name: "Albums" },
+    { id: "artists", name: "Artists" },
+    { id: "genres", name: "Genres" },
+    { id: "composers", name: "Composers", hidden: true },
+    { id: "years", name: "Years", hidden: true }
+  ]
 };
 
 const librarySlice = createSlice({
@@ -45,11 +55,33 @@ const librarySlice = createSlice({
     },
     setColumnState: (state, action: PayloadAction<ColumnState[]>) => {
       state.columnState = action.payload;
+    },
+    moveLibraryItem: (
+      state,
+      action: PayloadAction<{
+        id: string;
+        parentId: string | null;
+        index: number;
+      }>
+    ) => {
+      state.layout = moveTreeNode(state.layout, action.payload);
+    },
+    updateLibraryItem: (
+      state,
+      action: PayloadAction<{ id: string; changes: Partial<Item> }>
+    ) => {
+      state.layout = updateTreeNode(state.layout, action.payload);
     }
   }
 });
 
-export const { addTracks, removeTracks, setColumnState } = librarySlice.actions;
+export const {
+  addTracks,
+  removeTracks,
+  setColumnState,
+  moveLibraryItem,
+  updateLibraryItem
+} = librarySlice.actions;
 
 export const {
   selectIds: selectTrackIds,
@@ -58,6 +90,7 @@ export const {
 } = tracksAdapter.getSelectors((state: RootState) => state.library.tracks);
 export const selectColumnState = (state: RootState) =>
   state.library.columnState;
+export const selectLibraryLayout = (state: RootState) => state.library.layout;
 
 export default librarySlice.reducer;
 

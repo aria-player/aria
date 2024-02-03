@@ -3,6 +3,7 @@ import configReducer from "../features/config/configSlice";
 import playerReducer from "../features/player/playerSlice";
 import libraryReducer from "../features/library/librarySlice";
 import pluginsReducer from "../features/plugins/pluginsSlice";
+import playlistsReducer from "../features/playlists/playlistsSlice";
 import localforage from "localforage";
 import {
   FLUSH,
@@ -39,7 +40,8 @@ const reducer = combineReducers({
     playerReducer
   ),
   library: persistReducer({ key: "library", storage }, libraryReducer),
-  plugins: persistReducer({ key: "plugins", storage }, pluginsReducer)
+  plugins: persistReducer({ key: "plugins", storage }, pluginsReducer),
+  playlists: persistReducer({ key: "playlists", storage }, playlistsReducer)
 });
 
 export const store = configureStore({
