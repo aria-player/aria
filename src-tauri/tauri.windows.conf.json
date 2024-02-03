@@ -2,7 +2,8 @@
   "tauri": {
     "windows": [
       {
-        "decorations": false
+        "decorations": false,
+        "fileDropEnabled": false
       }
     ]
   }
