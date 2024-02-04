@@ -2,8 +2,8 @@ import styles from "./Sidebar.module.css";
 import { isTauri } from "../../app/utils";
 import { MenuButton } from "../MenuButton";
 import { useTranslation } from "react-i18next";
-import { SectionTree } from "soprano-ui";
-import { useRef } from "react";
+import { Item, SectionTree, SectionTreeApi } from "soprano-ui";
+import { useContext, useEffect, useRef } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   moveLibraryItem,
@@ -14,6 +14,7 @@ import {
   selectPlaylistsLayout
 } from "../../features/playlists/playlistsSlice";
 import { useContextMenu } from "react-contexify";
+import { MenuContext } from "../../contexts/MenuContext";
 
 import FolderOpenIcon from "../../assets/chevron-down-solid.svg?react";
 import FolderClosedIcon from "../../assets/chevron-right-solid.svg?react";
@@ -23,10 +24,11 @@ import DoneButtonIcon from "../../assets/check-solid.svg?react";
 export function Sidebar() {
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
-  const sectionTreeRef = useRef(null);
+  const sectionTreeRef = useRef<SectionTreeApi<Item>>(null);
   const libraryLayout = useAppSelector(selectLibraryLayout);
   const playlistsLayout = useAppSelector(selectPlaylistsLayout);
   const { show, hideAll } = useContextMenu();
+  const { visibility } = useContext(MenuContext);
 
   const sections = [
     {
@@ -42,6 +44,16 @@ export function Sidebar() {
       children: playlistsLayout
     }
   ];
+
+  useEffect(() => {
+    if (
+      visibility["sidebarlibrary"] === false &&
+      visibility["sidebarplaylists"] === false &&
+      sectionTreeRef.current?.optionsMenuActive != null
+    ) {
+      sectionTreeRef.current?.setOptionsMenuActive(null);
+    }
+  }, [visibility]);
 
   return (
     <div className={styles.sideBar}>
@@ -82,6 +94,22 @@ export function Sidebar() {
               index: args.newIndex
             })
           );
+        }}
+        onOptionsMenuActiveChange={(section, button, event) => {
+          if (section != null && event != null) {
+            const buttonPosition = button?.getBoundingClientRect();
+            const menuId = "sidebar" + section;
+            show({
+              id: menuId,
+              event,
+              position: {
+                x: buttonPosition?.left ?? 0,
+                y: buttonPosition?.bottom ?? 0
+              }
+            });
+          } else {
+            hideAll();
+          }
         }}
       />
     </div>
