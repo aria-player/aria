@@ -71,6 +71,9 @@ const librarySlice = createSlice({
       action: PayloadAction<{ id: string; changes: Partial<Item> }>
     ) => {
       state.layout = updateTreeNode(state.layout, action.payload);
+    },
+    resetLibraryLayout: (state) => {
+      state.layout = initialState.layout;
     }
   }
 });
@@ -80,7 +83,8 @@ export const {
   removeTracks,
   setColumnState,
   moveLibraryItem,
-  updateLibraryItem
+  updateLibraryItem,
+  resetLibraryLayout
 } = librarySlice.actions;
 
 export const {
