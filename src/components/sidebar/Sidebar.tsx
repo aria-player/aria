@@ -7,6 +7,7 @@ import { useRef } from "react";
 import { useAppSelector } from "../../app/hooks";
 import { selectLibraryLayout } from "../../features/library/librarySlice";
 import { selectPlaylistsLayout } from "../../features/playlists/playlistsSlice";
+import { useContextMenu } from "react-contexify";
 
 import FolderOpenIcon from "../../assets/chevron-down-solid.svg?react";
 import FolderClosedIcon from "../../assets/chevron-right-solid.svg?react";
@@ -18,10 +19,11 @@ export function Sidebar() {
   const sectionTreeRef = useRef(null);
   const libraryLayout = useAppSelector(selectLibraryLayout);
   const playlistsLayout = useAppSelector(selectPlaylistsLayout);
+  const { show, hideAll } = useContextMenu();
 
   const sections = [
     {
-      id: "views",
+      id: "library",
       name: "Library",
       emptyMessage: "No views enabled",
       children: libraryLayout
@@ -48,11 +50,21 @@ export function Sidebar() {
       />
       <SectionTree
         ref={sectionTreeRef}
+        sections={sections}
         FolderOpenIcon={() => <FolderOpenIcon />}
         FolderClosedIcon={() => <FolderClosedIcon />}
         OptionsButtonIcon={() => <OptionsButtonIcon />}
         DoneButtonIcon={() => <DoneButtonIcon />}
-        sections={sections}
+        onSectionContextMenu={(section, event) => {
+          if (section != null) {
+            show({ id: "sidebar" + section, event });
+          } else {
+            hideAll();
+          }
+        }}
+        onEmptySpaceContextMenu={(event) => {
+          show({ id: "sidebarplaylists", event });
+        }}
       />
     </div>
   );
