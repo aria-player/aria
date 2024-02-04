@@ -11,6 +11,8 @@ import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-mod
 import { ModuleRegistry } from "@ag-grid-community/core";
 import { MenuProvider } from "./contexts/MenuContext";
 import { TreeProvider } from "./contexts/TreeContext";
+import { HTML5toTouch } from "rdndmb-html5-to-touch";
+import { DndProvider } from "react-dnd-multi-backend";
 import App from "./App";
 import "./i18n";
 
@@ -33,7 +35,9 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
             <TreeProvider>
               <MenuProvider>
                 <PlatformProvider>
-                  <App />
+                  <DndProvider options={HTML5toTouch}>
+                    <App />
+                  </DndProvider>
                 </PlatformProvider>
               </MenuProvider>
             </TreeProvider>

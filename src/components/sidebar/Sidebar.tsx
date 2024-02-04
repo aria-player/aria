@@ -25,6 +25,7 @@ import { useMenuActions } from "../../hooks/useMenuActions";
 import { store } from "../../app/store";
 import { push } from "redux-first-history";
 import { BASEPATH } from "../../app/constants";
+import { useDragDropManager } from "react-dnd";
 
 import FolderOpenIcon from "../../assets/chevron-down-solid.svg?react";
 import FolderClosedIcon from "../../assets/chevron-right-solid.svg?react";
@@ -40,6 +41,7 @@ export function Sidebar() {
   const { show, hideAll } = useContextMenu();
   const { visibility, setMenuData } = useContext(MenuContext);
   const { invokeMenuAction } = useMenuActions();
+  const dragDropManager = useDragDropManager();
   const currentRoute = useAppSelector(
     (state) => state.router.location?.pathname
   );
@@ -123,6 +125,7 @@ export function Sidebar() {
       <SectionTree
         ref={treeRef}
         sections={sections}
+        dndManager={dragDropManager}
         FolderOpenIcon={() => <FolderOpenIcon />}
         FolderClosedIcon={() => <FolderClosedIcon />}
         OptionsButtonIcon={() => <OptionsButtonIcon />}
