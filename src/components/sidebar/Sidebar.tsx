@@ -30,7 +30,7 @@ export function Sidebar() {
   const libraryLayout = useAppSelector(selectLibraryLayout);
   const playlistsLayout = useAppSelector(selectPlaylistsLayout);
   const { show, hideAll } = useContextMenu();
-  const { visibility } = useContext(MenuContext);
+  const { visibility, setMenuData } = useContext(MenuContext);
 
   const sections = [
     {
@@ -115,6 +115,14 @@ export function Sidebar() {
         }}
         onItemVisibilityChange={(_, itemId, hidden) => {
           dispatch(updateLibraryItem({ id: itemId, changes: { hidden } }));
+        }}
+        onItemContextMenu={(section, itemId, event) => {
+          if (section == "library") {
+            show({ id: "sidebarlibrary", event });
+          } else {
+            setMenuData({ itemId, type: "sidebaritem" });
+            show({ id: "sidebaritem", event });
+          }
         }}
       />
     </div>

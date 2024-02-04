@@ -1,9 +1,10 @@
-import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { PayloadAction, createSelector, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 import {
   Item,
   createTreeNode,
   deleteTreeNode,
+  findTreeNode,
   moveTreeNode,
   updateTreeNode
 } from "soprano-ui";
@@ -61,5 +62,10 @@ export const {
 
 export const selectPlaylistsLayout = (state: RootState) =>
   state.playlists.layout;
+
+export const selectPlaylistsLayoutItemById = createSelector(
+  [selectPlaylistsLayout, (_: RootState, nodeId: string) => nodeId],
+  (items, nodeId) => findTreeNode(items, nodeId)
+);
 
 export default playlistsSlice.reducer;
