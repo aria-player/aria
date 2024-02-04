@@ -6,6 +6,7 @@ import { MenuContext } from "../../contexts/MenuContext";
 import {
   createPlaylistItem,
   deletePlaylistItem,
+  openPlaylistFolder,
   selectPlaylistsLayoutItemById
 } from "../../features/playlists/playlistsSlice";
 import { nanoid } from "@reduxjs/toolkit";
@@ -20,6 +21,26 @@ export function SidebarItemContextMenu() {
   );
   const treeRef = useContext(TreeContext)?.treeRef;
 
+  const createItem = (isFolder: boolean) => {
+    if (!menuData) return;
+    dispatch(
+      openPlaylistFolder({
+        id: menuData.itemId
+      })
+    );
+    treeRef?.current?.root.tree.open(menuData.itemId);
+    dispatch(
+      createPlaylistItem({
+        newData: {
+          id: nanoid(),
+          name: "New Playlist",
+          children: isFolder ? [] : undefined
+        },
+        parentId: menuData.itemId
+      })
+    );
+  };
+
   return (
     <Menu
       onContextMenu={(e) => {
@@ -32,37 +53,8 @@ export function SidebarItemContextMenu() {
     >
       {item?.children != undefined && (
         <>
-          <Item
-            onClick={() => {
-              dispatch(
-                createPlaylistItem({
-                  newData: {
-                    id: nanoid(),
-                    name: "New Playlist"
-                  },
-                  parentId: menuData?.itemId
-                })
-              );
-            }}
-          >
-            Add new playlist
-          </Item>
-          <Item
-            onClick={() => {
-              dispatch(
-                createPlaylistItem({
-                  newData: {
-                    id: nanoid(),
-                    name: "New Folder",
-                    children: []
-                  },
-                  parentId: menuData?.itemId
-                })
-              );
-            }}
-          >
-            Add new folder
-          </Item>
+          <Item onClick={() => createItem(false)}>Add new playlist</Item>
+          <Item onClick={() => createItem(true)}>Add new folder</Item>
           <Separator />
         </>
       )}
