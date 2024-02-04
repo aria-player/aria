@@ -2,8 +2,8 @@ import styles from "./Sidebar.module.css";
 import { isTauri } from "../../app/utils";
 import { MenuButton } from "../MenuButton";
 import { useTranslation } from "react-i18next";
-import { Item, SectionTree, SectionTreeApi } from "soprano-ui";
-import { useContext, useEffect, useRef } from "react";
+import { SectionTree } from "soprano-ui";
+import { useContext, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   moveLibraryItem,
@@ -15,6 +15,7 @@ import {
 } from "../../features/playlists/playlistsSlice";
 import { useContextMenu } from "react-contexify";
 import { MenuContext } from "../../contexts/MenuContext";
+import { TreeContext } from "../../contexts/TreeContext";
 
 import FolderOpenIcon from "../../assets/chevron-down-solid.svg?react";
 import FolderClosedIcon from "../../assets/chevron-right-solid.svg?react";
@@ -24,7 +25,7 @@ import DoneButtonIcon from "../../assets/check-solid.svg?react";
 export function Sidebar() {
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
-  const sectionTreeRef = useRef<SectionTreeApi<Item>>(null);
+  const treeRef = useContext(TreeContext)?.treeRef;
   const libraryLayout = useAppSelector(selectLibraryLayout);
   const playlistsLayout = useAppSelector(selectPlaylistsLayout);
   const { show, hideAll } = useContextMenu();
@@ -49,11 +50,11 @@ export function Sidebar() {
     if (
       visibility["sidebarlibrary"] === false &&
       visibility["sidebarplaylists"] === false &&
-      sectionTreeRef.current?.optionsMenuActive != null
+      treeRef?.current?.optionsMenuActive != null
     ) {
-      sectionTreeRef.current?.setOptionsMenuActive(null);
+      treeRef?.current?.setOptionsMenuActive(null);
     }
-  }, [visibility]);
+  }, [visibility, treeRef]);
 
   return (
     <div className={styles.sideBar}>
@@ -68,7 +69,7 @@ export function Sidebar() {
         placeholder={t("nav.search")}
       />
       <SectionTree
-        ref={sectionTreeRef}
+        ref={treeRef}
         sections={sections}
         FolderOpenIcon={() => <FolderOpenIcon />}
         FolderClosedIcon={() => <FolderClosedIcon />}

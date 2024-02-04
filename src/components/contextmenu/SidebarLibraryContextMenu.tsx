@@ -1,10 +1,12 @@
 import { useContext } from "react";
 import { Item, Menu, Separator } from "react-contexify";
 import { MenuContext } from "../../contexts/MenuContext";
+import { TreeContext } from "../../contexts/TreeContext";
 
 const id = "sidebarlibrary";
 
 export function SidebarLibraryContextMenu() {
+  const treeRef = useContext(TreeContext).treeRef;
   const { updateVisibility } = useContext(MenuContext);
 
   return (
@@ -19,10 +21,16 @@ export function SidebarLibraryContextMenu() {
     >
       <Item
         onClick={() => {
-          // Tree API interaction here
+          if (treeRef?.current?.visibilityEditing) {
+            treeRef?.current?.setVisibilityEditing(null);
+          } else {
+            treeRef?.current?.setVisibilityEditing("library");
+          }
         }}
       >
-        Edit sections...
+        {treeRef?.current?.visibilityEditing
+          ? "Save changes"
+          : "Edit sections..."}
       </Item>
       <Separator />
       <Item>Reset to default layout</Item>
