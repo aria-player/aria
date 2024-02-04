@@ -75,10 +75,10 @@ export function SidebarItemContextMenu() {
         {t("sidebar.playlists.menu.rename")}
       </Item>
       <Item
-        onClick={() => {
+        onClick={async () => {
           if (!menuData) return;
           if (item?.children?.length ?? 0 > 0) {
-            const confirmed = confirm(
+            const confirmed = await confirm(
               t("sidebar.playlists.menu.confirmDelete")
             );
             if (confirmed) {
