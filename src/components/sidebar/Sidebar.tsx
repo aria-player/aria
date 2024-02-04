@@ -49,7 +49,10 @@ export function Sidebar() {
       id: "library",
       name: t("sidebar.library.title"),
       emptyMessage: t("sidebar.library.empty"),
-      children: libraryLayout
+      children: libraryLayout.map((item) => ({
+        ...item,
+        name: t("views." + item.id)
+      }))
     },
     {
       id: "playlists",

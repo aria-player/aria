@@ -23,12 +23,12 @@ const initialState: LibraryState = {
   tracks: tracksAdapter.getInitialState(),
   columnState: null,
   layout: [
-    { id: "songs", name: "Songs" },
-    { id: "albums", name: "Albums" },
-    { id: "artists", name: "Artists" },
-    { id: "genres", name: "Genres" },
-    { id: "composers", name: "Composers", hidden: true },
-    { id: "years", name: "Years", hidden: true }
+    { id: "songs", name: "songs" },
+    { id: "albums", name: "albums" },
+    { id: "artists", name: "artists" },
+    { id: "genres", name: "genres" },
+    { id: "composers", name: "composers", hidden: true },
+    { id: "years", name: "years", hidden: true }
   ]
 };
 

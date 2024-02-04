@@ -24,6 +24,14 @@
       "defaultFolder": "New Folder"
     }
   },
+  "views": {
+    "songs": "Songs",
+    "albums": "Albums",
+    "artists": "Artists",
+    "genres": "Genres",
+    "composers": "Composers",
+    "years": "Years"
+  },
   "settings": {
     "sections": {
       "general": "General",
