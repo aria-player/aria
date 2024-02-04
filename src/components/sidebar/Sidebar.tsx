@@ -3,7 +3,7 @@ import { isTauri } from "../../app/utils";
 import { MenuButton } from "../MenuButton";
 import { useTranslation } from "react-i18next";
 import { SectionTree } from "soprano-ui";
-import { useContext, useEffect } from "react";
+import { useCallback, useContext, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   moveLibraryItem,
@@ -79,21 +79,34 @@ export function Sidebar() {
     }
   }, [treeRef]);
 
-  useEffect(() => {
-    if (currentRoute === BASEPATH) {
-      treeRef?.current?.root.tree.select("songs");
-    } else if (currentRoute) {
-      const id = currentRoute.replace(BASEPATH, "");
-      const isPlaylist = id.startsWith("playlist/");
-      if (isPlaylist) {
-        treeRef?.current?.root.tree.select(id.replace("playlist/", ""));
-      } else {
-        treeRef?.current?.root.tree.select(id);
+  const syncSelectionWithRoute = useCallback(
+    (alwaysUpdateSelection: boolean) => {
+      let routeAsId = "";
+      if (currentRoute === BASEPATH) {
+        routeAsId = "songs";
+      } else if (currentRoute) {
+        routeAsId = currentRoute.replace(BASEPATH, "");
+        if (routeAsId.startsWith("playlist/")) {
+          routeAsId = routeAsId.replace("playlist/", "");
+        }
       }
-    } else {
-      treeRef?.current?.root.tree.deselectAll();
-    }
-  }, [treeRef, currentRoute]);
+      if (
+        (routeAsId && treeRef?.current?.root.tree.get(routeAsId)) ||
+        alwaysUpdateSelection
+      ) {
+        treeRef?.current?.root.tree.setSelection({
+          ids: [routeAsId],
+          anchor: null,
+          mostRecent: null
+        });
+      }
+    },
+    [treeRef, currentRoute]
+  );
+
+  useEffect(() => {
+    syncSelectionWithRoute(true);
+  }, [syncSelectionWithRoute, treeRef, currentRoute]);
 
   return (
     <div className={styles.sideBar}>
@@ -177,6 +190,11 @@ export function Sidebar() {
         onFolderAction={(_, itemId, open) => {
           const action = open ? openPlaylistFolder : closePlaylistFolder;
           dispatch(action({ id: itemId }));
+        }}
+        onSelect={(nodes) => {
+          if (!nodes[0]?.id) {
+            syncSelectionWithRoute(false);
+          }
         }}
         onSelectedItemChange={(section, itemId) => {
           if (!itemId) return;
