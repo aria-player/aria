@@ -7,7 +7,8 @@ import { useContext, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   moveLibraryItem,
-  selectLibraryLayout
+  selectLibraryLayout,
+  updateLibraryItem
 } from "../../features/library/librarySlice";
 import {
   movePlaylistItem,
@@ -111,6 +112,9 @@ export function Sidebar() {
           } else {
             hideAll();
           }
+        }}
+        onItemVisibilityChange={(_, itemId, hidden) => {
+          dispatch(updateLibraryItem({ id: itemId, changes: { hidden } }));
         }}
       />
     </div>
