@@ -23,6 +23,8 @@ import { MenuContext } from "../../contexts/MenuContext";
 import { TreeContext } from "../../contexts/TreeContext";
 import { useMenuActions } from "../../hooks/useMenuActions";
 import { store } from "../../app/store";
+import { push } from "redux-first-history";
+import { BASEPATH } from "../../app/constants";
 
 import FolderOpenIcon from "../../assets/chevron-down-solid.svg?react";
 import FolderClosedIcon from "../../assets/chevron-right-solid.svg?react";
@@ -38,6 +40,9 @@ export function Sidebar() {
   const { show, hideAll } = useContextMenu();
   const { visibility, setMenuData } = useContext(MenuContext);
   const { invokeMenuAction } = useMenuActions();
+  const currentRoute = useAppSelector(
+    (state) => state.router.location?.pathname
+  );
 
   const sections = [
     {
@@ -70,6 +75,22 @@ export function Sidebar() {
       treeRef?.current?.root.tree.open(item);
     }
   }, [treeRef]);
+
+  useEffect(() => {
+    if (currentRoute === BASEPATH) {
+      treeRef?.current?.root.tree.select("songs");
+    } else if (currentRoute) {
+      const id = currentRoute.replace(BASEPATH, "");
+      const isPlaylist = id.startsWith("playlist/");
+      if (isPlaylist) {
+        treeRef?.current?.root.tree.select(id.replace("playlist/", ""));
+      } else {
+        treeRef?.current?.root.tree.select(id);
+      }
+    } else {
+      treeRef?.current?.root.tree.deselectAll();
+    }
+  }, [treeRef, currentRoute]);
 
   return (
     <div className={styles.sideBar}>
@@ -153,6 +174,18 @@ export function Sidebar() {
         onFolderAction={(_, itemId, open) => {
           const action = open ? openPlaylistFolder : closePlaylistFolder;
           dispatch(action({ id: itemId }));
+        }}
+        onSelectedItemChange={(section, itemId) => {
+          if (!itemId) return;
+          if (section == "library") {
+            if (itemId === "songs") {
+              dispatch(push(BASEPATH));
+            } else {
+              dispatch(push(BASEPATH + itemId));
+            }
+          } else {
+            dispatch(push(BASEPATH + "playlist/" + itemId));
+          }
         }}
       />
     </div>
