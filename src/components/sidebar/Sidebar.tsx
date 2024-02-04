@@ -8,6 +8,11 @@ import { useAppSelector } from "../../app/hooks";
 import { selectLibraryLayout } from "../../features/library/librarySlice";
 import { selectPlaylistsLayout } from "../../features/playlists/playlistsSlice";
 
+import FolderOpenIcon from "../../assets/chevron-down-solid.svg?react";
+import FolderClosedIcon from "../../assets/chevron-right-solid.svg?react";
+import OptionsButtonIcon from "../../assets/ellipsis-solid.svg?react";
+import DoneButtonIcon from "../../assets/check-solid.svg?react";
+
 export function Sidebar() {
   const { t } = useTranslation();
   const sectionTreeRef = useRef(null);
@@ -43,10 +48,10 @@ export function Sidebar() {
       />
       <SectionTree
         ref={sectionTreeRef}
-        FolderOpenIcon={() => <div>V</div>}
-        FolderClosedIcon={() => <div>&gt;</div>}
-        OptionsButtonIcon={() => <div>*</div>}
-        DoneButtonIcon={() => <div>!</div>}
+        FolderOpenIcon={() => <FolderOpenIcon />}
+        FolderClosedIcon={() => <FolderClosedIcon />}
+        OptionsButtonIcon={() => <OptionsButtonIcon />}
+        DoneButtonIcon={() => <DoneButtonIcon />}
         sections={sections}
       />
     </div>
