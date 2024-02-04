@@ -12,7 +12,8 @@ import {
 } from "../../features/library/librarySlice";
 import {
   movePlaylistItem,
-  selectPlaylistsLayout
+  selectPlaylistsLayout,
+  updatePlaylistItem
 } from "../../features/playlists/playlistsSlice";
 import { useContextMenu } from "react-contexify";
 import { MenuContext } from "../../contexts/MenuContext";
@@ -95,6 +96,11 @@ export function Sidebar() {
               parentId: args.newParentId,
               index: args.newIndex
             })
+          );
+        }}
+        onRenameWithinSection={(_, itemId, newName) => {
+          dispatch(
+            updatePlaylistItem({ id: itemId, changes: { name: newName } })
           );
         }}
         onOptionsMenuActiveChange={(section, button, event) => {
