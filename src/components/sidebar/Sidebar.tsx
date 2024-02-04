@@ -13,12 +13,16 @@ import {
 import {
   movePlaylistItem,
   selectPlaylistsLayout,
+  selectOpenFolders,
+  openPlaylistFolder,
+  closePlaylistFolder,
   updatePlaylistItem
 } from "../../features/playlists/playlistsSlice";
 import { useContextMenu } from "react-contexify";
 import { MenuContext } from "../../contexts/MenuContext";
 import { TreeContext } from "../../contexts/TreeContext";
 import { useMenuActions } from "../../hooks/useMenuActions";
+import { store } from "../../app/store";
 
 import FolderOpenIcon from "../../assets/chevron-down-solid.svg?react";
 import FolderClosedIcon from "../../assets/chevron-right-solid.svg?react";
@@ -59,6 +63,13 @@ export function Sidebar() {
       treeRef?.current?.setOptionsMenuActive(null);
     }
   }, [visibility, treeRef]);
+
+  useEffect(() => {
+    const initialOpenState = selectOpenFolders(store.getState());
+    for (const item of initialOpenState) {
+      treeRef?.current?.root.tree.open(item);
+    }
+  }, [treeRef]);
 
   return (
     <div className={styles.sideBar}>
@@ -138,6 +149,10 @@ export function Sidebar() {
             e.preventDefault();
             e.stopPropagation();
           }
+        }}
+        onFolderAction={(_, itemId, open) => {
+          const action = open ? openPlaylistFolder : closePlaylistFolder;
+          dispatch(action({ id: itemId }));
         }}
       />
     </div>

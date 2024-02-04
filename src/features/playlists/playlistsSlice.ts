@@ -11,10 +11,12 @@ import {
 
 export interface PlaylistsState {
   layout: Item[];
+  openFolders: string[];
 }
 
 const initialState: PlaylistsState = {
-  layout: []
+  layout: [],
+  openFolders: []
 };
 
 export const playlistsSlice = createSlice({
@@ -49,6 +51,16 @@ export const playlistsSlice = createSlice({
     },
     deletePlaylistItem: (state, action: PayloadAction<{ id: string }>) => {
       state.layout = deleteTreeNode(state.layout, action.payload).result;
+    },
+    openPlaylistFolder: (state, action: PayloadAction<{ id: string }>) => {
+      const itemId = action.payload.id;
+      if (!state.openFolders.includes(itemId)) {
+        state.openFolders.push(itemId);
+      }
+    },
+    closePlaylistFolder: (state, action: PayloadAction<{ id: string }>) => {
+      const itemId = action.payload.id;
+      state.openFolders = state.openFolders.filter((id) => id !== itemId);
     }
   }
 });
@@ -57,11 +69,15 @@ export const {
   movePlaylistItem,
   updatePlaylistItem,
   createPlaylistItem,
-  deletePlaylistItem
+  deletePlaylistItem,
+  openPlaylistFolder,
+  closePlaylistFolder
 } = playlistsSlice.actions;
 
 export const selectPlaylistsLayout = (state: RootState) =>
   state.playlists.layout;
+export const selectOpenFolders = (state: RootState) =>
+  state.playlists.openFolders;
 
 export const selectPlaylistsLayoutItemById = createSelector(
   [selectPlaylistsLayout, (_: RootState, nodeId: string) => nodeId],
