@@ -18,6 +18,7 @@ import {
 import { useContextMenu } from "react-contexify";
 import { MenuContext } from "../../contexts/MenuContext";
 import { TreeContext } from "../../contexts/TreeContext";
+import { useMenuActions } from "../../hooks/useMenuActions";
 
 import FolderOpenIcon from "../../assets/chevron-down-solid.svg?react";
 import FolderClosedIcon from "../../assets/chevron-right-solid.svg?react";
@@ -32,6 +33,7 @@ export function Sidebar() {
   const playlistsLayout = useAppSelector(selectPlaylistsLayout);
   const { show, hideAll } = useContextMenu();
   const { visibility, setMenuData } = useContext(MenuContext);
+  const { invokeMenuAction } = useMenuActions();
 
   const sections = [
     {
@@ -128,6 +130,13 @@ export function Sidebar() {
           } else {
             setMenuData({ itemId, type: "sidebaritem" });
             show({ id: "sidebaritem", event });
+          }
+        }}
+        onRowKeyDown={(e) => {
+          if (e.key === " ") {
+            invokeMenuAction("togglePlay");
+            e.preventDefault();
+            e.stopPropagation();
           }
         }}
       />
