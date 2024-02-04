@@ -47,14 +47,14 @@ export function Sidebar() {
   const sections = [
     {
       id: "library",
-      name: "Library",
-      emptyMessage: "No views enabled",
+      name: t("sidebar.library.title"),
+      emptyMessage: t("sidebar.library.empty"),
       children: libraryLayout
     },
     {
       id: "playlists",
-      name: "Playlists",
-      emptyMessage: "No playlists",
+      name: t("sidebar.playlists.title"),
+      emptyMessage: t("sidebar.playlists.empty"),
       children: playlistsLayout
     }
   ];
@@ -102,7 +102,7 @@ export function Sidebar() {
       <input
         className={styles.search}
         type="text"
-        placeholder={t("nav.search")}
+        placeholder={t("sidebar.search")}
       />
       <SectionTree
         ref={treeRef}

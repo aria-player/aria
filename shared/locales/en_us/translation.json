@@ -1,8 +1,28 @@
 {
-  "nav": {
+  "sidebar": {
     "search": "Search",
-    "songs": "Songs",
-    "albums": "Albums"
+    "library": {
+      "title": "Library",
+      "empty": "No views enabled",
+      "menu": {
+        "edit": "Edit sections...",
+        "save": "Save changes",
+        "reset": "Reset to default layout"
+      }
+    },
+    "playlists": {
+      "title": "Playlists",
+      "empty": "No playlists",
+      "menu": {
+        "addPlaylist": "Add new playlist",
+        "addFolder": "Add new folder",
+        "rename": "Rename...",
+        "delete": "Delete",
+        "confirmDelete": "Deleting this folder will also delete all of its contents. Are you sure?"
+      },
+      "defaultPlaylist": "New Playlist",
+      "defaultFolder": "New Folder"
+    }
   },
   "settings": {
     "sections": {

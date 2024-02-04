@@ -4,10 +4,12 @@ import { nanoid } from "@reduxjs/toolkit";
 import { createPlaylistItem } from "../../features/playlists/playlistsSlice";
 import { useContext } from "react";
 import { MenuContext } from "../../contexts/MenuContext";
+import { useTranslation } from "react-i18next";
 
 const id = "sidebarplaylists";
 
 export function SidebarPlaylistsContextMenu() {
+  const { t } = useTranslation();
   const { updateVisibility } = useContext(MenuContext);
   const dispatch = useAppDispatch();
 
@@ -27,13 +29,13 @@ export function SidebarPlaylistsContextMenu() {
             createPlaylistItem({
               newData: {
                 id: nanoid(),
-                name: "New Playlist"
+                name: t("sidebar.playlists.defaultPlaylist")
               }
             })
           );
         }}
       >
-        Add new playlist
+        {t("sidebar.playlists.menu.addPlaylist")}
       </Item>
       <Item
         onClick={() => {
@@ -41,14 +43,14 @@ export function SidebarPlaylistsContextMenu() {
             createPlaylistItem({
               newData: {
                 id: nanoid(),
-                name: "New Folder",
+                name: t("sidebar.playlists.defaultFolder"),
                 children: []
               }
             })
           );
         }}
       >
-        Add new playlist folder
+        {t("sidebar.playlists.menu.addFolder")}
       </Item>
     </Menu>
   );

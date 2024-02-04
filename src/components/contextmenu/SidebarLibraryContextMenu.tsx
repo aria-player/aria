@@ -4,10 +4,12 @@ import { MenuContext } from "../../contexts/MenuContext";
 import { TreeContext } from "../../contexts/TreeContext";
 import { useAppDispatch } from "../../app/hooks";
 import { resetLibraryLayout } from "../../features/library/librarySlice";
+import { useTranslation } from "react-i18next";
 
 const id = "sidebarlibrary";
 
 export function SidebarLibraryContextMenu() {
+  const { t } = useTranslation();
   const treeRef = useContext(TreeContext).treeRef;
   const { updateVisibility } = useContext(MenuContext);
   const dispatch = useAppDispatch();
@@ -32,8 +34,8 @@ export function SidebarLibraryContextMenu() {
         }}
       >
         {treeRef?.current?.visibilityEditing
-          ? "Save changes"
-          : "Edit sections..."}
+          ? t("sidebar.library.menu.save")
+          : t("sidebar.library.menu.edit")}
       </Item>
       <Separator />
       <Item
@@ -41,7 +43,7 @@ export function SidebarLibraryContextMenu() {
           dispatch(resetLibraryLayout());
         }}
       >
-        Reset to default layout
+        {t("sidebar.library.menu.reset")}
       </Item>
     </Menu>
   );
