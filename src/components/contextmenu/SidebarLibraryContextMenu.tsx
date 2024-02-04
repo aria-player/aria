@@ -1,8 +1,12 @@
+import { useContext } from "react";
 import { Item, Menu, Separator } from "react-contexify";
+import { MenuContext } from "../../contexts/MenuContext";
 
 const id = "sidebarlibrary";
 
 export function SidebarLibraryContextMenu() {
+  const { updateVisibility } = useContext(MenuContext);
+
   return (
     <Menu
       onContextMenu={(e) => {
@@ -11,6 +15,7 @@ export function SidebarLibraryContextMenu() {
       }}
       id={id}
       animation={false}
+      onVisibilityChange={(isVisible) => updateVisibility(id, isVisible)}
     >
       <Item
         onClick={() => {

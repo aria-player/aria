@@ -2,10 +2,13 @@ import { Item, Menu } from "react-contexify";
 import { useAppDispatch } from "../../app/hooks";
 import { nanoid } from "@reduxjs/toolkit";
 import { createPlaylistItem } from "../../features/playlists/playlistsSlice";
+import { useContext } from "react";
+import { MenuContext } from "../../contexts/MenuContext";
 
 const id = "sidebarplaylists";
 
 export function SidebarPlaylistsContextMenu() {
+  const { updateVisibility } = useContext(MenuContext);
   const dispatch = useAppDispatch();
 
   return (
@@ -16,6 +19,7 @@ export function SidebarPlaylistsContextMenu() {
       }}
       id={id}
       animation={false}
+      onVisibilityChange={(isVisible) => updateVisibility(id, isVisible)}
     >
       <Item
         onClick={() => {

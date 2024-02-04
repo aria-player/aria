@@ -9,6 +9,7 @@ import { PlatformProvider } from "./contexts/PlatformContext";
 import { BASEPATH } from "./app/constants";
 import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
 import { ModuleRegistry } from "@ag-grid-community/core";
+import { MenuProvider } from "./contexts/MenuContext";
 import App from "./App";
 import "./i18n";
 
@@ -28,9 +29,11 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
       <PersistGate loading={null} persistor={persistor}>
         <HistoryRouter history={history} basename={BASEPATH}>
           <GridProvider>
-            <PlatformProvider>
-              <App />
-            </PlatformProvider>
+            <MenuProvider>
+              <PlatformProvider>
+                <App />
+              </PlatformProvider>
+            </MenuProvider>
           </GridProvider>
         </HistoryRouter>
       </PersistGate>
