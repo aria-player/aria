@@ -1,12 +1,14 @@
 import { useContext } from "react";
-import { Item, Menu } from "react-contexify";
+import { Item, Menu, Separator } from "react-contexify";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { TreeContext } from "../../contexts/TreeContext";
 import { MenuContext } from "../../contexts/MenuContext";
 import {
+  createPlaylistItem,
   deletePlaylistItem,
   selectPlaylistsLayoutItemById
 } from "../../features/playlists/playlistsSlice";
+import { nanoid } from "@reduxjs/toolkit";
 
 const id = "sidebaritem";
 
@@ -28,6 +30,42 @@ export function SidebarItemContextMenu() {
       animation={false}
       onVisibilityChange={(isVisible) => updateVisibility(id, isVisible)}
     >
+      {item?.children != undefined && (
+        <>
+          <Item
+            onClick={() => {
+              dispatch(
+                createPlaylistItem({
+                  newData: {
+                    id: nanoid(),
+                    name: "New Playlist"
+                  },
+                  parentId: menuData?.itemId
+                })
+              );
+            }}
+          >
+            Add new playlist
+          </Item>
+          <Item
+            onClick={() => {
+              dispatch(
+                createPlaylistItem({
+                  newData: {
+                    id: nanoid(),
+                    name: "New Folder",
+                    children: []
+                  },
+                  parentId: menuData?.itemId
+                })
+              );
+            }}
+          >
+            Add new folder
+          </Item>
+          <Separator />
+        </>
+      )}
       <Item
         onClick={() => {
           if (!menuData) return;
