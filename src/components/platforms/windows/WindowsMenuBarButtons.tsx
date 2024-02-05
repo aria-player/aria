@@ -2,7 +2,7 @@ import { Menu, useContextMenu } from "react-contexify";
 import menus from "../../../../shared/menus.json";
 import React, { useEffect, useState } from "react";
 import styles from "./WindowsMenuBarButtons.module.css";
-import { AppMenu } from "../../AppMenu";
+import { AppMenu } from "../../appmenu/AppMenu";
 import { useTranslation } from "react-i18next";
 
 export function WindowsMenuBarButtons() {

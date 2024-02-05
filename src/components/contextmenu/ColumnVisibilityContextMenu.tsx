@@ -1,7 +1,7 @@
 import { Menu } from "react-contexify";
 import { MenuItem } from "../../app/menu";
 import menus from "../../../shared/menus.json";
-import { AppMenu } from "../AppMenu";
+import { AppMenu } from "../appmenu/AppMenu";
 import { useContext } from "react";
 import { MenuContext } from "../../contexts/MenuContext";
 

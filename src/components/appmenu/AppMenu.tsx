@@ -1,9 +1,9 @@
 import { Item, Submenu, RightSlot, Separator } from "react-contexify";
-import { MenuItem, MenuItemState, selectMenuState } from "../app/menu";
-import { isTauri } from "../app/utils";
-import { useAppSelector } from "../app/hooks";
+import { MenuItem, MenuItemState, selectMenuState } from "../../app/menu";
+import { isTauri } from "../../app/utils";
+import { useAppSelector } from "../../app/hooks";
 import { useTranslation } from "react-i18next";
-import { useMenuActions } from "../hooks/useMenuActions";
+import { useMenuActions } from "../../hooks/useMenuActions";
 import styles from "./AppMenu.module.css";
 
 export function AppMenu(props: {

@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { goBack, goForward } from "redux-first-history";
 import LeftArrow from "../../../assets/arrow-left-solid.svg?react";
 import RightArrow from "../../../assets/arrow-right-solid.svg?react";
-import { MenuButton } from "../../MenuButton";
+import { MenuButton } from "../../appmenu/MenuButton";
 import { selectMenuState } from "../../../app/menu";
 import { WindowsMenuBarButtons } from "./WindowsMenuBarButtons";
 import { useContext } from "react";

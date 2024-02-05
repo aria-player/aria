@@ -1,6 +1,6 @@
 import styles from "./Sidebar.module.css";
 import { isTauri } from "../../app/utils";
-import { MenuButton } from "../MenuButton";
+import { MenuButton } from "../appmenu/MenuButton";
 import { useTranslation } from "react-i18next";
 import { SectionTree } from "soprano-ui";
 import { useCallback, useContext, useEffect } from "react";
