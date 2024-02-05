@@ -1,14 +1,14 @@
 import { useTranslation } from "react-i18next";
 import styles from "./settings.module.css";
-import { plugins } from "../../plugins/plugins";
-import { PluginId } from "../../features/plugins/pluginsTypes";
+import { plugins } from "../../../plugins/plugins";
+import { PluginId } from "../../../features/plugins/pluginsTypes";
 import React from "react";
-import { useAppSelector } from "../../app/hooks";
+import { useAppSelector } from "../../../app/hooks";
 import {
   pluginHandles,
   selectActivePlugins,
   selectPluginData
-} from "../../features/plugins/pluginsSlice";
+} from "../../../features/plugins/pluginsSlice";
 
 export function LibraryPage() {
   const { t } = useTranslation();

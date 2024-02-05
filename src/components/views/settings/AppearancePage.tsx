@@ -1,15 +1,15 @@
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { AccentColors, Themes } from "../../themes/themes";
-import { isTauri } from "../../app/utils";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import { AccentColors, Themes } from "../../../themes/themes";
+import { isTauri } from "../../../app/utils";
 import {
   selectAccentColor,
   selectTheme,
   setAccentColor,
   setTheme
-} from "../../features/config/configSlice";
+} from "../../../features/config/configSlice";
 import styles from "./settings.module.css";
 import { useContext } from "react";
-import { Platform, PlatformContext } from "../../contexts/PlatformContext";
+import { Platform, PlatformContext } from "../../../contexts/PlatformContext";
 import { useTranslation } from "react-i18next";
 
 export function AppearancePage() {

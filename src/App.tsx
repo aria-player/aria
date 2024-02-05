@@ -1,23 +1,23 @@
 import { WindowsMenuBar } from "./components/platforms/windows/WindowsMenuBar";
 import styles from "./App.module.css";
 import { Route, Routes } from "react-router-dom";
-import ErrorPage from "./views/Error";
+import ErrorPage from "./components/views/Error";
 import { Allotment } from "allotment";
 import { useContext } from "react";
-import SettingsPage from "./views/Settings";
+import SettingsPage from "./components/views/Settings";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
-import { AppearancePage } from "./views/settings/AppearancePage";
-import { AboutPage } from "./views/settings/AboutPage";
+import { AppearancePage } from "./components/views/settings/AppearancePage";
+import { AboutPage } from "./components/views/settings/AboutPage";
 import { MacTitleBar } from "./components/platforms/mac/MacTitleBar";
 import { Platform, PlatformContext } from "./contexts/PlatformContext";
-import { GeneralPage } from "./views/settings/GeneralPage";
+import { GeneralPage } from "./components/views/settings/GeneralPage";
 import { useTheme } from "./hooks/useTheme";
 import { Footer } from "./components/footer/Footer";
 import { Sidebar } from "./components/sidebar/Sidebar";
-import { TrackList } from "./views/TrackList";
-import { AlbumGrid } from "./views/AlbumGrid";
-import { PluginsPage } from "./views/settings/PluginsPage";
-import { LibraryPage } from "./views/settings/LibraryPage";
+import { TrackList } from "./components/views/TrackList";
+import { AlbumGrid } from "./components/views/AlbumGrid";
+import { PluginsPage } from "./components/views/settings/PluginsPage";
+import { LibraryPage } from "./components/views/settings/LibraryPage";
 import { useAppDispatch, useAppSelector } from "./app/hooks";
 import {
   selectSidebarCollapsed,

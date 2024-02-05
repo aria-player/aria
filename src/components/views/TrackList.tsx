@@ -8,17 +8,17 @@ import {
   RowClickedEvent
 } from "@ag-grid-community/core";
 import styles from "./TrackList.module.css";
-import { useAppDispatch, useAppSelector } from "../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   selectAllTracks,
   selectColumnState,
   setColumnState
-} from "../features/library/librarySlice";
-import { defaultColumnDefinitions } from "../features/library/libraryColumns";
-import { setQueue } from "../features/player/playerSlice";
-import { selectCurrentTrack } from "../features/sharedSelectors";
-import { TrackId } from "../features/library/libraryTypes";
-import { GridContext } from "../contexts/GridContext";
+} from "../../features/library/librarySlice";
+import { defaultColumnDefinitions } from "../../features/library/libraryColumns";
+import { setQueue } from "../../features/player/playerSlice";
+import { selectCurrentTrack } from "../../features/sharedSelectors";
+import { TrackId } from "../../features/library/libraryTypes";
+import { GridContext } from "../../contexts/GridContext";
 import { useTranslation } from "react-i18next";
 import { TriggerEvent, useContextMenu } from "react-contexify";
 

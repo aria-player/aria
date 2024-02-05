@@ -1,11 +1,14 @@
-import { isTauri } from "../../app/utils";
+import { isTauri } from "../../../app/utils";
 import styles from "./settings.module.css";
 import { useContext } from "react";
-import { Platform, PlatformContext } from "../../contexts/PlatformContext";
+import { Platform, PlatformContext } from "../../../contexts/PlatformContext";
 import { useTranslation } from "react-i18next";
-import { supportedLanguages } from "../../i18n";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { selectLanguage, setLanguage } from "../../features/config/configSlice";
+import { supportedLanguages } from "../../../i18n";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
+import {
+  selectLanguage,
+  setLanguage
+} from "../../../features/config/configSlice";
 import { invoke } from "@tauri-apps/api";
 
 export function GeneralPage() {
