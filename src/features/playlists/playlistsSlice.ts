@@ -1,4 +1,10 @@
-import { PayloadAction, createSelector, createSlice } from "@reduxjs/toolkit";
+import {
+  EntityState,
+  PayloadAction,
+  createEntityAdapter,
+  createSelector,
+  createSlice
+} from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 import {
   Item,
@@ -8,13 +14,18 @@ import {
   moveTreeNode,
   updateTreeNode
 } from "soprano-ui";
+import { Playlist } from "./playlistsTypes";
+
+const playlistsAdapter = createEntityAdapter<Playlist>();
 
 export interface PlaylistsState {
+  playlists: EntityState<Playlist>;
   layout: Item[];
   openFolders: string[];
 }
 
 const initialState: PlaylistsState = {
+  playlists: playlistsAdapter.getInitialState(),
   layout: [],
   openFolders: []
 };
@@ -48,9 +59,17 @@ export const playlistsSlice = createSlice({
       }>
     ) => {
       state.layout = createTreeNode(state.layout, action.payload);
+      if (action.payload.newData.children == undefined) {
+        playlistsAdapter.addOne(state.playlists, {
+          id: action.payload.newData.id,
+          tracks: []
+        });
+      }
     },
     deletePlaylistItem: (state, action: PayloadAction<{ id: string }>) => {
-      state.layout = deleteTreeNode(state.layout, action.payload).result;
+      const deletion = deleteTreeNode(state.layout, action.payload);
+      state.layout = deletion.result;
+      playlistsAdapter.removeMany(state.playlists, deletion.deletedIds);
     },
     openPlaylistFolder: (state, action: PayloadAction<{ id: string }>) => {
       const itemId = action.payload.id;
@@ -82,6 +101,14 @@ export const selectOpenFolders = (state: RootState) =>
 export const selectPlaylistsLayoutItemById = createSelector(
   [selectPlaylistsLayout, (_: RootState, nodeId: string) => nodeId],
   (items, nodeId) => findTreeNode(items, nodeId)
+);
+
+export const {
+  selectIds: selectPlaylistIds,
+  selectAll: selectAllPlaylists,
+  selectById: selectPlaylistById
+} = playlistsAdapter.getSelectors(
+  (state: RootState) => state.undoable.present.playlists.playlists
 );
 
 export default playlistsSlice.reducer;
