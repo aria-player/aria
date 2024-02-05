@@ -87,6 +87,8 @@
     "help": "Help",
     "exit": "Exit",
     "settings": "Settings...",
+    "undo": "Undo",
+    "redo": "Redo",
     "selectAll": "Select All",
     "fullscreen": "Toggle Fullscreen",
     "back": "Back",

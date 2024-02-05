@@ -20,6 +20,7 @@ import { createReduxHistoryContext } from "redux-first-history";
 import { createBrowserHistory } from "history";
 import { listenerMiddleware } from "./listener";
 import undoable, { includeAction } from "redux-undo";
+import { undoableActions } from "./undo";
 
 const storage = localforage;
 
@@ -47,7 +48,7 @@ const reducer = combineReducers({
       playlists: persistReducer({ key: "playlists", storage }, playlistsReducer)
     }),
     {
-      filter: includeAction([])
+      filter: includeAction(undoableActions.map((action) => action.type))
     }
   )
 });

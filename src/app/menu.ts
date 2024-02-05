@@ -17,6 +17,7 @@ import {
   toggleShuffle
 } from "../features/player/playerSlice";
 import { restartOrPreviousTrack } from "../features/player/playerTime";
+import { ActionCreators } from "redux-undo";
 
 export interface MenuItem {
   id: string;
@@ -91,6 +92,12 @@ export function handleMenuAction(
     case "toggleMute":
       dispatch(setMuted(!state.player.muted));
       break;
+    case "undo":
+      dispatch(ActionCreators.undo());
+      break;
+    case "redo":
+      dispatch(ActionCreators.redo());
+      break;
     default:
       break;
   }
@@ -105,6 +112,8 @@ export const selectMenuState = createSelector(
   [
     (state: RootState) => state.router.location,
     (state: RootState) => state.undoable.present.library.columnState,
+    (state: RootState) => state.undoable.present.library.layout,
+    (state: RootState) => state.undoable.present.playlists.layout,
     (state: RootState) => state.player.status
   ],
   () => {
@@ -154,6 +163,12 @@ export const selectMenuState = createSelector(
       },
       previous: {
         disabled: state.player.status == Status.Stopped
+      },
+      undo: {
+        disabled: !state.undoable.past.length
+      },
+      redo: {
+        disabled: !state.undoable.future.length
       }
     };
   }

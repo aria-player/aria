@@ -50,6 +50,17 @@
     "id": "edit",
     "submenu": [
       {
+        "id": "undo",
+        "shortcut": "Ctrl+Z"
+      },
+      {
+        "id": "redo",
+        "shortcut": "Ctrl+Y"
+      },
+      {
+        "id": "separator"
+      },
+      {
         "id": "selectAll",
         "shortcut": "Ctrl+A"
       }
