@@ -1,6 +1,7 @@
 import { useContext, useEffect, useMemo } from "react";
 import { AgGridReact } from "@ag-grid-community/react";
 import {
+  CellContextMenuEvent,
   ColDef,
   ColumnMovedEvent,
   ColumnResizedEvent,
@@ -21,6 +22,7 @@ import { TrackId } from "../../features/library/libraryTypes";
 import { GridContext } from "../../contexts/GridContext";
 import { useTranslation } from "react-i18next";
 import { TriggerEvent, useContextMenu } from "react-contexify";
+import { MenuContext } from "../../contexts/MenuContext";
 
 export const TrackList = () => {
   const dispatch = useAppDispatch();
@@ -29,8 +31,12 @@ export const TrackList = () => {
   const rowData = useAppSelector(selectAllTracks);
 
   const { gridRef } = useContext(GridContext);
+  const { setMenuData } = useContext(MenuContext);
   const { show: showHeaderContextMenu } = useContextMenu({
     id: "tracklistheader"
+  });
+  const { show: showCellContextMenu } = useContextMenu({
+    id: "tracklistitem"
   });
 
   const { t } = useTranslation();
@@ -147,6 +153,16 @@ export const TrackList = () => {
     };
   }, [showHeaderContextMenu]);
 
+  const handleCellContextMenu = (event: CellContextMenuEvent) => {
+    if (!event.node.isSelected()) {
+      event.node.setSelected(true, true);
+    }
+    if (event.node.id) {
+      setMenuData({ itemId: event.node.id, type: "tracklistitem" });
+    }
+    showCellContextMenu({ event: event.event as TriggerEvent });
+  };
+
   return (
     <div className={`${styles.tracklist} ag-theme-balham`}>
       <AgGridReact
@@ -161,6 +177,7 @@ export const TrackList = () => {
         onColumnMoved={handleColumnMovedOrResized}
         onColumnResized={handleColumnMovedOrResized}
         onColumnVisible={updateColumnState}
+        onCellContextMenu={handleCellContextMenu}
         rowHeight={33}
         headerHeight={37}
         suppressCellFocus
@@ -171,6 +188,7 @@ export const TrackList = () => {
         rowDragEntireRow
         animateRows
         alwaysShowVerticalScroll
+        preventDefaultOnContextMenu
         getRowStyle={(params: RowClassParams) => {
           if (currentTrack == params.data.id) {
             return { fontWeight: 700 };

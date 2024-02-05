@@ -24,6 +24,10 @@
       "defaultFolder": "New Folder"
     }
   },
+  "tracks": {
+    "selectedCount_one": "{{count}} track selected",
+    "selectedCount_other": "{{count}} tracks selected"
+  },
   "views": {
     "songs": "Songs",
     "albums": "Albums",

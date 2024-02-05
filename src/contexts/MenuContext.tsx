@@ -1,10 +1,9 @@
 import { createContext, useState } from "react";
 import { ReactNode } from "react";
 
-// TODO: Add more menu data types e.g. for track list items
 type MenuData = {
   itemId: string;
-  type: "sidebaritem";
+  type: "sidebaritem" | "tracklistitem";
 };
 
 export const MenuContext = createContext<{
