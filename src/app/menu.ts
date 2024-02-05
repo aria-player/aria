@@ -107,14 +107,15 @@ export const selectMenuState = createSelector(
     (state: RootState) => state.library.columnState,
     (state: RootState) => state.player.status
   ],
-  (location, columnState, status) => {
+  () => {
+    const state = store.getState();
     const columnVisibility = {} as { [key: string]: MenuItemState };
-    if (columnState && columnState.length > 0) {
-      columnState?.forEach((c) => {
+    if (state.library.columnState && state.library.columnState.length > 0) {
+      state.library.columnState?.forEach((c) => {
         if (c.colId == "uri" || c.colId == "id") return;
         columnVisibility["columns." + c.colId] = {
           selected: !c.hide,
-          disabled: location?.pathname != BASEPATH
+          disabled: state.router.location?.pathname != BASEPATH
         };
       });
     } else {
@@ -122,7 +123,7 @@ export const selectMenuState = createSelector(
         if (c.field == "uri" || c.field == "id") return;
         columnVisibility["columns." + c.field] = {
           selected: !c.hide,
-          disabled: location?.pathname != BASEPATH
+          disabled: state.router.location?.pathname != BASEPATH
         };
       });
     }
@@ -138,20 +139,20 @@ export const selectMenuState = createSelector(
         )
       },
       selectAll: {
-        disabled: location?.pathname != BASEPATH
+        disabled: state.router.location?.pathname != BASEPATH
       },
       columns: {
-        disabled: location?.pathname != BASEPATH
+        disabled: state.router.location?.pathname != BASEPATH
       },
       ...columnVisibility,
       togglePlay: {
-        disabled: status == Status.Stopped
+        disabled: state.player.status == Status.Stopped
       },
       next: {
-        disabled: status == Status.Stopped
+        disabled: state.player.status == Status.Stopped
       },
       previous: {
-        disabled: status == Status.Stopped
+        disabled: state.player.status == Status.Stopped
       }
     };
   }
