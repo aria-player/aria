@@ -75,9 +75,9 @@ export const {
 } = playlistsSlice.actions;
 
 export const selectPlaylistsLayout = (state: RootState) =>
-  state.playlists.layout;
+  state.undoable.present.playlists.layout;
 export const selectOpenFolders = (state: RootState) =>
-  state.playlists.openFolders;
+  state.undoable.present.playlists.openFolders;
 
 export const selectPlaylistsLayoutItemById = createSelector(
   [selectPlaylistsLayout, (_: RootState, nodeId: string) => nodeId],

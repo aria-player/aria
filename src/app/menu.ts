@@ -104,14 +104,15 @@ export function handleMenuAction(
 export const selectMenuState = createSelector(
   [
     (state: RootState) => state.router.location,
-    (state: RootState) => state.library.columnState,
+    (state: RootState) => state.undoable.present.library.columnState,
     (state: RootState) => state.player.status
   ],
   () => {
     const state = store.getState();
+    const columnState = state.undoable.present.library.columnState;
     const columnVisibility = {} as { [key: string]: MenuItemState };
-    if (state.library.columnState && state.library.columnState.length > 0) {
-      state.library.columnState?.forEach((c) => {
+    if (columnState && columnState.length > 0) {
+      columnState?.forEach((c) => {
         if (c.colId == "uri" || c.colId == "id") return;
         columnVisibility["columns." + c.colId] = {
           selected: !c.hide,

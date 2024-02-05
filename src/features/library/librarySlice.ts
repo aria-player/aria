@@ -91,10 +91,13 @@ export const {
   selectIds: selectTrackIds,
   selectAll: selectAllTracks,
   selectById: selectTrackById
-} = tracksAdapter.getSelectors((state: RootState) => state.library.tracks);
+} = tracksAdapter.getSelectors(
+  (state: RootState) => state.undoable.present.library.tracks
+);
 export const selectColumnState = (state: RootState) =>
-  state.library.columnState;
-export const selectLibraryLayout = (state: RootState) => state.library.layout;
+  state.undoable.present.library.columnState;
+export const selectLibraryLayout = (state: RootState) =>
+  state.undoable.present.library.layout;
 
 export default librarySlice.reducer;
 

@@ -19,6 +19,7 @@ import { combineReducers } from "redux";
 import { createReduxHistoryContext } from "redux-first-history";
 import { createBrowserHistory } from "history";
 import { listenerMiddleware } from "./listener";
+import undoable, { includeAction } from "redux-undo";
 
 const storage = localforage;
 
@@ -39,9 +40,16 @@ const reducer = combineReducers({
     },
     playerReducer
   ),
-  library: persistReducer({ key: "library", storage }, libraryReducer),
   plugins: persistReducer({ key: "plugins", storage }, pluginsReducer),
-  playlists: persistReducer({ key: "playlists", storage }, playlistsReducer)
+  undoable: undoable(
+    combineReducers({
+      library: persistReducer({ key: "library", storage }, libraryReducer),
+      playlists: persistReducer({ key: "playlists", storage }, playlistsReducer)
+    }),
+    {
+      filter: includeAction([])
+    }
+  )
 });
 
 export const store = configureStore({
