@@ -14,7 +14,7 @@ import {
   moveTreeNode,
   updateTreeNode
 } from "soprano-ui";
-import { Playlist } from "./playlistsTypes";
+import { Playlist, PlaylistId, PlaylistItem } from "./playlistsTypes";
 
 const playlistsAdapter = createEntityAdapter<Playlist>();
 
@@ -80,6 +80,34 @@ export const playlistsSlice = createSlice({
     closePlaylistFolder: (state, action: PayloadAction<{ id: string }>) => {
       const itemId = action.payload.id;
       state.openFolders = state.openFolders.filter((id) => id !== itemId);
+    },
+    addTracksToPlaylist: (
+      state,
+      action: PayloadAction<{
+        playlistId: PlaylistId;
+        newTracks: PlaylistItem[];
+      }>
+    ) => {
+      const { playlistId, newTracks } = action.payload;
+      const item = state.playlists.entities[playlistId];
+      if (item) {
+        item.tracks = item.tracks.concat(newTracks);
+      }
+    },
+    removeTracksFromPlaylist: (
+      state,
+      action: PayloadAction<{
+        playlistId: PlaylistId;
+        trackIds: string[];
+      }>
+    ) => {
+      const { playlistId, trackIds } = action.payload;
+      const item = state.playlists.entities[playlistId];
+      if (item) {
+        item.tracks = item.tracks.filter(
+          (track) => !trackIds.includes(track.itemId)
+        );
+      }
     }
   }
 });
@@ -90,7 +118,9 @@ export const {
   createPlaylistItem,
   deletePlaylistItem,
   openPlaylistFolder,
-  closePlaylistFolder
+  closePlaylistFolder,
+  addTracksToPlaylist,
+  removeTracksFromPlaylist
 } = playlistsSlice.actions;
 
 export const selectPlaylistsLayout = (state: RootState) =>

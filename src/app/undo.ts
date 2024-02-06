@@ -4,9 +4,11 @@ import {
   updateLibraryItem
 } from "../features/library/librarySlice";
 import {
+  addTracksToPlaylist,
   createPlaylistItem,
   deletePlaylistItem,
   movePlaylistItem,
+  removeTracksFromPlaylist,
   updatePlaylistItem
 } from "../features/playlists/playlistsSlice";
 
@@ -18,5 +20,7 @@ export const undoableActions = [
   movePlaylistItem,
   updatePlaylistItem,
   createPlaylistItem,
-  deletePlaylistItem
+  deletePlaylistItem,
+  addTracksToPlaylist,
+  removeTracksFromPlaylist
 ];

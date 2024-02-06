@@ -26,7 +26,10 @@
   },
   "tracks": {
     "selectedCount_one": "{{count}} track selected",
-    "selectedCount_other": "{{count}} tracks selected"
+    "selectedCount_other": "{{count}} tracks selected",
+    "noItems": "(No items)",
+    "addToPlaylist": "Add to playlist",
+    "addToNewPlaylist": "New playlist..."
   },
   "views": {
     "songs": "Songs",
