@@ -31,10 +31,11 @@ export function SidebarItemContextMenu() {
       })
     );
     treeRef?.current?.root.tree.open(menuData.itemId);
+    const newItemId = nanoid();
     dispatch(
       createPlaylistItem({
         newData: {
-          id: nanoid(),
+          id: newItemId,
           name: isFolder
             ? t("sidebar.playlists.defaultFolder")
             : t("sidebar.playlists.defaultPlaylist"),
@@ -43,6 +44,7 @@ export function SidebarItemContextMenu() {
         parentId: menuData.itemId
       })
     );
+    treeRef?.current?.root.tree.edit(newItemId);
   };
 
   return (

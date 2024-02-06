@@ -75,6 +75,7 @@ export function TrackListItemContextMenu() {
               })
             );
             addTracks(newPlaylistId);
+            // TODO: Open all parent folders and call .edit on the new item
           }}
         >
           {t("tracks.addToNewPlaylist")}
