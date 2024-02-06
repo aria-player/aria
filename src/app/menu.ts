@@ -93,10 +93,14 @@ export function handleMenuAction(
       dispatch(setMuted(!state.player.muted));
       break;
     case "undo":
-      dispatch(ActionCreators.undo());
+      if (state.undoable.past.length) {
+        dispatch(ActionCreators.undo());
+      }
       break;
     case "redo":
-      dispatch(ActionCreators.redo());
+      if (state.undoable.future.length) {
+        dispatch(ActionCreators.redo());
+      }
       break;
     default:
       break;
