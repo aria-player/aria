@@ -15,12 +15,12 @@ import {
   persistReducer,
   persistStore
 } from "redux-persist";
-import { combineReducers } from "redux";
+import { Reducer, combineReducers } from "redux";
 import { createReduxHistoryContext } from "redux-first-history";
 import { createBrowserHistory } from "history";
 import { listenerMiddleware } from "./listener";
 import undoable, { includeAction } from "redux-undo";
-import { undoableActions } from "./undo";
+import { excludeStateFromUndo, undoableActions } from "./undo";
 
 const storage = localforage;
 
@@ -29,6 +29,18 @@ const { createReduxHistory, routerMiddleware, routerReducer } =
     history: createBrowserHistory(),
     reduxTravelling: true
   });
+
+const undoableSlices = undoable(
+  combineReducers({
+    library: persistReducer({ key: "library", storage }, libraryReducer),
+    playlists: persistReducer({ key: "playlists", storage }, playlistsReducer)
+  }),
+  {
+    filter: includeAction(undoableActions.map((action) => action.type)),
+    ignoreInitialState: true,
+    syncFilter: true
+  }
+);
 
 const reducer = combineReducers({
   router: routerReducer,
@@ -42,15 +54,7 @@ const reducer = combineReducers({
     playerReducer
   ),
   plugins: persistReducer({ key: "plugins", storage }, pluginsReducer),
-  undoable: undoable(
-    combineReducers({
-      library: persistReducer({ key: "library", storage }, libraryReducer),
-      playlists: persistReducer({ key: "playlists", storage }, playlistsReducer)
-    }),
-    {
-      filter: includeAction(undoableActions.map((action) => action.type))
-    }
-  )
+  undoable: excludeStateFromUndo(undoableSlices) as Reducer<UndoableSlices>
 });
 
 export const store = configureStore({
@@ -65,6 +69,7 @@ export const store = configureStore({
 
 export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof store.getState>;
+export type UndoableSlices = ReturnType<typeof undoableSlices>;
 export type AppThunk<ReturnType = void> = ThunkAction<
   ReturnType,
   RootState,
