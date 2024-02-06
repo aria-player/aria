@@ -57,12 +57,16 @@ export function createWebPlayer(host: SourceCallbacks): SourceHandle {
   }
 
   async function updateTracksMetadata(tracks: TrackMetadata[]) {
-    for (const track of tracks) {
-      if (host.getTrackByUri(track.uri)?.metadataloaded) continue;
-      const metadata = await getMetadata(track, fileHandles[track.uri]);
-      host.updateMetadata([metadata]);
+    const batchSize = 10;
+    for (let i = 0; i < tracks.length; i += batchSize) {
+      const metadataPromises = tracks
+        .slice(i, i + batchSize)
+        .filter((track) => !host.getTrackByUri(track.uri)?.metadataloaded)
+        .map((track) => getMetadata(track, fileHandles[track.uri]));
+      const newMetadata = await Promise.all(metadataPromises);
+      host.updateMetadata(newMetadata);
       host.updateData({
-        scanned: (host.getData() as WebPlayerData).scanned + 1
+        scanned: (host.getData() as WebPlayerData).scanned + newMetadata.length
       });
     }
   }
