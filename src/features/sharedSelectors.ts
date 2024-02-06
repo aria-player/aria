@@ -1,5 +1,5 @@
 import { RootState } from "../app/store";
-import { selectTrackById } from "./library/librarySlice";
+import { selectTrackById } from "./tracks/tracksSlice";
 
 export const selectCurrentTrack = (state: RootState) => {
   if (state.player.queueIndex == null) {

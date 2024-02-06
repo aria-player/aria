@@ -3,7 +3,7 @@ import { pluginHandles } from "./pluginsSlice";
 import { plugins } from "../../plugins/plugins";
 import { getBaseCallbacks, getSourceCallbacks } from "./pluginsCallbacks";
 import { listenForChange } from "../../app/listener";
-import { removeTracks } from "../library/librarySlice";
+import { removeTracks } from "../tracks/tracksSlice";
 
 const createPluginInstance = (pluginId: PluginId) => {
   if (!pluginHandles[pluginId]) {

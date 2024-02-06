@@ -42,8 +42,7 @@ export const excludeStateFromUndo =
             ...newState.present,
             library: {
               ...newState.present.library,
-              columnState: state.present.library.columnState,
-              tracks: state.present.library.tracks
+              columnState: state.present.library.columnState
             },
             playlists: {
               ...newState.present.playlists,

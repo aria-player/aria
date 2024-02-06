@@ -4,6 +4,7 @@ import playerReducer from "../features/player/playerSlice";
 import libraryReducer from "../features/library/librarySlice";
 import pluginsReducer from "../features/plugins/pluginsSlice";
 import playlistsReducer from "../features/playlists/playlistsSlice";
+import tracksReducer from "../features/tracks/tracksSlice";
 import localforage from "localforage";
 import {
   FLUSH,
@@ -54,6 +55,7 @@ const reducer = combineReducers({
     playerReducer
   ),
   plugins: persistReducer({ key: "plugins", storage }, pluginsReducer),
+  tracks: persistReducer({ key: "tracks", storage }, tracksReducer),
   undoable: excludeStateFromUndo(undoableSlices) as Reducer<UndoableSlices>
 });
 

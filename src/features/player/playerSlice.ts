@@ -4,8 +4,8 @@ import { RepeatMode, Status } from "./playerTypes";
 import { TrackId } from "../library/libraryTypes";
 import { pluginHandles } from "../plugins/pluginsSlice";
 import { SourceHandle } from "../plugins/pluginsTypes";
-import { selectTrackById } from "../library/librarySlice";
 import { setupPlayerListeners } from "./playerListeners";
+import { selectTrackById } from "../tracks/tracksSlice";
 
 interface PlayerState {
   status: Status;

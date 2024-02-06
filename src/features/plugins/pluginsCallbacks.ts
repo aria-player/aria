@@ -1,18 +1,18 @@
 import { store } from "../../app/store";
 import { getTrackId } from "../../app/utils";
 import {
-  selectTrackIds,
-  addTracks,
-  removeTracks,
-  selectAllTracks,
-  selectTrackById
-} from "../library/librarySlice";
-import {
   Track,
   TrackId,
   TrackMetadata,
   TrackUri
 } from "../library/libraryTypes";
+import {
+  addTracks,
+  removeTracks,
+  selectAllTracks,
+  selectTrackById,
+  selectTrackIds
+} from "../tracks/tracksSlice";
 import { selectActivePlugins, setPluginData } from "./pluginsSlice";
 import { PluginId, BaseCallbacks, SourceCallbacks } from "./pluginsTypes";
 

@@ -11,7 +11,6 @@ import {
 import styles from "./TrackList.module.css";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
-  selectAllTracks,
   selectColumnState,
   setColumnState
 } from "../../features/library/librarySlice";
@@ -23,6 +22,7 @@ import { GridContext } from "../../contexts/GridContext";
 import { useTranslation } from "react-i18next";
 import { TriggerEvent, useContextMenu } from "react-contexify";
 import { MenuContext } from "../../contexts/MenuContext";
+import { selectAllTracks } from "../../features/tracks/tracksSlice";
 
 export const TrackList = () => {
   const dispatch = useAppDispatch();

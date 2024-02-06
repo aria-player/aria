@@ -1,26 +1,14 @@
-import {
-  EntityState,
-  PayloadAction,
-  createEntityAdapter,
-  createSlice
-} from "@reduxjs/toolkit";
-import { Track, TrackId } from "./libraryTypes";
-import { PluginId } from "../plugins/pluginsTypes";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
-import { setupLibraryListeners } from "./libraryListeners";
 import { ColumnState } from "@ag-grid-community/core";
 import { Item, moveTreeNode, updateTreeNode } from "soprano-ui";
 
-const tracksAdapter = createEntityAdapter<Track>();
-
 interface LibraryState {
-  tracks: EntityState<Track>;
   columnState: ColumnState[] | null;
   layout: Item[];
 }
 
 const initialState: LibraryState = {
-  tracks: tracksAdapter.getInitialState(),
   columnState: null,
   layout: [
     { id: "songs", name: "songs" },
@@ -36,23 +24,6 @@ const librarySlice = createSlice({
   name: "library",
   initialState,
   reducers: {
-    addTracks: (
-      state,
-      action: PayloadAction<{ source: PluginId; tracks?: Track[] }>
-    ) => {
-      tracksAdapter.upsertMany(state.tracks, action.payload.tracks ?? []);
-    },
-    removeTracks: (
-      state,
-      action: PayloadAction<{ source: PluginId; tracks?: TrackId[] }>
-    ) => {
-      const tracksToFilter = action.payload.tracks ?? state.tracks.ids;
-      const tracksToRemove = tracksToFilter.filter(
-        (trackId) =>
-          state.tracks.entities[trackId]?.source === action.payload.source
-      );
-      tracksAdapter.removeMany(state.tracks, tracksToRemove);
-    },
     setColumnState: (state, action: PayloadAction<ColumnState[]>) => {
       state.columnState = action.payload;
     },
@@ -79,26 +50,15 @@ const librarySlice = createSlice({
 });
 
 export const {
-  addTracks,
-  removeTracks,
   setColumnState,
   moveLibraryItem,
   updateLibraryItem,
   resetLibraryLayout
 } = librarySlice.actions;
 
-export const {
-  selectIds: selectTrackIds,
-  selectAll: selectAllTracks,
-  selectById: selectTrackById
-} = tracksAdapter.getSelectors(
-  (state: RootState) => state.undoable.present.library.tracks
-);
 export const selectColumnState = (state: RootState) =>
   state.undoable.present.library.columnState;
 export const selectLibraryLayout = (state: RootState) =>
   state.undoable.present.library.layout;
 
 export default librarySlice.reducer;
-
-setupLibraryListeners();
