@@ -125,7 +125,7 @@ export const TrackList = () => {
   const handleColumnMovedOrResized = (
     params: ColumnMovedEvent | ColumnResizedEvent
   ) => {
-    if (params.finished) {
+    if (params.finished && params.column) {
       updateColumnState();
     }
   };
