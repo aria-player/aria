@@ -2,7 +2,7 @@ import styles from "./Sidebar.module.css";
 import { isTauri } from "../../app/utils";
 import { MenuButton } from "../appmenu/MenuButton";
 import { useTranslation } from "react-i18next";
-import { SectionTree } from "soprano-ui";
+import { SectionTree, findTreeNode } from "soprano-ui";
 import { useCallback, useContext, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
@@ -152,9 +152,13 @@ export function Sidebar() {
           );
         }}
         onRenameWithinSection={(_, itemId, newName) => {
-          dispatch(
-            updatePlaylistItem({ id: itemId, changes: { name: newName } })
-          );
+          if (
+            findTreeNode(selectPlaylistsLayout(store.getState()), itemId)
+              ?.name != newName
+          )
+            dispatch(
+              updatePlaylistItem({ id: itemId, changes: { name: newName } })
+            );
         }}
         onOptionsMenuActiveChange={(section, button, event) => {
           if (section != null && event != null) {
