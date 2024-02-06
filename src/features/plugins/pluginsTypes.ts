@@ -1,4 +1,4 @@
-import { Track, TrackMetadata, TrackUri } from "../library/libraryTypes";
+import { Track, TrackMetadata, TrackUri } from "../tracks/tracksTypes";
 
 export type PluginId = string;
 

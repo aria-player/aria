@@ -5,7 +5,7 @@ import {
   TrackId,
   TrackMetadata,
   TrackUri
-} from "../library/libraryTypes";
+} from "../tracks/tracksTypes";
 import {
   addTracks,
   removeTracks,

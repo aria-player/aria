@@ -1,4 +1,4 @@
-import { TrackUri, TrackId } from "../features/library/libraryTypes";
+import { TrackUri, TrackId } from "../features/tracks/tracksTypes";
 import { PluginId } from "../features/plugins/pluginsTypes";
 
 interface Window {

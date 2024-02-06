@@ -1,5 +1,5 @@
 import { parseBlob } from "music-metadata-browser";
-import { TrackMetadata } from "../../features/library/libraryTypes";
+import { TrackMetadata } from "../../features/tracks/tracksTypes";
 
 export const getMetadata = async (track: TrackMetadata, file: File) => {
   const metadata = await parseBlob(file);

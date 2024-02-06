@@ -2,7 +2,7 @@ import {
   Track,
   TrackMetadata,
   TrackUri
-} from "../../features/library/libraryTypes";
+} from "../../features/tracks/tracksTypes";
 import {
   SourceCallbacks,
   SourceHandle

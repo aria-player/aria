@@ -17,7 +17,7 @@ import {
 import { defaultColumnDefinitions } from "../../features/library/libraryColumns";
 import { setQueue } from "../../features/player/playerSlice";
 import { selectCurrentTrack } from "../../features/sharedSelectors";
-import { TrackId } from "../../features/library/libraryTypes";
+import { TrackId } from "../../features/tracks/tracksTypes";
 import { GridContext } from "../../contexts/GridContext";
 import { useTranslation } from "react-i18next";
 import { TriggerEvent, useContextMenu } from "react-contexify";

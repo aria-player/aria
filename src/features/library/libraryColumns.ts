@@ -1,5 +1,5 @@
 import { ColDef } from "@ag-grid-community/core";
-import { Track } from "./libraryTypes";
+import { Track } from "../tracks/tracksTypes";
 import { formatBytes, formatDuration } from "../../app/utils";
 import { plugins } from "../../plugins/plugins";
 

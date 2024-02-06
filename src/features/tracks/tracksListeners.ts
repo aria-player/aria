@@ -3,7 +3,7 @@ import { listenForAction } from "../../app/listener";
 import { pluginHandles } from "../plugins/pluginsSlice";
 import { SourceHandle } from "../plugins/pluginsTypes";
 import { addTracks, removeTracks, selectAllTracks } from "./tracksSlice";
-import { Track } from "../library/libraryTypes";
+import { Track } from "./tracksTypes";
 
 export function setupTracksListeners() {
   listenForAction(isAnyOf(addTracks, removeTracks), (state, action) => {

@@ -1,4 +1,4 @@
-import { TrackUri } from "../../features/library/libraryTypes";
+import { TrackUri } from "../../features/tracks/tracksTypes";
 import { SourceCallbacks } from "../../features/plugins/pluginsTypes";
 import { WebPlayerData } from "./createWebPlayer";
 

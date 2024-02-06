@@ -1,4 +1,4 @@
-import { TrackId } from "../library/libraryTypes";
+import { TrackId } from "../tracks/tracksTypes";
 
 export type PlaylistId = string;
 export type PlaylistItemId = string;
