@@ -54,6 +54,7 @@ body {
     --ag-background-color: var(--primary-background);
     --ag-modal-overlay-background-color: transparent;
     --ag-row-height: 33px;
+    --ag-range-selection-border-color: var(--accent-color);
   }
 
   .ag-root-wrapper {
@@ -103,5 +104,29 @@ body {
 
   .ag-row-hover {
     border-radius: 0.25rem;
+  }
+
+  .ag-dnd-ghost-icon {
+    display: none;
+  }
+
+  .ag-dnd-ghost {
+    background-color: transparent;
+    border: none;
+    padding: 0;
+    padding-left: 1rem;
+  }
+
+  .ag-dnd-ghost-label {
+    display: flex;
+    align-items: center;
+    height: 100%;
+    padding: 0.5rem;
+    color: var(--primary-text);
+    background-color: var(--primary-background);
+    border-radius: 0.25rem;
+    opacity: 0.7;
+    font-weight: 400;
+    font-size: 0.8rem;
   }
 }
