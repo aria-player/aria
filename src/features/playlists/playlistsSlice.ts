@@ -15,6 +15,7 @@ import {
   updateTreeNode
 } from "soprano-ui";
 import { Playlist, PlaylistId, PlaylistItem } from "./playlistsTypes";
+import { setupPlaylistsListeners } from "./playlistsListeners";
 
 const playlistsAdapter = createEntityAdapter<Playlist>();
 
@@ -142,3 +143,5 @@ export const {
 );
 
 export default playlistsSlice.reducer;
+
+setupPlaylistsListeners();
