@@ -1,7 +1,7 @@
 import { listenForAction } from "../../app/listener";
 import { push } from "redux-first-history";
 import { BASEPATH } from "../../app/constants";
-import { selectCurrentPlaylist } from "../sharedSelectors";
+import { selectVisiblePlaylist } from "../sharedSelectors";
 import { AnyAction, isAnyOf } from "@reduxjs/toolkit";
 import { deletePlaylistItem } from "./playlistsSlice";
 import { ActionTypes } from "redux-undo";
@@ -18,7 +18,7 @@ export function setupPlaylistsListeners() {
         action.type === ActionTypes.REDO) as MatchFunction<AnyAction>
     ),
     (state, _, dispatch) => {
-      if (!selectCurrentPlaylist(state)) {
+      if (!selectVisiblePlaylist(state)) {
         dispatch(push(BASEPATH));
       }
     }

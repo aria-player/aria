@@ -19,7 +19,7 @@ import {
 import { restartOrPreviousTrack } from "../features/player/playerTime";
 import { ActionCreators } from "redux-undo";
 import {
-  selectCurrentPlaylist,
+  selectVisiblePlaylist,
   selectTrackListIsVisible
 } from "../features/sharedSelectors";
 import { removeTracksFromPlaylist } from "../features/playlists/playlistsSlice";
@@ -109,11 +109,11 @@ export function handleMenuAction(
       break;
     case "delete":
       {
-        const currentPlaylist = selectCurrentPlaylist(store.getState())?.id;
-        if (currentPlaylist) {
+        const visiblePlaylist = selectVisiblePlaylist(store.getState())?.id;
+        if (visiblePlaylist) {
           dispatch(
             removeTracksFromPlaylist({
-              playlistId: currentPlaylist,
+              playlistId: visiblePlaylist,
               itemIds: state.tracks.selectedTracks
             })
           );
@@ -196,7 +196,7 @@ export const selectMenuState = createSelector(
       },
       delete: {
         disabled:
-          !selectCurrentPlaylist(state) || !state.tracks.selectedTracks.length
+          !selectVisiblePlaylist(state) || !state.tracks.selectedTracks.length
       }
     };
   }

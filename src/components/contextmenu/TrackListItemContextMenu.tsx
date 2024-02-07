@@ -13,7 +13,7 @@ import {
 import { Item as TreeItem } from "soprano-ui";
 import { nanoid } from "@reduxjs/toolkit";
 import { PlaylistItem } from "../../features/playlists/playlistsTypes";
-import { selectCurrentPlaylist } from "../../features/sharedSelectors";
+import { selectVisiblePlaylist } from "../../features/sharedSelectors";
 import { selectSelectedTracks } from "../../features/tracks/tracksSlice";
 const id = "tracklistitem";
 
@@ -22,7 +22,7 @@ export function TrackListItemContextMenu() {
   const { updateVisibility } = useContext(MenuContext);
   const gridRef = useContext(GridContext).gridRef;
   const playlists = useAppSelector(selectPlaylistsLayout);
-  const currentPlaylist = useAppSelector(selectCurrentPlaylist);
+  const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
   const selectedTracks = useAppSelector(selectSelectedTracks);
 
   const addTracks = (playlistId: string) => {
@@ -111,12 +111,12 @@ export function TrackListItemContextMenu() {
         {renderItems(playlists)}
       </Submenu>
       <Separator />
-      {currentPlaylist && (
+      {visiblePlaylist && (
         <Item
           onClick={() => {
             dispatch(
               removeTracksFromPlaylist({
-                playlistId: currentPlaylist.id,
+                playlistId: visiblePlaylist.id,
                 itemIds: selectedTracks
               })
             );

@@ -15,7 +15,7 @@ export const selectCurrentTrack = (state: RootState) => {
   return selectTrackById(state, currentTrackId);
 };
 
-export const selectCurrentPlaylist = (state: RootState) => {
+export const selectVisiblePlaylist = (state: RootState) => {
   if (state.router.location?.pathname.split("/")[2] != null)
     return selectPlaylistById(
       state,
@@ -32,9 +32,9 @@ export const selectVisibleTracks = createSelector(
   () => {
     const state = store.getState();
     const tracks = state.tracks.tracks;
-    const currentPlaylist = selectCurrentPlaylist(state)?.tracks;
-    return currentPlaylist
-      ? currentPlaylist.map((playlistTrack) => {
+    const visiblePlaylist = selectVisiblePlaylist(state)?.tracks;
+    return visiblePlaylist
+      ? visiblePlaylist.map((playlistTrack) => {
           return {
             ...playlistTrack,
             ...tracks.entities[playlistTrack.trackId]
@@ -50,6 +50,6 @@ export const selectVisibleTracks = createSelector(
 export const selectTrackListIsVisible = (state: RootState) => {
   return (
     state.router.location?.pathname == BASEPATH ||
-    selectCurrentPlaylist(state)?.id != null
+    selectVisiblePlaylist(state)?.id != null
   );
 };
