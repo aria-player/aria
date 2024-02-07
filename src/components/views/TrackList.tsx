@@ -188,7 +188,6 @@ export const TrackList = () => {
         suppressScrollOnNewData
         suppressMoveWhenRowDragging
         rowDragEntireRow
-        animateRows
         alwaysShowVerticalScroll
         preventDefaultOnContextMenu
         getRowStyle={(params: RowClassParams) => {
