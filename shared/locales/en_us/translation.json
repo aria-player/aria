@@ -97,6 +97,7 @@
     "settings": "Settings...",
     "undo": "Undo",
     "redo": "Redo",
+    "delete": "Delete",
     "selectAll": "Select All",
     "fullscreen": "Toggle Fullscreen",
     "back": "Back",

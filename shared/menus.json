@@ -61,6 +61,13 @@
         "id": "separator"
       },
       {
+        "id": "delete",
+        "shortcut": "Delete"
+      },
+      {
+        "id": "separator"
+      },
+      {
         "id": "selectAll",
         "shortcut": "Ctrl+A"
       }

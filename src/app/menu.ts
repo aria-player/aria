@@ -18,6 +18,8 @@ import {
 } from "../features/player/playerSlice";
 import { restartOrPreviousTrack } from "../features/player/playerTime";
 import { ActionCreators } from "redux-undo";
+import { selectCurrentPlaylist } from "../features/sharedSelectors";
+import { removeTracksFromPlaylist } from "../features/playlists/playlistsSlice";
 
 export interface MenuItem {
   id: string;
@@ -102,6 +104,19 @@ export function handleMenuAction(
         dispatch(ActionCreators.redo());
       }
       break;
+    case "delete":
+      {
+        const currentPlaylist = selectCurrentPlaylist(store.getState())?.id;
+        if (grid?.api && grid.api.getSelectedNodes() && currentPlaylist) {
+          dispatch(
+            removeTracksFromPlaylist({
+              playlistId: currentPlaylist,
+              trackIds: grid.api.getSelectedRows().map((node) => node.itemId)
+            })
+          );
+        }
+      }
+      break;
     default:
       break;
   }
@@ -174,6 +189,9 @@ export const selectMenuState = createSelector(
       },
       redo: {
         disabled: !state.undoable.future.length
+      },
+      delete: {
+        disabled: false // TODO: Playlist open && any item selected
       }
     };
   }
