@@ -29,7 +29,8 @@
     "selectedCount_other": "{{count}} tracks selected",
     "noItems": "(No items)",
     "addToPlaylist": "Add to playlist",
-    "addToNewPlaylist": "New playlist..."
+    "addToNewPlaylist": "New playlist...",
+    "removeFromPlaylist": "Remove from playlist"
   },
   "views": {
     "songs": "Songs",
