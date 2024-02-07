@@ -118,6 +118,7 @@ export const selectMenuState = createSelector(
     (state: RootState) => state.undoable.present.library.columnState,
     (state: RootState) => state.undoable.present.library.layout,
     (state: RootState) => state.undoable.present.playlists.layout,
+    (state: RootState) => state.undoable.present.playlists.playlists,
     (state: RootState) => state.player.status
   ],
   () => {
