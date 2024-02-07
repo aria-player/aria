@@ -25,7 +25,10 @@ import {
   setSidebarConfig
 } from "./features/config/configSlice";
 import { ContextMenuContainer } from "./components/contextmenu/ContextMenuContainer";
-import { selectTrackListIsVisible } from "./features/sharedSelectors";
+import {
+  selectCurrentPlaylist,
+  selectTrackListIsVisible
+} from "./features/sharedSelectors";
 
 function App() {
   const { platform, fullscreen } = useContext(PlatformContext);
@@ -36,6 +39,7 @@ function App() {
   const sidebarWidth = useAppSelector(selectSidebarWidth);
   const sidebarCollapsed = useAppSelector(selectSidebarCollapsed);
   const trackListIsVisible = useAppSelector(selectTrackListIsVisible);
+  const currentPlaylist = useAppSelector(selectCurrentPlaylist);
   const handleDragEnd = (sizes: number[]) => {
     dispatch(setSidebarConfig({ width: sizes[0], collapsed: sizes[0] === 0 }));
   };
@@ -67,7 +71,10 @@ function App() {
                 <Route path="plugins" Component={PluginsPage} />
                 <Route path="about" Component={AboutPage} />
               </Route>
-              <Route path="playlist/:id" Component={() => <></>} />
+              <Route
+                path="playlist/:id"
+                Component={() => (currentPlaylist?.id ? <></> : <ErrorPage />)}
+              />
               <Route path="*" Component={ErrorPage} />
             </Routes>
             <div
