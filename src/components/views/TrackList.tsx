@@ -7,6 +7,7 @@ import {
   ColumnResizedEvent,
   RowClassParams,
   RowClickedEvent,
+  RowDragEndEvent,
   SelectionChangedEvent
 } from "@ag-grid-community/core";
 import styles from "./TrackList.module.css";
@@ -19,6 +20,7 @@ import { defaultColumnDefinitions } from "../../features/library/libraryColumns"
 import { setQueue } from "../../features/player/playerSlice";
 import {
   selectCurrentTrack,
+  selectVisiblePlaylist,
   selectVisibleTracks
 } from "../../features/sharedSelectors";
 import { TrackId } from "../../features/tracks/tracksTypes";
@@ -27,13 +29,15 @@ import { useTranslation } from "react-i18next";
 import { TriggerEvent, useContextMenu } from "react-contexify";
 import { MenuContext } from "../../contexts/MenuContext";
 import { setSelectedTracks } from "../../features/tracks/tracksSlice";
+import { setPlaylistTracks } from "../../features/playlists/playlistsSlice";
+import { PlaylistItem } from "../../features/playlists/playlistsTypes";
 
 export const TrackList = () => {
   const dispatch = useAppDispatch();
 
   const currentTrack = useAppSelector(selectCurrentTrack)?.id;
   const rowData = useAppSelector(selectVisibleTracks);
-
+  const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
   const { gridRef } = useContext(GridContext);
   const { setMenuData } = useContext(MenuContext);
   const { show: showHeaderContextMenu } = useContextMenu({
@@ -173,6 +177,22 @@ export const TrackList = () => {
     );
   };
 
+  const handleRowDragEnd = (event: RowDragEndEvent) => {
+    if (!visiblePlaylist?.id) return;
+    const newOrder = [] as PlaylistItem[];
+    event.api.forEachNode((node) => {
+      if (node.data) {
+        newOrder.push({
+          itemId: node.data.itemId,
+          trackId: node.data.id
+        });
+      }
+    });
+    dispatch(
+      setPlaylistTracks({ playlistId: visiblePlaylist.id, tracks: newOrder })
+    );
+  };
+
   return (
     <div className={`${styles.tracklist} ag-theme-balham`}>
       <AgGridReact
@@ -189,6 +209,7 @@ export const TrackList = () => {
         onColumnVisible={updateColumnState}
         onCellContextMenu={handleCellContextMenu}
         onSelectionChanged={handleSelectionChanged}
+        onRowDragEnd={handleRowDragEnd}
         rowHeight={33}
         headerHeight={37}
         suppressCellFocus
@@ -196,6 +217,7 @@ export const TrackList = () => {
         suppressDragLeaveHidesColumns
         suppressScrollOnNewData
         suppressMoveWhenRowDragging
+        rowDragManaged={visiblePlaylist?.id != null}
         rowDragEntireRow
         alwaysShowVerticalScroll
         preventDefaultOnContextMenu

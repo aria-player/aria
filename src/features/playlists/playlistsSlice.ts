@@ -114,6 +114,16 @@ export const playlistsSlice = createSlice({
           (track) => !itemIds.includes(track.itemId)
         );
       }
+    },
+    setPlaylistTracks: (
+      state,
+      action: PayloadAction<{ playlistId: PlaylistId; tracks: PlaylistItem[] }>
+    ) => {
+      const { playlistId, tracks } = action.payload;
+      const item = state.playlists.entities[playlistId];
+      if (item) {
+        item.tracks = tracks;
+      }
     }
   }
 });
@@ -126,7 +136,8 @@ export const {
   openPlaylistFolder,
   closePlaylistFolder,
   addTracksToPlaylist,
-  removeTracksFromPlaylist
+  removeTracksFromPlaylist,
+  setPlaylistTracks
 } = playlistsSlice.actions;
 
 export const selectPlaylistsLayout = (state: RootState) =>

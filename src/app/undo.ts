@@ -11,6 +11,7 @@ import {
   deletePlaylistItem,
   movePlaylistItem,
   removeTracksFromPlaylist,
+  setPlaylistTracks,
   updatePlaylistItem
 } from "../features/playlists/playlistsSlice";
 import { UndoableSlices } from "./store";
@@ -26,7 +27,8 @@ export const undoableActions = [
   createPlaylistItem,
   deletePlaylistItem,
   addTracksToPlaylist,
-  removeTracksFromPlaylist
+  removeTracksFromPlaylist,
+  setPlaylistTracks
 ];
 
 export const excludeStateFromUndo =
