@@ -14,7 +14,12 @@ import {
   moveTreeNode,
   updateTreeNode
 } from "soprano-ui";
-import { Playlist, PlaylistId, PlaylistItem } from "./playlistsTypes";
+import {
+  Playlist,
+  PlaylistId,
+  PlaylistItem,
+  PlaylistItemId
+} from "./playlistsTypes";
 import { setupPlaylistsListeners } from "./playlistsListeners";
 
 const playlistsAdapter = createEntityAdapter<Playlist>();
@@ -99,14 +104,14 @@ export const playlistsSlice = createSlice({
       state,
       action: PayloadAction<{
         playlistId: PlaylistId;
-        trackIds: string[];
+        itemIds: PlaylistItemId[];
       }>
     ) => {
-      const { playlistId, trackIds } = action.payload;
+      const { playlistId, itemIds } = action.payload;
       const item = state.playlists.entities[playlistId];
       if (item) {
         item.tracks = item.tracks.filter(
-          (track) => !trackIds.includes(track.itemId)
+          (track) => !itemIds.includes(track.itemId)
         );
       }
     }

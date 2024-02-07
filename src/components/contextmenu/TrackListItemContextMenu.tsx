@@ -116,7 +116,7 @@ export function TrackListItemContextMenu() {
               dispatch(
                 removeTracksFromPlaylist({
                   playlistId: currentPlaylist.id,
-                  trackIds: gridRef?.current?.api
+                  itemIds: gridRef?.current?.api
                     ?.getSelectedRows()
                     ?.map((node) => node.itemId)
                 })

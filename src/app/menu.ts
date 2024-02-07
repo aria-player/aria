@@ -111,7 +111,7 @@ export function handleMenuAction(
           dispatch(
             removeTracksFromPlaylist({
               playlistId: currentPlaylist,
-              trackIds: grid.api.getSelectedRows().map((node) => node.itemId)
+              itemIds: grid.api.getSelectedRows().map((node) => node.itemId)
             })
           );
         }
