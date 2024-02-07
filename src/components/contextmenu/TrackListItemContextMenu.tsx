@@ -110,20 +110,22 @@ export function TrackListItemContextMenu() {
       <Submenu label={t("tracks.addToPlaylist")}>
         {renderItems(playlists)}
       </Submenu>
-      <Separator />
       {visiblePlaylist && (
-        <Item
-          onClick={() => {
-            dispatch(
-              removeTracksFromPlaylist({
-                playlistId: visiblePlaylist.id,
-                itemIds: selectedTracks
-              })
-            );
-          }}
-        >
-          {t("tracks.removeFromPlaylist")}
-        </Item>
+        <>
+          <Separator />
+          <Item
+            onClick={() => {
+              dispatch(
+                removeTracksFromPlaylist({
+                  playlistId: visiblePlaylist.id,
+                  itemIds: selectedTracks
+                })
+              );
+            }}
+          >
+            {t("tracks.removeFromPlaylist")}
+          </Item>
+        </>
       )}
     </Menu>
   );
