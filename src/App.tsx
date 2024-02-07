@@ -25,7 +25,7 @@ import {
   setSidebarConfig
 } from "./features/config/configSlice";
 import { ContextMenuContainer } from "./components/contextmenu/ContextMenuContainer";
-import { BASEPATH } from "./app/constants";
+import { selectTrackListIsVisible } from "./features/sharedSelectors";
 
 function App() {
   const { platform, fullscreen } = useContext(PlatformContext);
@@ -35,7 +35,7 @@ function App() {
   const dispatch = useAppDispatch();
   const sidebarWidth = useAppSelector(selectSidebarWidth);
   const sidebarCollapsed = useAppSelector(selectSidebarCollapsed);
-  const location = useAppSelector((state) => state.router.location);
+  const trackListIsVisible = useAppSelector(selectTrackListIsVisible);
   const handleDragEnd = (sizes: number[]) => {
     dispatch(setSidebarConfig({ width: sizes[0], collapsed: sizes[0] === 0 }));
   };
@@ -74,11 +74,7 @@ function App() {
               style={{
                 height: "100%",
                 width: "100%",
-                display:
-                  location?.pathname == BASEPATH ||
-                  location?.pathname.includes("playlist/")
-                    ? "block"
-                    : "none"
+                display: trackListIsVisible ? "block" : "none"
               }}
             >
               <TrackList />

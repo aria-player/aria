@@ -2,6 +2,7 @@ import { RootState, store } from "../app/store";
 import { selectTrackById } from "./tracks/tracksSlice";
 import { selectPlaylistById } from "./playlists/playlistsSlice";
 import { createSelector } from "@reduxjs/toolkit";
+import { BASEPATH } from "../app/constants";
 
 export const selectCurrentTrack = (state: RootState) => {
   if (state.player.queueIndex == null) {
@@ -45,3 +46,10 @@ export const selectVisibleTracks = createSelector(
         }));
   }
 );
+
+export const selectTrackListIsVisible = (state: RootState) => {
+  return (
+    state.router.location?.pathname == BASEPATH ||
+    selectCurrentPlaylist(state)?.id != null
+  );
+};

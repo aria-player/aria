@@ -18,7 +18,10 @@ import {
 } from "../features/player/playerSlice";
 import { restartOrPreviousTrack } from "../features/player/playerTime";
 import { ActionCreators } from "redux-undo";
-import { selectCurrentPlaylist } from "../features/sharedSelectors";
+import {
+  selectCurrentPlaylist,
+  selectTrackListIsVisible
+} from "../features/sharedSelectors";
 import { removeTracksFromPlaylist } from "../features/playlists/playlistsSlice";
 
 export interface MenuItem {
@@ -146,7 +149,7 @@ export const selectMenuState = createSelector(
         if (c.colId == "uri" || c.colId == "id") return;
         columnVisibility["columns." + c.colId] = {
           selected: !c.hide,
-          disabled: state.router.location?.pathname != BASEPATH
+          disabled: !selectTrackListIsVisible(state)
         };
       });
     } else {
@@ -154,7 +157,7 @@ export const selectMenuState = createSelector(
         if (c.field == "uri" || c.field == "id") return;
         columnVisibility["columns." + c.field] = {
           selected: !c.hide,
-          disabled: state.router.location?.pathname != BASEPATH
+          disabled: !selectTrackListIsVisible(state)
         };
       });
     }
@@ -170,10 +173,10 @@ export const selectMenuState = createSelector(
         )
       },
       selectAll: {
-        disabled: state.router.location?.pathname != BASEPATH
+        disabled: !selectTrackListIsVisible(state)
       },
       columns: {
-        disabled: state.router.location?.pathname != BASEPATH
+        disabled: !selectTrackListIsVisible(state)
       },
       ...columnVisibility,
       togglePlay: {
@@ -193,8 +196,7 @@ export const selectMenuState = createSelector(
       },
       delete: {
         disabled:
-          !selectCurrentPlaylist(state)?.id ||
-          state.tracks.selectedTracks.length == 0
+          !selectCurrentPlaylist(state) || !state.tracks.selectedTracks.length
       }
     };
   }
