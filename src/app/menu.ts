@@ -134,6 +134,7 @@ export const selectMenuState = createSelector(
     (state: RootState) => state.undoable.present.library.layout,
     (state: RootState) => state.undoable.present.playlists.layout,
     (state: RootState) => state.undoable.present.playlists.playlists,
+    (state: RootState) => state.tracks.selectedTracks,
     (state: RootState) => state.player.status
   ],
   () => {
@@ -191,7 +192,9 @@ export const selectMenuState = createSelector(
         disabled: !state.undoable.future.length
       },
       delete: {
-        disabled: false // TODO: Playlist open && any item selected
+        disabled:
+          !selectCurrentPlaylist(state)?.id ||
+          state.tracks.selectedTracks.length == 0
       }
     };
   }
