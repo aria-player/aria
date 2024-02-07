@@ -6,7 +6,8 @@ import {
   ColumnMovedEvent,
   ColumnResizedEvent,
   RowClassParams,
-  RowClickedEvent
+  RowClickedEvent,
+  SelectionChangedEvent
 } from "@ag-grid-community/core";
 import styles from "./TrackList.module.css";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
@@ -25,6 +26,7 @@ import { GridContext } from "../../contexts/GridContext";
 import { useTranslation } from "react-i18next";
 import { TriggerEvent, useContextMenu } from "react-contexify";
 import { MenuContext } from "../../contexts/MenuContext";
+import { setSelectedTracks } from "../../features/tracks/tracksSlice";
 
 export const TrackList = () => {
   const dispatch = useAppDispatch();
@@ -165,6 +167,12 @@ export const TrackList = () => {
     showCellContextMenu({ event: event.event as TriggerEvent });
   };
 
+  const handleSelectionChanged = (event: SelectionChangedEvent) => {
+    dispatch(
+      setSelectedTracks(event.api.getSelectedRows().map((node) => node.itemId))
+    );
+  };
+
   return (
     <div className={`${styles.tracklist} ag-theme-balham`}>
       <AgGridReact
@@ -180,6 +188,7 @@ export const TrackList = () => {
         onColumnResized={handleColumnMovedOrResized}
         onColumnVisible={updateColumnState}
         onCellContextMenu={handleCellContextMenu}
+        onSelectionChanged={handleSelectionChanged}
         rowHeight={33}
         headerHeight={37}
         suppressCellFocus

@@ -107,11 +107,11 @@ export function handleMenuAction(
     case "delete":
       {
         const currentPlaylist = selectCurrentPlaylist(store.getState())?.id;
-        if (grid?.api && grid.api.getSelectedNodes() && currentPlaylist) {
+        if (currentPlaylist) {
           dispatch(
             removeTracksFromPlaylist({
               playlistId: currentPlaylist,
-              itemIds: grid.api.getSelectedRows().map((node) => node.itemId)
+              itemIds: state.tracks.selectedTracks
             })
           );
         }

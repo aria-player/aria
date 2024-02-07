@@ -14,6 +14,7 @@ import { Item as TreeItem } from "soprano-ui";
 import { nanoid } from "@reduxjs/toolkit";
 import { PlaylistItem } from "../../features/playlists/playlistsTypes";
 import { selectCurrentPlaylist } from "../../features/sharedSelectors";
+import { selectSelectedTracks } from "../../features/tracks/tracksSlice";
 const id = "tracklistitem";
 
 export function TrackListItemContextMenu() {
@@ -22,6 +23,7 @@ export function TrackListItemContextMenu() {
   const gridRef = useContext(GridContext).gridRef;
   const playlists = useAppSelector(selectPlaylistsLayout);
   const currentPlaylist = useAppSelector(selectCurrentPlaylist);
+  const selectedTracks = useAppSelector(selectSelectedTracks);
 
   const addTracks = (playlistId: string) => {
     const newItems: PlaylistItem[] = gridRef?.current?.api
@@ -101,7 +103,7 @@ export function TrackListItemContextMenu() {
     >
       <Item disabled>
         {t("tracks.selectedCount", {
-          count: gridRef?.current?.api?.getSelectedRows()?.length
+          count: selectedTracks.length
         })}
       </Item>
       <Separator />
@@ -112,16 +114,12 @@ export function TrackListItemContextMenu() {
       {currentPlaylist && (
         <Item
           onClick={() => {
-            if (gridRef?.current?.api?.getSelectedRows()) {
-              dispatch(
-                removeTracksFromPlaylist({
-                  playlistId: currentPlaylist.id,
-                  itemIds: gridRef?.current?.api
-                    ?.getSelectedRows()
-                    ?.map((node) => node.itemId)
-                })
-              );
-            }
+            dispatch(
+              removeTracksFromPlaylist({
+                playlistId: currentPlaylist.id,
+                itemIds: selectedTracks
+              })
+            );
           }}
         >
           {t("tracks.removeFromPlaylist")}

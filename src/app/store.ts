@@ -55,7 +55,10 @@ const reducer = combineReducers({
     playerReducer
   ),
   plugins: persistReducer({ key: "plugins", storage }, pluginsReducer),
-  tracks: persistReducer({ key: "tracks", storage }, tracksReducer),
+  tracks: persistReducer(
+    { key: "tracks", storage, blacklist: ["selectedTracks"] },
+    tracksReducer
+  ),
   undoable: excludeStateFromUndo(undoableSlices) as Reducer<UndoableSlices>
 });
 

@@ -8,15 +8,18 @@ import { RootState } from "../../app/store";
 import { setupTracksListeners } from "./tracksListeners";
 import { Track, TrackId } from "./tracksTypes";
 import { PluginId } from "../plugins/pluginsTypes";
+import { PlaylistItemId } from "../playlists/playlistsTypes";
 
 const tracksAdapter = createEntityAdapter<Track>();
 
 interface TracksState {
   tracks: EntityState<Track>;
+  selectedTracks: TrackId[] | PlaylistItemId[];
 }
 
 const initialState: TracksState = {
-  tracks: tracksAdapter.getInitialState()
+  tracks: tracksAdapter.getInitialState(),
+  selectedTracks: []
 };
 
 const tracksSlice = createSlice({
@@ -39,17 +42,26 @@ const tracksSlice = createSlice({
           state.tracks.entities[trackId]?.source === action.payload.source
       );
       tracksAdapter.removeMany(state.tracks, tracksToRemove);
+    },
+    setSelectedTracks: (
+      state,
+      action: PayloadAction<TrackId[] | PlaylistItemId[]>
+    ) => {
+      state.selectedTracks = action.payload;
     }
   }
 });
 
-export const { addTracks, removeTracks } = tracksSlice.actions;
+export const { addTracks, removeTracks, setSelectedTracks } =
+  tracksSlice.actions;
 
 export const {
   selectIds: selectTrackIds,
   selectAll: selectAllTracks,
   selectById: selectTrackById
 } = tracksAdapter.getSelectors((state: RootState) => state.tracks.tracks);
+export const selectSelectedTracks = (state: RootState) =>
+  state.tracks.selectedTracks;
 
 export default tracksSlice.reducer;
 
