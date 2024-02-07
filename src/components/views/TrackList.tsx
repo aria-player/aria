@@ -16,19 +16,21 @@ import {
 } from "../../features/library/librarySlice";
 import { defaultColumnDefinitions } from "../../features/library/libraryColumns";
 import { setQueue } from "../../features/player/playerSlice";
-import { selectCurrentTrack } from "../../features/sharedSelectors";
+import {
+  selectCurrentTrack,
+  selectVisibleTracks
+} from "../../features/sharedSelectors";
 import { TrackId } from "../../features/tracks/tracksTypes";
 import { GridContext } from "../../contexts/GridContext";
 import { useTranslation } from "react-i18next";
 import { TriggerEvent, useContextMenu } from "react-contexify";
 import { MenuContext } from "../../contexts/MenuContext";
-import { selectAllTracks } from "../../features/tracks/tracksSlice";
 
 export const TrackList = () => {
   const dispatch = useAppDispatch();
 
   const currentTrack = useAppSelector(selectCurrentTrack)?.id;
-  const rowData = useAppSelector(selectAllTracks);
+  const rowData = useAppSelector(selectVisibleTracks);
 
   const { gridRef } = useContext(GridContext);
   const { setMenuData } = useContext(MenuContext);
@@ -167,7 +169,7 @@ export const TrackList = () => {
     <div className={`${styles.tracklist} ag-theme-balham`}>
       <AgGridReact
         ref={gridRef}
-        getRowId={(params) => params.data.id}
+        getRowId={(params) => params.data.itemId}
         rowData={rowData}
         columnDefs={columnDefs as ColDef[]}
         defaultColDef={defaultColDef}

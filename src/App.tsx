@@ -67,13 +67,18 @@ function App() {
                 <Route path="plugins" Component={PluginsPage} />
                 <Route path="about" Component={AboutPage} />
               </Route>
+              <Route path="playlist/:id" Component={() => <></>} />
               <Route path="*" Component={ErrorPage} />
             </Routes>
             <div
               style={{
                 height: "100%",
                 width: "100%",
-                display: location?.pathname == BASEPATH ? "block" : "none"
+                display:
+                  location?.pathname == BASEPATH ||
+                  location?.pathname.includes("playlist/")
+                    ? "block"
+                    : "none"
               }}
             >
               <TrackList />
