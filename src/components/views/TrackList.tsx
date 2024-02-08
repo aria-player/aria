@@ -226,6 +226,13 @@ export const TrackList = () => {
             return { fontWeight: 700 };
           }
         }}
+        rowDragText={(params) =>
+          params.rowNodes?.length == 1
+            ? params.rowNode?.data.title
+            : t("tracks.selectedCount", {
+                count: params.rowNodes?.length
+              })
+        }
       />
     </div>
   );
