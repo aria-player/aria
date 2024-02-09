@@ -5,8 +5,10 @@ body {
   --slider-thumb-size: 8px;
   --slider-thumb-border-size: 3px;
   --slider-track-thickness: 6px;
+  --slider-active-transform: scale(1.15);
   --slider-color: var(--accent-color);
   --slider-track-color: var(--player-slider-background);
+  --slider-focus-outline-color: var(--focus-outline);
   --tree-item-text: var(--button-text);
   --tree-item-text-selected: var(--button-text-selected);
   --tree-item-background-hover: var(--button-background-hover);
