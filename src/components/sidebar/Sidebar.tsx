@@ -130,6 +130,8 @@ export function Sidebar() {
         FolderClosedIcon={() => <FolderClosedIcon />}
         OptionsButtonIcon={() => <OptionsButtonIcon />}
         DoneButtonIcon={() => <DoneButtonIcon />}
+        optionsButtonTooltip={t("sidebar.options")}
+        doneButtonTooltip={t("sidebar.library.menu.save")}
         onSectionContextMenu={(section, event) => {
           if (section != null) {
             show({ id: "sidebar" + section, event });

@@ -1,6 +1,7 @@
 {
   "sidebar": {
     "search": "Search",
+    "options": "Options",
     "library": {
       "title": "Library",
       "empty": "No views enabled",
