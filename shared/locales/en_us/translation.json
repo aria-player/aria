@@ -127,7 +127,7 @@
     "title": "Title",
     "duration": "Duration",
     "artist": "Artist",
-    "albumartist": "Album Artist",
+    "albumArtist": "Album Artist",
     "album": "Album",
     "genre": "Genre",
     "year": "Year",
@@ -135,9 +135,9 @@
     "comments": "Comments",
     "track": "Track #",
     "disc": "Disc #",
-    "datemodified": "Date Modified",
-    "dateadded": "Date Added",
-    "filesize": "Size",
+    "dateModified": "Date Modified",
+    "dateAdded": "Date Added",
+    "fileSize": "Size",
     "source": "Source"
   },
   "accentColors": {

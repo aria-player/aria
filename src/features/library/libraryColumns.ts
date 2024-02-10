@@ -10,14 +10,14 @@ export const defaultColumnDefinitions: ColDef[] = [
     field: "title",
     flex: 1,
     cellStyle: (params: { data: Track }) => {
-      return { fontStyle: params.data.metadataloaded ? "normal" : "italic" };
+      return { fontStyle: params.data.metadataLoaded ? "normal" : "italic" };
     }
   },
   {
     field: "duration",
     filter: false,
     valueFormatter: (params: { data: Track; value: number }) => {
-      if (!params.data.metadataloaded) {
+      if (!params.data.metadataLoaded) {
         return "-";
       }
       return formatDuration(params.value);
@@ -32,11 +32,11 @@ export const defaultColumnDefinitions: ColDef[] = [
       return params.value;
     }
   },
-  { field: "albumartist" },
+  { field: "albumArtist" },
   {
     field: "album",
     cellStyle: (params: { data: Track }) => {
-      return { fontStyle: params.data.metadataloaded ? "normal" : "italic" };
+      return { fontStyle: params.data.metadataLoaded ? "normal" : "italic" };
     }
   },
   { field: "genre" },
@@ -56,7 +56,7 @@ export const defaultColumnDefinitions: ColDef[] = [
     type: "rightAligned"
   },
   {
-    field: "datemodified",
+    field: "dateModified",
     hide: true,
     filter: false,
     valueFormatter: (params: { value: number }) => {
@@ -64,7 +64,7 @@ export const defaultColumnDefinitions: ColDef[] = [
     }
   },
   {
-    field: "dateadded",
+    field: "dateAdded",
     hide: true,
     filter: false,
     valueFormatter: (params: { value: number }) => {
@@ -72,7 +72,7 @@ export const defaultColumnDefinitions: ColDef[] = [
     }
   },
   {
-    field: "filesize",
+    field: "fileSize",
     hide: true,
     filter: false,
     valueFormatter: (params: { value: number }) => {

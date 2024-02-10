@@ -6,10 +6,10 @@ export type TrackUri = string;
 export interface TrackMetadata {
   uri: TrackUri;
   title: string;
-  metadataloaded: boolean;
+  metadataLoaded: boolean;
   duration?: number;
   artist?: string | string[];
-  albumartist?: string;
+  albumArtist?: string;
   album?: string;
   genre?: string | string[];
   composer?: string | string[];
@@ -17,9 +17,9 @@ export interface TrackMetadata {
   year?: number;
   track?: number;
   disc?: number;
-  filesize?: number;
-  datemodified?: number;
-  dateadded?: number;
+  fileSize?: number;
+  dateModified?: number;
+  dateAdded?: number;
 }
 
 export interface Track extends TrackMetadata {

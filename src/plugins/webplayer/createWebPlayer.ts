@@ -37,7 +37,7 @@ export function createWebPlayer(host: SourceCallbacks): SourceHandle {
       fileHandles = await getAudioFileHandlesWeb(directoryHandle);
       host.updateData({
         folder,
-        scanned: host.getTracks().filter((track) => track.metadataloaded)
+        scanned: host.getTracks().filter((track) => track.metadataLoaded)
           .length,
         total: Object.keys(fileHandles).length
       });
@@ -45,11 +45,11 @@ export function createWebPlayer(host: SourceCallbacks): SourceHandle {
       const tracks = Object.keys(fileHandles).map((uri: TrackUri) => ({
         uri,
         title: fileHandles[uri].name,
-        datemodified: fileHandles[uri].lastModified,
-        dateadded: Date.now(),
-        filesize: fileHandles[uri].size,
+        dateModified: fileHandles[uri].lastModified,
+        dateAdded: Date.now(),
+        fileSize: fileHandles[uri].size,
         album: uri.split("/").slice(-2, -1)[0],
-        metadataloaded: false
+        metadataLoaded: false
       }));
       host.addTracks(tracks);
       updateTracksMetadata(tracks);
@@ -61,7 +61,7 @@ export function createWebPlayer(host: SourceCallbacks): SourceHandle {
     for (let i = 0; i < tracks.length; i += batchSize) {
       const metadataPromises = tracks
         .slice(i, i + batchSize)
-        .filter((track) => !host.getTrackByUri(track.uri)?.metadataloaded)
+        .filter((track) => !host.getTrackByUri(track.uri)?.metadataLoaded)
         .map((track) => getMetadata(track, fileHandles[track.uri]));
       const newMetadata = await Promise.all(metadataPromises);
       host.updateMetadata(newMetadata);
@@ -111,7 +111,7 @@ export function createWebPlayer(host: SourceCallbacks): SourceHandle {
         file = fileHandles[track.uri];
         if (!file) throw new Error("File not found after re-selection");
       }
-      if (!track.metadataloaded) {
+      if (!track.metadataLoaded) {
         const metadata = await getMetadata(track, fileHandles[track.uri]);
         host.updateMetadata([metadata]);
         host.updateData({
