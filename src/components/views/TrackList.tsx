@@ -314,7 +314,7 @@ export const TrackList = () => {
           newTracks = gridRef?.current?.api
             .getSelectedRows()
             .map((node) => {
-              return { itemId: nanoid(), trackId: node.data.trackId };
+              return { itemId: nanoid(), trackId: node.trackId };
             })
             .filter(Boolean) as PlaylistItem[];
         }
