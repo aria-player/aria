@@ -26,6 +26,10 @@ import { store } from "../../app/store";
 import { push } from "redux-first-history";
 import { BASEPATH } from "../../app/constants";
 import { useDragDropManager } from "react-dnd";
+import {
+  selectVisiblePlaylist,
+  selectVisibleViewType
+} from "../../features/sharedSelectors";
 
 import FolderOpenIcon from "../../assets/chevron-down-solid.svg?react";
 import FolderClosedIcon from "../../assets/chevron-right-solid.svg?react";
@@ -38,14 +42,13 @@ export function Sidebar() {
   const treeRef = useContext(TreeContext)?.treeRef;
   const libraryLayout = useAppSelector(selectLibraryLayout);
   const playlistsLayout = useAppSelector(selectPlaylistsLayout);
+  const visibleViewType = useAppSelector(selectVisibleViewType);
+  const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
+
   const { show, hideAll } = useContextMenu();
   const { visibility, setMenuData } = useContext(MenuContext);
   const { invokeMenuAction } = useMenuActions();
   const dragDropManager = useDragDropManager();
-  const currentRoute = useAppSelector(
-    (state) => state.router.location?.pathname
-  );
-
   const sections = [
     {
       id: "library",
@@ -83,19 +86,8 @@ export function Sidebar() {
 
   const syncSelectionWithRoute = useCallback(
     (alwaysUpdateSelection: boolean) => {
-      let routeAsId = "";
-      if (currentRoute === BASEPATH) {
-        routeAsId = "songs";
-      } else if (currentRoute) {
-        routeAsId = currentRoute.replace(BASEPATH, "");
-        if (routeAsId.startsWith("playlist/")) {
-          routeAsId = routeAsId.replace("playlist/", "");
-        }
-      }
-      if (
-        (routeAsId && treeRef?.current?.root.tree.get(routeAsId)) ||
-        alwaysUpdateSelection
-      ) {
+      const routeAsId = visiblePlaylist?.id || visibleViewType;
+      if (treeRef?.current?.root.tree.get(routeAsId) || alwaysUpdateSelection) {
         treeRef?.current?.root.tree.setSelection({
           ids: [routeAsId],
           anchor: null,
@@ -103,12 +95,12 @@ export function Sidebar() {
         });
       }
     },
-    [treeRef, currentRoute]
+    [treeRef, visiblePlaylist, visibleViewType]
   );
 
   useEffect(() => {
     syncSelectionWithRoute(true);
-  }, [syncSelectionWithRoute, treeRef, currentRoute]);
+  }, [syncSelectionWithRoute, treeRef, visiblePlaylist, visibleViewType]);
 
   return (
     <div className={styles.sideBar}>

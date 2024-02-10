@@ -16,12 +16,14 @@ import { useDebounce } from "react-use";
 import QueueIcon from "../../assets/list-solid.svg?react";
 import { BASEPATH } from "../../app/constants";
 import { goBack, push } from "redux-first-history";
+import { selectVisibleViewType } from "../../features/sharedSelectors";
+import { View } from "../../app/view";
 
 export function AuxiliaryControls() {
   const dispatch = useAppDispatch();
   const muted = useAppSelector(selectMuted);
   const volume = useAppSelector(selectVolume);
-  const route = useAppSelector((state) => state.router.location?.pathname);
+  const visibleViewType = useAppSelector(selectVisibleViewType);
   const [localVolume, setLocalVolume] = useState(volume);
 
   useEffect(() => {
@@ -75,9 +77,9 @@ export function AuxiliaryControls() {
         <VolumeIcon />
       </button>
       <button
-        className={`${styles.button} ${styles.queue} ${route == BASEPATH + "queue" ? styles.active : ""}`}
+        className={`${styles.button} ${styles.queue} ${visibleViewType == View.Queue ? styles.active : ""}`}
         onClick={() => {
-          if (route != BASEPATH + "queue") {
+          if (visibleViewType != View.Queue) {
             dispatch(push(BASEPATH + "queue"));
           } else {
             dispatch(goBack());
