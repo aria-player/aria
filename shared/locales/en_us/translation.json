@@ -34,7 +34,10 @@
     "removeFromPlaylist": "Remove from playlist",
     "addNamedTrackToPlaylist": "Add '{{title}}' to '{{playlist}}'",
     "addSelectedToPlaylist_one": "Add {{count}} track to '{{playlist}}'",
-    "addSelectedToPlaylist_other": "Add {{count}} tracks to '{{playlist}}'"
+    "addSelectedToPlaylist_other": "Add {{count}} tracks to '{{playlist}}'",
+    "emptyLibrary": "Library is empty",
+    "emptyPlaylist": "Playlist is empty",
+    "emptyQueue": "Queue is empty"
   },
   "views": {
     "songs": "Songs",

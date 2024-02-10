@@ -399,6 +399,13 @@ export const TrackList = () => {
                 count: params.rowNodes?.length
               })
         }
+        overlayNoRowsTemplate={
+          visibleViewType == View.Queue
+            ? t("tracks.emptyQueue")
+            : visibleViewType == View.Playlist
+              ? t("tracks.emptyPlaylist")
+              : t("tracks.emptyLibrary")
+        }
       />
     </div>
   );
