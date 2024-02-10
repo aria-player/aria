@@ -15,6 +15,13 @@ export const selectCurrentTrack = (state: RootState) => {
   return selectTrackById(state, currentTrackId.trackId);
 };
 
+export const selectCurrentTrackItemId = (state: RootState) => {
+  if (state.player.queueIndex == null) {
+    return null;
+  }
+  return state.player.queue[state.player.queueIndex].itemId;
+};
+
 export const selectVisiblePlaylist = (state: RootState) => {
   if (state.router.location?.pathname.split("/")[2] != null)
     return selectPlaylistById(

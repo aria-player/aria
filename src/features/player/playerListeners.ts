@@ -2,7 +2,10 @@ import { listenForAction, listenForChange } from "../../app/listener";
 import { RootState } from "../../app/store";
 import { pluginHandles, selectActivePlugins } from "../plugins/pluginsSlice";
 import { SourceHandle } from "../plugins/pluginsTypes";
-import { selectCurrentTrack } from "../sharedSelectors";
+import {
+  selectCurrentTrack,
+  selectCurrentTrackItemId
+} from "../sharedSelectors";
 import { loadAndPlayTrack, selectStatus } from "./playerSlice";
 import { Status } from "./playerTypes";
 import { resetTimer, startTimer, stopTimer } from "./playerTime";
@@ -21,7 +24,7 @@ export function setupPlayerListeners() {
   });
 
   listenForChange(
-    (state) => selectCurrentTrack(state),
+    (state) => selectCurrentTrackItemId(state),
     (state, _action, dispatch) => {
       stopTimer();
       resetTimer();

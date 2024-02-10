@@ -23,6 +23,7 @@ import { defaultColumnDefinitions } from "../../features/library/libraryColumns"
 import { selectQueueSource, setQueue } from "../../features/player/playerSlice";
 import {
   selectCurrentTrack,
+  selectCurrentTrackItemId,
   selectVisiblePlaylist,
   selectVisibleTracks
 } from "../../features/sharedSelectors";
@@ -43,6 +44,7 @@ export const TrackList = () => {
   const dispatch = useAppDispatch();
 
   const currentTrack = useAppSelector(selectCurrentTrack)?.id;
+  const currentTrackItemId = useAppSelector(selectCurrentTrackItemId);
   const rowData = useAppSelector(selectVisibleTracks);
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
   const queueSource = useAppSelector(selectQueueSource);
@@ -139,8 +141,9 @@ export const TrackList = () => {
       });
       let queueIndex = null;
       if (currentTrack) {
-        // TODO: This should actually check the itemId in case of duplicates
-        queueIndex = queue.findIndex((item) => item.trackId === currentTrack);
+        queueIndex = queue.findIndex(
+          (item) => item.itemId === currentTrackItemId
+        );
       }
       dispatch(
         setQueue({
@@ -163,7 +166,7 @@ export const TrackList = () => {
 
   useEffect(() => {
     if (gridRef?.current?.api) gridRef.current?.api.redrawRows();
-  }, [gridRef, currentTrack]);
+  }, [gridRef, currentTrackItemId]);
 
   useEffect(() => {
     const headerContextArea = document.querySelector(".ag-header");
@@ -358,7 +361,10 @@ export const TrackList = () => {
         alwaysShowVerticalScroll
         preventDefaultOnContextMenu
         getRowStyle={(params: RowClassParams) => {
-          if (currentTrack == params.data.id && queueSource == visibleView) {
+          if (
+            params.data.itemId === currentTrackItemId &&
+            queueSource == visibleView
+          ) {
             return { fontWeight: 700 };
           }
         }}
