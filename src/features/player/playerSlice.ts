@@ -90,7 +90,7 @@ export const playerSlice = createSlice({
       action: PayloadAction<{
         queue: PlaylistItem[];
         queueIndex: number | null;
-        queueSource: LibraryView | PlaylistId;
+        queueSource?: LibraryView | PlaylistId;
       }>
     ) => {
       state.queueUnshuffled = action.payload.queue;
@@ -101,7 +101,9 @@ export const playerSlice = createSlice({
       } else {
         state.queue = state.queueUnshuffled;
       }
-      state.queueSource = action.payload.queueSource;
+      if (action.payload.queueSource !== undefined) {
+        state.queueSource = action.payload.queueSource;
+      }
     },
     nextTrack: (state) => {
       if (state.queueIndex !== null) {

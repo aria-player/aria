@@ -38,6 +38,7 @@ import {
 } from "../../features/playlists/playlistsSlice";
 import { PlaylistItem } from "../../features/playlists/playlistsTypes";
 import { nanoid } from "@reduxjs/toolkit";
+import { View } from "../../app/view";
 
 export const TrackList = () => {
   const dispatch = useAppDispatch();
@@ -76,6 +77,11 @@ export const TrackList = () => {
         return {
           ...colDef,
           ...updatedColumnState,
+          sortable: visibleViewType != View.Queue ? colDef.sortable : false,
+          sort:
+            visibleViewType != View.Queue && colDef.field
+              ? columnStateMap[colDef.field]?.sort
+              : null,
           headerName:
             colDef.field != "trackId" && colDef.field != "uri"
               ? t(`columns.${colDef.field}`)
@@ -91,7 +97,7 @@ export const TrackList = () => {
         );
         return indexA - indexB || 1;
       });
-  }, [columnState, t]);
+  }, [columnState, t, visibleViewType]);
 
   const defaultColDef = useMemo(
     () => ({
@@ -203,7 +209,7 @@ export const TrackList = () => {
   };
 
   const handleRowDragEnd = (event: RowDragEndEvent) => {
-    if (!visiblePlaylist?.id) return;
+    if (!visiblePlaylist?.id && visibleViewType != View.Queue) return;
     const newOrder = [] as PlaylistItem[];
     event.api.forEachNode((node) => {
       if (node.data) {
@@ -213,9 +219,20 @@ export const TrackList = () => {
         });
       }
     });
-    dispatch(
-      setPlaylistTracks({ playlistId: visiblePlaylist.id, tracks: newOrder })
-    );
+    if (visibleViewType == View.Queue) {
+      dispatch(
+        setQueue({
+          queue: newOrder,
+          queueIndex: newOrder.findIndex(
+            (item) => item.itemId === currentTrack?.itemId
+          )
+        })
+      );
+    } else if (visiblePlaylist?.id) {
+      dispatch(
+        setPlaylistTracks({ playlistId: visiblePlaylist.id, tracks: newOrder })
+      );
+    }
   };
 
   const handleGridReady = (params: GridReadyEvent) => {
@@ -356,14 +373,16 @@ export const TrackList = () => {
         suppressDragLeaveHidesColumns
         suppressScrollOnNewData
         suppressMoveWhenRowDragging
-        rowDragManaged={visiblePlaylist?.id != null}
+        rowDragManaged={
+          visibleViewType == View.Playlist || visibleViewType == View.Queue
+        }
         rowDragEntireRow
         alwaysShowVerticalScroll
         preventDefaultOnContextMenu
         getRowStyle={(params: RowClassParams) => {
           if (
             params.data.itemId === currentTrack?.itemId &&
-            queueSource == visibleView
+            (queueSource == visibleView || visibleViewType == View.Queue)
           ) {
             return { fontWeight: 700 };
           }
