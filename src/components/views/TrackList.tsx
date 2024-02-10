@@ -5,9 +5,12 @@ import {
   ColDef,
   ColumnMovedEvent,
   ColumnResizedEvent,
+  GridReadyEvent,
   RowClassParams,
   RowClickedEvent,
   RowDragEndEvent,
+  RowDragLeaveEvent,
+  RowDragMoveEvent,
   SelectionChangedEvent
 } from "@ag-grid-community/core";
 import styles from "./TrackList.module.css";
@@ -29,8 +32,12 @@ import { useTranslation } from "react-i18next";
 import { TriggerEvent, useContextMenu } from "react-contexify";
 import { MenuContext } from "../../contexts/MenuContext";
 import { setSelectedTracks } from "../../features/tracks/tracksSlice";
-import { setPlaylistTracks } from "../../features/playlists/playlistsSlice";
+import {
+  addTracksToPlaylist,
+  setPlaylistTracks
+} from "../../features/playlists/playlistsSlice";
 import { PlaylistItem } from "../../features/playlists/playlistsTypes";
+import { nanoid } from "@reduxjs/toolkit";
 
 export const TrackList = () => {
   const dispatch = useAppDispatch();
@@ -193,6 +200,118 @@ export const TrackList = () => {
     );
   };
 
+  const handleGridReady = (params: GridReadyEvent) => {
+    let lastHoveredItem: HTMLElement | null = null;
+    const treeElement = document.querySelector('[role="tree"]') as HTMLElement;
+
+    const setOutline = (
+      element: Element | null | undefined,
+      enabled: boolean
+    ) => {
+      if (element)
+        (element as HTMLElement).style.outline = enabled
+          ? "2px solid var(--accent-color)"
+          : "none";
+    };
+
+    const updateDragGhost = (
+      trackTitle: string,
+      playlist: string | null | undefined
+    ) => {
+      const ghostLabel = document.querySelector(".ag-dnd-ghost-label");
+      if (!ghostLabel) return;
+
+      const selectedRowsCount =
+        gridRef?.current?.api.getSelectedRows().length ?? 0;
+      ghostLabel.textContent = playlist
+        ? selectedRowsCount <= 1
+          ? t("tracks.addNamedTrackToPlaylist", {
+              title: trackTitle,
+              playlist
+            })
+          : t("tracks.addSelectedToPlaylist", {
+              count: selectedRowsCount,
+              playlist
+            })
+        : selectedRowsCount <= 1
+          ? trackTitle
+          : t("tracks.selectedCount", { count: selectedRowsCount });
+
+      if (!playlist && lastHoveredItem) {
+        setOutline(lastHoveredItem, false);
+      }
+    };
+
+    const isPlaylist = (item: HTMLElement | null) => {
+      return (
+        item != null &&
+        item.getAttribute("data-section") === "playlists" &&
+        item.getAttribute("data-folder") != "true" &&
+        item.getAttribute("data-item") != "header-playlists"
+      );
+    };
+
+    const getHoveredItem = (x: number, y: number) => {
+      const targetElements = document.elementsFromPoint(x, y);
+      const item = targetElements.find((element) =>
+        element.matches('[data-section="playlists"]')
+      ) as HTMLElement;
+      setOutline(lastHoveredItem, false);
+      if (!isPlaylist(item)) return null;
+
+      setOutline(item.firstElementChild?.firstElementChild, true);
+      lastHoveredItem = item.firstElementChild
+        ?.firstElementChild as HTMLElement;
+      return { id: item.getAttribute("data-item"), title: item.textContent };
+    };
+
+    const playlistDropZone = {
+      getContainer: () => treeElement,
+
+      onDragging: (params: RowDragMoveEvent) => {
+        const item = getHoveredItem(params.event.clientX, params.event.clientY);
+        updateDragGhost(params.node.data.title, item?.title);
+      },
+
+      onDragLeave: (params: RowDragLeaveEvent) => {
+        updateDragGhost(params.node.data.title, null);
+      },
+
+      onDragStop: (params: RowDragEndEvent) => {
+        updateDragGhost(params.node.data.title, null);
+        const item = getHoveredItem(params.event.clientX, params.event.clientY);
+        if (!item?.id) return;
+
+        const selectedRowsCount =
+          gridRef?.current?.api.getSelectedRows().length ?? 0;
+        let newTracks = [] as PlaylistItem[];
+        if (selectedRowsCount <= 1) {
+          newTracks = [
+            {
+              itemId: nanoid(),
+              trackId: params.node.data.id
+            }
+          ];
+        } else {
+          newTracks = gridRef?.current?.api
+            .getSelectedRows()
+            .map((node) => {
+              return { itemId: nanoid(), trackId: node.id };
+            })
+            .filter(Boolean) as PlaylistItem[];
+        }
+        dispatch(
+          addTracksToPlaylist({
+            playlistId: item.id,
+            newTracks
+          })
+        );
+      }
+    };
+
+    params.api.addRowDropZone(playlistDropZone);
+  };
+
   return (
     <div className={`${styles.tracklist} ag-theme-balham`}>
       <AgGridReact
@@ -202,6 +321,7 @@ export const TrackList = () => {
         columnDefs={columnDefs as ColDef[]}
         defaultColDef={defaultColDef}
         rowSelection="multiple"
+        onGridReady={handleGridReady}
         onCellDoubleClicked={handleCellDoubleClicked}
         onSortChanged={handleSortChanged}
         onColumnMoved={handleColumnMovedOrResized}

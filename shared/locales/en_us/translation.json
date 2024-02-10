@@ -31,7 +31,10 @@
     "noItems": "(No items)",
     "addToPlaylist": "Add to playlist",
     "addToNewPlaylist": "New playlist...",
-    "removeFromPlaylist": "Remove from playlist"
+    "removeFromPlaylist": "Remove from playlist",
+    "addNamedTrackToPlaylist": "Add '{{title}}' to '{{playlist}}'",
+    "addSelectedToPlaylist_one": "Add {{count}} track to '{{playlist}}'",
+    "addSelectedToPlaylist_other": "Add {{count}} tracks to '{{playlist}}'"
   },
   "views": {
     "songs": "Songs",
