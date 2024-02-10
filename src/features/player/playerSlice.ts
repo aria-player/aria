@@ -109,6 +109,12 @@ export const playerSlice = createSlice({
         if (state.queueIndex >= state.queue.length) {
           if (state.repeatMode != RepeatMode.Off) {
             state.queueIndex = 0;
+            if (state.shuffle) {
+              state.queue = shuffleQueue(
+                state.queueUnshuffled,
+                state.queueIndex
+              );
+            }
           } else {
             state.queueIndex = null;
             state.status = Status.Stopped;
