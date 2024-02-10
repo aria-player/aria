@@ -1,5 +1,5 @@
 import { AppDispatch, RootState, store } from "./store";
-import { createSelector } from "@reduxjs/toolkit";
+import { createSelector, nanoid } from "@reduxjs/toolkit";
 import { invoke } from "@tauri-apps/api";
 import { push, goBack, goForward } from "redux-first-history";
 import { BASEPATH } from "./constants";
@@ -22,7 +22,12 @@ import {
   selectVisiblePlaylist,
   selectTrackListIsVisible
 } from "../features/sharedSelectors";
-import { removeTracksFromPlaylist } from "../features/playlists/playlistsSlice";
+import {
+  addTracksToPlaylist,
+  removeTracksFromPlaylist
+} from "../features/playlists/playlistsSlice";
+import { copySelectedTracks } from "../features/tracks/tracksSlice";
+import { PlaylistItem } from "../features/playlists/playlistsTypes";
 
 export interface MenuItem {
   id: string;
@@ -120,6 +125,43 @@ export function handleMenuAction(
         }
       }
       break;
+    case "cut": {
+      const visiblePlaylist = selectVisiblePlaylist(store.getState());
+      if (visiblePlaylist?.id) {
+        dispatch(copySelectedTracks());
+        dispatch(
+          removeTracksFromPlaylist({
+            playlistId: visiblePlaylist.id,
+            itemIds: state.tracks.selectedTracks.map((track) => track.itemId)
+          })
+        );
+      }
+      break;
+    }
+    case "copy":
+      dispatch(copySelectedTracks());
+      break;
+    case "paste":
+      {
+        const visiblePlaylist = selectVisiblePlaylist(store.getState());
+        if (visiblePlaylist?.id) {
+          const newTracks: PlaylistItem[] = state.tracks.clipboard
+            .map((node) => {
+              return {
+                itemId: nanoid(),
+                trackId: node.trackId
+              };
+            })
+            .filter(Boolean) as PlaylistItem[];
+          dispatch(
+            addTracksToPlaylist({
+              playlistId: visiblePlaylist.id,
+              newTracks
+            })
+          );
+        }
+      }
+      break;
     default:
       break;
   }
@@ -138,6 +180,7 @@ export const selectMenuState = createSelector(
     (state: RootState) => state.undoable.present.playlists.layout,
     (state: RootState) => state.undoable.present.playlists.playlists,
     (state: RootState) => state.tracks.selectedTracks,
+    (state: RootState) => state.tracks.clipboard,
     (state: RootState) => state.player.status
   ],
   () => {
@@ -197,6 +240,17 @@ export const selectMenuState = createSelector(
       delete: {
         disabled:
           !selectVisiblePlaylist(state) || !state.tracks.selectedTracks.length
+      },
+      cut: {
+        disabled:
+          !state.tracks.selectedTracks.length || !selectVisiblePlaylist(state)
+      },
+      copy: {
+        disabled: !state.tracks.selectedTracks.length
+      },
+      paste: {
+        disabled:
+          !state.tracks.clipboard.length || !selectVisiblePlaylist(state)
       }
     };
   }

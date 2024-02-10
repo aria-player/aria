@@ -17,11 +17,13 @@ const tracksAdapter = createEntityAdapter<Track>({
 interface TracksState {
   tracks: EntityState<Track>;
   selectedTracks: PlaylistItem[];
+  clipboard: PlaylistItem[];
 }
 
 const initialState: TracksState = {
   tracks: tracksAdapter.getInitialState(),
-  selectedTracks: []
+  selectedTracks: [],
+  clipboard: []
 };
 
 const tracksSlice = createSlice({
@@ -47,12 +49,19 @@ const tracksSlice = createSlice({
     },
     setSelectedTracks: (state, action: PayloadAction<PlaylistItem[]>) => {
       state.selectedTracks = action.payload;
+    },
+    copySelectedTracks: (state) => {
+      state.clipboard = state.selectedTracks;
     }
   }
 });
 
-export const { addTracks, removeTracks, setSelectedTracks } =
-  tracksSlice.actions;
+export const {
+  addTracks,
+  removeTracks,
+  setSelectedTracks,
+  copySelectedTracks
+} = tracksSlice.actions;
 
 export const {
   selectIds: selectTrackIds,
@@ -61,6 +70,7 @@ export const {
 } = tracksAdapter.getSelectors((state: RootState) => state.tracks.tracks);
 export const selectSelectedTracks = (state: RootState) =>
   state.tracks.selectedTracks;
+export const selectClipboard = (state: RootState) => state.tracks.clipboard;
 
 export default tracksSlice.reducer;
 

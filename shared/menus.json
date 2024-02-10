@@ -61,6 +61,18 @@
         "id": "separator"
       },
       {
+        "id": "cut",
+        "shortcut": "Ctrl+X"
+      },
+      {
+        "id": "copy",
+        "shortcut": "Ctrl+C"
+      },
+      {
+        "id": "paste",
+        "shortcut": "Ctrl+V"
+      },
+      {
         "id": "delete",
         "shortcut": "Delete"
       },
