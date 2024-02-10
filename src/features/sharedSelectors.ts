@@ -67,9 +67,9 @@ export const selectVisibleTracks = createSelector(
         })
       : selectVisibleViewType(state) === View.Queue
         ? state.player.queue
-            .map((trackId) => ({
-              ...tracks.entities[trackId.trackId],
-              itemId: trackId.itemId
+            .map((queueTrack) => ({
+              ...tracks.entities[queueTrack.trackId],
+              itemId: queueTrack.itemId
             }))
             .slice(state.player.queueIndex!)
         : (Object.values(tracks.entities).map((track) => ({
