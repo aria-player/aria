@@ -17,32 +17,6 @@ export const selectVisibleViewType = (state: RootState) => {
   return View.Error;
 };
 
-export const selectCurrentTrack = (state: RootState) => {
-  if (state.player.queueIndex == null) {
-    return null;
-  }
-  const currentTrackId = state.player.queue[state.player.queueIndex];
-  if (currentTrackId == null) {
-    return null;
-  }
-  return {
-    ...selectTrackById(state, currentTrackId.trackId),
-    itemId: currentTrackId.itemId
-  } as TrackListItem;
-};
-
-export const selectCurrentTrackItemId = (state: RootState) => {
-  if (state.player.queueIndex == null) {
-    return null;
-  }
-  return state.player.queue[state.player.queueIndex].itemId;
-};
-
-export const selectCurrentPlaylist = (state: RootState) => {
-  if (!state.player.queueSource) return null;
-  return selectPlaylistById(state, state.player.queueSource) ?? null;
-};
-
 export const selectVisiblePlaylist = (state: RootState) => {
   if (state.router.location?.pathname.split("/")[2] != null)
     return selectPlaylistById(
@@ -90,4 +64,30 @@ export const selectTrackListIsVisible = (state: RootState) => {
     selectVisibleViewType(state) === View.Queue ||
     selectVisiblePlaylist(state) != null
   );
+};
+
+export const selectCurrentPlaylist = (state: RootState) => {
+  if (!state.player.queueSource) return null;
+  return selectPlaylistById(state, state.player.queueSource) ?? null;
+};
+
+export const selectCurrentTrack = (state: RootState) => {
+  if (state.player.queueIndex == null) {
+    return null;
+  }
+  const currentTrackId = state.player.queue[state.player.queueIndex];
+  if (currentTrackId == null) {
+    return null;
+  }
+  return {
+    ...selectTrackById(state, currentTrackId.trackId),
+    itemId: currentTrackId.itemId
+  } as TrackListItem;
+};
+
+export const selectCurrentTrackItemId = (state: RootState) => {
+  if (state.player.queueIndex == null) {
+    return null;
+  }
+  return state.player.queue[state.player.queueIndex].itemId;
 };
