@@ -3,7 +3,7 @@ import MusicIcon from "../../assets/music.svg?react";
 import { PlaybackControls } from "./PlaybackControls";
 import { useAppSelector } from "../../app/hooks";
 import { selectCurrentTrack } from "../../features/sharedSelectors";
-import { VolumeControls } from "./VolumeControls";
+import { AuxiliaryControls } from "./AuxiliaryControls";
 
 export function Footer() {
   const metadata = useAppSelector(selectCurrentTrack);
@@ -21,7 +21,7 @@ export function Footer() {
         <PlaybackControls />
       </section>
       <section className={styles.right}>
-        <VolumeControls />
+        <AuxiliaryControls />
       </section>
     </footer>
   );

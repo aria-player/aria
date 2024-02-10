@@ -3,7 +3,7 @@ import VolumeZeroIcon from "../../assets/volume-off-solid.svg?react";
 import VolumeLowIcon from "../../assets/volume-low-solid.svg?react";
 import VolumeHighIcon from "../../assets/volume-high-solid.svg?react";
 import VolumeMutedIcon from "../../assets/volume-xmark-solid.svg?react";
-import styles from "./VolumeControls.module.css";
+import styles from "./AuxiliaryControls.module.css";
 import { useState, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
@@ -17,7 +17,7 @@ import QueueIcon from "../../assets/list-solid.svg?react";
 import { BASEPATH } from "../../app/constants";
 import { goBack, push } from "redux-first-history";
 
-export function VolumeControls() {
+export function AuxiliaryControls() {
   const dispatch = useAppDispatch();
   const muted = useAppSelector(selectMuted);
   const volume = useAppSelector(selectVolume);
