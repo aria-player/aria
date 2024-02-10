@@ -26,7 +26,6 @@ import {
   selectVisiblePlaylist,
   selectVisibleTracks
 } from "../../features/sharedSelectors";
-import { TrackId } from "../../features/tracks/tracksTypes";
 import { GridContext } from "../../contexts/GridContext";
 import { useTranslation } from "react-i18next";
 import { TriggerEvent, useContextMenu } from "react-contexify";
@@ -112,9 +111,12 @@ export const TrackList = () => {
 
   const handleCellDoubleClicked = (event: RowClickedEvent) => {
     if (gridRef?.current?.api) {
-      const queue = [] as TrackId[];
+      const queue = [] as PlaylistItem[];
       gridRef.current.api.forEachNodeAfterFilterAndSort((node) => {
-        queue.push(node.data.id);
+        queue.push({
+          itemId: node.data.itemId,
+          trackId: node.data.id
+        });
       });
       dispatch(
         setQueue({
@@ -128,13 +130,17 @@ export const TrackList = () => {
 
   const handleSortChanged = () => {
     if (gridRef?.current?.api && queueSource == visibleView) {
-      const queue = [] as TrackId[];
+      const queue = [] as PlaylistItem[];
       gridRef.current.api.forEachNodeAfterFilterAndSort((node) => {
-        queue.push(node.data.id);
+        queue.push({
+          itemId: node.data.itemId,
+          trackId: node.data.id
+        });
       });
       let queueIndex = null;
       if (currentTrack) {
-        queueIndex = queue.indexOf(currentTrack);
+        // TODO: This should actually check the itemId in case of duplicates
+        queueIndex = queue.findIndex((item) => item.trackId === currentTrack);
       }
       dispatch(
         setQueue({

@@ -6,15 +6,15 @@ import { pluginHandles } from "../plugins/pluginsSlice";
 import { SourceHandle } from "../plugins/pluginsTypes";
 import { setupPlayerListeners } from "./playerListeners";
 import { selectTrackById } from "../tracks/tracksSlice";
-import { PlaylistId } from "../playlists/playlistsTypes";
+import { PlaylistId, PlaylistItem } from "../playlists/playlistsTypes";
 import { LibraryView } from "../library/libraryTypes";
 
 interface PlayerState {
   status: Status;
   volume: number;
   muted: boolean;
-  queue: TrackId[];
-  queueUnshuffled: TrackId[];
+  queue: PlaylistItem[];
+  queueUnshuffled: PlaylistItem[];
   queueIndex: number | null;
   queueSource: LibraryView | PlaylistId | null;
   repeatMode: RepeatMode;
@@ -33,12 +33,12 @@ const initialState: PlayerState = {
   shuffle: false
 };
 
-function shuffleQueue(queue: TrackId[], queueIndex: number | null) {
+function shuffleQueue(queue: PlaylistItem[], queueIndex: number | null) {
   const firstTrack = queueIndex != null ? queue[queueIndex] : null;
   const shuffledTracks = queue.filter((t) => t !== firstTrack);
   shuffledTracks.sort(() => Math.random() - 0.5);
   if (queueIndex != null) {
-    shuffledTracks.unshift(firstTrack as TrackId);
+    shuffledTracks.unshift(firstTrack as PlaylistItem);
   }
   return shuffledTracks;
 }
@@ -88,7 +88,7 @@ export const playerSlice = createSlice({
     setQueue: (
       state,
       action: PayloadAction<{
-        queue: TrackId[];
+        queue: PlaylistItem[];
         queueIndex: number | null;
         queueSource: LibraryView | PlaylistId;
       }>
@@ -144,7 +144,9 @@ export const playerSlice = createSlice({
           state.queueIndex = 0;
         } else {
           state.queue = state.queueUnshuffled;
-          state.queueIndex = state.queue.indexOf(firstTrack);
+          state.queueIndex = state.queue.findIndex(
+            (t) => t.itemId === firstTrack.itemId
+          );
         }
       }
     }

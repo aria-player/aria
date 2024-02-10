@@ -26,7 +26,9 @@ export function setupPlayerListeners() {
       stopTimer();
       resetTimer();
       if (state.player.queueIndex != null) {
-        dispatch(loadAndPlayTrack(state.player.queue[state.player.queueIndex]));
+        dispatch(
+          loadAndPlayTrack(state.player.queue[state.player.queueIndex].trackId)
+        );
       }
     }
   );

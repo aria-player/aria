@@ -12,7 +12,7 @@ export const selectCurrentTrack = (state: RootState) => {
   if (currentTrackId == null) {
     return null;
   }
-  return selectTrackById(state, currentTrackId);
+  return selectTrackById(state, currentTrackId.trackId);
 };
 
 export const selectVisiblePlaylist = (state: RootState) => {
@@ -43,8 +43,8 @@ export const selectVisibleTracks = createSelector(
         })
       : isQueue
         ? state.player.queue.map((trackId) => ({
-            ...tracks.entities[trackId],
-            itemId: trackId
+            ...tracks.entities[trackId.trackId],
+            itemId: trackId.itemId
           }))
         : Object.values(tracks.entities).map((track) => ({
             itemId: track?.id,
