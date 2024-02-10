@@ -7,7 +7,7 @@ import { SourceHandle } from "../plugins/pluginsTypes";
 import { setupPlayerListeners } from "./playerListeners";
 import { selectTrackById } from "../tracks/tracksSlice";
 import { PlaylistId, PlaylistItem } from "../playlists/playlistsTypes";
-import { LibraryView } from "../library/libraryTypes";
+import { LibraryView } from "../../app/view";
 
 interface PlayerState {
   status: Status;

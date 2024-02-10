@@ -24,7 +24,8 @@ import { selectQueueSource, setQueue } from "../../features/player/playerSlice";
 import {
   selectCurrentTrack,
   selectVisiblePlaylist,
-  selectVisibleTracks
+  selectVisibleTracks,
+  selectVisibleViewType
 } from "../../features/sharedSelectors";
 import { GridContext } from "../../contexts/GridContext";
 import { useTranslation } from "react-i18next";
@@ -37,7 +38,6 @@ import {
 } from "../../features/playlists/playlistsSlice";
 import { PlaylistItem } from "../../features/playlists/playlistsTypes";
 import { nanoid } from "@reduxjs/toolkit";
-import { LibraryView } from "../../features/library/libraryTypes";
 
 export const TrackList = () => {
   const dispatch = useAppDispatch();
@@ -45,6 +45,7 @@ export const TrackList = () => {
   const currentTrack = useAppSelector(selectCurrentTrack);
   const rowData = useAppSelector(selectVisibleTracks);
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
+  const visibleViewType = useAppSelector(selectVisibleViewType);
   const queueSource = useAppSelector(selectQueueSource);
   const { gridRef } = useContext(GridContext);
   const { setMenuData } = useContext(MenuContext);
@@ -54,7 +55,7 @@ export const TrackList = () => {
   const { show: showCellContextMenu } = useContextMenu({
     id: "tracklistitem"
   });
-  const visibleView = visiblePlaylist?.id ?? LibraryView.Songs;
+  const visibleView = visiblePlaylist?.id ?? visibleViewType;
 
   const { t } = useTranslation();
   const columnState = useAppSelector(selectColumnState);

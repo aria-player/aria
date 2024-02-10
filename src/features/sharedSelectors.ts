@@ -2,8 +2,20 @@ import { RootState, store } from "../app/store";
 import { selectTrackById } from "./tracks/tracksSlice";
 import { selectPlaylistById } from "./playlists/playlistsSlice";
 import { createSelector } from "@reduxjs/toolkit";
-import { BASEPATH } from "../app/constants";
 import { TrackListItem } from "./tracks/tracksTypes";
+import { LibraryView, View, isLibraryView } from "../app/view";
+
+export const selectVisibleViewType = (state: RootState) => {
+  const firstPath = state.router.location?.pathname.split("/")[1];
+  if (!firstPath) {
+    return LibraryView.Songs;
+  } else if (isLibraryView(firstPath)) {
+    return firstPath as LibraryView;
+  } else if (Object.values(View).includes(firstPath as View)) {
+    return firstPath as View;
+  }
+  return View.Error;
+};
 
 export const selectCurrentTrack = (state: RootState) => {
   if (state.player.queueIndex == null) {
@@ -45,7 +57,6 @@ export const selectVisibleTracks = createSelector(
   () => {
     const state = store.getState();
     const tracks = state.tracks.tracks;
-    const isQueue = state.router.location?.pathname.split("/")[1] == "queue";
     const visiblePlaylist = selectVisiblePlaylist(state)?.tracks;
     return visiblePlaylist
       ? visiblePlaylist.map((playlistTrack) => {
@@ -54,7 +65,7 @@ export const selectVisibleTracks = createSelector(
             ...tracks.entities[playlistTrack.trackId]
           };
         })
-      : isQueue
+      : selectVisibleViewType(state) === View.Queue
         ? state.player.queue
             .map((trackId) => ({
               ...tracks.entities[trackId.trackId],
@@ -70,8 +81,8 @@ export const selectVisibleTracks = createSelector(
 
 export const selectTrackListIsVisible = (state: RootState) => {
   return (
-    state.router.location?.pathname == BASEPATH ||
-    state.router.location?.pathname.split("/")[1] == "queue" ||
-    selectVisiblePlaylist(state)?.id != null
+    selectVisibleViewType(state) === LibraryView.Songs ||
+    selectVisibleViewType(state) === View.Queue ||
+    selectVisiblePlaylist(state) != null
   );
 };
