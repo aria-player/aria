@@ -26,3 +26,7 @@ export interface Track extends TrackMetadata {
   trackId: TrackId;
   source: PluginId;
 }
+
+export interface TrackListItem extends Track {
+  itemId: string;
+}

@@ -3,6 +3,7 @@ import { selectTrackById } from "./tracks/tracksSlice";
 import { selectPlaylistById } from "./playlists/playlistsSlice";
 import { createSelector } from "@reduxjs/toolkit";
 import { BASEPATH } from "../app/constants";
+import { TrackListItem } from "./tracks/tracksTypes";
 
 export const selectCurrentTrack = (state: RootState) => {
   if (state.player.queueIndex == null) {
@@ -12,7 +13,10 @@ export const selectCurrentTrack = (state: RootState) => {
   if (currentTrackId == null) {
     return null;
   }
-  return selectTrackById(state, currentTrackId.trackId);
+  return {
+    ...selectTrackById(state, currentTrackId.trackId),
+    itemId: currentTrackId.itemId
+  } as TrackListItem;
 };
 
 export const selectCurrentTrackItemId = (state: RootState) => {
@@ -57,10 +61,10 @@ export const selectVisibleTracks = createSelector(
               itemId: trackId.itemId
             }))
             .slice(state.player.queueIndex!)
-        : Object.values(tracks.entities).map((track) => ({
-            itemId: track?.trackId,
-            ...track
-          }));
+        : (Object.values(tracks.entities).map((track) => ({
+            ...track,
+            itemId: track?.trackId
+          })) as TrackListItem[]);
   }
 );
 

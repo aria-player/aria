@@ -23,7 +23,6 @@ import { defaultColumnDefinitions } from "../../features/library/libraryColumns"
 import { selectQueueSource, setQueue } from "../../features/player/playerSlice";
 import {
   selectCurrentTrack,
-  selectCurrentTrackItemId,
   selectVisiblePlaylist,
   selectVisibleTracks
 } from "../../features/sharedSelectors";
@@ -43,8 +42,7 @@ import { LibraryView } from "../../features/library/libraryTypes";
 export const TrackList = () => {
   const dispatch = useAppDispatch();
 
-  const currentTrack = useAppSelector(selectCurrentTrack)?.trackId;
-  const currentTrackItemId = useAppSelector(selectCurrentTrackItemId);
+  const currentTrack = useAppSelector(selectCurrentTrack);
   const rowData = useAppSelector(selectVisibleTracks);
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
   const queueSource = useAppSelector(selectQueueSource);
@@ -142,7 +140,7 @@ export const TrackList = () => {
       let queueIndex = null;
       if (currentTrack) {
         queueIndex = queue.findIndex(
-          (item) => item.itemId === currentTrackItemId
+          (item) => item.itemId === currentTrack.itemId
         );
       }
       dispatch(
@@ -166,7 +164,7 @@ export const TrackList = () => {
 
   useEffect(() => {
     if (gridRef?.current?.api) gridRef.current?.api.redrawRows();
-  }, [gridRef, currentTrackItemId]);
+  }, [gridRef, currentTrack]);
 
   useEffect(() => {
     const headerContextArea = document.querySelector(".ag-header");
@@ -363,7 +361,7 @@ export const TrackList = () => {
         preventDefaultOnContextMenu
         getRowStyle={(params: RowClassParams) => {
           if (
-            params.data.itemId === currentTrackItemId &&
+            params.data.itemId === currentTrack?.itemId &&
             queueSource == visibleView
           ) {
             return { fontWeight: 700 };
