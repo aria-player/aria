@@ -63,6 +63,7 @@ function App() {
           <div className={styles.outlet}>
             <Routes>
               <Route path="/" Component={() => <></>} />
+              <Route path="/queue" Component={() => <></>} />
               <Route path="/albums" Component={AlbumGrid} />
               <Route path="settings" Component={SettingsPage}>
                 <Route index Component={GeneralPage} />

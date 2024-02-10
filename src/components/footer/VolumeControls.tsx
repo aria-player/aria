@@ -13,11 +13,15 @@ import {
   setMuted
 } from "../../features/player/playerSlice";
 import { useDebounce } from "react-use";
+import QueueIcon from "../../assets/list-solid.svg?react";
+import { BASEPATH } from "../../app/constants";
+import { goBack, push } from "redux-first-history";
 
 export function VolumeControls() {
   const dispatch = useAppDispatch();
   const muted = useAppSelector(selectMuted);
   const volume = useAppSelector(selectVolume);
+  const route = useAppSelector((state) => state.router.location?.pathname);
   const [localVolume, setLocalVolume] = useState(volume);
 
   useEffect(() => {
@@ -63,12 +67,24 @@ export function VolumeControls() {
         />
       </div>
       <button
-        className={styles.mute}
+        className={styles.button}
         onClick={() => {
           dispatch(setMuted(!muted));
         }}
       >
         <VolumeIcon />
+      </button>
+      <button
+        className={`${styles.button} ${styles.queue} ${route == BASEPATH + "queue" ? styles.active : ""}`}
+        onClick={() => {
+          if (route != BASEPATH + "queue") {
+            dispatch(push(BASEPATH + "queue"));
+          } else {
+            dispatch(goBack());
+          }
+        }}
+      >
+        <QueueIcon />
       </button>
     </>
   );

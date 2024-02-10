@@ -32,6 +32,7 @@ export const selectVisibleTracks = createSelector(
   () => {
     const state = store.getState();
     const tracks = state.tracks.tracks;
+    const isQueue = state.router.location?.pathname.split("/")[1] == "queue";
     const visiblePlaylist = selectVisiblePlaylist(state)?.tracks;
     return visiblePlaylist
       ? visiblePlaylist.map((playlistTrack) => {
@@ -40,16 +41,22 @@ export const selectVisibleTracks = createSelector(
             ...tracks.entities[playlistTrack.trackId]
           };
         })
-      : Object.values(tracks.entities).map((track) => ({
-          itemId: track?.id,
-          ...track
-        }));
+      : isQueue
+        ? state.player.queue.map((trackId) => ({
+            ...tracks.entities[trackId],
+            itemId: trackId
+          }))
+        : Object.values(tracks.entities).map((track) => ({
+            itemId: track?.id,
+            ...track
+          }));
   }
 );
 
 export const selectTrackListIsVisible = (state: RootState) => {
   return (
     state.router.location?.pathname == BASEPATH ||
+    state.router.location?.pathname.split("/")[1] == "queue" ||
     selectVisiblePlaylist(state)?.id != null
   );
 };
