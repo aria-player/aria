@@ -204,7 +204,12 @@ export const TrackList = () => {
 
   const handleSelectionChanged = (event: SelectionChangedEvent) => {
     dispatch(
-      setSelectedTracks(event.api.getSelectedRows().map((node) => node.itemId))
+      setSelectedTracks(
+        event.api.getSelectedRows().map((node) => ({
+          itemId: node.itemId,
+          trackId: node.trackId
+        }))
+      )
     );
   };
 

@@ -118,7 +118,7 @@ export function TrackListItemContextMenu() {
               dispatch(
                 removeTracksFromPlaylist({
                   playlistId: visiblePlaylist.id,
-                  itemIds: selectedTracks
+                  itemIds: selectedTracks.map((track) => track.itemId)
                 })
               );
             }}

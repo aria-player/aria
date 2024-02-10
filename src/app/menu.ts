@@ -114,7 +114,7 @@ export function handleMenuAction(
           dispatch(
             removeTracksFromPlaylist({
               playlistId: visiblePlaylist,
-              itemIds: state.tracks.selectedTracks
+              itemIds: state.tracks.selectedTracks.map((track) => track.itemId)
             })
           );
         }

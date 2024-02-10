@@ -8,7 +8,7 @@ import { RootState } from "../../app/store";
 import { setupTracksListeners } from "./tracksListeners";
 import { Track, TrackId } from "./tracksTypes";
 import { PluginId } from "../plugins/pluginsTypes";
-import { PlaylistItemId } from "../playlists/playlistsTypes";
+import { PlaylistItem } from "../playlists/playlistsTypes";
 
 const tracksAdapter = createEntityAdapter<Track>({
   selectId: (track) => track.trackId
@@ -16,7 +16,7 @@ const tracksAdapter = createEntityAdapter<Track>({
 
 interface TracksState {
   tracks: EntityState<Track>;
-  selectedTracks: TrackId[] | PlaylistItemId[];
+  selectedTracks: PlaylistItem[];
 }
 
 const initialState: TracksState = {
@@ -45,10 +45,7 @@ const tracksSlice = createSlice({
       );
       tracksAdapter.removeMany(state.tracks, tracksToRemove);
     },
-    setSelectedTracks: (
-      state,
-      action: PayloadAction<TrackId[] | PlaylistItemId[]>
-    ) => {
+    setSelectedTracks: (state, action: PayloadAction<PlaylistItem[]>) => {
       state.selectedTracks = action.payload;
     }
   }
