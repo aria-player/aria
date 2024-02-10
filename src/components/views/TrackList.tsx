@@ -266,7 +266,8 @@ export const TrackList = () => {
         item != null &&
         item.getAttribute("data-section") === "playlists" &&
         item.getAttribute("data-folder") != "true" &&
-        item.getAttribute("data-item") != "header-playlists"
+        item.getAttribute("data-item") != "header-playlists" &&
+        item.getAttribute("data-item") != "playlists-empty"
       );
     };
 
