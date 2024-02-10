@@ -6,6 +6,8 @@ import { pluginHandles } from "../plugins/pluginsSlice";
 import { SourceHandle } from "../plugins/pluginsTypes";
 import { setupPlayerListeners } from "./playerListeners";
 import { selectTrackById } from "../tracks/tracksSlice";
+import { PlaylistId } from "../playlists/playlistsTypes";
+import { LibraryView } from "../library/libraryTypes";
 
 interface PlayerState {
   status: Status;
@@ -14,6 +16,7 @@ interface PlayerState {
   queue: TrackId[];
   queueUnshuffled: TrackId[];
   queueIndex: number | null;
+  queueSource: LibraryView | PlaylistId | null;
   repeatMode: RepeatMode;
   shuffle: boolean;
 }
@@ -25,6 +28,7 @@ const initialState: PlayerState = {
   queue: [],
   queueUnshuffled: [],
   queueIndex: null,
+  queueSource: null,
   repeatMode: RepeatMode.Off,
   shuffle: false
 };
@@ -83,7 +87,11 @@ export const playerSlice = createSlice({
     },
     setQueue: (
       state,
-      action: PayloadAction<{ queue: TrackId[]; queueIndex: number | null }>
+      action: PayloadAction<{
+        queue: TrackId[];
+        queueIndex: number | null;
+        queueSource: LibraryView | PlaylistId;
+      }>
     ) => {
       state.queueUnshuffled = action.payload.queue;
       state.queueIndex = action.payload.queueIndex;
@@ -93,6 +101,7 @@ export const playerSlice = createSlice({
       } else {
         state.queue = state.queueUnshuffled;
       }
+      state.queueSource = action.payload.queueSource;
     },
     nextTrack: (state) => {
       if (state.queueIndex !== null) {
@@ -172,6 +181,7 @@ export const selectVolume = (state: RootState) => state.player.volume;
 export const selectMuted = (state: RootState) => state.player.muted;
 export const selectQueue = (state: RootState) => state.player.queue;
 export const selectQueueIndex = (state: RootState) => state.player.queueIndex;
+export const selectQueueSource = (state: RootState) => state.player.queueSource;
 export const selectRepeatMode = (state: RootState) => state.player.repeatMode;
 export const selectShuffle = (state: RootState) => state.player.shuffle;
 

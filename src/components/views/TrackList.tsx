@@ -20,7 +20,7 @@ import {
   setColumnState
 } from "../../features/library/librarySlice";
 import { defaultColumnDefinitions } from "../../features/library/libraryColumns";
-import { setQueue } from "../../features/player/playerSlice";
+import { selectQueueSource, setQueue } from "../../features/player/playerSlice";
 import {
   selectCurrentTrack,
   selectVisiblePlaylist,
@@ -38,6 +38,7 @@ import {
 } from "../../features/playlists/playlistsSlice";
 import { PlaylistItem } from "../../features/playlists/playlistsTypes";
 import { nanoid } from "@reduxjs/toolkit";
+import { LibraryView } from "../../features/library/libraryTypes";
 
 export const TrackList = () => {
   const dispatch = useAppDispatch();
@@ -45,6 +46,7 @@ export const TrackList = () => {
   const currentTrack = useAppSelector(selectCurrentTrack)?.id;
   const rowData = useAppSelector(selectVisibleTracks);
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
+  const queueSource = useAppSelector(selectQueueSource);
   const { gridRef } = useContext(GridContext);
   const { setMenuData } = useContext(MenuContext);
   const { show: showHeaderContextMenu } = useContextMenu({
@@ -53,6 +55,7 @@ export const TrackList = () => {
   const { show: showCellContextMenu } = useContextMenu({
     id: "tracklistitem"
   });
+  const visibleView = visiblePlaylist?.id ?? LibraryView.Songs;
 
   const { t } = useTranslation();
   const columnState = useAppSelector(selectColumnState);
@@ -116,14 +119,15 @@ export const TrackList = () => {
       dispatch(
         setQueue({
           queue,
-          queueIndex: event.rowIndex ?? 0
+          queueIndex: event.rowIndex ?? 0,
+          queueSource: visibleView
         })
       );
     }
   };
 
   const handleSortChanged = () => {
-    if (gridRef?.current?.api) {
+    if (gridRef?.current?.api && queueSource == visibleView) {
       const queue = [] as TrackId[];
       gridRef.current.api.forEachNodeAfterFilterAndSort((node) => {
         queue.push(node.data.id);
@@ -132,7 +136,13 @@ export const TrackList = () => {
       if (currentTrack) {
         queueIndex = queue.indexOf(currentTrack);
       }
-      dispatch(setQueue({ queue, queueIndex }));
+      dispatch(
+        setQueue({
+          queue,
+          queueIndex,
+          queueSource: visibleView
+        })
+      );
       updateColumnState();
     }
   };
@@ -342,7 +352,7 @@ export const TrackList = () => {
         alwaysShowVerticalScroll
         preventDefaultOnContextMenu
         getRowStyle={(params: RowClassParams) => {
-          if (currentTrack == params.data.id) {
+          if (currentTrack == params.data.id && queueSource == visibleView) {
             return { fontWeight: 700 };
           }
         }}
