@@ -34,7 +34,9 @@ export const selectVisibleTracks = createSelector(
   [
     (state: RootState) => state.tracks,
     (state: RootState) => state.router.location?.pathname,
-    (state: RootState) => state.undoable.present.playlists
+    (state: RootState) => state.undoable.present.playlists,
+    (state: RootState) => state.player.queue,
+    (state: RootState) => state.player.queueIndex
   ],
   () => {
     const state = store.getState();
@@ -49,10 +51,12 @@ export const selectVisibleTracks = createSelector(
           };
         })
       : isQueue
-        ? state.player.queue.map((trackId) => ({
-            ...tracks.entities[trackId.trackId],
-            itemId: trackId.itemId
-          }))
+        ? state.player.queue
+            .map((trackId) => ({
+              ...tracks.entities[trackId.trackId],
+              itemId: trackId.itemId
+            }))
+            .slice(state.player.queueIndex!)
         : Object.values(tracks.entities).map((track) => ({
             itemId: track?.trackId,
             ...track
