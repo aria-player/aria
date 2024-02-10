@@ -71,19 +71,27 @@ export const selectCurrentPlaylist = (state: RootState) => {
   return selectPlaylistById(state, state.player.queueSource) ?? null;
 };
 
-export const selectCurrentTrack = (state: RootState) => {
-  if (state.player.queueIndex == null) {
-    return null;
+export const selectCurrentTrack = createSelector(
+  [
+    (state: RootState) => state.player.queue,
+    (state: RootState) => state.player.queueIndex,
+    (state: RootState) => state.tracks.tracks.entities
+  ],
+  () => {
+    const state = store.getState();
+    if (state.player.queueIndex == null) {
+      return null;
+    }
+    const currentTrackId = state.player.queue[state.player.queueIndex];
+    if (currentTrackId == null) {
+      return null;
+    }
+    return {
+      ...selectTrackById(state, currentTrackId.trackId),
+      itemId: currentTrackId.itemId
+    } as TrackListItem;
   }
-  const currentTrackId = state.player.queue[state.player.queueIndex];
-  if (currentTrackId == null) {
-    return null;
-  }
-  return {
-    ...selectTrackById(state, currentTrackId.trackId),
-    itemId: currentTrackId.itemId
-  } as TrackListItem;
-};
+);
 
 export const selectCurrentTrackItemId = (state: RootState) => {
   if (state.player.queueIndex == null) {
