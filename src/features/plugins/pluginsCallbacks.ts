@@ -1,11 +1,6 @@
 import { store } from "../../app/store";
 import { getTrackId } from "../../app/utils";
-import {
-  Track,
-  TrackId,
-  TrackMetadata,
-  TrackUri
-} from "../tracks/tracksTypes";
+import { Track, TrackId, TrackMetadata, TrackUri } from "../tracks/tracksTypes";
 import {
   addTracks,
   removeTracks,
@@ -35,7 +30,7 @@ function handleAddTracks(source: PluginId, metadata: TrackMetadata[]) {
     )
     .map((track: TrackMetadata) => ({
       ...track,
-      id: getTrackId(source, track.uri),
+      trackId: getTrackId(source, track.uri),
       source: source
     }));
 
@@ -51,7 +46,7 @@ function handleUpdateMetadata(source: PluginId, metadata: TrackMetadata[]) {
     )
     .map((track: TrackMetadata) => ({
       ...track,
-      id: getTrackId(source, track.uri),
+      trackId: getTrackId(source, track.uri),
       source: source
     }));
 

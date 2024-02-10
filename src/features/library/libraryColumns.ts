@@ -4,7 +4,7 @@ import { formatBytes, formatDuration } from "../../app/utils";
 import { plugins } from "../../plugins/plugins";
 
 export const defaultColumnDefinitions: ColDef[] = [
-  { field: "id", hide: true, filter: false },
+  { field: "trackId", hide: true, filter: false },
   { field: "uri", hide: true, filter: false },
   {
     field: "title",

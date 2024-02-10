@@ -29,7 +29,7 @@ export function TrackListItemContextMenu() {
     const newItems: PlaylistItem[] = gridRef?.current?.api
       .getSelectedRows()
       .map((node) => {
-        return { itemId: nanoid(), trackId: node.id };
+        return { itemId: nanoid(), trackId: node.trackId };
       })
       .filter(Boolean) as PlaylistItem[];
     dispatch(

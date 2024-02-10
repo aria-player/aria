@@ -146,7 +146,7 @@ export const selectMenuState = createSelector(
     const columnVisibility = {} as { [key: string]: MenuItemState };
     if (columnState && columnState.length > 0) {
       columnState?.forEach((c) => {
-        if (c.colId == "uri" || c.colId == "id") return;
+        if (c.colId == "uri" || c.colId == "trackId") return;
         columnVisibility["columns." + c.colId] = {
           selected: !c.hide,
           disabled: !selectTrackListIsVisible(state)
@@ -154,7 +154,7 @@ export const selectMenuState = createSelector(
       });
     } else {
       defaultColumnDefinitions.forEach((c) => {
-        if (c.field == "uri" || c.field == "id") return;
+        if (c.field == "uri" || c.field == "trackId") return;
         columnVisibility["columns." + c.field] = {
           selected: !c.hide,
           disabled: !selectTrackListIsVisible(state)

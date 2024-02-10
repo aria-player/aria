@@ -43,7 +43,7 @@ import { LibraryView } from "../../features/library/libraryTypes";
 export const TrackList = () => {
   const dispatch = useAppDispatch();
 
-  const currentTrack = useAppSelector(selectCurrentTrack)?.id;
+  const currentTrack = useAppSelector(selectCurrentTrack)?.trackId;
   const currentTrackItemId = useAppSelector(selectCurrentTrackItemId);
   const rowData = useAppSelector(selectVisibleTracks);
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
@@ -78,7 +78,7 @@ export const TrackList = () => {
           ...colDef,
           ...updatedColumnState,
           headerName:
-            colDef.field != "id" && colDef.field != "uri"
+            colDef.field != "trackId" && colDef.field != "uri"
               ? t(`columns.${colDef.field}`)
               : colDef.field
         };
@@ -117,7 +117,7 @@ export const TrackList = () => {
       gridRef.current.api.forEachNodeAfterFilterAndSort((node) => {
         queue.push({
           itemId: node.data.itemId,
-          trackId: node.data.id
+          trackId: node.data.trackId
         });
       });
       dispatch(
@@ -136,7 +136,7 @@ export const TrackList = () => {
       gridRef.current.api.forEachNodeAfterFilterAndSort((node) => {
         queue.push({
           itemId: node.data.itemId,
-          trackId: node.data.id
+          trackId: node.data.trackId
         });
       });
       let queueIndex = null;
@@ -210,7 +210,7 @@ export const TrackList = () => {
       if (node.data) {
         newOrder.push({
           itemId: node.data.itemId,
-          trackId: node.data.id
+          trackId: node.data.trackId
         });
       }
     });
@@ -308,14 +308,14 @@ export const TrackList = () => {
           newTracks = [
             {
               itemId: nanoid(),
-              trackId: params.node.data.id
+              trackId: params.node.data.trackId
             }
           ];
         } else {
           newTracks = gridRef?.current?.api
             .getSelectedRows()
             .map((node) => {
-              return { itemId: nanoid(), trackId: node.id };
+              return { itemId: nanoid(), trackId: node.data.trackId };
             })
             .filter(Boolean) as PlaylistItem[];
         }

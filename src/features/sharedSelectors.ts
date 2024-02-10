@@ -54,7 +54,7 @@ export const selectVisibleTracks = createSelector(
             itemId: trackId.itemId
           }))
         : Object.values(tracks.entities).map((track) => ({
-            itemId: track?.id,
+            itemId: track?.trackId,
             ...track
           }));
   }
