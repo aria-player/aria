@@ -15,7 +15,6 @@ import { useTheme } from "./hooks/useTheme";
 import { Footer } from "./components/footer/Footer";
 import { Sidebar } from "./components/sidebar/Sidebar";
 import { TrackList } from "./components/views/TrackList";
-import { AlbumGrid } from "./components/views/AlbumGrid";
 import { PluginsPage } from "./components/views/settings/PluginsPage";
 import { LibraryPage } from "./components/views/settings/LibraryPage";
 import { useAppDispatch, useAppSelector } from "./app/hooks";
@@ -64,7 +63,11 @@ function App() {
             <Routes>
               <Route path="/" Component={() => <></>} />
               <Route path="/queue" Component={() => <></>} />
-              <Route path="/albums" Component={AlbumGrid} />
+              <Route path="/albums" Component={() => <>albums</>} />
+              <Route path="/artists" Component={() => <>artists</>} />
+              <Route path="/genres" Component={() => <>genres</>} />
+              <Route path="/composers" Component={() => <>composers</>} />
+              <Route path="/years" Component={() => <>years</>} />
               <Route path="settings" Component={SettingsPage}>
                 <Route index Component={GeneralPage} />
                 <Route path="library" Component={LibraryPage} />
