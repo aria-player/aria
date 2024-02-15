@@ -19,6 +19,7 @@ interface PlayerState {
   queueSource: LibraryView | PlaylistId | null;
   repeatMode: RepeatMode;
   shuffle: boolean;
+  currentTrackNotInPlaylist: boolean;
 }
 
 const initialState: PlayerState = {
@@ -30,7 +31,8 @@ const initialState: PlayerState = {
   queueIndex: null,
   queueSource: null,
   repeatMode: RepeatMode.Off,
-  shuffle: false
+  shuffle: false,
+  currentTrackNotInPlaylist: false
 };
 
 function shuffleQueue(queue: PlaylistItem[], queueIndex: number | null) {
@@ -85,12 +87,12 @@ export const playerSlice = createSlice({
     setMuted: (state, action) => {
       state.muted = action.payload;
     },
-    setQueue: (
+    setQueueToNewSource: (
       state,
       action: PayloadAction<{
         queue: PlaylistItem[];
-        queueIndex: number | null;
-        queueSource?: LibraryView | PlaylistId;
+        queueIndex: number;
+        queueSource: LibraryView | PlaylistId;
       }>
     ) => {
       state.queueUnshuffled = action.payload.queue;
@@ -101,15 +103,64 @@ export const playerSlice = createSlice({
       } else {
         state.queue = state.queueUnshuffled;
       }
-      if (action.payload.queueSource !== undefined) {
-        state.queueSource = action.payload.queueSource;
+      state.queueSource = action.payload.queueSource;
+      state.currentTrackNotInPlaylist = false;
+    },
+    updateQueueAfterChange: (state, action: PayloadAction<PlaylistItem[]>) => {
+      const newPlaylistTracks = action.payload;
+      if (state.queueIndex != null) {
+        const currentItemId = state.queue[state.queueIndex].itemId;
+        if (!newPlaylistTracks.find((item) => item.itemId == currentItemId)) {
+          // The current track isn't in the updated playlist, so it was removed
+          // Prevent it from being removed from the queue as this would interrupt playback
+          state.currentTrackNotInPlaylist = true;
+          state.queueUnshuffled = state.queueUnshuffled.filter(
+            (oldItem) =>
+              newPlaylistTracks.some(
+                (newItem) => newItem.itemId === oldItem.itemId
+              ) || oldItem.itemId === currentItemId
+          );
+        } else {
+          state.currentTrackNotInPlaylist = false;
+          state.queueUnshuffled = newPlaylistTracks;
+        }
+        state.queueIndex = state.queueUnshuffled.findIndex(
+          (track) => track.itemId == currentItemId
+        );
+        // Re-shuffle the queue
+        if (state.shuffle) {
+          state.queue = shuffleQueue(state.queueUnshuffled, state.queueIndex);
+          if (state.queueIndex != null) state.queueIndex = 0;
+        } else {
+          state.queue = state.queueUnshuffled;
+        }
+      }
+    },
+    reorderQueue: (state, action: PayloadAction<PlaylistItem[]>) => {
+      if (state.queueIndex != null) {
+        const startOfQueue = state.queue.slice(0, state.queueIndex);
+        state.queue = startOfQueue.concat(action.payload);
+      } else {
+        state.queue = action.payload;
       }
     },
     nextTrack: (state) => {
-      if (state.queueIndex !== null) {
-        state.queueIndex += 1;
+      if (state.queueIndex != null) {
+        if (state.currentTrackNotInPlaylist) {
+          const currentItemId = state.queue[state.queueIndex].itemId;
+          state.queueUnshuffled = state.queueUnshuffled.filter(
+            (item) => item.itemId != currentItemId
+          );
+          state.queue = state.queue.filter(
+            (item) => item.itemId != currentItemId
+          );
+          state.currentTrackNotInPlaylist = false;
+        } else {
+          state.queueIndex += 1;
+        }
+
         if (state.queueIndex >= state.queue.length) {
-          if (state.repeatMode != RepeatMode.Off) {
+          if (state.repeatMode != RepeatMode.Off && state.queue.length > 0) {
             state.queueIndex = 0;
             if (state.shuffle) {
               state.queue = shuffleQueue(
@@ -125,10 +176,21 @@ export const playerSlice = createSlice({
       }
     },
     previousTrack: (state) => {
-      if (state.queueIndex !== null) {
+      if (state.queueIndex != null) {
+        if (state.currentTrackNotInPlaylist) {
+          const currentItemId = state.queue[state.queueIndex].itemId;
+          state.queueUnshuffled = state.queueUnshuffled.filter(
+            (item) => item.itemId != currentItemId
+          );
+          state.queue = state.queue.filter(
+            (item) => item.itemId != currentItemId
+          );
+          state.currentTrackNotInPlaylist = false;
+        }
+
         state.queueIndex -= 1;
         if (state.queueIndex < 0) {
-          if (state.repeatMode != RepeatMode.Off) {
+          if (state.repeatMode != RepeatMode.Off && state.queue.length > 0) {
             state.queueIndex = state.queue.length - 1;
           } else {
             state.queueIndex = null;
@@ -179,7 +241,9 @@ export const {
   stop,
   setVolume,
   setMuted,
-  setQueue,
+  setQueueToNewSource,
+  updateQueueAfterChange,
+  reorderQueue,
   nextTrack,
   previousTrack,
   cycleRepeatMode,

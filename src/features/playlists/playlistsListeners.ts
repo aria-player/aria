@@ -3,14 +3,13 @@ import { push } from "redux-first-history";
 import { BASEPATH } from "../../app/constants";
 import {
   selectCurrentPlaylist,
-  selectCurrentTrack,
   selectVisiblePlaylist
 } from "../sharedSelectors";
 import { AnyAction, isAnyOf } from "@reduxjs/toolkit";
 import { deletePlaylistItem } from "./playlistsSlice";
 import { ActionTypes } from "redux-undo";
 import { MatchFunction } from "@reduxjs/toolkit/dist/listenerMiddleware/types";
-import { setQueue } from "../player/playerSlice";
+import { updateQueueAfterChange } from "../player/playerSlice";
 
 export function setupPlaylistsListeners() {
   listenForAction(
@@ -40,13 +39,8 @@ export function setupPlaylistsListeners() {
       }
       dispatch(
         // TODO: Currently this doesn't account for the playlist sort order, so it will be forgotten
-        // after any changes to the playlist tracks/order
-        setQueue({
-          queue: newPlaylist.tracks,
-          queueIndex: newPlaylist.tracks.findIndex(
-            (track) => track.itemId == selectCurrentTrack(state)?.itemId
-          )
-        })
+        // after any tracks are added/removed from the playlist
+        updateQueueAfterChange(newPlaylist.tracks)
       );
     }
   );

@@ -20,7 +20,12 @@ import {
   setColumnState
 } from "../../features/library/librarySlice";
 import { defaultColumnDefinitions } from "../../features/library/libraryColumns";
-import { selectQueueSource, setQueue } from "../../features/player/playerSlice";
+import {
+  reorderQueue,
+  selectQueueSource,
+  setQueueToNewSource,
+  updateQueueAfterChange
+} from "../../features/player/playerSlice";
 import {
   selectCurrentTrack,
   selectVisiblePlaylist,
@@ -126,7 +131,7 @@ export const TrackList = () => {
         });
       });
       dispatch(
-        setQueue({
+        setQueueToNewSource({
           queue,
           queueIndex: event.rowIndex ?? 0,
           queueSource: visibleView
@@ -144,19 +149,7 @@ export const TrackList = () => {
           trackId: node.data.trackId
         });
       });
-      let queueIndex = null;
-      if (currentTrack) {
-        queueIndex = queue.findIndex(
-          (item) => item.itemId === currentTrack.itemId
-        );
-      }
-      dispatch(
-        setQueue({
-          queue,
-          queueIndex,
-          queueSource: visibleView
-        })
-      );
+      dispatch(updateQueueAfterChange(queue));
       updateColumnState();
     }
   };
@@ -225,14 +218,7 @@ export const TrackList = () => {
       }
     });
     if (visibleViewType == View.Queue) {
-      dispatch(
-        setQueue({
-          queue: newOrder,
-          queueIndex: newOrder.findIndex(
-            (item) => item.itemId === currentTrack?.itemId
-          )
-        })
-      );
+      dispatch(reorderQueue(newOrder));
     } else if (visiblePlaylist?.id) {
       dispatch(
         setPlaylistTracks({ playlistId: visiblePlaylist.id, tracks: newOrder })
