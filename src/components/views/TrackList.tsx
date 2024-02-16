@@ -141,6 +141,7 @@ export const TrackList = () => {
   };
 
   const handleSortChanged = () => {
+    updateColumnState();
     if (gridRef?.current?.api && queueSource == visibleView) {
       const queue = [] as PlaylistItem[];
       gridRef.current.api.forEachNodeAfterFilterAndSort((node) => {
@@ -150,7 +151,6 @@ export const TrackList = () => {
         });
       });
       dispatch(updateQueueAfterChange(queue));
-      updateColumnState();
     }
   };
 
