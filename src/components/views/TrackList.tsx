@@ -135,8 +135,15 @@ export const TrackList = () => {
 
   const updateColumnState = () => {
     if (gridRef?.current != null) {
-      const colState = gridRef.current.columnApi.getColumnState();
-      dispatch(setColumnState(colState));
+      const newColumnState = gridRef.current.columnApi.getColumnState();
+      if (visiblePlaylist) {
+        newColumnState.forEach((item) => {
+          item.sort = columnState?.find(
+            (oldItem) => oldItem.colId === item.colId
+          )?.sort;
+        });
+      }
+      dispatch(setColumnState(newColumnState));
     }
   };
 
@@ -161,8 +168,6 @@ export const TrackList = () => {
 
   const handleSortChanged = () => {
     if (!visiblePlaylist) {
-      // TODO: Also need to make sure that the default sort isn't updated
-      // when resizing/reordering etc from a playlist
       updateColumnState();
     }
     if (gridRef?.current?.api && queueSource == visibleView) {
