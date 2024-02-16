@@ -24,7 +24,7 @@ const librarySlice = createSlice({
   name: "library",
   initialState,
   reducers: {
-    setColumnState: (state, action: PayloadAction<ColumnState[]>) => {
+    setLibraryColumnState: (state, action: PayloadAction<ColumnState[]>) => {
       state.columnState = action.payload;
     },
     moveLibraryItem: (
@@ -50,13 +50,13 @@ const librarySlice = createSlice({
 });
 
 export const {
-  setColumnState,
+  setLibraryColumnState,
   moveLibraryItem,
   updateLibraryItem,
   resetLibraryLayout
 } = librarySlice.actions;
 
-export const selectColumnState = (state: RootState) =>
+export const selectLibraryColumnState = (state: RootState) =>
   state.undoable.present.library.columnState;
 export const selectLibraryLayout = (state: RootState) =>
   state.undoable.present.library.layout;

@@ -4,7 +4,7 @@ import { invoke } from "@tauri-apps/api";
 import { push, goBack, goForward } from "redux-first-history";
 import { BASEPATH } from "./constants";
 import { AgGridReact } from "@ag-grid-community/react";
-import { setColumnState } from "../features/library/librarySlice";
+import { setLibraryColumnState } from "../features/library/librarySlice";
 import { defaultColumnDefinitions } from "../features/library/libraryColumns";
 import { Status } from "../features/player/playerTypes";
 import {
@@ -72,7 +72,7 @@ export function handleMenuAction(
       grid?.api?.selectAll();
       break;
     case "resetColumns":
-      dispatch(setColumnState([]));
+      dispatch(setLibraryColumnState([]));
       break;
     case "togglePlay":
       if (state.player.status == Status.Playing) {

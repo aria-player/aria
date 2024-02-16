@@ -16,8 +16,8 @@ import {
 import styles from "./TrackList.module.css";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
-  selectColumnState,
-  setColumnState
+  setLibraryColumnState,
+  selectLibraryColumnState
 } from "../../features/library/librarySlice";
 import { defaultColumnDefinitions } from "../../features/library/libraryColumns";
 import {
@@ -66,14 +66,14 @@ export const TrackList = () => {
   const visibleView = visiblePlaylist?.id ?? visibleViewType;
 
   const { t } = useTranslation();
-  const columnState = useAppSelector(selectColumnState);
+  const libraryColumnState = useAppSelector(selectLibraryColumnState);
   const playlistColumnState = useAppSelector(selectVisiblePlaylistColumnState);
 
   const columnDefs = useMemo(() => {
-    if (!columnState) return defaultColumnDefinitions;
+    if (!libraryColumnState) return defaultColumnDefinitions;
 
     const columnStateMap = Object.fromEntries(
-      columnState.map((state) => [state.colId, state])
+      libraryColumnState.map((state) => [state.colId, state])
     );
 
     return defaultColumnDefinitions
@@ -113,15 +113,15 @@ export const TrackList = () => {
         };
       })
       .sort((a, b) => {
-        const indexA = columnState.findIndex(
+        const indexA = libraryColumnState.findIndex(
           (state) => state.colId === a.field
         );
-        const indexB = columnState.findIndex(
+        const indexB = libraryColumnState.findIndex(
           (state) => state.colId === b.field
         );
         return indexA - indexB || 1;
       });
-  }, [columnState, t, visibleViewType, playlistColumnState]);
+  }, [libraryColumnState, t, visibleViewType, playlistColumnState]);
 
   const defaultColDef = useMemo(
     () => ({
@@ -138,12 +138,12 @@ export const TrackList = () => {
       const newColumnState = gridRef.current.columnApi.getColumnState();
       if (visiblePlaylist) {
         newColumnState.forEach((item) => {
-          item.sort = columnState?.find(
+          item.sort = libraryColumnState?.find(
             (oldItem) => oldItem.colId === item.colId
           )?.sort;
         });
       }
-      dispatch(setColumnState(newColumnState));
+      dispatch(setLibraryColumnState(newColumnState));
     }
   };
 
