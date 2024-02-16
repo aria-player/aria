@@ -1,6 +1,9 @@
 import { RootState, store } from "../app/store";
 import { selectTrackById } from "./tracks/tracksSlice";
-import { selectPlaylistById } from "./playlists/playlistsSlice";
+import {
+  selectPlaylistById,
+  selectPlaylistConfigById
+} from "./playlists/playlistsSlice";
 import { createSelector } from "@reduxjs/toolkit";
 import { TrackListItem } from "./tracks/tracksTypes";
 import { LibraryView, View, isLibraryView } from "../app/view";
@@ -22,6 +25,16 @@ export const selectVisiblePlaylist = (state: RootState) => {
     return selectPlaylistById(
       state,
       state.router.location?.pathname.split("/")[2]
+    );
+};
+
+export const selectVisiblePlaylistColumnState = (state: RootState) => {
+  if (state.router.location?.pathname.split("/")[2] != null)
+    return (
+      selectPlaylistConfigById(
+        state,
+        state.router.location?.pathname.split("/")[2]
+      )?.columnState ?? null
     );
 };
 

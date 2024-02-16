@@ -15,23 +15,28 @@ import {
   updateTreeNode
 } from "soprano-ui";
 import {
-  Playlist,
+  PlaylistConfig,
   PlaylistId,
   PlaylistItem,
-  PlaylistItemId
+  PlaylistItemId,
+  PlaylistUndoable
 } from "./playlistsTypes";
 import { setupPlaylistsListeners } from "./playlistsListeners";
+import { ColumnState } from "@ag-grid-community/core";
 
-const playlistsAdapter = createEntityAdapter<Playlist>();
+const playlistsAdapter = createEntityAdapter<PlaylistUndoable>();
+const playlistsConfigAdapter = createEntityAdapter<PlaylistConfig>();
 
 export interface PlaylistsState {
-  playlists: EntityState<Playlist>;
+  playlists: EntityState<PlaylistUndoable>;
+  playlistsConfig: EntityState<PlaylistConfig>;
   layout: Item[];
   openFolders: string[];
 }
 
 const initialState: PlaylistsState = {
   playlists: playlistsAdapter.getInitialState(),
+  playlistsConfig: playlistsConfigAdapter.getInitialState(),
   layout: [],
   openFolders: []
 };
@@ -70,12 +75,20 @@ export const playlistsSlice = createSlice({
           id: action.payload.newData.id,
           tracks: []
         });
+        playlistsConfigAdapter.addOne(state.playlistsConfig, {
+          id: action.payload.newData.id,
+          columnState: []
+        });
       }
     },
     deletePlaylistItem: (state, action: PayloadAction<{ id: string }>) => {
       const deletion = deleteTreeNode(state.layout, action.payload);
       state.layout = deletion.result;
       playlistsAdapter.removeMany(state.playlists, deletion.deletedIds);
+      playlistsConfigAdapter.removeMany(
+        state.playlistsConfig,
+        deletion.deletedIds
+      );
     },
     openPlaylistFolder: (state, action: PayloadAction<{ id: string }>) => {
       const itemId = action.payload.id;
@@ -124,6 +137,18 @@ export const playlistsSlice = createSlice({
       if (item) {
         item.tracks = tracks;
       }
+    },
+    updatePlaylistColumnState: (
+      state,
+      action: PayloadAction<{
+        playlistId: PlaylistId;
+        columnState: ColumnState[];
+      }>
+    ) => {
+      const item = state.playlistsConfig.entities[action.payload.playlistId];
+      if (item) {
+        item.columnState = action.payload.columnState;
+      }
     }
   }
 });
@@ -137,7 +162,8 @@ export const {
   closePlaylistFolder,
   addTracksToPlaylist,
   removeTracksFromPlaylist,
-  setPlaylistTracks
+  setPlaylistTracks,
+  updatePlaylistColumnState
 } = playlistsSlice.actions;
 
 export const selectPlaylistsLayout = (state: RootState) =>
@@ -157,6 +183,11 @@ export const {
 } = playlistsAdapter.getSelectors(
   (state: RootState) => state.undoable.present.playlists.playlists
 );
+
+export const { selectById: selectPlaylistConfigById } =
+  playlistsConfigAdapter.getSelectors(
+    (state: RootState) => state.undoable.present.playlists.playlistsConfig
+  );
 
 export default playlistsSlice.reducer;
 

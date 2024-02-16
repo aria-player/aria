@@ -29,6 +29,7 @@ import {
 import {
   selectCurrentTrack,
   selectVisiblePlaylist,
+  selectVisiblePlaylistColumnState,
   selectVisibleTracks,
   selectVisibleViewType
 } from "../../features/sharedSelectors";
@@ -39,7 +40,8 @@ import { MenuContext } from "../../contexts/MenuContext";
 import { setSelectedTracks } from "../../features/tracks/tracksSlice";
 import {
   addTracksToPlaylist,
-  setPlaylistTracks
+  setPlaylistTracks,
+  updatePlaylistColumnState
 } from "../../features/playlists/playlistsSlice";
 import { PlaylistItem } from "../../features/playlists/playlistsTypes";
 import { nanoid } from "@reduxjs/toolkit";
@@ -65,6 +67,8 @@ export const TrackList = () => {
 
   const { t } = useTranslation();
   const columnState = useAppSelector(selectColumnState);
+  const playlistColumnState = useAppSelector(selectVisiblePlaylistColumnState);
+
   const columnDefs = useMemo(() => {
     if (!columnState) return defaultColumnDefinitions;
 
@@ -77,16 +81,31 @@ export const TrackList = () => {
         const updatedColumnState = {
           ...columnStateMap[colDef.field as string]
         };
+
+        let sort =
+          visibleViewType != View.Queue && colDef.field
+            ? columnStateMap[colDef.field]?.sort
+            : null;
+        if (playlistColumnState != null && colDef.field) {
+          const playlistColumnStateMap = Object.fromEntries(
+            playlistColumnState.map((state) => [state.colId, state])
+          );
+          const def = playlistColumnStateMap[colDef.field];
+          if (def) {
+            sort = def.sort;
+          } else {
+            // New playlists shouldn't follow the library column state sort
+            sort = null;
+          }
+        }
+
         delete updatedColumnState.rowGroup;
         delete updatedColumnState.pivot;
         return {
           ...colDef,
           ...updatedColumnState,
           sortable: visibleViewType != View.Queue ? colDef.sortable : false,
-          sort:
-            visibleViewType != View.Queue && colDef.field
-              ? columnStateMap[colDef.field]?.sort
-              : null,
+          sort,
           headerName:
             colDef.field != "trackId" && colDef.field != "uri"
               ? t(`columns.${colDef.field}`)
@@ -102,7 +121,7 @@ export const TrackList = () => {
         );
         return indexA - indexB || 1;
       });
-  }, [columnState, t, visibleViewType]);
+  }, [columnState, t, visibleViewType, playlistColumnState]);
 
   const defaultColDef = useMemo(
     () => ({
@@ -141,7 +160,11 @@ export const TrackList = () => {
   };
 
   const handleSortChanged = () => {
-    updateColumnState();
+    if (!visiblePlaylist) {
+      // TODO: Also need to make sure that the default sort isn't updated
+      // when resizing/reordering etc from a playlist
+      updateColumnState();
+    }
     if (gridRef?.current?.api && queueSource == visibleView) {
       const queue = [] as PlaylistItem[];
       gridRef.current.api.forEachNodeAfterFilterAndSort((node) => {
@@ -151,6 +174,14 @@ export const TrackList = () => {
         });
       });
       dispatch(updateQueueAfterChange(queue));
+    }
+    if (visiblePlaylist?.id != null && gridRef?.current) {
+      dispatch(
+        updatePlaylistColumnState({
+          playlistId: visiblePlaylist.id,
+          columnState: gridRef.current.columnApi.getColumnState()
+        })
+      );
     }
   };
 
