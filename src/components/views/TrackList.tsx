@@ -370,6 +370,7 @@ export const TrackList = () => {
         rowDragEntireRow
         alwaysShowVerticalScroll
         preventDefaultOnContextMenu
+        multiSortKey="ctrl"
         getRowStyle={(params: RowClassParams) => {
           if (
             params.data.itemId === currentTrack?.itemId &&
