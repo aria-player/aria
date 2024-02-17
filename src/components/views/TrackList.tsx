@@ -45,7 +45,7 @@ import {
 } from "../../features/playlists/playlistsSlice";
 import { PlaylistItem } from "../../features/playlists/playlistsTypes";
 import { nanoid } from "@reduxjs/toolkit";
-import { View } from "../../app/view";
+import { LibraryView, View } from "../../app/view";
 
 export const TrackList = () => {
   const dispatch = useAppDispatch();
@@ -69,50 +69,36 @@ export const TrackList = () => {
   const libraryColumnState = useAppSelector(selectLibraryColumnState);
   const playlistConfig = useAppSelector(selectVisiblePlaylistConfig);
 
-  const columnDefs = useMemo(() => {
-    if (!libraryColumnState) return defaultColumnDefinitions;
-
-    const columnStateMap = Object.fromEntries(
-      libraryColumnState.map((state) => [state.colId, state])
-    );
-
+  const columnDefs = useMemo<ColDef[]>(() => {
     return defaultColumnDefinitions
       .map((colDef) => {
-        let updatedColumnState = {
-          ...columnStateMap[colDef.field as string]
-        };
+        let colDefOverrides = {
+          ...libraryColumnState?.find((col) => col.colId == colDef.field)
+        } as ColDef;
 
         let sort =
-          visibleViewType != View.Queue && colDef.field
-            ? columnStateMap[colDef.field]?.sort
-            : null;
+          visibleViewType == LibraryView.Songs ? colDefOverrides?.sort : null;
         if (playlistConfig?.columnState != null && colDef.field) {
-          const playlistColumnStateMap = Object.fromEntries(
-            playlistConfig?.columnState.map((state) => [state.colId, state])
-          );
+          const playlistColDefOverrides = {
+            ...colDefOverrides,
+            ...playlistConfig?.columnState?.find(
+              (col) => col.colId == colDef.field
+            )
+          } as ColDef;
+          sort = playlistColDefOverrides.sort;
           if (
             playlistConfig.useCustomLayout &&
             playlistConfig.columnState.length > 0
           ) {
-            updatedColumnState = {
-              ...columnStateMap[colDef.field as string],
-              ...playlistColumnStateMap[colDef.field as string]
-            };
-          }
-          const def = playlistColumnStateMap[colDef.field];
-          if (def) {
-            sort = def.sort;
-          } else {
-            // New playlists shouldn't follow the library column state sort
-            sort = null;
+            colDefOverrides = playlistColDefOverrides;
           }
         }
 
-        delete updatedColumnState.rowGroup;
-        delete updatedColumnState.pivot;
+        delete colDefOverrides.rowGroup;
+        delete colDefOverrides.pivot;
         return {
           ...colDef,
-          ...updatedColumnState,
+          ...colDefOverrides,
           sortable: visibleViewType != View.Queue ? colDef.sortable : false,
           sort,
           headerName:
@@ -121,14 +107,18 @@ export const TrackList = () => {
               : colDef.field
         };
       })
-      .sort((a, b) => {
-        const indexA = libraryColumnState.findIndex(
-          (state) => state.colId === a.field
+      .sort((colDefA, colDefB) => {
+        const orderedColumns =
+          playlistConfig?.useCustomLayout && playlistConfig?.columnState
+            ? playlistConfig.columnState
+            : libraryColumnState;
+        const indexA = orderedColumns?.findIndex(
+          (libraryCol) => libraryCol.colId === colDefA.field
         );
-        const indexB = libraryColumnState.findIndex(
-          (state) => state.colId === b.field
+        const indexB = orderedColumns?.findIndex(
+          (libraryCol) => libraryCol.colId === colDefB.field
         );
-        return indexA - indexB || 1;
+        return (indexA || 2) - (indexB || 1);
       });
   }, [libraryColumnState, t, visibleViewType, playlistConfig]);
 
@@ -400,7 +390,7 @@ export const TrackList = () => {
         ref={gridRef}
         getRowId={(params) => params.data.itemId}
         rowData={rowData}
-        columnDefs={columnDefs as ColDef[]}
+        columnDefs={columnDefs}
         defaultColDef={defaultColDef}
         rowSelection="multiple"
         onGridReady={handleGridReady}
