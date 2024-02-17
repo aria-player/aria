@@ -258,6 +258,11 @@ export const TrackList = () => {
 
   const handleRowDragEnd = (event: RowDragEndEvent) => {
     if (!visiblePlaylist?.id && visibleViewType != View.Queue) return;
+    if (
+      event.columnApi.getColumnState().filter((col) => col.sort !== null)
+        .length != 0
+    )
+      return;
     const newOrder = [] as PlaylistItem[];
     event.api.forEachNode((node) => {
       if (node.data) {
