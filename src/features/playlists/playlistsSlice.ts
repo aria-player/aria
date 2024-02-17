@@ -155,13 +155,16 @@ export const playlistsSlice = createSlice({
     resetPlaylistColumnState: (state, action: PayloadAction<PlaylistId>) => {
       const item = state.playlistsConfig.entities[action.payload];
       if (item) {
-        item.columnState =
-          (defaultColumnDefinitions?.map((playlistColumn) => ({
+        item.columnState = defaultColumnDefinitions?.map((playlistColumn) => {
+          const col = item.columnState?.find(
+            (col) => col.colId === playlistColumn.field
+          );
+          return {
             colId: playlistColumn.field,
-            sort:
-              item.columnState?.find((col) => col.colId == playlistColumn.field)
-                ?.sort ?? null
-          })) as ColumnState[]) ?? null;
+            sort: col?.sort,
+            sortIndex: col?.sortIndex
+          };
+        }) as ColumnState[];
       }
     },
     togglePlaylistUsesCustomLayout: (
@@ -182,12 +185,16 @@ export const playlistsSlice = createSlice({
           // Reset column state except sort
           // TODO: Set sort to null if colId .hide true for libraryColumnState
           const newColumnState = action.payload.libraryColumnState.map(
-            (libraryColumn) => ({
-              ...libraryColumn,
-              sort: playlistConfig.columnState?.find(
-                (playlistColumn) => playlistColumn.colId === libraryColumn.colId
-              )?.sort
-            })
+            (libraryColumn) => {
+              const col = playlistConfig.columnState?.find(
+                (col) => col.colId === libraryColumn.colId
+              );
+              return {
+                ...libraryColumn,
+                sort: col?.sort,
+                sortIndex: col?.sortIndex
+              };
+            }
           );
           playlistConfig.columnState = newColumnState;
         }

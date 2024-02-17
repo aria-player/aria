@@ -78,6 +78,10 @@ export const TrackList = () => {
 
         let sort =
           visibleViewType == LibraryView.Songs ? colDefOverrides?.sort : null;
+        let sortIndex =
+          visibleViewType == LibraryView.Songs
+            ? colDefOverrides?.sortIndex
+            : null;
         if (playlistConfig?.columnState != null && colDef.field) {
           const playlistColDefOverrides = {
             ...playlistConfig?.columnState?.find(
@@ -85,6 +89,7 @@ export const TrackList = () => {
             )
           } as ColDef;
           sort = playlistColDefOverrides.sort;
+          sortIndex = playlistColDefOverrides.sortIndex;
           if (
             playlistConfig.useCustomLayout &&
             playlistConfig.columnState.length > 0
@@ -100,6 +105,7 @@ export const TrackList = () => {
           ...colDefOverrides,
           sortable: visibleViewType != View.Queue ? colDef.sortable : false,
           sort,
+          sortIndex,
           headerName:
             colDef.field != "trackId" && colDef.field != "uri"
               ? t(`columns.${colDef.field}`)

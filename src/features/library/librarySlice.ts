@@ -29,13 +29,16 @@ const librarySlice = createSlice({
       state.columnState = action.payload;
     },
     resetLibraryColumnState: (state) => {
-      state.columnState =
-        (defaultColumnDefinitions?.map((libraryColumn) => ({
+      state.columnState = defaultColumnDefinitions?.map((libraryColumn) => {
+        const col = state.columnState?.find(
+          (col) => col.colId === libraryColumn.field
+        );
+        return {
           colId: libraryColumn.field,
-          sort:
-            state.columnState?.find((col) => col.colId == libraryColumn.field)
-              ?.sort ?? null
-        })) as ColumnState[]) ?? null;
+          sort: col?.sort,
+          sortIndex: col?.sortIndex
+        };
+      }) as ColumnState[];
     },
     moveLibraryItem: (
       state,
