@@ -23,6 +23,7 @@ import {
 } from "./playlistsTypes";
 import { setupPlaylistsListeners } from "./playlistsListeners";
 import { ColumnState } from "@ag-grid-community/core";
+import { defaultColumnDefinitions } from "../library/libraryColumns";
 
 const playlistsAdapter = createEntityAdapter<PlaylistUndoable>();
 const playlistsConfigAdapter = createEntityAdapter<PlaylistConfig>();
@@ -151,6 +152,18 @@ export const playlistsSlice = createSlice({
         item.columnState = action.payload.columnState;
       }
     },
+    resetPlaylistColumnState: (state, action: PayloadAction<PlaylistId>) => {
+      const item = state.playlistsConfig.entities[action.payload];
+      if (item) {
+        item.columnState =
+          (defaultColumnDefinitions?.map((playlistColumn) => ({
+            colId: playlistColumn.field,
+            sort:
+              item.columnState?.find((col) => col.colId == playlistColumn.field)
+                ?.sort ?? null
+          })) as ColumnState[]) ?? null;
+      }
+    },
     togglePlaylistUsesCustomLayout: (
       state,
       action: PayloadAction<{
@@ -193,6 +206,7 @@ export const {
   addTracksToPlaylist,
   removeTracksFromPlaylist,
   setPlaylistTracks,
+  resetPlaylistColumnState,
   updatePlaylistColumnState,
   togglePlaylistUsesCustomLayout
 } = playlistsSlice.actions;

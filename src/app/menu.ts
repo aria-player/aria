@@ -29,6 +29,7 @@ import {
 import {
   addTracksToPlaylist,
   removeTracksFromPlaylist,
+  resetPlaylistColumnState,
   togglePlaylistUsesCustomLayout
 } from "../features/playlists/playlistsSlice";
 import { copySelectedTracks } from "../features/tracks/tracksSlice";
@@ -77,8 +78,14 @@ export function handleMenuAction(
       grid?.api?.selectAll();
       break;
     case "resetColumns":
-      // TODO: Playlist specific behaviour
-      dispatch(resetLibraryColumnState());
+      {
+        const playlist = selectVisiblePlaylist(state)?.id;
+        if (selectVisiblePlaylistConfig(state)?.useCustomLayout && playlist) {
+          dispatch(resetPlaylistColumnState(playlist));
+        } else {
+          dispatch(resetLibraryColumnState());
+        }
+      }
       break;
     case "togglePlay":
       if (state.player.status == Status.Playing) {

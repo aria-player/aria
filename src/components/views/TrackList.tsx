@@ -80,7 +80,6 @@ export const TrackList = () => {
           visibleViewType == LibraryView.Songs ? colDefOverrides?.sort : null;
         if (playlistConfig?.columnState != null && colDef.field) {
           const playlistColDefOverrides = {
-            ...colDefOverrides,
             ...playlistConfig?.columnState?.find(
               (col) => col.colId == colDef.field
             )
