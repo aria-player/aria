@@ -2,6 +2,7 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 import { ColumnState } from "@ag-grid-community/core";
 import { Item, moveTreeNode, updateTreeNode } from "soprano-ui";
+import { defaultColumnDefinitions } from "./libraryColumns";
 
 interface LibraryState {
   columnState: ColumnState[] | null;
@@ -27,6 +28,15 @@ const librarySlice = createSlice({
     setLibraryColumnState: (state, action: PayloadAction<ColumnState[]>) => {
       state.columnState = action.payload;
     },
+    resetLibraryColumnState: (state) => {
+      state.columnState =
+        (defaultColumnDefinitions?.map((libraryColumn) => ({
+          colId: libraryColumn.field,
+          sort:
+            state.columnState?.find((col) => col.colId == libraryColumn.field)
+              ?.sort ?? null
+        })) as ColumnState[]) ?? null;
+    },
     moveLibraryItem: (
       state,
       action: PayloadAction<{
@@ -51,6 +61,7 @@ const librarySlice = createSlice({
 
 export const {
   setLibraryColumnState,
+  resetLibraryColumnState,
   moveLibraryItem,
   updateLibraryItem,
   resetLibraryLayout

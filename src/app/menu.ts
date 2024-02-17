@@ -5,8 +5,8 @@ import { push, goBack, goForward } from "redux-first-history";
 import { BASEPATH } from "./constants";
 import { AgGridReact } from "@ag-grid-community/react";
 import {
-  selectLibraryColumnState,
-  setLibraryColumnState
+  resetLibraryColumnState,
+  selectLibraryColumnState
 } from "../features/library/librarySlice";
 import { defaultColumnDefinitions } from "../features/library/libraryColumns";
 import { Status } from "../features/player/playerTypes";
@@ -78,7 +78,7 @@ export function handleMenuAction(
       break;
     case "resetColumns":
       // TODO: Playlist specific behaviour
-      dispatch(setLibraryColumnState([]));
+      dispatch(resetLibraryColumnState());
       break;
     case "togglePlay":
       if (state.player.status == Status.Playing) {
@@ -219,23 +219,14 @@ export const selectMenuState = createSelector(
       });
     }
     const columnVisibility = {} as { [key: string]: MenuItemState };
-    if (columnState && columnState.length > 0) {
-      columnState?.forEach((c) => {
-        if (c.colId == "uri" || c.colId == "trackId") return;
-        columnVisibility["columns." + c.colId] = {
-          selected: !c.hide,
-          disabled: !selectTrackListIsVisible(state)
-        };
-      });
-    } else {
-      defaultColumnDefinitions.forEach((c) => {
-        if (c.field == "uri" || c.field == "trackId") return;
-        columnVisibility["columns." + c.field] = {
-          selected: !c.hide,
-          disabled: !selectTrackListIsVisible(state)
-        };
-      });
-    }
+    defaultColumnDefinitions?.forEach((c) => {
+      if (c.field == "uri" || c.field == "trackId") return;
+      const hidden = columnState?.find((col) => c.field == col.colId)?.hide;
+      columnVisibility["columns." + c.field] = {
+        selected: hidden != undefined ? !hidden : !c.hide,
+        disabled: !selectTrackListIsVisible(state)
+      };
+    });
 
     return {
       back: {
