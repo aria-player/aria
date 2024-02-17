@@ -134,6 +134,7 @@ export const TrackList = () => {
 
   const defaultColDef = useMemo(
     () => ({
+      hide: false,
       sortable: true,
       resizable: true,
       lockPinned: true,
