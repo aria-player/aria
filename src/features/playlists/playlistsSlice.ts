@@ -77,7 +77,7 @@ export const playlistsSlice = createSlice({
         });
         playlistsConfigAdapter.addOne(state.playlistsConfig, {
           id: action.payload.newData.id,
-          columnState: [],
+          columnState: null,
           useCustomLayout: false
         });
       }
