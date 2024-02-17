@@ -28,13 +28,13 @@ export const selectVisiblePlaylist = (state: RootState) => {
     );
 };
 
-export const selectVisiblePlaylistColumnState = (state: RootState) => {
+export const selectVisiblePlaylistConfig = (state: RootState) => {
   if (state.router.location?.pathname.split("/")[2] != null)
     return (
       selectPlaylistConfigById(
         state,
         state.router.location?.pathname.split("/")[2]
-      )?.columnState ?? null
+      ) ?? null
     );
 };
 

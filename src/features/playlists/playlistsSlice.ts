@@ -77,7 +77,8 @@ export const playlistsSlice = createSlice({
         });
         playlistsConfigAdapter.addOne(state.playlistsConfig, {
           id: action.payload.newData.id,
-          columnState: []
+          columnState: [],
+          useCustomLayout: false
         });
       }
     },
@@ -149,6 +150,35 @@ export const playlistsSlice = createSlice({
       if (item) {
         item.columnState = action.payload.columnState;
       }
+    },
+    togglePlaylistUsesCustomLayout: (
+      state,
+      action: PayloadAction<{
+        playlistId: PlaylistId;
+        libraryColumnState: ColumnState[] | null;
+      }>
+    ) => {
+      const playlistConfig =
+        state.playlistsConfig.entities[action.payload.playlistId];
+      if (playlistConfig) {
+        playlistConfig.useCustomLayout = !playlistConfig.useCustomLayout;
+        if (
+          !playlistConfig.useCustomLayout &&
+          action.payload.libraryColumnState
+        ) {
+          // Reset column state except sort
+          // TODO: Set sort to null if colId .hide true for libraryColumnState
+          const newColumnState = action.payload.libraryColumnState.map(
+            (libraryColumn) => ({
+              ...libraryColumn,
+              sort: playlistConfig.columnState?.find(
+                (playlistColumn) => playlistColumn.colId === libraryColumn.colId
+              )?.sort
+            })
+          );
+          playlistConfig.columnState = newColumnState;
+        }
+      }
     }
   }
 });
@@ -163,7 +193,8 @@ export const {
   addTracksToPlaylist,
   removeTracksFromPlaylist,
   setPlaylistTracks,
-  updatePlaylistColumnState
+  updatePlaylistColumnState,
+  togglePlaylistUsesCustomLayout
 } = playlistsSlice.actions;
 
 export const selectPlaylistsLayout = (state: RootState) =>

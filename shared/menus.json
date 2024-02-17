@@ -108,6 +108,7 @@
           { "id": "columns.fileSize", "keepopen": true },
           { "id": "columns.source", "keepopen": true },
           { "id": "separator" },
+          { "id": "togglePlaylistLayout"},
           { "id": "resetColumns" }
         ]
       },

@@ -29,7 +29,7 @@ import {
 import {
   selectCurrentTrack,
   selectVisiblePlaylist,
-  selectVisiblePlaylistColumnState,
+  selectVisiblePlaylistConfig,
   selectVisibleTracks,
   selectVisibleViewType
 } from "../../features/sharedSelectors";
@@ -67,7 +67,7 @@ export const TrackList = () => {
 
   const { t } = useTranslation();
   const libraryColumnState = useAppSelector(selectLibraryColumnState);
-  const playlistColumnState = useAppSelector(selectVisiblePlaylistColumnState);
+  const playlistConfig = useAppSelector(selectVisiblePlaylistConfig);
 
   const columnDefs = useMemo(() => {
     if (!libraryColumnState) return defaultColumnDefinitions;
@@ -78,7 +78,7 @@ export const TrackList = () => {
 
     return defaultColumnDefinitions
       .map((colDef) => {
-        const updatedColumnState = {
+        let updatedColumnState = {
           ...columnStateMap[colDef.field as string]
         };
 
@@ -86,10 +86,19 @@ export const TrackList = () => {
           visibleViewType != View.Queue && colDef.field
             ? columnStateMap[colDef.field]?.sort
             : null;
-        if (playlistColumnState != null && colDef.field) {
+        if (playlistConfig?.columnState != null && colDef.field) {
           const playlistColumnStateMap = Object.fromEntries(
-            playlistColumnState.map((state) => [state.colId, state])
+            playlistConfig?.columnState.map((state) => [state.colId, state])
           );
+          if (
+            playlistConfig.useCustomLayout &&
+            playlistConfig.columnState.length > 0
+          ) {
+            updatedColumnState = {
+              ...columnStateMap[colDef.field as string],
+              ...playlistColumnStateMap[colDef.field as string]
+            };
+          }
           const def = playlistColumnStateMap[colDef.field];
           if (def) {
             sort = def.sort;
@@ -121,7 +130,7 @@ export const TrackList = () => {
         );
         return indexA - indexB || 1;
       });
-  }, [libraryColumnState, t, visibleViewType, playlistColumnState]);
+  }, [libraryColumnState, t, visibleViewType, playlistConfig]);
 
   const defaultColDef = useMemo(
     () => ({
@@ -136,14 +145,23 @@ export const TrackList = () => {
   const updateColumnState = () => {
     if (gridRef?.current != null) {
       const newColumnState = gridRef.current.columnApi.getColumnState();
-      if (visiblePlaylist) {
+      if (visiblePlaylist && !playlistConfig?.useCustomLayout) {
         newColumnState.forEach((item) => {
           item.sort = libraryColumnState?.find(
             (oldItem) => oldItem.colId === item.colId
           )?.sort;
         });
       }
-      dispatch(setLibraryColumnState(newColumnState));
+      if (visiblePlaylist && playlistConfig?.useCustomLayout) {
+        dispatch(
+          updatePlaylistColumnState({
+            playlistId: visiblePlaylist.id,
+            columnState: newColumnState
+          })
+        );
+      } else {
+        dispatch(setLibraryColumnState(newColumnState));
+      }
     }
   };
 

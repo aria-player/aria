@@ -4,7 +4,10 @@ import { invoke } from "@tauri-apps/api";
 import { push, goBack, goForward } from "redux-first-history";
 import { BASEPATH } from "./constants";
 import { AgGridReact } from "@ag-grid-community/react";
-import { setLibraryColumnState } from "../features/library/librarySlice";
+import {
+  selectLibraryColumnState,
+  setLibraryColumnState
+} from "../features/library/librarySlice";
 import { defaultColumnDefinitions } from "../features/library/libraryColumns";
 import { Status } from "../features/player/playerTypes";
 import {
@@ -20,11 +23,13 @@ import { restartOrPreviousTrack } from "../features/player/playerTime";
 import { ActionCreators } from "redux-undo";
 import {
   selectVisiblePlaylist,
-  selectTrackListIsVisible
+  selectTrackListIsVisible,
+  selectVisiblePlaylistConfig
 } from "../features/sharedSelectors";
 import {
   addTracksToPlaylist,
-  removeTracksFromPlaylist
+  removeTracksFromPlaylist,
+  togglePlaylistUsesCustomLayout
 } from "../features/playlists/playlistsSlice";
 import { copySelectedTracks } from "../features/tracks/tracksSlice";
 import { PlaylistItem } from "../features/playlists/playlistsTypes";
@@ -72,6 +77,7 @@ export function handleMenuAction(
       grid?.api?.selectAll();
       break;
     case "resetColumns":
+      // TODO: Playlist specific behaviour
       dispatch(setLibraryColumnState([]));
       break;
     case "togglePlay":
@@ -162,6 +168,18 @@ export function handleMenuAction(
         }
       }
       break;
+    case "togglePlaylistLayout": {
+      const visiblePlaylist = selectVisiblePlaylist(store.getState());
+      if (visiblePlaylist?.id) {
+        dispatch(
+          togglePlaylistUsesCustomLayout({
+            playlistId: visiblePlaylist.id,
+            libraryColumnState: selectLibraryColumnState(store.getState())
+          })
+        );
+      }
+      break;
+    }
     default:
       break;
   }
@@ -179,13 +197,27 @@ export const selectMenuState = createSelector(
     (state: RootState) => state.undoable.present.library.layout,
     (state: RootState) => state.undoable.present.playlists.layout,
     (state: RootState) => state.undoable.present.playlists.playlists,
+    (state: RootState) => state.undoable.present.playlists.playlistsConfig,
     (state: RootState) => state.tracks.selectedTracks,
     (state: RootState) => state.tracks.clipboard,
     (state: RootState) => state.player.status
   ],
   () => {
     const state = store.getState();
-    const columnState = state.undoable.present.library.columnState;
+    let columnState = state.undoable.present.library.columnState;
+    const playlistColumnState = selectVisiblePlaylistConfig(state)?.columnState;
+    if (
+      columnState &&
+      playlistColumnState &&
+      selectVisiblePlaylistConfig(state)?.useCustomLayout
+    ) {
+      columnState = columnState.map((existingColumn) => {
+        const newColumn = playlistColumnState.find(
+          (playlistColumn) => playlistColumn.colId === existingColumn.colId
+        );
+        return newColumn || existingColumn;
+      });
+    }
     const columnVisibility = {} as { [key: string]: MenuItemState };
     if (columnState && columnState.length > 0) {
       columnState?.forEach((c) => {
@@ -251,6 +283,10 @@ export const selectMenuState = createSelector(
       paste: {
         disabled:
           !state.tracks.clipboard.length || !selectVisiblePlaylist(state)
+      },
+      togglePlaylistLayout: {
+        disabled: !selectVisiblePlaylist(state),
+        selected: selectVisiblePlaylistConfig(state)?.useCustomLayout
       }
     };
   }

@@ -114,6 +114,7 @@
     "forward": "Forward",
     "about": "About...",
     "columns": "Columns",
+    "togglePlaylistLayout": "Use playlist-specific layout",
     "resetColumns": "Reset to default layout",
     "togglePlay": "Play/Pause",
     "next": "Next",

@@ -12,6 +12,7 @@ export interface PlaylistUndoable {
 export interface PlaylistConfig {
   id: PlaylistId;
   columnState: ColumnState[];
+  useCustomLayout: boolean;
 }
 
 export interface PlaylistItem {
