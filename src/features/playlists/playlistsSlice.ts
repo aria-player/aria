@@ -178,10 +178,7 @@ export const playlistsSlice = createSlice({
         state.playlistsConfig.entities[action.payload.playlistId];
       if (playlistConfig) {
         playlistConfig.useCustomLayout = !playlistConfig.useCustomLayout;
-        if (
-          !playlistConfig.useCustomLayout &&
-          action.payload.libraryColumnState
-        ) {
+        if (action.payload.libraryColumnState) {
           // Reset column state except sort
           // TODO: Set sort to null if colId .hide true for libraryColumnState
           const newColumnState = action.payload.libraryColumnState.map(
