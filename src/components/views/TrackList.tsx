@@ -158,8 +158,11 @@ export const TrackList = () => {
           })
         );
       } else {
-        if (visiblePlaylist && !playlistConfig?.useCustomLayout) {
-          // Make sure to exclude the playlist sort from the updated library column state
+        if (
+          visibleView == View.Queue ||
+          (visiblePlaylist && !playlistConfig?.useCustomLayout)
+        ) {
+          // Make sure to exclude the sort from the updated library column state
           newColumnState = overrideColumnStateSort(
             newColumnState,
             libraryColumnState
@@ -191,6 +194,7 @@ export const TrackList = () => {
 
   const handleSortChanged = () => {
     if (!gridRef?.current) return;
+    if (visibleView == View.Queue) return;
     if (visiblePlaylist) {
       dispatch(
         updatePlaylistColumnState({
