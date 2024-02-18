@@ -46,7 +46,7 @@ import {
 import { PlaylistItem } from "../../features/playlists/playlistsTypes";
 import { nanoid } from "@reduxjs/toolkit";
 import { LibraryView, View } from "../../app/view";
-import { overrideColumnStateSort } from "../../app/utils";
+import { compareMetadata, overrideColumnStateSort } from "../../app/utils";
 
 export const TrackList = () => {
   const dispatch = useAppDispatch();
@@ -136,6 +136,8 @@ export const TrackList = () => {
 
   const defaultColDef = useMemo(
     () => ({
+      comparator: (valueA: string | number, valueB: string | number) =>
+        compareMetadata(valueA, valueB),
       hide: false,
       sortable: true,
       resizable: true,

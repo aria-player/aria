@@ -55,3 +55,33 @@ export function resetColumnStateExceptSort(columnState: ColumnState[] | null) {
     } as ColumnState;
   });
 }
+
+export const compareMetadata = (
+  valueA: string[] | string | number | boolean | undefined,
+  valueB: string[] | string | number | boolean | undefined,
+  isDescending?: boolean
+): number => {
+  const order = isDescending ? -1 : 1;
+
+  if (valueA == null && valueB == null) return 0;
+  if (valueA == null) return 1 * order;
+  if (valueB == null) return -1 * order;
+
+  if (Array.isArray(valueA)) valueA = valueA.length > 0 ? valueA[0] : "";
+  if (Array.isArray(valueB)) valueB = valueB.length > 0 ? valueB[0] : "";
+
+  if (typeof valueA === "string" && typeof valueB === "string") {
+    return (
+      valueA.localeCompare(valueB, undefined, {
+        sensitivity: "base",
+        ignorePunctuation: true
+      }) * order
+    );
+  }
+
+  if (typeof valueA === "number" && typeof valueB === "number") {
+    return (valueA - valueB) * order;
+  }
+
+  return 0;
+};
