@@ -46,6 +46,7 @@ import {
 import { PlaylistItem } from "../../features/playlists/playlistsTypes";
 import { nanoid } from "@reduxjs/toolkit";
 import { LibraryView, View } from "../../app/view";
+import { overrideColumnStateSort } from "../../app/utils";
 
 export const TrackList = () => {
   const dispatch = useAppDispatch();
@@ -151,16 +152,10 @@ export const TrackList = () => {
       } else {
         if (visiblePlaylist && !playlistConfig?.useCustomLayout) {
           // Make sure to exclude the playlist sort from the updated library column state
-          newColumnState = newColumnState.map((libraryColumn) => {
-            const col = libraryColumnState?.find(
-              (col) => col.colId === libraryColumn.colId
-            );
-            return {
-              ...libraryColumn,
-              sort: col?.sort,
-              sortIndex: col?.sortIndex
-            };
-          });
+          newColumnState = overrideColumnStateSort(
+            newColumnState,
+            libraryColumnState
+          );
         }
         dispatch(setLibraryColumnState(newColumnState));
       }

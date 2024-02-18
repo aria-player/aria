@@ -23,7 +23,10 @@ import {
 } from "./playlistsTypes";
 import { setupPlaylistsListeners } from "./playlistsListeners";
 import { ColumnState } from "@ag-grid-community/core";
-import { defaultColumnDefinitions } from "../library/libraryColumns";
+import {
+  overrideColumnStateSort,
+  resetColumnStateExceptSort
+} from "../../app/utils";
 
 const playlistsAdapter = createEntityAdapter<PlaylistUndoable>();
 const playlistsConfigAdapter = createEntityAdapter<PlaylistConfig>();
@@ -155,16 +158,7 @@ export const playlistsSlice = createSlice({
     resetPlaylistColumnState: (state, action: PayloadAction<PlaylistId>) => {
       const item = state.playlistsConfig.entities[action.payload];
       if (item) {
-        item.columnState = defaultColumnDefinitions?.map((playlistColumn) => {
-          const col = item.columnState?.find(
-            (col) => col.colId === playlistColumn.field
-          );
-          return {
-            colId: playlistColumn.field,
-            sort: col?.sort,
-            sortIndex: col?.sortIndex
-          };
-        }) as ColumnState[];
+        item.columnState = resetColumnStateExceptSort(item.columnState);
       }
     },
     togglePlaylistUsesCustomLayout: (
@@ -181,19 +175,10 @@ export const playlistsSlice = createSlice({
         if (action.payload.libraryColumnState) {
           // Reset column state except sort
           // TODO: Set sort to null if colId .hide true for libraryColumnState
-          const newColumnState = action.payload.libraryColumnState.map(
-            (libraryColumn) => {
-              const col = playlistConfig.columnState?.find(
-                (col) => col.colId === libraryColumn.colId
-              );
-              return {
-                ...libraryColumn,
-                sort: col?.sort,
-                sortIndex: col?.sortIndex
-              };
-            }
+          playlistConfig.columnState = overrideColumnStateSort(
+            action.payload.libraryColumnState,
+            playlistConfig.columnState
           );
-          playlistConfig.columnState = newColumnState;
         }
       }
     }
