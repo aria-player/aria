@@ -140,14 +140,7 @@ export const TrackList = () => {
 
   const updateColumnState = () => {
     if (gridRef?.current != null) {
-      const newColumnState = gridRef.current.columnApi.getColumnState();
-      if (visiblePlaylist && !playlistConfig?.useCustomLayout) {
-        newColumnState.forEach((item) => {
-          item.sort = libraryColumnState?.find(
-            (oldItem) => oldItem.colId === item.colId
-          )?.sort;
-        });
-      }
+      let newColumnState = gridRef.current.columnApi.getColumnState();
       if (visiblePlaylist && playlistConfig?.useCustomLayout) {
         dispatch(
           updatePlaylistColumnState({
@@ -156,6 +149,19 @@ export const TrackList = () => {
           })
         );
       } else {
+        if (visiblePlaylist && !playlistConfig?.useCustomLayout) {
+          // Make sure to exclude the playlist sort from the updated library column state
+          newColumnState = newColumnState.map((libraryColumn) => {
+            const col = libraryColumnState?.find(
+              (col) => col.colId === libraryColumn.colId
+            );
+            return {
+              ...libraryColumn,
+              sort: col?.sort,
+              sortIndex: col?.sortIndex
+            };
+          });
+        }
         dispatch(setLibraryColumnState(newColumnState));
       }
     }
@@ -181,10 +187,20 @@ export const TrackList = () => {
   };
 
   const handleSortChanged = () => {
-    if (!visiblePlaylist) {
-      updateColumnState();
+    if (!gridRef?.current) return;
+    if (visiblePlaylist) {
+      dispatch(
+        updatePlaylistColumnState({
+          playlistId: visiblePlaylist.id,
+          columnState: gridRef.current.columnApi.getColumnState()
+        })
+      );
+    } else {
+      dispatch(
+        setLibraryColumnState(gridRef.current.columnApi.getColumnState())
+      );
     }
-    if (gridRef?.current?.api && queueSource == visibleView) {
+    if (queueSource == visibleView) {
       const queue = [] as PlaylistItem[];
       gridRef.current.api.forEachNodeAfterFilterAndSort((node) => {
         queue.push({
@@ -193,14 +209,6 @@ export const TrackList = () => {
         });
       });
       dispatch(updateQueueAfterChange(queue));
-    }
-    if (visiblePlaylist?.id != null && gridRef?.current) {
-      dispatch(
-        updatePlaylistColumnState({
-          playlistId: visiblePlaylist.id,
-          columnState: gridRef.current.columnApi.getColumnState()
-        })
-      );
     }
   };
 
