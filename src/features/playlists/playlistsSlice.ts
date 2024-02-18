@@ -174,7 +174,6 @@ export const playlistsSlice = createSlice({
         playlistConfig.useCustomLayout = !playlistConfig.useCustomLayout;
         if (action.payload.libraryColumnState) {
           // Reset column state except sort
-          // TODO: Set sort to null if colId .hide true for libraryColumnState
           playlistConfig.columnState = overrideColumnStateSort(
             action.payload.libraryColumnState,
             playlistConfig.columnState
