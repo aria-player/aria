@@ -144,6 +144,9 @@ export const playerSlice = createSlice({
         state.queue = action.payload;
       }
     },
+    skipQueueIndexes: (state, action) => {
+      state.queueIndex = state.queueIndex + action.payload;
+    },
     nextTrack: (state) => {
       if (state.queueIndex != null) {
         if (state.currentTrackNotInPlaylist) {
@@ -244,6 +247,7 @@ export const {
   setQueueToNewSource,
   updateQueueAfterChange,
   reorderQueue,
+  skipQueueIndexes,
   nextTrack,
   previousTrack,
   cycleRepeatMode,

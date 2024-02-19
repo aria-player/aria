@@ -24,6 +24,7 @@ import {
   reorderQueue,
   selectQueueSource,
   setQueueToNewSource,
+  skipQueueIndexes,
   updateQueueAfterChange
 } from "../../features/player/playerSlice";
 import {
@@ -175,6 +176,10 @@ export const TrackList = () => {
 
   const handleCellDoubleClicked = (event: RowClickedEvent) => {
     if (gridRef?.current?.api) {
+      if (visibleView == View.Queue) {
+        dispatch(skipQueueIndexes(event.rowIndex));
+        return;
+      }
       const queue = [] as PlaylistItem[];
       gridRef.current.api.forEachNodeAfterFilterAndSort((node) => {
         queue.push({
