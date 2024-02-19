@@ -7,6 +7,9 @@ import {
 import { createSelector } from "@reduxjs/toolkit";
 import { TrackListItem } from "./tracks/tracksTypes";
 import { LibraryView, View, isLibraryView } from "../app/view";
+import { PlaylistId, PlaylistItem } from "./playlists/playlistsTypes";
+import { selectLibraryColumnState } from "./library/librarySlice";
+import { compareMetadata, overrideColumnStateSort } from "../app/utils";
 
 export const selectVisibleViewType = (state: RootState) => {
   const firstPath = state.router.location?.pathname.split("/")[1];
@@ -70,6 +73,67 @@ export const selectVisibleTracks = createSelector(
           })) as TrackListItem[]);
   }
 );
+
+export const selectSortedTrackList = (
+  state: RootState,
+  playlistId?: PlaylistId
+): PlaylistItem[] => {
+  // 1. Get tracks with metadata
+  const playlist = playlistId
+    ? selectPlaylistById(state, playlistId)
+    : undefined;
+  const tracks = playlist
+    ? playlist.tracks.map((track) => ({
+        ...track,
+        ...state.tracks.tracks.entities[track.trackId]
+      }))
+    : (Object.values(state.tracks.tracks.entities).map((track) => ({
+        ...track,
+        itemId: track?.trackId
+      })) as TrackListItem[]);
+
+  // 2. Get the column state that applies to this playlist
+  const playlistConfig = playlistId
+    ? selectPlaylistConfigById(state, playlistId)
+    : undefined;
+  const libraryColumnState = selectLibraryColumnState(state);
+  const columnState = playlistConfig?.useCustomLayout
+    ? playlistConfig.columnState
+    : playlistConfig && libraryColumnState
+      ? overrideColumnStateSort(libraryColumnState, playlistConfig.columnState)
+      : libraryColumnState;
+  // Don't sort by any hidden columns
+  const filteredColumnState = columnState?.filter((col) => !col.hide);
+
+  const tracksCopy = tracks.slice();
+  if (filteredColumnState && filteredColumnState.length > 0) {
+    // 3. Determine the sorted column state
+    const sortedColumnState = filteredColumnState
+      .filter((col) => col.sort !== null)
+      .sort((a, b) => (a.sortIndex ?? 0) - (b.sortIndex ?? 0));
+
+    // 4. Finally, sort the tracks
+    tracksCopy.sort((a, b) => {
+      for (const col of sortedColumnState) {
+        const keyA = a[col.colId as keyof TrackListItem];
+        const keyB = b[col.colId as keyof TrackListItem];
+        const comparisonResult = compareMetadata(
+          keyA,
+          keyB,
+          col.sort === "desc"
+        );
+        if (comparisonResult !== 0) {
+          return comparisonResult;
+        }
+      }
+      return 0;
+    });
+  }
+  return tracksCopy.map((track) => ({
+    itemId: track.itemId,
+    trackId: track.trackId
+  }));
+};
 
 export const selectTrackListIsVisible = (state: RootState) => {
   return (

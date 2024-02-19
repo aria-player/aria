@@ -5,6 +5,7 @@ import {
   ColDef,
   ColumnMovedEvent,
   ColumnResizedEvent,
+  ColumnVisibleEvent,
   GridReadyEvent,
   RowClassParams,
   RowClickedEvent,
@@ -28,7 +29,9 @@ import {
   updateQueueAfterChange
 } from "../../features/player/playerSlice";
 import {
+  selectCurrentPlaylist,
   selectCurrentTrack,
+  selectSortedTrackList,
   selectVisiblePlaylist,
   selectVisiblePlaylistConfig,
   selectVisibleTracks,
@@ -41,6 +44,7 @@ import { MenuContext } from "../../contexts/MenuContext";
 import { setSelectedTracks } from "../../features/tracks/tracksSlice";
 import {
   addTracksToPlaylist,
+  selectPlaylistConfigById,
   setPlaylistTracks,
   updatePlaylistColumnState
 } from "../../features/playlists/playlistsSlice";
@@ -48,6 +52,7 @@ import { PlaylistItem } from "../../features/playlists/playlistsTypes";
 import { nanoid } from "@reduxjs/toolkit";
 import { LibraryView, View } from "../../app/view";
 import { compareMetadata, overrideColumnStateSort } from "../../app/utils";
+import { store } from "../../app/store";
 
 export const TrackList = () => {
   const dispatch = useAppDispatch();
@@ -148,22 +153,23 @@ export const TrackList = () => {
     []
   );
 
-  const updateColumnState = () => {
+  const updateColumnState = (alwaysCopyToPlaylist: boolean) => {
     if (gridRef?.current != null) {
       let newColumnState = gridRef.current.columnApi.getColumnState();
-      if (visiblePlaylist && playlistConfig?.useCustomLayout) {
+      if (
+        visiblePlaylist &&
+        (alwaysCopyToPlaylist || playlistConfig?.useCustomLayout)
+      ) {
         dispatch(
           updatePlaylistColumnState({
             playlistId: visiblePlaylist.id,
             columnState: newColumnState
           })
         );
-      } else {
-        if (
-          visibleView == View.Queue ||
-          (visiblePlaylist && !playlistConfig?.useCustomLayout)
-        ) {
-          // Make sure to exclude the sort from the updated library column state
+      }
+      if (!playlistConfig?.useCustomLayout) {
+        if (visibleView != LibraryView.Songs) {
+          // Make sure to exclude the playlist sort from the updated library column state
           newColumnState = overrideColumnStateSort(
             newColumnState,
             libraryColumnState
@@ -180,6 +186,8 @@ export const TrackList = () => {
         dispatch(skipQueueIndexes(event.rowIndex));
         return;
       }
+      // We could use selectSortedTrackList here instead,
+      // but then we'd be re-calculating the same sorted tracks that are already displayed
       const queue = [] as PlaylistItem[];
       gridRef.current.api.forEachNodeAfterFilterAndSort((node) => {
         queue.push({
@@ -194,6 +202,48 @@ export const TrackList = () => {
           queueSource: visibleView
         })
       );
+    }
+  };
+
+  const handleColumnVisible = (params: ColumnVisibleEvent) => {
+    const state = store.getState();
+    const currentPlaylist = selectCurrentPlaylist(state)?.id;
+
+    let oldColumnState = selectLibraryColumnState(state);
+    if (currentPlaylist) {
+      const playlistConfig = selectPlaylistConfigById(state, currentPlaylist);
+      if (playlistConfig?.useCustomLayout) {
+        oldColumnState = playlistConfig.columnState;
+      } else if (oldColumnState && playlistConfig?.columnState) {
+        oldColumnState = overrideColumnStateSort(
+          oldColumnState,
+          playlistConfig?.columnState
+        );
+      }
+    }
+
+    updateColumnState(true);
+
+    if (
+      oldColumnState?.some(
+        (column) =>
+          column.sort !== null &&
+          params.columns?.some(
+            (c) => c.getColId() === column.colId && !c.getColDef().hide
+          )
+      )
+    ) {
+      if (!state.player.shuffle) {
+        // A column that was being used to sort the queue is now hidden, update the queue
+        dispatch(
+          updateQueueAfterChange(
+            selectSortedTrackList(
+              store.getState(),
+              selectCurrentPlaylist(store.getState())?.id
+            )
+          )
+        );
+      }
     }
   };
 
@@ -213,14 +263,11 @@ export const TrackList = () => {
       );
     }
     if (queueSource == visibleView) {
-      const queue = [] as PlaylistItem[];
-      gridRef.current.api.forEachNodeAfterFilterAndSort((node) => {
-        queue.push({
-          itemId: node.data.itemId,
-          trackId: node.data.trackId
-        });
-      });
-      dispatch(updateQueueAfterChange(queue));
+      dispatch(
+        updateQueueAfterChange(
+          selectSortedTrackList(store.getState(), visiblePlaylist?.id)
+        )
+      );
     }
   };
 
@@ -228,7 +275,7 @@ export const TrackList = () => {
     params: ColumnMovedEvent | ColumnResizedEvent
   ) => {
     if (params.finished && params.column) {
-      updateColumnState();
+      updateColumnState(false);
     }
   };
 
@@ -428,7 +475,7 @@ export const TrackList = () => {
         onSortChanged={handleSortChanged}
         onColumnMoved={handleColumnMovedOrResized}
         onColumnResized={handleColumnMovedOrResized}
-        onColumnVisible={updateColumnState}
+        onColumnVisible={handleColumnVisible}
         onCellContextMenu={handleCellContextMenu}
         onSelectionChanged={handleSelectionChanged}
         onRowDragEnd={handleRowDragEnd}

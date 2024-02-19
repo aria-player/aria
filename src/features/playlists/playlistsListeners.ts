@@ -3,6 +3,7 @@ import { push } from "redux-first-history";
 import { BASEPATH } from "../../app/constants";
 import {
   selectCurrentPlaylist,
+  selectSortedTrackList,
   selectVisiblePlaylist
 } from "../sharedSelectors";
 import { AnyAction, isAnyOf } from "@reduxjs/toolkit";
@@ -38,9 +39,7 @@ export function setupPlaylistsListeners() {
         return;
       }
       dispatch(
-        // TODO: Currently this doesn't account for the playlist sort order, so it will be forgotten
-        // after any tracks are added/removed from the playlist
-        updateQueueAfterChange(newPlaylist.tracks)
+        updateQueueAfterChange(selectSortedTrackList(state, newPlaylist?.id))
       );
     }
   );
