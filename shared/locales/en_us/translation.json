@@ -38,7 +38,8 @@
     "addSelectedToPlaylist_other": "Add {{count}} tracks to '{{playlist}}'",
     "emptyLibrary": "Library is empty",
     "emptyPlaylist": "Playlist is empty",
-    "emptyQueue": "Queue is empty"
+    "emptyQueue": "Queue is empty",
+    "playNamedTrack": "Play '{{title}}'"
   },
   "views": {
     "songs": "Songs",

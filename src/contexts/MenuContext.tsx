@@ -3,6 +3,8 @@ import { ReactNode } from "react";
 
 type MenuData = {
   itemId: string;
+  itemSource?: string;
+  itemIndex?: number;
   type: "sidebaritem" | "tracklistitem";
 };
 

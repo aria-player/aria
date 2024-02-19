@@ -333,7 +333,12 @@ export const TrackList = () => {
       event.node.setSelected(true, true);
     }
     if (event.node.id) {
-      setMenuData({ itemId: event.node.id, type: "tracklistitem" });
+      setMenuData({
+        itemId: event.node.data.trackId,
+        itemSource: visibleView,
+        itemIndex: event.rowIndex ?? undefined,
+        type: "tracklistitem"
+      });
     }
     showCellContextMenu({ event: event.event as TriggerEvent });
   };

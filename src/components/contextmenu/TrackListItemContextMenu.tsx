@@ -8,22 +8,40 @@ import {
   addTracksToPlaylist,
   createPlaylistItem,
   removeTracksFromPlaylist,
+  selectPlaylistById,
   selectPlaylistsLayout
 } from "../../features/playlists/playlistsSlice";
 import { Item as TreeItem } from "soprano-ui";
 import { nanoid } from "@reduxjs/toolkit";
 import { PlaylistItem } from "../../features/playlists/playlistsTypes";
-import { selectVisiblePlaylist } from "../../features/sharedSelectors";
-import { selectSelectedTracks } from "../../features/tracks/tracksSlice";
+import {
+  selectSortedTrackList,
+  selectVisiblePlaylist
+} from "../../features/sharedSelectors";
+import {
+  selectSelectedTracks,
+  selectTrackById
+} from "../../features/tracks/tracksSlice";
+import { store } from "../../app/store";
+import { LibraryView, View } from "../../app/view";
+import {
+  setQueueToNewSource,
+  skipQueueIndexes
+} from "../../features/player/playerSlice";
 const id = "tracklistitem";
 
 export function TrackListItemContextMenu() {
   const dispatch = useAppDispatch();
-  const { updateVisibility } = useContext(MenuContext);
+  const { updateVisibility, menuData } = useContext(MenuContext);
   const gridRef = useContext(GridContext).gridRef;
   const playlists = useAppSelector(selectPlaylistsLayout);
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
   const selectedTracks = useAppSelector(selectSelectedTracks);
+
+  const track = useAppSelector((state) =>
+    selectTrackById(state, menuData?.itemId ?? "")
+  );
+  const trackTitle = track?.title;
 
   const addTracks = (playlistId: string) => {
     const newItems: PlaylistItem[] = gridRef?.current?.api
@@ -107,25 +125,50 @@ export function TrackListItemContextMenu() {
         })}
       </Item>
       <Separator />
+      <Item
+        onClick={() => {
+          if (!menuData) return;
+          if (menuData.itemSource == View.Queue) {
+            dispatch(skipQueueIndexes(menuData.itemIndex));
+          } else {
+            const source = selectPlaylistById(
+              store.getState(),
+              menuData.itemSource ?? ""
+            )?.id;
+            dispatch(
+              setQueueToNewSource({
+                queue: selectSortedTrackList(
+                  store.getState(),
+                  source ?? undefined
+                ),
+                queueSource: menuData.itemSource ?? LibraryView.Songs,
+                queueIndex: menuData.itemIndex ?? 0
+              })
+            );
+          }
+        }}
+      >
+        {t("tracks.playNamedTrack", {
+          title: trackTitle
+        })}
+      </Item>
+      <Separator />
       <Submenu label={t("tracks.addToPlaylist")}>
         {renderItems(playlists)}
       </Submenu>
       {visiblePlaylist && (
-        <>
-          <Separator />
-          <Item
-            onClick={() => {
-              dispatch(
-                removeTracksFromPlaylist({
-                  playlistId: visiblePlaylist.id,
-                  itemIds: selectedTracks.map((track) => track.itemId)
-                })
-              );
-            }}
-          >
-            {t("tracks.removeFromPlaylist")}
-          </Item>
-        </>
+        <Item
+          onClick={() => {
+            dispatch(
+              removeTracksFromPlaylist({
+                playlistId: visiblePlaylist.id,
+                itemIds: selectedTracks.map((track) => track.itemId)
+              })
+            );
+          }}
+        >
+          {t("tracks.removeFromPlaylist")}
+        </Item>
       )}
     </Menu>
   );
