@@ -33,6 +33,7 @@
     "addToPlaylist": "Add to playlist",
     "addToNewPlaylist": "New playlist...",
     "removeFromPlaylist": "Remove from playlist",
+    "removeFromQueue": "Remove from queue",
     "addNamedTrackToPlaylist": "Add '{{title}}' to '{{playlist}}'",
     "addSelectedToPlaylist_one": "Add {{count}} track to '{{playlist}}'",
     "addSelectedToPlaylist_other": "Add {{count}} tracks to '{{playlist}}'",

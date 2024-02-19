@@ -16,12 +16,14 @@ import { nanoid } from "@reduxjs/toolkit";
 import { PlaylistItem } from "../../features/playlists/playlistsTypes";
 import {
   selectSortedTrackList,
-  selectVisiblePlaylist
+  selectVisiblePlaylist,
+  selectVisibleViewType
 } from "../../features/sharedSelectors";
 import { selectSelectedTracks } from "../../features/tracks/tracksSlice";
 import { store } from "../../app/store";
 import { LibraryView, View } from "../../app/view";
 import {
+  removeFromQueue,
   setQueueToNewSource,
   skipQueueIndexes
 } from "../../features/player/playerSlice";
@@ -33,6 +35,7 @@ export function TrackListItemContextMenu() {
   const gridRef = useContext(GridContext).gridRef;
   const playlists = useAppSelector(selectPlaylistsLayout);
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
+  const visibleView = useAppSelector(selectVisibleViewType);
   const selectedTracks = useAppSelector(selectSelectedTracks);
 
   const addTracks = (playlistId: string) => {
@@ -161,6 +164,20 @@ export function TrackListItemContextMenu() {
         >
           {t("tracks.removeFromPlaylist")}
         </Item>
+      )}
+      {visibleView == View.Queue && menuData?.itemIndex != 0 && (
+        <>
+          <Separator />
+          <Item
+            onClick={() => {
+              dispatch(
+                removeFromQueue(selectedTracks.map((track) => track.itemId))
+              );
+            }}
+          >
+            {t("tracks.removeFromQueue")}
+          </Item>
+        </>
       )}
     </Menu>
   );

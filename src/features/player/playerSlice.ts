@@ -6,7 +6,11 @@ import { pluginHandles } from "../plugins/pluginsSlice";
 import { SourceHandle } from "../plugins/pluginsTypes";
 import { setupPlayerListeners } from "./playerListeners";
 import { selectTrackById } from "../tracks/tracksSlice";
-import { PlaylistId, PlaylistItem } from "../playlists/playlistsTypes";
+import {
+  PlaylistId,
+  PlaylistItem,
+  PlaylistItemId
+} from "../playlists/playlistsTypes";
 import { LibraryView } from "../../app/view";
 
 interface PlayerState {
@@ -144,6 +148,14 @@ export const playerSlice = createSlice({
         state.queue = action.payload;
       }
     },
+    removeFromQueue: (state, action: PayloadAction<PlaylistItemId[]>) => {
+      state.queue = state.queue.filter(
+        (track) => !action.payload.includes(track.itemId)
+      );
+      state.queueUnshuffled = state.queueUnshuffled.filter(
+        (track) => !action.payload.includes(track.itemId)
+      );
+    },
     skipQueueIndexes: (state, action) => {
       state.queueIndex = state.queueIndex + action.payload;
     },
@@ -247,6 +259,7 @@ export const {
   setQueueToNewSource,
   updateQueueAfterChange,
   reorderQueue,
+  removeFromQueue,
   skipQueueIndexes,
   nextTrack,
   previousTrack,
