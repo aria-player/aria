@@ -24,6 +24,7 @@ import {
 import { setupPlaylistsListeners } from "./playlistsListeners";
 import { ColumnState } from "@ag-grid-community/core";
 import {
+  filterHiddenColumnSort,
   overrideColumnStateSort,
   resetColumnStateExceptSort
 } from "../../app/utils";
@@ -152,7 +153,7 @@ export const playlistsSlice = createSlice({
     ) => {
       const item = state.playlistsConfig.entities[action.payload.playlistId];
       if (item) {
-        item.columnState = action.payload.columnState;
+        item.columnState = filterHiddenColumnSort(action.payload.columnState);
       }
     },
     resetPlaylistColumnState: (state, action: PayloadAction<PlaylistId>) => {

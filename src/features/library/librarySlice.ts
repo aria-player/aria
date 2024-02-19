@@ -2,7 +2,10 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 import { ColumnState } from "@ag-grid-community/core";
 import { Item, moveTreeNode, updateTreeNode } from "soprano-ui";
-import { resetColumnStateExceptSort } from "../../app/utils";
+import {
+  filterHiddenColumnSort,
+  resetColumnStateExceptSort
+} from "../../app/utils";
 
 interface LibraryState {
   columnState: ColumnState[] | null;
@@ -26,7 +29,7 @@ const librarySlice = createSlice({
   initialState,
   reducers: {
     setLibraryColumnState: (state, action: PayloadAction<ColumnState[]>) => {
-      state.columnState = action.payload;
+      state.columnState = filterHiddenColumnSort(action.payload);
     },
     resetLibraryColumnState: (state) => {
       state.columnState = resetColumnStateExceptSort(state.columnState);

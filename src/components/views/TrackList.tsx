@@ -51,7 +51,11 @@ import {
 import { PlaylistItem } from "../../features/playlists/playlistsTypes";
 import { nanoid } from "@reduxjs/toolkit";
 import { LibraryView, View } from "../../app/view";
-import { compareMetadata, overrideColumnStateSort } from "../../app/utils";
+import {
+  compareMetadata,
+  filterHiddenColumnSort,
+  overrideColumnStateSort
+} from "../../app/utils";
 import { store } from "../../app/store";
 
 export const TrackList = () => {
@@ -155,7 +159,9 @@ export const TrackList = () => {
 
   const updateColumnState = (alwaysCopyToPlaylist: boolean) => {
     if (gridRef?.current != null) {
-      let newColumnState = gridRef.current.columnApi.getColumnState();
+      let newColumnState = filterHiddenColumnSort(
+        gridRef.current.columnApi.getColumnState()
+      );
       if (
         visiblePlaylist &&
         (alwaysCopyToPlaylist || playlistConfig?.useCustomLayout)

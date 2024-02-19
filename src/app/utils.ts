@@ -27,6 +27,16 @@ export function getTrackId(source: PluginId, uri: TrackUri): TrackId {
   return source + ":" + uri;
 }
 
+export function filterHiddenColumnSort(columnState: ColumnState[]) {
+  return columnState.map((column) => {
+    return {
+      ...column,
+      sort: column.hide ? null : column?.sort,
+      sortIndex: column.hide ? null : column?.sortIndex
+    };
+  });
+}
+
 export function overrideColumnStateSort(
   columnState: ColumnState[],
   sortedColumnState: ColumnState[] | null
@@ -37,8 +47,8 @@ export function overrideColumnStateSort(
     );
     return {
       ...column,
-      sort: overrideCol?.sort,
-      sortIndex: overrideCol?.sortIndex
+      sort: column.hide ? null : overrideCol?.sort,
+      sortIndex: column.hide ? null : overrideCol?.sortIndex
     };
   });
 }
@@ -50,8 +60,8 @@ export function resetColumnStateExceptSort(columnState: ColumnState[] | null) {
     );
     return {
       colId: colDef.field,
-      sort: overrideCol?.sort,
-      sortIndex: overrideCol?.sortIndex
+      sort: colDef.hide ? null : overrideCol?.sort,
+      sortIndex: colDef.hide ? null : overrideCol?.sortIndex
     } as ColumnState;
   });
 }
