@@ -162,6 +162,7 @@ export const TrackList = () => {
       let newColumnState = filterHiddenColumnSort(
         gridRef.current.columnApi.getColumnState()
       );
+      // Update the visible playlist column state
       if (
         visiblePlaylist &&
         (alwaysCopyToPlaylist || playlistConfig?.useCustomLayout)
@@ -172,6 +173,25 @@ export const TrackList = () => {
             columnState: newColumnState
           })
         );
+      }
+      // Update the current playlist column state, if need be
+      const currentPlaylist = selectCurrentPlaylist(store.getState())?.id;
+      if (currentPlaylist && visiblePlaylist?.id != currentPlaylist) {
+        const currentPlaylistConfig = selectPlaylistConfigById(
+          store.getState(),
+          currentPlaylist
+        );
+        if (!currentPlaylistConfig?.useCustomLayout) {
+          dispatch(
+            updatePlaylistColumnState({
+              playlistId: currentPlaylist,
+              columnState: overrideColumnStateSort(
+                newColumnState,
+                currentPlaylistConfig?.columnState ?? []
+              )
+            })
+          );
+        }
       }
       if (!playlistConfig?.useCustomLayout) {
         if (visibleView != LibraryView.Songs) {
