@@ -11,6 +11,9 @@ import {
 } from "../../features/playlists/playlistsSlice";
 import { nanoid } from "@reduxjs/toolkit";
 import { useTranslation } from "react-i18next";
+import { setQueueToNewSource } from "../../features/player/playerSlice";
+import { selectSortedTrackList } from "../../features/sharedSelectors";
+import { store } from "../../app/store";
 
 const id = "sidebaritem";
 
@@ -57,13 +60,34 @@ export function SidebarItemContextMenu() {
       animation={false}
       onVisibilityChange={(isVisible) => updateVisibility(id, isVisible)}
     >
-      {item?.children != undefined && (
+      {item?.children != undefined ? (
         <>
           <Item onClick={() => createItem(false)}>
             {t("sidebar.playlists.menu.addPlaylist")}
           </Item>
           <Item onClick={() => createItem(true)}>
             {t("sidebar.playlists.menu.addFolder")}
+          </Item>
+          <Separator />
+        </>
+      ) : (
+        <>
+          <Item
+            onClick={() => {
+              if (!menuData) return;
+              dispatch(
+                setQueueToNewSource({
+                  queue: selectSortedTrackList(
+                    store.getState(),
+                    menuData.itemId
+                  ),
+                  queueSource: menuData.itemId,
+                  queueIndex: 0
+                })
+              );
+            }}
+          >
+            {t("sidebar.playlists.menu.play")}
           </Item>
           <Separator />
         </>

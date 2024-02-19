@@ -19,7 +19,8 @@
         "addFolder": "Add new folder",
         "rename": "Rename...",
         "delete": "Delete",
-        "confirmDelete": "Deleting this folder will also delete all of its contents. Are you sure?"
+        "confirmDelete": "Deleting this folder will also delete all of its contents. Are you sure?",
+        "play": "Play"
       },
       "defaultPlaylist": "New Playlist",
       "defaultFolder": "New Folder"
