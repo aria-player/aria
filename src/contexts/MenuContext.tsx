@@ -1,10 +1,12 @@
 import { createContext, useState } from "react";
 import { ReactNode } from "react";
+import { Track } from "../features/tracks/tracksTypes";
 
 type MenuData = {
   itemId: string;
   itemSource?: string;
   itemIndex?: number;
+  metadata?: Track;
   type: "sidebaritem" | "tracklistitem";
 };
 

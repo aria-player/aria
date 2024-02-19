@@ -18,10 +18,7 @@ import {
   selectSortedTrackList,
   selectVisiblePlaylist
 } from "../../features/sharedSelectors";
-import {
-  selectSelectedTracks,
-  selectTrackById
-} from "../../features/tracks/tracksSlice";
+import { selectSelectedTracks } from "../../features/tracks/tracksSlice";
 import { store } from "../../app/store";
 import { LibraryView, View } from "../../app/view";
 import {
@@ -37,11 +34,6 @@ export function TrackListItemContextMenu() {
   const playlists = useAppSelector(selectPlaylistsLayout);
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
   const selectedTracks = useAppSelector(selectSelectedTracks);
-
-  const track = useAppSelector((state) =>
-    selectTrackById(state, menuData?.itemId ?? "")
-  );
-  const trackTitle = track?.title;
 
   const addTracks = (playlistId: string) => {
     const newItems: PlaylistItem[] = gridRef?.current?.api
@@ -149,7 +141,7 @@ export function TrackListItemContextMenu() {
         }}
       >
         {t("tracks.playNamedTrack", {
-          title: trackTitle
+          title: menuData?.metadata?.title
         })}
       </Item>
       <Separator />

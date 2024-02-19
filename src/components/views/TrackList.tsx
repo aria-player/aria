@@ -337,6 +337,7 @@ export const TrackList = () => {
         itemId: event.node.data.trackId,
         itemSource: visibleView,
         itemIndex: event.rowIndex ?? undefined,
+        metadata: event.node.data,
         type: "tracklistitem"
       });
     }
