@@ -14,6 +14,7 @@ import {
   cycleRepeatMode,
   nextTrack,
   pause,
+  removeFromQueue,
   resume,
   setMuted,
   setVolume,
@@ -24,7 +25,8 @@ import { ActionCreators } from "redux-undo";
 import {
   selectVisiblePlaylist,
   selectTrackListIsVisible,
-  selectVisiblePlaylistConfig
+  selectVisiblePlaylistConfig,
+  selectVisibleViewType
 } from "../features/sharedSelectors";
 import {
   addTracksToPlaylist,
@@ -34,6 +36,7 @@ import {
 } from "../features/playlists/playlistsSlice";
 import { copySelectedTracks } from "../features/tracks/tracksSlice";
 import { PlaylistItem } from "../features/playlists/playlistsTypes";
+import { View } from "./view";
 
 export interface MenuItem {
   id: string;
@@ -127,6 +130,7 @@ export function handleMenuAction(
       break;
     case "delete":
       {
+        const visibleView = selectVisibleViewType(state);
         const visiblePlaylist = selectVisiblePlaylist(state)?.id;
         if (visiblePlaylist) {
           dispatch(
@@ -134,6 +138,12 @@ export function handleMenuAction(
               playlistId: visiblePlaylist,
               itemIds: state.tracks.selectedTracks.map((track) => track.itemId)
             })
+          );
+        } else if (visibleView == View.Queue) {
+          dispatch(
+            removeFromQueue(
+              state.tracks.selectedTracks.map((track) => track.itemId)
+            )
           );
         }
       }
@@ -269,7 +279,9 @@ export const selectMenuState = createSelector(
       },
       delete: {
         disabled:
-          !selectVisiblePlaylist(state) || !state.tracks.selectedTracks.length
+          (!selectVisiblePlaylist(state) &&
+            selectVisibleViewType(state) != View.Queue) ||
+          !state.tracks.selectedTracks.length
       },
       cut: {
         disabled:
