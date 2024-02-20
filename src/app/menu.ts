@@ -127,7 +127,7 @@ export function handleMenuAction(
       break;
     case "delete":
       {
-        const visiblePlaylist = selectVisiblePlaylist(store.getState())?.id;
+        const visiblePlaylist = selectVisiblePlaylist(state)?.id;
         if (visiblePlaylist) {
           dispatch(
             removeTracksFromPlaylist({
@@ -139,7 +139,7 @@ export function handleMenuAction(
       }
       break;
     case "cut": {
-      const visiblePlaylist = selectVisiblePlaylist(store.getState());
+      const visiblePlaylist = selectVisiblePlaylist(state);
       if (visiblePlaylist?.id) {
         dispatch(copySelectedTracks());
         dispatch(
@@ -156,7 +156,7 @@ export function handleMenuAction(
       break;
     case "paste":
       {
-        const visiblePlaylist = selectVisiblePlaylist(store.getState());
+        const visiblePlaylist = selectVisiblePlaylist(state);
         if (visiblePlaylist?.id) {
           const newTracks: PlaylistItem[] = state.tracks.clipboard
             .map((node) => {
@@ -176,12 +176,12 @@ export function handleMenuAction(
       }
       break;
     case "togglePlaylistLayout": {
-      const visiblePlaylist = selectVisiblePlaylist(store.getState());
+      const visiblePlaylist = selectVisiblePlaylist(state);
       if (visiblePlaylist?.id) {
         dispatch(
           togglePlaylistUsesCustomLayout({
             playlistId: visiblePlaylist.id,
-            libraryColumnState: selectLibraryColumnState(store.getState())
+            libraryColumnState: selectLibraryColumnState(state)
           })
         );
       }
