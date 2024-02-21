@@ -20,6 +20,7 @@ export interface TrackMetadata {
   fileSize?: number;
   dateModified?: number;
   dateAdded?: number;
+  artworkUri?: string;
 }
 
 export interface Track extends TrackMetadata {

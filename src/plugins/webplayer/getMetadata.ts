@@ -1,10 +1,19 @@
 import { parseBlob } from "music-metadata-browser";
 import { TrackMetadata } from "../../features/tracks/tracksTypes";
+import { storeCoverArtGetHash } from "./artworkStore";
 
 export const getMetadata = async (track: TrackMetadata, file: File) => {
   const metadata = await parseBlob(file);
   const newTrack = { ...track };
   newTrack.duration = (metadata.format.duration ?? 0) * 1000;
+  if (metadata.common.picture && metadata.common.picture[0]) {
+    const picture = metadata.common.picture[0];
+    const pictureData = `data:${picture.format};base64,${picture.data.toString(
+      "base64"
+    )}`;
+    const hash = await storeCoverArtGetHash(pictureData);
+    newTrack.artworkUri = hash;
+  }
   if (metadata.native && metadata.native["ID3v2.3"]) {
     const ID3v23Data = new Map(
       metadata.native["ID3v2.3"].map((item) => [item.id, item.value])

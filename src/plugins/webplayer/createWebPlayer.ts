@@ -9,6 +9,7 @@ import {
 } from "../../features/plugins/pluginsTypes";
 import { Config } from "./Config";
 import { getMetadata } from "./getMetadata";
+import { getCoverArt } from "./artworkStore";
 
 export type WebPlayerData = {
   folder: string;
@@ -131,6 +132,10 @@ export function createWebPlayer(host: SourceCallbacks): SourceHandle {
           audio.play().then(resolve).catch(reject);
         }
       });
+    },
+
+    async getTrackArtwork(track: Track) {
+      if (track.artworkUri) return await getCoverArt(track.artworkUri);
     },
 
     pause() {
