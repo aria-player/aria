@@ -28,6 +28,7 @@ import {
   overrideColumnStateSort,
   resetColumnStateExceptSort
 } from "../../app/utils";
+import { DisplayMode } from "../../app/view";
 
 const playlistsAdapter = createEntityAdapter<PlaylistUndoable>();
 const playlistsConfigAdapter = createEntityAdapter<PlaylistConfig>();
@@ -83,7 +84,8 @@ export const playlistsSlice = createSlice({
         playlistsConfigAdapter.addOne(state.playlistsConfig, {
           id: action.payload.newData.id,
           columnState: null,
-          useCustomLayout: false
+          useCustomLayout: false,
+          displayMode: DisplayMode.TrackList
         });
       }
     },
@@ -181,6 +183,19 @@ export const playlistsSlice = createSlice({
           );
         }
       }
+    },
+    setPlaylistDisplayMode: (
+      state,
+      action: PayloadAction<{
+        playlistId: PlaylistId;
+        displayMode: DisplayMode;
+      }>
+    ) => {
+      const playlistConfig =
+        state.playlistsConfig.entities[action.payload.playlistId];
+      if (playlistConfig) {
+        playlistConfig.displayMode = action.payload.displayMode;
+      }
     }
   }
 });
@@ -197,7 +212,8 @@ export const {
   setPlaylistTracks,
   resetPlaylistColumnState,
   updatePlaylistColumnState,
-  togglePlaylistUsesCustomLayout
+  togglePlaylistUsesCustomLayout,
+  setPlaylistDisplayMode
 } = playlistsSlice.actions;
 
 export const selectPlaylistsLayout = (state: RootState) =>

@@ -1,3 +1,8 @@
+export enum DisplayMode {
+  TrackList = "tracklist",
+  DebugView = "debugview"
+}
+
 export enum View {
   Playlist = "playlist",
   Queue = "queue",

@@ -6,7 +6,7 @@ import {
 } from "./playlists/playlistsSlice";
 import { createSelector } from "@reduxjs/toolkit";
 import { TrackListItem } from "./tracks/tracksTypes";
-import { LibraryView, View, isLibraryView } from "../app/view";
+import { LibraryView, View, DisplayMode, isLibraryView } from "../app/view";
 import { PlaylistId, PlaylistItem } from "./playlists/playlistsTypes";
 import { selectLibraryColumnState } from "./library/librarySlice";
 import { compareMetadata, overrideColumnStateSort } from "../app/utils";
@@ -139,7 +139,15 @@ export const selectTrackListIsVisible = (state: RootState) => {
   return (
     selectVisibleViewType(state) === LibraryView.Songs ||
     selectVisibleViewType(state) === View.Queue ||
-    selectVisiblePlaylist(state) != null
+    (selectVisiblePlaylist(state) != null &&
+      selectVisiblePlaylistConfig(state)?.displayMode == DisplayMode.TrackList)
+  );
+};
+
+export const selectDebugViewIsVisible = (state: RootState) => {
+  return (
+    selectVisiblePlaylist(state) != null &&
+    selectVisiblePlaylistConfig(state)?.displayMode == DisplayMode.DebugView
   );
 };
 

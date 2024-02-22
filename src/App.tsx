@@ -26,7 +26,8 @@ import {
 import { ContextMenuContainer } from "./components/contextmenu/ContextMenuContainer";
 import {
   selectVisiblePlaylist,
-  selectTrackListIsVisible
+  selectTrackListIsVisible,
+  selectDebugViewIsVisible
 } from "./features/sharedSelectors";
 
 function App() {
@@ -38,6 +39,7 @@ function App() {
   const sidebarWidth = useAppSelector(selectSidebarWidth);
   const sidebarCollapsed = useAppSelector(selectSidebarCollapsed);
   const trackListIsVisible = useAppSelector(selectTrackListIsVisible);
+  const debugViewIsVisible = useAppSelector(selectDebugViewIsVisible);
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
   const handleDragEnd = (sizes: number[]) => {
     dispatch(setSidebarConfig({ width: sizes[0], collapsed: sizes[0] === 0 }));
@@ -90,6 +92,7 @@ function App() {
             >
               <TrackList />
             </div>
+            {debugViewIsVisible && <>Debug View</>}
           </div>
         </Allotment.Pane>
       </Allotment>

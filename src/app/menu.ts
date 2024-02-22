@@ -32,11 +32,12 @@ import {
   addTracksToPlaylist,
   removeTracksFromPlaylist,
   resetPlaylistColumnState,
+  setPlaylistDisplayMode,
   togglePlaylistUsesCustomLayout
 } from "../features/playlists/playlistsSlice";
 import { copySelectedTracks } from "../features/tracks/tracksSlice";
 import { PlaylistItem } from "../features/playlists/playlistsTypes";
-import { View } from "./view";
+import { View, DisplayMode } from "./view";
 
 export interface MenuItem {
   id: string;
@@ -205,6 +206,19 @@ export function handleMenuAction(
     const isVisible = grid?.columnApi?.getColumn(column)?.isVisible();
     grid?.columnApi.setColumnVisible(column, !isVisible);
   }
+  if (action.startsWith("switchTo")) {
+    const visiblePlaylist = selectVisiblePlaylist(state);
+    if (visiblePlaylist?.id) {
+      dispatch(
+        setPlaylistDisplayMode({
+          playlistId: visiblePlaylist?.id,
+          displayMode: action
+            .replace("switchTo", "")
+            .toLowerCase() as DisplayMode
+        })
+      );
+    }
+  }
 }
 
 export const selectMenuState = createSelector(
@@ -297,6 +311,21 @@ export const selectMenuState = createSelector(
       togglePlaylistLayout: {
         disabled: !selectVisiblePlaylist(state),
         selected: selectVisiblePlaylistConfig(state)?.useCustomLayout
+      },
+      viewType: {
+        disabled: !selectVisiblePlaylist(state)
+      },
+      switchToTrackList: {
+        disabled: !selectVisiblePlaylist(state),
+        selected:
+          selectVisiblePlaylistConfig(state)?.displayMode ==
+          DisplayMode.TrackList
+      },
+      switchToDebugView: {
+        disabled: !selectVisiblePlaylist(state),
+        selected:
+          selectVisiblePlaylistConfig(state)?.displayMode ==
+          DisplayMode.DebugView
       }
     };
   }

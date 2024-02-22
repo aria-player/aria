@@ -90,7 +90,6 @@
     "submenu": [
       {
         "id": "columns",
-        "label": "Columns",
         "submenu": [
           { "id": "columns.title", "keepopen": true },
           { "id": "columns.duration", "keepopen": true },
@@ -108,9 +107,16 @@
           { "id": "columns.fileSize", "keepopen": true },
           { "id": "columns.source", "keepopen": true },
           { "id": "separator" },
-          { "id": "togglePlaylistLayout"},
+          { "id": "togglePlaylistLayout" },
           { "id": "separator" },
           { "id": "resetColumns" }
+        ]
+      },
+      {
+        "id": "viewType",
+        "submenu": [
+          { "id": "switchToTrackList" },
+          { "id": "switchToDebugView" }
         ]
       },
       {
