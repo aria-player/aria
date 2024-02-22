@@ -67,10 +67,12 @@ export const selectVisibleTracks = createSelector(
               itemId: queueTrack.itemId
             }))
             .slice(state.player.queueIndex!)
-        : (Object.values(tracks.entities).map((track) => ({
-            ...track,
-            itemId: track?.trackId
-          })) as TrackListItem[]);
+        : selectVisibleViewType(state) === LibraryView.Songs
+          ? (Object.values(tracks.entities).map((track) => ({
+              ...track,
+              itemId: track?.trackId
+            })) as TrackListItem[])
+          : [];
   }
 );
 
