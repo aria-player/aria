@@ -116,6 +116,7 @@
         "id": "viewType",
         "submenu": [
           { "id": "switchToTrackList" },
+          { "id": "switchToAlbumGrid" },
           { "id": "switchToDebugView" }
         ]
       },

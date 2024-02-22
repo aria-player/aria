@@ -1,5 +1,6 @@
 export enum DisplayMode {
   TrackList = "tracklist",
+  AlbumGrid = "albumgrid",
   DebugView = "debugview"
 }
 

@@ -30,6 +30,7 @@ import {
 } from "./features/sharedSelectors";
 import { DisplayMode } from "./app/view";
 import DebugView from "./components/views/DebugView";
+import AlbumGrid from "./components/views/AlbumGrid";
 
 function App() {
   const { platform, fullscreen } = useContext(PlatformContext);
@@ -92,6 +93,16 @@ function App() {
               }}
             >
               <TrackList />
+            </div>
+            <div
+              style={{
+                height: "100%",
+                width: "100%",
+                display:
+                  visibleDisplayMode == DisplayMode.AlbumGrid ? "block" : "none"
+              }}
+            >
+              <AlbumGrid />
             </div>
             {visibleDisplayMode == DisplayMode.DebugView && <DebugView />}
           </div>
