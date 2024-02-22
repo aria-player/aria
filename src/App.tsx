@@ -29,6 +29,7 @@ import {
   selectVisiblePlaylist
 } from "./features/sharedSelectors";
 import { DisplayMode } from "./app/view";
+import DebugView from "./components/views/DebugView";
 
 function App() {
   const { platform, fullscreen } = useContext(PlatformContext);
@@ -92,7 +93,7 @@ function App() {
             >
               <TrackList />
             </div>
-            {visibleDisplayMode == DisplayMode.DebugView && <>Debug View</>}
+            {visibleDisplayMode == DisplayMode.DebugView && <DebugView />}
           </div>
         </Allotment.Pane>
       </Allotment>
