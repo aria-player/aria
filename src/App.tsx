@@ -25,10 +25,10 @@ import {
 } from "./features/config/configSlice";
 import { ContextMenuContainer } from "./components/contextmenu/ContextMenuContainer";
 import {
-  selectVisiblePlaylist,
-  selectTrackListIsVisible,
-  selectDebugViewIsVisible
+  selectVisibleDisplayMode,
+  selectVisiblePlaylist
 } from "./features/sharedSelectors";
+import { DisplayMode } from "./app/view";
 
 function App() {
   const { platform, fullscreen } = useContext(PlatformContext);
@@ -38,8 +38,7 @@ function App() {
   const dispatch = useAppDispatch();
   const sidebarWidth = useAppSelector(selectSidebarWidth);
   const sidebarCollapsed = useAppSelector(selectSidebarCollapsed);
-  const trackListIsVisible = useAppSelector(selectTrackListIsVisible);
-  const debugViewIsVisible = useAppSelector(selectDebugViewIsVisible);
+  const visibleDisplayMode = useAppSelector(selectVisibleDisplayMode);
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
   const handleDragEnd = (sizes: number[]) => {
     dispatch(setSidebarConfig({ width: sizes[0], collapsed: sizes[0] === 0 }));
@@ -87,12 +86,13 @@ function App() {
               style={{
                 height: "100%",
                 width: "100%",
-                display: trackListIsVisible ? "block" : "none"
+                display:
+                  visibleDisplayMode == DisplayMode.TrackList ? "block" : "none"
               }}
             >
               <TrackList />
             </div>
-            {debugViewIsVisible && <>Debug View</>}
+            {visibleDisplayMode == DisplayMode.DebugView && <>Debug View</>}
           </div>
         </Allotment.Pane>
       </Allotment>

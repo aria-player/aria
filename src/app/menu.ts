@@ -23,8 +23,8 @@ import {
 import { restartOrPreviousTrack } from "../features/player/playerTime";
 import { ActionCreators } from "redux-undo";
 import {
+  selectVisibleDisplayMode,
   selectVisiblePlaylist,
-  selectTrackListIsVisible,
   selectVisiblePlaylistConfig,
   selectVisibleViewType
 } from "../features/sharedSelectors";
@@ -255,7 +255,7 @@ export const selectMenuState = createSelector(
       const hidden = columnState?.find((col) => c.field == col.colId)?.hide;
       columnVisibility["columns." + c.field] = {
         selected: hidden != undefined ? !hidden : !c.hide,
-        disabled: !selectTrackListIsVisible(state)
+        disabled: selectVisibleDisplayMode(state) != DisplayMode.TrackList
       };
     });
 
@@ -270,10 +270,10 @@ export const selectMenuState = createSelector(
         )
       },
       selectAll: {
-        disabled: !selectTrackListIsVisible(state)
+        disabled: selectVisibleDisplayMode(state) != DisplayMode.TrackList
       },
       columns: {
-        disabled: !selectTrackListIsVisible(state)
+        disabled: selectVisibleDisplayMode(state) != DisplayMode.TrackList
       },
       ...columnVisibility,
       togglePlay: {

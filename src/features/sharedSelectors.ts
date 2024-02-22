@@ -135,19 +135,16 @@ export const selectSortedTrackList = (
   }));
 };
 
-export const selectTrackListIsVisible = (state: RootState) => {
-  return (
+export const selectVisibleDisplayMode = (state: RootState) => {
+  if (
     selectVisibleViewType(state) === LibraryView.Songs ||
-    selectVisibleViewType(state) === View.Queue ||
-    (selectVisiblePlaylist(state) != null &&
-      selectVisiblePlaylistConfig(state)?.displayMode == DisplayMode.TrackList)
-  );
-};
+    selectVisibleViewType(state) === View.Queue
+  )
+    return DisplayMode.TrackList;
 
-export const selectDebugViewIsVisible = (state: RootState) => {
   return (
     selectVisiblePlaylist(state) != null &&
-    selectVisiblePlaylistConfig(state)?.displayMode == DisplayMode.DebugView
+    selectVisiblePlaylistConfig(state)?.displayMode
   );
 };
 
