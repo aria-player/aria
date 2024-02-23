@@ -150,6 +150,10 @@ export const selectVisibleDisplayMode = (state: RootState) => {
   );
 };
 
+export const selectVisibleSelectedItem = (state: RootState) => {
+  return selectVisiblePlaylistConfig(state)?.selectedAlbum;
+};
+
 export const selectCurrentPlaylist = (state: RootState) => {
   if (!state.player.queueSource) return null;
   return selectPlaylistById(state, state.player.queueSource) ?? null;

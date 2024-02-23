@@ -85,7 +85,8 @@ export const playlistsSlice = createSlice({
           id: action.payload.newData.id,
           columnState: null,
           useCustomLayout: false,
-          displayMode: DisplayMode.TrackList
+          displayMode: DisplayMode.TrackList,
+          selectedAlbum: null
         });
       }
     },
@@ -196,6 +197,19 @@ export const playlistsSlice = createSlice({
       if (playlistConfig) {
         playlistConfig.displayMode = action.payload.displayMode;
       }
+    },
+    setPlaylistSelectedAlbum: (
+      state,
+      action: PayloadAction<{
+        playlistId: PlaylistId;
+        selectedAlbum: string | null;
+      }>
+    ) => {
+      const playlistConfig =
+        state.playlistsConfig.entities[action.payload.playlistId];
+      if (playlistConfig) {
+        playlistConfig.selectedAlbum = action.payload.selectedAlbum;
+      }
     }
   }
 });
@@ -213,7 +227,8 @@ export const {
   resetPlaylistColumnState,
   updatePlaylistColumnState,
   togglePlaylistUsesCustomLayout,
-  setPlaylistDisplayMode
+  setPlaylistDisplayMode,
+  setPlaylistSelectedAlbum
 } = playlistsSlice.actions;
 
 export const selectPlaylistsLayout = (state: RootState) =>

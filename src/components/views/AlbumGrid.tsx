@@ -1,14 +1,22 @@
-import { useState } from "react";
-import { useAppSelector } from "../../app/hooks";
-import { selectVisibleTracks } from "../../features/sharedSelectors";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import {
+  selectVisiblePlaylist,
+  selectVisibleSelectedItem,
+  selectVisibleTracks
+} from "../../features/sharedSelectors";
 import { selectAllTracks } from "../../features/tracks/tracksSlice";
 import { Track } from "../../features/tracks/tracksTypes";
 import { AlbumArt } from "../AlbumArt";
 import styles from "./AlbumGrid.module.css";
 import LeftArrow from "../../assets/arrow-left-solid.svg?react";
+import { setPlaylistSelectedAlbum } from "../../features/playlists/playlistsSlice";
 
 export default function AlbumGrid() {
+  const dispatch = useAppDispatch();
+
   const libraryTracks = useAppSelector(selectAllTracks);
+  const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
+  const selectedItem = useAppSelector(selectVisibleSelectedItem);
   const visibleTracks = useAppSelector(selectVisibleTracks);
   const allAlbums = [
     ...new Map(libraryTracks.map((track) => [track.album, track])).values()
@@ -21,9 +29,16 @@ export default function AlbumGrid() {
   );
   // TODO: Decide how to handle albums with the same name
   const visibleAlbums = [...new Set(visibleTracks.map((track) => track.album))];
-  const [selectedItem, setSelectedItem] = useState<string | null | undefined>(
-    null
-  );
+
+  function setSelectedItem(album?: string) {
+    if (visiblePlaylist?.id)
+      dispatch(
+        setPlaylistSelectedAlbum({
+          playlistId: visiblePlaylist?.id,
+          selectedAlbum: album ?? null
+        })
+      );
+  }
 
   return (
     <div style={{ overflowY: "auto" }}>
@@ -57,8 +72,8 @@ export default function AlbumGrid() {
         {selectedItem && (
           <div
             className={styles.detailOuter}
-            onClick={(e) => {
-              setSelectedItem(null);
+            onClick={() => {
+              setSelectedItem();
             }}
           >
             <div
@@ -69,8 +84,8 @@ export default function AlbumGrid() {
             >
               <button
                 className={styles.backButton}
-                onClick={(e) => {
-                  setSelectedItem(null);
+                onClick={() => {
+                  setSelectedItem();
                 }}
               >
                 <LeftArrow />
