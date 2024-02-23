@@ -26,17 +26,24 @@ export default function AlbumGrid() {
         {allAlbums.map((track) => {
           if (track)
             return (
-              <button
+              <div
                 key={track.album}
-                className={styles.gridItem}
                 style={{
                   display: visibleAlbums.includes(track.album)
                     ? "block"
                     : "none"
                 }}
               >
-                <AlbumArt track={track as Track} />
-              </button>
+                <button className={styles.gridItem}>
+                  <AlbumArt track={track as Track} />
+                </button>
+                <div className={`${styles.albumText} ${styles.albumTitle}`}>
+                  {track.album}
+                </div>
+                <div className={`${styles.albumText} ${styles.albumArtist}`}>
+                  {track.albumArtist ?? track.artist}
+                </div>
+              </div>
             );
         })}
       </div>

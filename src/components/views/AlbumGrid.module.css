@@ -18,3 +18,22 @@
 .gridItem:hover {
   cursor: pointer;
 }
+
+.albumTitle {
+  font-weight: 500;
+  margin-top: 0.4rem;
+  padding: 0 0.2rem;
+  font-size: 0.95rem;
+}
+
+.albumArtist {
+  margin-top: 0.1rem;
+  padding: 0 0.2rem;
+  font-size: 0.9rem;
+}
+
+.albumText {
+  text-overflow: ellipsis;
+  text-wrap: nowrap;
+  overflow: hidden;
+}
