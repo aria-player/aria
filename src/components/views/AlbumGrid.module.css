@@ -37,3 +37,40 @@
   text-wrap: nowrap;
   overflow: hidden;
 }
+
+.detailOuter {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  backdrop-filter: blur(4px);
+  padding: 4rem 5rem;
+  cursor: pointer;
+}
+
+.detailInner {
+  background-color: var(--primary-background);
+  border-radius: 1.5rem;
+  height: 100%;
+  box-shadow: 0 5px 5px rgb(0 0 0 / 20%);
+  cursor: default;
+}
+
+.backButton {
+  color: var(--player-controls);
+  border: none;
+  background: none;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 0.25rem;
+  margin: 1rem;
+  transition: transform 0.1s ease;
+  cursor: pointer;
+}
+
+.backButton:hover {
+  background-color: var(--button-background-hover);
+}
+
+.backButton:active svg {
+  transform: scale(0.9);
+}
