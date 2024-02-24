@@ -43,7 +43,7 @@ export const selectVisiblePlaylistConfig = (state: RootState) => {
 
 export const selectVisibleTracks = createSelector(
   [
-    (state: RootState) => state.tracks,
+    (state: RootState) => state.tracks.tracks,
     (state: RootState) => state.router.location?.pathname,
     (state: RootState) => state.undoable.present.playlists,
     (state: RootState) => state.player.queue,
