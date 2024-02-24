@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import styles from "./Settings.module.css";
+import styles from "./SettingsPage.module.css";
 import { NavLink, Outlet } from "react-router-dom";
 
 export default function SettingsPage() {

@@ -1,5 +1,5 @@
 import { useTranslation } from "react-i18next";
-import styles from "./Error.module.css";
+import styles from "./ErrorPage.module.css";
 
 export default function ErrorPage() {
   const { t } = useTranslation();

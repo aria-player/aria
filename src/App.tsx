@@ -1,22 +1,15 @@
 import { WindowsMenuBar } from "./components/platforms/windows/WindowsMenuBar";
 import styles from "./App.module.css";
 import { Route, Routes } from "react-router-dom";
-import ErrorPage from "./components/views/Error";
 import { Allotment } from "allotment";
 import { useContext } from "react";
-import SettingsPage from "./components/views/Settings";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
-import { AppearancePage } from "./components/views/settings/AppearancePage";
-import { AboutPage } from "./components/views/settings/AboutPage";
 import { MacTitleBar } from "./components/platforms/mac/MacTitleBar";
 import { Platform, PlatformContext } from "./contexts/PlatformContext";
-import { GeneralPage } from "./components/views/settings/GeneralPage";
 import { useTheme } from "./hooks/useTheme";
 import { Footer } from "./components/footer/Footer";
 import { Sidebar } from "./components/sidebar/Sidebar";
 import { TrackList } from "./components/views/TrackList";
-import { PluginsPage } from "./components/views/settings/PluginsPage";
-import { LibraryPage } from "./components/views/settings/LibraryPage";
 import { useAppDispatch, useAppSelector } from "./app/hooks";
 import {
   selectSidebarCollapsed,
@@ -31,6 +24,13 @@ import {
 import { DisplayMode } from "./app/view";
 import DebugView from "./components/views/DebugView";
 import AlbumGrid from "./components/views/AlbumGrid";
+import ErrorPage from "./components/pages/ErrorPage";
+import SettingsPage from "./components/pages/SettingsPage";
+import { AboutPage } from "./components/pages/settings/AboutPage";
+import { AppearancePage } from "./components/pages/settings/AppearancePage";
+import { GeneralPage } from "./components/pages/settings/GeneralPage";
+import { LibraryPage } from "./components/pages/settings/LibraryPage";
+import { PluginsPage } from "./components/pages/settings/PluginsPage";
 
 function App() {
   const { platform, fullscreen } = useContext(PlatformContext);
