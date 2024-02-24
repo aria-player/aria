@@ -74,7 +74,7 @@ body {
     color: var(--button-text);
   }
 
-  .ag-body {
+  .ag-body-viewport {
     padding: 0.125rem 0.25rem;
   }
 
