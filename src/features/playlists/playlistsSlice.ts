@@ -1,4 +1,5 @@
 import {
+  EntityId,
   EntityState,
   PayloadAction,
   createEntityAdapter,
@@ -94,9 +95,14 @@ export const playlistsSlice = createSlice({
       const deletion = deleteTreeNode(state.layout, action.payload);
       state.layout = deletion.result;
       playlistsAdapter.removeMany(state.playlists, deletion.deletedIds);
+    },
+    cleanupPlaylistConfigs: (
+      state,
+      action: PayloadAction<{ deletedIds: EntityId[] }>
+    ) => {
       playlistsConfigAdapter.removeMany(
         state.playlistsConfig,
-        deletion.deletedIds
+        action.payload.deletedIds
       );
     },
     openPlaylistFolder: (state, action: PayloadAction<{ id: string }>) => {
@@ -219,6 +225,7 @@ export const {
   updatePlaylistItem,
   createPlaylistItem,
   deletePlaylistItem,
+  cleanupPlaylistConfigs,
   openPlaylistFolder,
   closePlaylistFolder,
   addTracksToPlaylist,

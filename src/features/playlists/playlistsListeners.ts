@@ -7,7 +7,7 @@ import {
   selectVisiblePlaylist
 } from "../sharedSelectors";
 import { AnyAction, isAnyOf } from "@reduxjs/toolkit";
-import { deletePlaylistItem } from "./playlistsSlice";
+import { cleanupPlaylistConfigs, deletePlaylistItem } from "./playlistsSlice";
 import { ActionTypes } from "redux-undo";
 import { MatchFunction } from "@reduxjs/toolkit/dist/listenerMiddleware/types";
 import { updateQueueAfterChange } from "../player/playerSlice";
@@ -41,6 +41,21 @@ export function setupPlaylistsListeners() {
       dispatch(
         updateQueueAfterChange(selectSortedTrackList(state, newPlaylist?.id))
       );
+    }
+  );
+
+  listenForChange(
+    (state) => state.undoable.present.playlists._persist?.rehydrated,
+    (state, _, dispatch) => {
+      const deletedIds =
+        state.undoable.present.playlists.playlistsConfig.ids.filter(
+          (configId) =>
+            !state.undoable.present.playlists.playlists.entities[configId]
+        );
+
+      if (deletedIds.length > 0) {
+        dispatch(cleanupPlaylistConfigs({ deletedIds }));
+      }
     }
   );
 }
