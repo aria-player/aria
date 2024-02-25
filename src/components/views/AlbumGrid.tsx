@@ -1,5 +1,6 @@
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
+  selectVisibleDisplayMode,
   selectVisiblePlaylist,
   selectVisibleSelectedItem,
   selectVisibleTracks
@@ -10,6 +11,7 @@ import { AlbumArt } from "../AlbumArt";
 import styles from "./AlbumGrid.module.css";
 import LeftArrow from "../../assets/arrow-left-solid.svg?react";
 import { setPlaylistSelectedAlbum } from "../../features/playlists/playlistsSlice";
+import { DisplayMode } from "../../app/view";
 
 export default function AlbumGrid() {
   const dispatch = useAppDispatch();
@@ -17,6 +19,7 @@ export default function AlbumGrid() {
   const libraryTracks = useAppSelector(selectAllTracks);
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
   const selectedItem = useAppSelector(selectVisibleSelectedItem);
+  const visibleDisplayMode = useAppSelector(selectVisibleDisplayMode);
   const visibleTracks = useAppSelector(selectVisibleTracks);
   const allAlbums = [
     ...new Map(libraryTracks.map((track) => [track.album, track])).values()
@@ -57,6 +60,11 @@ export default function AlbumGrid() {
                 <button
                   className={styles.gridItem}
                   onClick={() => setSelectedItem(track.album)}
+                  disabled={
+                    selectedItem || visibleDisplayMode != DisplayMode.AlbumGrid
+                      ? true
+                      : false
+                  }
                 >
                   <AlbumArt track={track as Track} />
                 </button>
