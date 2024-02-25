@@ -10,16 +10,11 @@ export default function ViewContainer() {
 
   return (
     <>
-      <div
-        style={{
-          height: "100%",
-          width: "100%",
-          display:
-            visibleDisplayMode == DisplayMode.TrackList ? "block" : "none"
-        }}
-      >
-        <TrackList />
-      </div>
+      {visibleDisplayMode == DisplayMode.TrackList && (
+        <div style={{ height: "100%", width: "100%" }}>
+          <TrackList />
+        </div>
+      )}
       <div
         style={{
           height: "100%",
