@@ -81,7 +81,9 @@
       "pluginConfig": "Plugin configuration"
     },
     "about": {
-      "version": "Version"
+      "version": "Version",
+      "reset": "Factory reset",
+      "confirmReset": "Are you sure you want to reset? All data and settings will be deleted."
     }
   },
   "error": {
