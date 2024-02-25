@@ -9,7 +9,6 @@ import { Platform, PlatformContext } from "./contexts/PlatformContext";
 import { useTheme } from "./hooks/useTheme";
 import { Footer } from "./components/footer/Footer";
 import { Sidebar } from "./components/sidebar/Sidebar";
-import { TrackList } from "./components/views/TrackList";
 import { useAppDispatch, useAppSelector } from "./app/hooks";
 import {
   selectSidebarCollapsed,
@@ -17,13 +16,7 @@ import {
   setSidebarConfig
 } from "./features/config/configSlice";
 import { ContextMenuContainer } from "./components/contextmenu/ContextMenuContainer";
-import {
-  selectVisibleDisplayMode,
-  selectVisiblePlaylist
-} from "./features/sharedSelectors";
-import { DisplayMode } from "./app/view";
-import DebugView from "./components/views/DebugView";
-import AlbumGrid from "./components/views/AlbumGrid";
+import { selectVisiblePlaylist } from "./features/sharedSelectors";
 import ErrorPage from "./components/pages/ErrorPage";
 import SettingsPage from "./components/pages/SettingsPage";
 import { AboutPage } from "./components/pages/settings/AboutPage";
@@ -31,6 +24,7 @@ import { AppearancePage } from "./components/pages/settings/AppearancePage";
 import { GeneralPage } from "./components/pages/settings/GeneralPage";
 import { LibraryPage } from "./components/pages/settings/LibraryPage";
 import { PluginsPage } from "./components/pages/settings/PluginsPage";
+import ViewContainer from "./components/views/ViewContainer";
 
 function App() {
   const { platform, fullscreen } = useContext(PlatformContext);
@@ -40,7 +34,6 @@ function App() {
   const dispatch = useAppDispatch();
   const sidebarWidth = useAppSelector(selectSidebarWidth);
   const sidebarCollapsed = useAppSelector(selectSidebarCollapsed);
-  const visibleDisplayMode = useAppSelector(selectVisibleDisplayMode);
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
   const handleDragEnd = (sizes: number[]) => {
     dispatch(setSidebarConfig({ width: sizes[0], collapsed: sizes[0] === 0 }));
@@ -84,27 +77,7 @@ function App() {
               />
               <Route path="*" Component={ErrorPage} />
             </Routes>
-            <div
-              style={{
-                height: "100%",
-                width: "100%",
-                display:
-                  visibleDisplayMode == DisplayMode.TrackList ? "block" : "none"
-              }}
-            >
-              <TrackList />
-            </div>
-            <div
-              style={{
-                height: "100%",
-                width: "100%",
-                display:
-                  visibleDisplayMode == DisplayMode.AlbumGrid ? "block" : "none"
-              }}
-            >
-              <AlbumGrid />
-            </div>
-            {visibleDisplayMode == DisplayMode.DebugView && <DebugView />}
+            <ViewContainer />
           </div>
         </Allotment.Pane>
       </Allotment>
