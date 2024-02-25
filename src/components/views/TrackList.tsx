@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo } from "react";
+import { useCallback, useContext, useEffect, useMemo } from "react";
 import { AgGridReact } from "@ag-grid-community/react";
 import {
   CellContextMenuEvent,
@@ -149,8 +149,6 @@ export const TrackList = () => {
       comparator: (valueA: string | number, valueB: string | number) =>
         compareMetadata(valueA, valueB),
       hide: false,
-      sortable: true,
-      resizable: true,
       lockPinned: true,
       flex: 0.3
     }),
@@ -160,7 +158,7 @@ export const TrackList = () => {
   const updateColumnState = (alwaysCopyToPlaylist: boolean) => {
     if (gridRef?.current != null) {
       let newColumnState = filterHiddenColumnSort(
-        gridRef.current.columnApi.getColumnState()
+        gridRef.current.api.getColumnState()
       );
       // Update the visible playlist column state
       if (
@@ -280,13 +278,11 @@ export const TrackList = () => {
       dispatch(
         updatePlaylistColumnState({
           playlistId: visiblePlaylist.id,
-          columnState: gridRef.current.columnApi.getColumnState()
+          columnState: gridRef.current.api.getColumnState()
         })
       );
     } else {
-      dispatch(
-        setLibraryColumnState(gridRef.current.columnApi.getColumnState())
-      );
+      dispatch(setLibraryColumnState(gridRef.current.api.getColumnState()));
     }
     if (queueSource == visibleView) {
       dispatch(
@@ -358,8 +354,7 @@ export const TrackList = () => {
   const handleRowDragEnd = (event: RowDragEndEvent) => {
     if (!visiblePlaylist?.id && visibleViewType != View.Queue) return;
     if (
-      event.columnApi.getColumnState().filter((col) => col.sort !== null)
-        .length != 0
+      event.api.getColumnState().filter((col) => col.sort !== null).length != 0
     )
       return;
     const newOrder = [] as PlaylistItem[];
@@ -493,6 +488,18 @@ export const TrackList = () => {
     params.api.addRowDropZone(playlistDropZone);
   };
 
+  const highlightCurrentTrack = useCallback(
+    (params: RowClassParams) => {
+      if (
+        params.data.itemId === currentTrack?.itemId &&
+        (queueSource == visibleView || visibleViewType == View.Queue)
+      ) {
+        return { fontWeight: 700 };
+      }
+    },
+    [currentTrack?.itemId, queueSource, visibleView, visibleViewType]
+  );
+
   return (
     <div className={`${styles.tracklist} ag-theme-balham`}>
       <AgGridReact
@@ -511,28 +518,22 @@ export const TrackList = () => {
         onCellContextMenu={handleCellContextMenu}
         onSelectionChanged={handleSelectionChanged}
         onRowDragEnd={handleRowDragEnd}
+        getRowStyle={highlightCurrentTrack}
         rowHeight={33}
         headerHeight={37}
+        animateRows={false}
         suppressCellFocus
         rowDragMultiRow
         suppressDragLeaveHidesColumns
         suppressScrollOnNewData
         suppressMoveWhenRowDragging
-        rowDragManaged={
-          visibleViewType == View.Playlist || visibleViewType == View.Queue
-        }
         rowDragEntireRow
         alwaysShowVerticalScroll
         preventDefaultOnContextMenu
+        rowDragManaged={
+          visibleViewType == View.Playlist || visibleViewType == View.Queue
+        }
         multiSortKey="ctrl"
-        getRowStyle={(params: RowClassParams) => {
-          if (
-            params.data.itemId === currentTrack?.itemId &&
-            (queueSource == visibleView || visibleViewType == View.Queue)
-          ) {
-            return { fontWeight: 700 };
-          }
-        }}
         rowDragText={(params) =>
           params.rowNodes?.length == 1
             ? params.rowNode?.data.title

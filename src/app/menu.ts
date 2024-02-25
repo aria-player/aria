@@ -201,10 +201,10 @@ export function handleMenuAction(
     default:
       break;
   }
-  if (action.startsWith("columns.") && grid?.columnApi) {
+  if (action.startsWith("columns.") && grid?.api) {
     const column = action.split(".")[1];
-    const isVisible = grid?.columnApi?.getColumn(column)?.isVisible();
-    grid?.columnApi.setColumnVisible(column, !isVisible);
+    const isVisible = grid?.api?.getColumn(column)?.isVisible();
+    grid?.api.setColumnsVisible([column], !isVisible);
   }
   if (action.startsWith("switchTo")) {
     const visiblePlaylist = selectVisiblePlaylist(state);
