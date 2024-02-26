@@ -117,6 +117,7 @@
     "fullscreen": "Toggle Fullscreen",
     "back": "Back",
     "forward": "Forward",
+    "goToCurrent": "Go to current track",
     "about": "About...",
     "columns": "Columns",
     "viewType": "View Type",

@@ -23,6 +23,8 @@ import {
 import { restartOrPreviousTrack } from "../features/player/playerTime";
 import { ActionCreators } from "redux-undo";
 import {
+  selectCurrentPlaylist,
+  selectCurrentTrack,
   selectVisibleDisplayMode,
   selectVisiblePlaylist,
   selectVisiblePlaylistConfig,
@@ -37,7 +39,7 @@ import {
 } from "../features/playlists/playlistsSlice";
 import { copySelectedTracks } from "../features/tracks/tracksSlice";
 import { PlaylistItem } from "../features/playlists/playlistsTypes";
-import { View, DisplayMode } from "./view";
+import { View, DisplayMode, LibraryView } from "./view";
 
 export interface MenuItem {
   id: string;
@@ -118,6 +120,24 @@ export function handleMenuAction(
       break;
     case "toggleMute":
       dispatch(setMuted(!state.player.muted));
+      break;
+    case "goToCurrent":
+      {
+        const queueSource = state.player.queueSource;
+        const currentPlaylist = selectCurrentPlaylist(state);
+        const currentTrack = selectCurrentTrack(state);
+        if (currentTrack) {
+          if (queueSource == LibraryView.Songs) {
+            dispatch(push(BASEPATH, { focusCurrent: true }));
+          } else if (currentPlaylist) {
+            dispatch(
+              push(BASEPATH + "playlist/" + currentPlaylist.id, {
+                focusCurrent: true
+              })
+            );
+          }
+        }
+      }
       break;
     case "undo":
       if (state.undoable.past.length) {
@@ -283,6 +303,9 @@ export const selectMenuState = createSelector(
         disabled: state.player.status == Status.Stopped
       },
       previous: {
+        disabled: state.player.status == Status.Stopped
+      },
+      goToCurrent: {
         disabled: state.player.status == Status.Stopped
       },
       undo: {

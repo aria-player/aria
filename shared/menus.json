@@ -183,6 +183,13 @@
       {
         "id": "forward",
         "shortcut": "Alt+Right"
+      },
+      {
+        "id": "separator"
+      },
+      {
+        "id": "goToCurrent",
+        "label": "Go to current track"
       }
     ]
   },

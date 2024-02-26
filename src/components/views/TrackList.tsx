@@ -57,10 +57,12 @@ import {
   overrideColumnStateSort
 } from "../../app/utils";
 import { store } from "../../app/store";
+import { useLocation } from "react-router-dom";
 
 export const TrackList = () => {
   const dispatch = useAppDispatch();
 
+  const location = useLocation();
   const currentTrack = useAppSelector(selectCurrentTrack);
   const rowData = useAppSelector(selectVisibleTracks);
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
@@ -375,7 +377,24 @@ export const TrackList = () => {
     }
   };
 
+  const focusCurrentIfNeeded = useCallback(() => {
+    const currentTrack = selectCurrentTrack(store.getState());
+    if (location.state?.focusCurrent && gridRef?.current?.api && currentTrack) {
+      const row = gridRef.current.api.getRowNode(currentTrack.itemId);
+      if (row != null && row.rowIndex != null) {
+        gridRef.current.api.ensureIndexVisible(row.rowIndex, "middle");
+        gridRef.current.api.deselectAll();
+        gridRef.current.api.setNodesSelected({ nodes: [row], newValue: true });
+      }
+    }
+  }, [gridRef, location.state]);
+
+  useEffect(() => {
+    focusCurrentIfNeeded();
+  }, [focusCurrentIfNeeded, location]);
+
   const handleGridReady = (params: GridReadyEvent) => {
+    focusCurrentIfNeeded();
     let lastHoveredItem: HTMLElement | null = null;
     const treeElement = document.querySelector('[role="tree"]') as HTMLElement;
 

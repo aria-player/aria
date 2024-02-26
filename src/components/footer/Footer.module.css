@@ -32,15 +32,39 @@
   white-space: nowrap;
   overflow: hidden;
   flex-direction: column;
-  text-overflow: ellipsis;
   line-height: 1.4rem;
+  display: flex;
+  text-overflow: ellipsis;
+  text-align: left;
+}
+
+.metadataRow {
+  display: flex;
 }
 
 .title {
   font-weight: 600;
   font-size: 1rem;
+  padding: 0.1rem;
+  background: none;
+  border: none;
+  font-family: inherit;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.title:hover {
+  background-color: var(--button-background-hover);
+  border-radius: 0.25rem;
 }
 
 .artist {
   font-size: 0.9rem;
+  padding: 0 0.1rem;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
