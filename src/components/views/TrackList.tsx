@@ -6,13 +6,15 @@ import {
   ColumnMovedEvent,
   ColumnResizedEvent,
   ColumnVisibleEvent,
+  GridApi,
   GridReadyEvent,
   RowClassParams,
   RowClickedEvent,
   RowDragEndEvent,
   RowDragLeaveEvent,
   RowDragMoveEvent,
-  SelectionChangedEvent
+  SelectionChangedEvent,
+  SortChangedEvent
 } from "@ag-grid-community/core";
 import styles from "./TrackList.module.css";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
@@ -157,78 +159,72 @@ export const TrackList = () => {
     []
   );
 
-  const updateColumnState = (alwaysCopyToPlaylist: boolean) => {
-    if (gridRef?.current != null) {
-      let newColumnState = filterHiddenColumnSort(
-        gridRef.current.api.getColumnState()
+  const updateColumnState = (api: GridApi, alwaysCopyToPlaylist: boolean) => {
+    let newColumnState = filterHiddenColumnSort(api.getColumnState());
+    // Update the visible playlist column state
+    if (
+      visiblePlaylist &&
+      (alwaysCopyToPlaylist || playlistConfig?.useCustomLayout)
+    ) {
+      dispatch(
+        updatePlaylistColumnState({
+          playlistId: visiblePlaylist.id,
+          columnState: newColumnState
+        })
       );
-      // Update the visible playlist column state
-      if (
-        visiblePlaylist &&
-        (alwaysCopyToPlaylist || playlistConfig?.useCustomLayout)
-      ) {
+    }
+    // Update the current playlist column state, if need be
+    const currentPlaylist = selectCurrentPlaylist(store.getState())?.id;
+    if (currentPlaylist && visiblePlaylist?.id != currentPlaylist) {
+      const currentPlaylistConfig = selectPlaylistConfigById(
+        store.getState(),
+        currentPlaylist
+      );
+      if (!currentPlaylistConfig?.useCustomLayout) {
         dispatch(
           updatePlaylistColumnState({
-            playlistId: visiblePlaylist.id,
-            columnState: newColumnState
+            playlistId: currentPlaylist,
+            columnState: overrideColumnStateSort(
+              newColumnState,
+              currentPlaylistConfig?.columnState ?? []
+            )
           })
         );
       }
-      // Update the current playlist column state, if need be
-      const currentPlaylist = selectCurrentPlaylist(store.getState())?.id;
-      if (currentPlaylist && visiblePlaylist?.id != currentPlaylist) {
-        const currentPlaylistConfig = selectPlaylistConfigById(
-          store.getState(),
-          currentPlaylist
+    }
+    if (!playlistConfig?.useCustomLayout) {
+      if (visibleView != LibraryView.Songs) {
+        // Make sure to exclude the playlist sort from the updated library column state
+        newColumnState = overrideColumnStateSort(
+          newColumnState,
+          libraryColumnState
         );
-        if (!currentPlaylistConfig?.useCustomLayout) {
-          dispatch(
-            updatePlaylistColumnState({
-              playlistId: currentPlaylist,
-              columnState: overrideColumnStateSort(
-                newColumnState,
-                currentPlaylistConfig?.columnState ?? []
-              )
-            })
-          );
-        }
       }
-      if (!playlistConfig?.useCustomLayout) {
-        if (visibleView != LibraryView.Songs) {
-          // Make sure to exclude the playlist sort from the updated library column state
-          newColumnState = overrideColumnStateSort(
-            newColumnState,
-            libraryColumnState
-          );
-        }
-        dispatch(setLibraryColumnState(newColumnState));
-      }
+      dispatch(setLibraryColumnState(newColumnState));
     }
   };
 
   const handleCellDoubleClicked = (event: RowClickedEvent) => {
-    if (gridRef?.current?.api) {
-      if (visibleView == View.Queue) {
-        dispatch(skipQueueIndexes(event.rowIndex));
-        return;
-      }
-      // We could use selectSortedTrackList here instead,
-      // but then we'd be re-calculating the same sorted tracks that are already displayed
-      const queue = [] as PlaylistItem[];
-      gridRef.current.api.forEachNodeAfterFilterAndSort((node) => {
-        queue.push({
-          itemId: node.data.itemId,
-          trackId: node.data.trackId
-        });
-      });
-      dispatch(
-        setQueueToNewSource({
-          queue,
-          queueIndex: event.rowIndex ?? 0,
-          queueSource: visibleView
-        })
-      );
+    if (visibleView == View.Queue) {
+      dispatch(skipQueueIndexes(event.rowIndex));
+      return;
     }
+    // We could use selectSortedTrackList here instead,
+    // but then we'd be re-calculating the same sorted tracks that are already displayed
+    const queue = [] as PlaylistItem[];
+    event.api.forEachNodeAfterFilterAndSort((node) => {
+      queue.push({
+        itemId: node.data.itemId,
+        trackId: node.data.trackId
+      });
+    });
+    dispatch(
+      setQueueToNewSource({
+        queue,
+        queueIndex: event.rowIndex ?? 0,
+        queueSource: visibleView
+      })
+    );
   };
 
   const handleColumnVisible = (params: ColumnVisibleEvent) => {
@@ -248,7 +244,7 @@ export const TrackList = () => {
       }
     }
 
-    updateColumnState(true);
+    updateColumnState(params.api, true);
 
     if (
       oldColumnState?.some(
@@ -273,18 +269,17 @@ export const TrackList = () => {
     }
   };
 
-  const handleSortChanged = () => {
-    if (!gridRef?.current) return;
+  const handleSortChanged = (params: SortChangedEvent) => {
     if (visibleView == View.Queue) return;
     if (visiblePlaylist) {
       dispatch(
         updatePlaylistColumnState({
           playlistId: visiblePlaylist.id,
-          columnState: gridRef.current.api.getColumnState()
+          columnState: params.api.getColumnState()
         })
       );
     } else {
-      dispatch(setLibraryColumnState(gridRef.current.api.getColumnState()));
+      dispatch(setLibraryColumnState(params.api.getColumnState()));
     }
     if (queueSource == visibleView) {
       dispatch(
@@ -299,7 +294,7 @@ export const TrackList = () => {
     params: ColumnMovedEvent | ColumnResizedEvent
   ) => {
     if (params.finished && params.column) {
-      updateColumnState(false);
+      updateColumnState(params.api, false);
     }
   };
 
@@ -415,8 +410,7 @@ export const TrackList = () => {
       const ghostLabel = document.querySelector(".ag-dnd-ghost-label");
       if (!ghostLabel) return;
 
-      const selectedRowsCount =
-        gridRef?.current?.api.getSelectedRows().length ?? 0;
+      const selectedRowsCount = params.api.getSelectedRows().length ?? 0;
       ghostLabel.textContent = playlist
         ? selectedRowsCount <= 1
           ? t("tracks.addNamedTrackToPlaylist", {
@@ -477,8 +471,7 @@ export const TrackList = () => {
         const item = getHoveredItem(params.event.clientX, params.event.clientY);
         if (!item?.id) return;
 
-        const selectedRowsCount =
-          gridRef?.current?.api.getSelectedRows().length ?? 0;
+        const selectedRowsCount = params.api.getSelectedRows().length ?? 0;
         let newTracks = [] as PlaylistItem[];
         if (selectedRowsCount <= 1) {
           newTracks = [
@@ -488,7 +481,7 @@ export const TrackList = () => {
             }
           ];
         } else {
-          newTracks = gridRef?.current?.api
+          newTracks = params.api
             .getSelectedRows()
             .map((node) => {
               return { itemId: nanoid(), trackId: node.trackId };
