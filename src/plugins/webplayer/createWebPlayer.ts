@@ -8,8 +8,7 @@ import {
   SourceHandle
 } from "../../features/plugins/pluginsTypes";
 import { Config } from "./Config";
-import { getMetadata } from "./getMetadata";
-import { getCoverArt } from "./artworkStore";
+import { wrap } from "comlink";
 
 export type WebPlayerData = {
   folder: string;
@@ -19,6 +18,14 @@ export type WebPlayerData = {
 
 export function createWebPlayer(host: SourceCallbacks): SourceHandle {
   const initialConfig = host.getData() as WebPlayerData | null;
+
+  const metadataWorker = new Worker(
+    new URL("./metadataWorker.ts", import.meta.url),
+    { type: "module" }
+  );
+  const { fetchCoverArt, parseMetadata } =
+    wrap<typeof import("./metadataWorker")>(metadataWorker);
+
   console.log("Created webplayer with initial config: ", initialConfig);
 
   let folder = initialConfig?.folder;
@@ -63,7 +70,7 @@ export function createWebPlayer(host: SourceCallbacks): SourceHandle {
       const metadataPromises = tracks
         .slice(i, i + batchSize)
         .filter((track) => !host.getTrackByUri(track.uri)?.metadataLoaded)
-        .map((track) => getMetadata(track, fileHandles[track.uri]));
+        .map((track) => parseMetadata(track, fileHandles[track.uri]));
       const newMetadata = await Promise.all(metadataPromises);
       host.updateMetadata(newMetadata);
       host.updateData({
@@ -113,7 +120,7 @@ export function createWebPlayer(host: SourceCallbacks): SourceHandle {
         if (!file) throw new Error("File not found after re-selection");
       }
       if (!track.metadataLoaded) {
-        const metadata = await getMetadata(track, fileHandles[track.uri]);
+        const metadata = await parseMetadata(track, fileHandles[track.uri]);
         host.updateMetadata([metadata]);
         host.updateData({
           scanned: (host.getData() as WebPlayerData).scanned + 1
@@ -135,7 +142,7 @@ export function createWebPlayer(host: SourceCallbacks): SourceHandle {
     },
 
     async getTrackArtwork(track: Track) {
-      if (track.artworkUri) return await getCoverArt(track.artworkUri);
+      if (track.artworkUri) return await fetchCoverArt(track.artworkUri);
     },
 
     pause() {

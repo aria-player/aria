@@ -20,6 +20,7 @@
     "@tauri-apps/api": "^1.5.0",
     "@types/crypto-js": "^4.2.2",
     "allotment": "^1.19.3",
+    "comlink": "^4.4.1",
     "crypto-js": "^4.2.0",
     "dnd-core": "^16.0.1",
     "history": "^5.3.0",

@@ -1,8 +1,30 @@
 import { parseBlob } from "music-metadata-browser";
 import { TrackMetadata } from "../../features/tracks/tracksTypes";
-import { storeCoverArtGetHash } from "./artworkStore";
+import localforage from "localforage";
+import { expose } from "comlink";
+import { SHA256 } from "crypto-js";
 
-export const getMetadata = async (track: TrackMetadata, file: File) => {
+const artworkStore = localforage.createInstance({
+  storeName: "webPlayerArtwork"
+});
+
+async function storeCoverArtGetHash(coverArtData: string) {
+  const coverArtHash = SHA256(coverArtData).toString();
+  const existingData = await artworkStore.getItem(coverArtHash);
+
+  if (!existingData) {
+    await artworkStore.setItem(coverArtHash, coverArtData);
+  }
+
+  return coverArtHash;
+}
+
+export async function fetchCoverArt(hash: string) {
+  const coverArtData = await artworkStore.getItem(hash);
+  return coverArtData as string;
+}
+
+export async function parseMetadata(track: TrackMetadata, file: File) {
   const metadata = await parseBlob(file);
   const newTrack = { ...track };
   newTrack.duration = (metadata.format.duration ?? 0) * 1000;
@@ -12,7 +34,7 @@ export const getMetadata = async (track: TrackMetadata, file: File) => {
       "base64"
     )}`;
     const hash = await storeCoverArtGetHash(pictureData);
-    newTrack.artworkUri = hash;
+    if (hash != null) newTrack.artworkUri = hash;
   }
   if (metadata.native && metadata.native["ID3v2.3"]) {
     const ID3v23Data = new Map(
@@ -66,4 +88,9 @@ export const getMetadata = async (track: TrackMetadata, file: File) => {
   }
   newTrack.metadataLoaded = true;
   return newTrack;
-};
+}
+
+expose({
+  fetchCoverArt,
+  parseMetadata
+});
