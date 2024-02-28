@@ -33,6 +33,7 @@ import {
 import {
   selectCurrentPlaylist,
   selectCurrentTrack,
+  selectQueueTracks,
   selectSortedTrackList,
   selectVisiblePlaylist,
   selectVisiblePlaylistConfig,
@@ -66,9 +67,11 @@ export const TrackList = () => {
 
   const location = useLocation();
   const currentTrack = useAppSelector(selectCurrentTrack);
-  const rowData = useAppSelector(selectVisibleTracks);
+  const tracklistData = useAppSelector(selectVisibleTracks);
+  const queueData = useAppSelector(selectQueueTracks);
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
   const visibleViewType = useAppSelector(selectVisibleViewType);
+  const rowData = visibleViewType == View.Queue ? queueData : tracklistData;
   const queueSource = useAppSelector(selectQueueSource);
   const { gridRef } = useContext(GridContext);
   const { setMenuData } = useContext(MenuContext);

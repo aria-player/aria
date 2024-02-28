@@ -45,9 +45,7 @@ export const selectVisibleTracks = createSelector(
   [
     (state: RootState) => state.tracks.tracks,
     (state: RootState) => state.router.location?.pathname,
-    (state: RootState) => state.undoable.present.playlists,
-    (state: RootState) => state.player.queue,
-    (state: RootState) => state.player.queueIndex
+    (state: RootState) => state.undoable.present.playlists
   ],
   () => {
     const state = store.getState();
@@ -60,19 +58,31 @@ export const selectVisibleTracks = createSelector(
             ...tracks.entities[playlistTrack.trackId]
           };
         })
-      : selectVisibleViewType(state) === View.Queue
-        ? state.player.queue
-            .map((queueTrack) => ({
-              ...tracks.entities[queueTrack.trackId],
-              itemId: queueTrack.itemId
-            }))
-            .slice(state.player.queueIndex!)
-        : selectVisibleViewType(state) === LibraryView.Songs
-          ? (Object.values(tracks.entities).map((track) => ({
-              ...track,
-              itemId: track?.trackId
-            })) as TrackListItem[])
-          : [];
+      : selectVisibleViewType(state) === LibraryView.Songs
+        ? (Object.values(tracks.entities).map((track) => ({
+            ...track,
+            itemId: track?.trackId
+          })) as TrackListItem[])
+        : [];
+  }
+);
+
+export const selectQueueTracks = createSelector(
+  [
+    (state: RootState) => state.tracks.tracks,
+    (state: RootState) => state.player.queue,
+    (state: RootState) => state.player.queueIndex
+  ],
+  () => {
+    const state = store.getState();
+    const tracks = state.tracks.tracks;
+
+    return state.player.queue
+      .map((queueTrack) => ({
+        ...tracks.entities[queueTrack.trackId],
+        itemId: queueTrack.itemId
+      }))
+      .slice(state.player.queueIndex!);
   }
 );
 
