@@ -61,6 +61,7 @@ import {
 } from "../../app/utils";
 import { store } from "../../app/store";
 import { useLocation } from "react-router-dom";
+import { replace } from "redux-first-history";
 
 export const TrackList = () => {
   const dispatch = useAppDispatch();
@@ -383,9 +384,10 @@ export const TrackList = () => {
         gridRef.current.api.ensureIndexVisible(row.rowIndex, "middle");
         gridRef.current.api.deselectAll();
         gridRef.current.api.setNodesSelected({ nodes: [row], newValue: true });
+        dispatch(replace(location.pathname, {}));
       }
     }
-  }, [gridRef, location.state]);
+  }, [dispatch, gridRef, location.pathname, location.state?.focusCurrent]);
 
   useEffect(() => {
     focusCurrentIfNeeded();
