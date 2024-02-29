@@ -19,15 +19,17 @@ export function Footer() {
         </div>
         <div className={styles.metadata}>
           <div className={styles.metadataRow}>
-            <button
-              className={styles.title}
-              onClick={() => {
-                if (!metadata) return;
-                invokeMenuAction("goToCurrent");
-              }}
-            >
-              {metadata?.title}
-            </button>
+            {metadata && (
+              <button
+                className={styles.title}
+                onClick={() => {
+                  if (!metadata) return;
+                  invokeMenuAction("goToCurrent");
+                }}
+              >
+                {metadata.title}
+              </button>
+            )}
           </div>
           <div className={styles.metadataRow}>
             <div className={styles.artist}>{metadata?.artist}</div>
