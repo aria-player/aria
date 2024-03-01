@@ -1,0 +1,23 @@
+.artwork {
+  position: absolute;
+  z-index: 10;
+  transform: translateX(-22rem);
+  width: 20rem;
+  height: 20rem;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  border-width: 1px;
+  border-color: var(--search-background-active);
+  border-style: solid;
+  display: flex;
+  object-fit: contain;
+  aspect-ratio: 1/1;
+}
+
+.textSeparator {
+  margin-left: 16px;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  height: 100%;
+}

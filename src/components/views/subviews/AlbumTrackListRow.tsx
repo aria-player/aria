@@ -1,7 +1,5 @@
 import { ICellRendererParams } from "@ag-grid-community/core";
-import styles from "./TrackDetailRow.module.css";
 import { formatDuration } from "../../../app/utils";
-import { AlbumArt } from "./AlbumArt";
 import { useContextMenu } from "react-contexify";
 import { useContext } from "react";
 import { View } from "../../../app/view";
@@ -18,8 +16,9 @@ import {
   selectVisiblePlaylist,
   selectVisibleViewType
 } from "../../../features/sharedSelectors";
+import styles from "./AlbumTrackListRow.module.css";
 
-export const TrackDetailRow = (props: ICellRendererParams) => {
+export const AlbumTrackListRow = (props: ICellRendererParams) => {
   const { show: showCellContextMenu } = useContextMenu({
     id: "tracklistitem"
   });
@@ -30,6 +29,13 @@ export const TrackDetailRow = (props: ICellRendererParams) => {
   const queueSource = useAppSelector(selectQueueSource);
   const currentTrack = useAppSelector(selectCurrentTrack);
   const visibleView = visiblePlaylist?.id ?? visibleViewType;
+
+  props.registerRowDragger(
+    props.eParentOfValue,
+    undefined,
+    props.data.name,
+    true
+  );
 
   // Logic mostly duplicated from TrackList
   const handleCellContextMenu = (
@@ -81,62 +87,35 @@ export const TrackDetailRow = (props: ICellRendererParams) => {
   };
   // End duplicated functions
 
-  if (props.node.data.separator) {
-    if (props.node.data.album) {
-      return (
-        <>
-          <div className={styles.artwork}>
-            <AlbumArt track={props.node.data} />
-          </div>
-          <h1>{props.node.data.album}</h1>
-          <h2>
-            {props.node.data.artist} - {props.node.data.year}
-          </h2>
-        </>
-      );
-    } else {
-      return (
-        <div className={styles.textSeparator}>{props.node.data.title}</div>
-      );
-    }
-  } else {
-    props.registerRowDragger(
-      props.eParentOfValue,
-      undefined,
-      props.data.name,
-      true
-    );
-    return (
-      <div
-        className={`${styles.trackDetailRow} ${
-          props.data.itemId === currentTrack?.itemId &&
-          queueSource == visibleView
-            ? styles.highlighted
-            : ""
-        }`}
-        onContextMenu={(e) => {
-          handleCellContextMenu(e, props);
-        }}
-        onDoubleClick={(e) => {
-          handleCellDoubleClicked(e, props);
-        }}
-      >
-        <span className={styles.trackNumber}>{props.node.data.track}</span>
-        <div className={styles.trackInfo}>
-          <div>
-            <span>{props.node.data.title}</span>
-            <br />
-            <span className={styles.trackArtist}>
-              {Array.isArray(props.node.data.artist)
-                ? props.node.data.artist.join("/")
-                : props.node.data.artist}
-            </span>
-          </div>
-          <span className={styles.trackDuration}>
-            {formatDuration(props.node.data.duration)}
+  return (
+    <div
+      className={`${styles.trackDetailRow} ${
+        props.data.itemId === currentTrack?.itemId && queueSource == visibleView
+          ? styles.highlighted
+          : ""
+      }`}
+      onContextMenu={(e) => {
+        handleCellContextMenu(e, props);
+      }}
+      onDoubleClick={(e) => {
+        handleCellDoubleClicked(e, props);
+      }}
+    >
+      <span className={styles.trackNumber}>{props.node.data.track}</span>
+      <div className={styles.trackInfo}>
+        <div>
+          <span>{props.node.data.title}</span>
+          <br />
+          <span className={styles.trackArtist}>
+            {Array.isArray(props.node.data.artist)
+              ? props.node.data.artist.join("/")
+              : props.node.data.artist}
           </span>
         </div>
+        <span className={styles.trackDuration}>
+          {formatDuration(props.node.data.duration)}
+        </span>
       </div>
-    );
-  }
+    </div>
+  );
 };

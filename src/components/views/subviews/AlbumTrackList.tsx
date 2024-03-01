@@ -17,7 +17,7 @@ import {
   selectVisibleTracks
 } from "../../../features/sharedSelectors";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { TrackDetailRow } from "./TrackDetailRow";
+import { AlbumTrackListRow } from "./AlbumTrackListRow";
 import { GridContext } from "../../../contexts/GridContext";
 import { PlaylistItem } from "../../../features/playlists/playlistsTypes";
 import { t } from "i18next";
@@ -27,6 +27,7 @@ import { useLocation } from "react-router-dom";
 import { store } from "../../../app/store";
 import { compareMetadata } from "../../../app/utils";
 import { replace } from "redux-first-history";
+import AlbumTrackListSeparator from "./AlbumTrackListSeparator";
 
 export interface AlbumTrackListItem {
   itemId: string;
@@ -41,7 +42,11 @@ export interface AlbumTrackListItem {
 }
 
 const fullWidthCellRenderer = (params: ICellRendererParams) => {
-  return <TrackDetailRow {...params} />;
+  return params.data.separator ? (
+    <AlbumTrackListSeparator {...params} />
+  ) : (
+    <AlbumTrackListRow {...params} />
+  );
 };
 
 const isRowSelectable = (node: IRowNode) => !node.data.separator;

@@ -1,0 +1,32 @@
+.trackDetailRow {
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.highlighted {
+  font-weight: 700;
+}
+
+.trackNumber {
+  width: 24px;
+  margin-left: 12px;
+  text-align: center;
+}
+
+.trackInfo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  margin-left: 16px;
+}
+
+.trackArtist {
+  font-style: italic;
+  font-size: 12px;
+}
+
+.trackDuration {
+  margin-right: 16px;
+}
