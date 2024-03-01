@@ -55,12 +55,12 @@ const getRowHeight = (params: RowHeightParams) => {
   if (params.data.separator) {
     if (!params.data.album) {
       if (params.data.tracks > 4) {
-        return 20;
+        return 24;
       } else {
-        return 20 + 50 * (5 - params.data.tracks);
+        return 24 + 48 * (5 - params.data.tracks);
       }
     }
-    return 100;
+    return 96;
   }
 };
 
@@ -292,7 +292,7 @@ export const AlbumTrackList = () => {
         isFullWidthRow={() => true}
         animateRows={false}
         headerHeight={0}
-        rowHeight={50}
+        rowHeight={48}
         overlayNoRowsTemplate={t("albumTrackList.empty")}
         rowSelection="multiple"
         suppressCellFocus

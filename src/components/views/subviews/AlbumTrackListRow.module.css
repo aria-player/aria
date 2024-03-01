@@ -9,8 +9,8 @@
 }
 
 .trackNumber {
-  width: 24px;
-  margin-left: 12px;
+  width: 1.5rem;
+  margin-left: 0.75rem;
   text-align: center;
 }
 
@@ -19,14 +19,14 @@
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  margin-left: 16px;
+  margin-left: 1rem;
 }
 
 .trackArtist {
   font-style: italic;
-  font-size: 12px;
+  font-size: 0.75rem;
 }
 
 .trackDuration {
-  margin-right: 16px;
+  margin-right: 1rem;
 }
