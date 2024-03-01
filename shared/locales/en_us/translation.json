@@ -157,6 +157,9 @@
     "fileSize": "Size",
     "source": "Source"
   },
+  "albumGrid": {
+    "empty": "No albums to display"
+  },
   "albumTrackList": {
     "disc": "Disc {{number}}",
     "empty": "No tracks to display"
