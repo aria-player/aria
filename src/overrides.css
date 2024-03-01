@@ -143,4 +143,37 @@ body {
     background-color: var(--button-background-hover);
     border-radius: 0.25rem;
   }
+
+  .ag-overrides-album-track-list {
+    .ag-row-selected::before {
+      content: unset;
+    }
+
+    .ag-center-cols-viewport {
+      width: 0;
+    }
+
+    .ag-full-width-container {
+      margin-top: 2rem;
+      margin-left: 22rem;
+      position: inherit;
+      pointer-events: all;
+    }
+
+    .ag-full-width-row {
+      overflow: unset;
+    }
+
+    .ag-row {
+      --ag-odd-row-background-color: transparent;
+    }
+
+    .ag-row:hover:not(
+        [row-id^="album-header"],
+        [row-id^="album-separator"],
+        [row-id^="disc-separator"]
+      ) {
+      background-color: var(--button-background-hover);
+    }
+  }
 }

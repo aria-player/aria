@@ -12,7 +12,7 @@ import styles from "./AlbumGrid.module.css";
 import LeftArrow from "../../assets/arrow-left-solid.svg?react";
 import { setPlaylistSelectedAlbum } from "../../features/playlists/playlistsSlice";
 import { DisplayMode } from "../../app/view";
-import { TrackList } from "./TrackList";
+import { AlbumTrackList } from "./AlbumTrackList";
 
 export default function AlbumGrid() {
   const dispatch = useAppDispatch();
@@ -81,16 +81,13 @@ export default function AlbumGrid() {
         {selectedItem && visibleDisplayMode == DisplayMode.AlbumGrid && (
           <div
             className={styles.detailOuter}
-            onClick={() => {
-              setSelectedItem();
+            onClick={(e) => {
+              if (e.currentTarget === e.target) {
+                setSelectedItem();
+              }
             }}
           >
-            <div
-              className={styles.detailInner}
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
-            >
+            <div className={styles.detailInner}>
               <button
                 className={styles.backButton}
                 onClick={() => {
@@ -99,8 +96,8 @@ export default function AlbumGrid() {
               >
                 <LeftArrow />
               </button>
-              <div style={{ height: "80%", margin: "2rem" }}>
-                <TrackList />
+              <div className={styles.albumTrackList}>
+                <AlbumTrackList />
               </div>
             </div>
           </div>
