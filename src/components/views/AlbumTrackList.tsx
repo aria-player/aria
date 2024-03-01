@@ -84,7 +84,7 @@ export const AlbumTrackList = () => {
             currentAlbum == track.album
           ) {
             processedTracks.push({
-              title: `Disc ${track.disc}`,
+              title: t("albumTrackList.disc", { number: track.disc }),
               separator: true,
               itemId: `disc-separator-${track.album}-${currentDisc}`
             });
@@ -288,7 +288,7 @@ export const AlbumTrackList = () => {
         animateRows={false}
         headerHeight={0}
         rowHeight={50}
-        overlayNoRowsTemplate={"No tracks to display"}
+        overlayNoRowsTemplate={t("albumTrackList.empty")}
         rowSelection="multiple"
         suppressCellFocus
         rowDragMultiRow

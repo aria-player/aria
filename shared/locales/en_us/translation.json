@@ -157,6 +157,10 @@
     "fileSize": "Size",
     "source": "Source"
   },
+  "albumTrackList": {
+    "disc": "Disc {{number}}",
+    "empty": "No tracks to display"
+  },
   "accentColors": {
     "blue": "Blue",
     "teal": "Teal",
