@@ -10,22 +10,22 @@ import {
 } from "@ag-grid-community/core";
 import { AgGridReact } from "@ag-grid-community/react";
 import { useMemo, useCallback, useContext, useEffect } from "react";
-import { Track } from "../../features/tracks/tracksTypes";
+import { Track } from "../../../features/tracks/tracksTypes";
 import { nanoid } from "@reduxjs/toolkit";
 import {
   selectCurrentTrack,
   selectVisibleTracks
-} from "../../features/sharedSelectors";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
+} from "../../../features/sharedSelectors";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { TrackDetailRow } from "./TrackDetailRow";
-import { GridContext } from "../../contexts/GridContext";
-import { PlaylistItem } from "../../features/playlists/playlistsTypes";
+import { GridContext } from "../../../contexts/GridContext";
+import { PlaylistItem } from "../../../features/playlists/playlistsTypes";
 import { t } from "i18next";
-import { addTracksToPlaylist } from "../../features/playlists/playlistsSlice";
-import { setSelectedTracks } from "../../features/tracks/tracksSlice";
+import { addTracksToPlaylist } from "../../../features/playlists/playlistsSlice";
+import { setSelectedTracks } from "../../../features/tracks/tracksSlice";
 import { useLocation } from "react-router-dom";
-import { store } from "../../app/store";
-import { compareMetadata } from "../../app/utils";
+import { store } from "../../../app/store";
+import { compareMetadata } from "../../../app/utils";
 import { replace } from "redux-first-history";
 
 export interface AlbumTrackListItem {

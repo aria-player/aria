@@ -1,23 +1,23 @@
 import { ICellRendererParams } from "@ag-grid-community/core";
 import styles from "./TrackDetailRow.module.css";
-import { formatDuration } from "../../app/utils";
-import { AlbumArt } from "../AlbumArt";
+import { formatDuration } from "../../../app/utils";
+import { AlbumArt } from "./AlbumArt";
 import { useContextMenu } from "react-contexify";
 import { useContext } from "react";
-import { View } from "../../app/view";
-import { MenuContext } from "../../contexts/MenuContext";
+import { View } from "../../../app/view";
+import { MenuContext } from "../../../contexts/MenuContext";
 import {
   skipQueueIndexes,
   setQueueToNewSource,
   selectQueueSource
-} from "../../features/player/playerSlice";
-import { PlaylistItem } from "../../features/playlists/playlistsTypes";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
+} from "../../../features/player/playerSlice";
+import { PlaylistItem } from "../../../features/playlists/playlistsTypes";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import {
   selectCurrentTrack,
   selectVisiblePlaylist,
   selectVisibleViewType
-} from "../../features/sharedSelectors";
+} from "../../../features/sharedSelectors";
 
 export const TrackDetailRow = (props: ICellRendererParams) => {
   const { show: showCellContextMenu } = useContextMenu({

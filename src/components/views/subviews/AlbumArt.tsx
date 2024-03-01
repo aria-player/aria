@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
-import MusicIcon from "../assets/music.svg";
-import { pluginHandles } from "../features/plugins/pluginsSlice";
-import { SourceHandle } from "../features/plugins/pluginsTypes";
-import { Track } from "../features/tracks/tracksTypes";
+import MusicIcon from "../../../assets/music.svg";
+import { pluginHandles } from "../../../features/plugins/pluginsSlice";
+import { SourceHandle } from "../../../features/plugins/pluginsTypes";
+import { Track } from "../../../features/tracks/tracksTypes";
 import styles from "./AlbumArt.module.css";
 
 export const AlbumArt = ({ track }: { track: Track | null }) => {

@@ -7,12 +7,12 @@ import {
 } from "../../features/sharedSelectors";
 import { selectAllTracks } from "../../features/tracks/tracksSlice";
 import { Track } from "../../features/tracks/tracksTypes";
-import { AlbumArt } from "../AlbumArt";
+import { AlbumArt } from "./subviews/AlbumArt";
 import styles from "./AlbumGrid.module.css";
 import LeftArrow from "../../assets/arrow-left-solid.svg?react";
 import { setPlaylistSelectedAlbum } from "../../features/playlists/playlistsSlice";
 import { DisplayMode } from "../../app/view";
-import { AlbumTrackList } from "./AlbumTrackList";
+import { AlbumTrackList } from "./subviews/AlbumTrackList";
 import { useTranslation } from "react-i18next";
 
 export default function AlbumGrid() {

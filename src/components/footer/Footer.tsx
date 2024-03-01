@@ -3,7 +3,7 @@ import { PlaybackControls } from "./PlaybackControls";
 import { useAppSelector } from "../../app/hooks";
 import { selectCurrentTrack } from "../../features/sharedSelectors";
 import { AuxiliaryControls } from "./AuxiliaryControls";
-import { AlbumArt } from "../AlbumArt";
+import { AlbumArt } from "../views/subviews/AlbumArt";
 import { useMenuActions } from "../../hooks/useMenuActions";
 
 export function Footer() {
