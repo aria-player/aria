@@ -371,11 +371,9 @@ export const TrackList = () => {
       <AgGridReact
         {...gridProps}
         ref={gridRef}
-        getRowId={(params) => params.data.itemId}
         rowData={rowData}
         columnDefs={columnDefs}
         defaultColDef={defaultColDef}
-        rowSelection="multiple"
         onCellDoubleClicked={handleCellDoubleClicked}
         onSortChanged={handleSortChanged}
         onColumnMoved={handleColumnMovedOrResized}
@@ -386,25 +384,8 @@ export const TrackList = () => {
         getRowStyle={highlightCurrentTrack}
         rowHeight={33}
         headerHeight={37}
-        animateRows={false}
-        suppressCellFocus
-        rowDragMultiRow
-        suppressDragLeaveHidesColumns
-        suppressScrollOnNewData
-        suppressMoveWhenRowDragging
-        rowDragEntireRow
-        alwaysShowVerticalScroll
-        preventDefaultOnContextMenu
         rowDragManaged={
           visibleViewType == View.Playlist || visibleViewType == View.Queue
-        }
-        multiSortKey="ctrl"
-        rowDragText={(params) =>
-          params.rowNodes?.length == 1
-            ? params.rowNode?.data.title
-            : t("tracks.selectedCount", {
-                count: params.rowNodes?.length
-              })
         }
         overlayNoRowsTemplate={
           visibleViewType == View.Queue
@@ -413,6 +394,10 @@ export const TrackList = () => {
               ? t("tracks.emptyPlaylist")
               : t("tracks.emptyLibrary")
         }
+        multiSortKey="ctrl"
+        rowDragEntireRow
+        suppressDragLeaveHidesColumns
+        suppressMoveWhenRowDragging
       />
     </div>
   );

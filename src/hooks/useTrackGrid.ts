@@ -3,7 +3,9 @@ import {
   GridReadyEvent,
   RowDragMoveEvent,
   RowDragLeaveEvent,
-  RowDragEndEvent
+  RowDragEndEvent,
+  GetRowIdParams,
+  IRowDragItem
 } from "@ag-grid-community/core";
 import { nanoid } from "@reduxjs/toolkit";
 import { t } from "i18next";
@@ -23,6 +25,8 @@ export function useTrackGrid() {
   const dispatch = useAppDispatch();
   const { gridRef } = useContext(GridContext);
   const location = useLocation();
+
+  const getRowId = (params: GetRowIdParams) => params.data.itemId;
 
   const focusCurrentIfNeeded = useCallback(() => {
     const currentTrack = selectCurrentTrack(store.getState());
@@ -164,9 +168,25 @@ export function useTrackGrid() {
     );
   };
 
+  const rowDragText = (params: IRowDragItem) =>
+    params.rowNodes?.length == 1
+      ? params.rowNode?.data.title
+      : t("tracks.selectedCount", {
+          count: params.rowNodes?.length
+        });
+
   const gridProps: Partial<AgGridReactProps> = {
+    getRowId,
     onGridReady: handleGridReady,
-    onSelectionChanged: handleSelectionChanged
+    onSelectionChanged: handleSelectionChanged,
+    rowDragText,
+    rowSelection: "multiple",
+    animateRows: false,
+    suppressCellFocus: true,
+    rowDragMultiRow: true,
+    suppressScrollOnNewData: true,
+    preventDefaultOnContextMenu: true,
+    alwaysShowVerticalScroll: true
   };
 
   return {

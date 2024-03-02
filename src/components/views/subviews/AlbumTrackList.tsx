@@ -134,29 +134,15 @@ export const AlbumTrackList = () => {
         {...gridProps}
         ref={gridRef}
         rowData={rowData}
-        getRowId={(params) => params.data.itemId}
         columnDefs={[]}
         getRowHeight={getRowHeight}
         isRowSelectable={isRowSelectable}
         fullWidthCellRenderer={fullWidthCellRenderer}
         isFullWidthRow={() => true}
-        animateRows={false}
         headerHeight={0}
         rowHeight={48}
         overlayNoRowsTemplate={t("albumTrackList.empty")}
-        rowSelection="multiple"
-        suppressCellFocus
-        rowDragMultiRow
-        suppressScrollOnNewData
-        preventDefaultOnContextMenu
         suppressHeaderFocus
-        rowDragText={(params) =>
-          params.rowNodes?.length == 1
-            ? params.rowNode?.data.title
-            : t("tracks.selectedCount", {
-                count: params.rowNodes?.length
-              })
-        }
       />
     </div>
   );
