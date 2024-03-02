@@ -122,7 +122,12 @@ export const AlbumTrackList = () => {
           processedTracks.push(track);
           currentAlbumTracks += 1;
         });
-
+      if (visibleTracks.length > 0)
+        processedTracks.push({
+          separator: true,
+          tracks: currentAlbumTracks,
+          itemId: `album-separator`
+        });
       return processedTracks;
     };
     return processTracks(visibleTracks as Track[]);
