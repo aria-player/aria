@@ -279,6 +279,12 @@ export const selectMenuState = createSelector(
       };
     });
 
+    // TODO: Should also be false if there is a selected album, but there are no visible tracks
+    const selectableTracksVisible =
+      selectVisibleDisplayMode(state) == DisplayMode.TrackList ||
+      (selectVisibleDisplayMode(state) == DisplayMode.AlbumGrid &&
+        selectVisiblePlaylistConfig(state)?.selectedAlbum);
+
     return {
       back: {
         disabled: !(window.history.length > 1 && window.history.state.idx > 0)
@@ -290,7 +296,7 @@ export const selectMenuState = createSelector(
         )
       },
       selectAll: {
-        disabled: selectVisibleDisplayMode(state) != DisplayMode.TrackList
+        disabled: !selectableTracksVisible
       },
       columns: {
         disabled: selectVisibleDisplayMode(state) != DisplayMode.TrackList
@@ -318,18 +324,25 @@ export const selectMenuState = createSelector(
         disabled:
           (!selectVisiblePlaylist(state) &&
             selectVisibleViewType(state) != View.Queue) ||
+          !selectableTracksVisible ||
           !state.tracks.selectedTracks.length
       },
       cut: {
         disabled:
-          !state.tracks.selectedTracks.length || !selectVisiblePlaylist(state)
+          (!selectVisiblePlaylist(state) &&
+            selectVisibleViewType(state) != View.Queue) ||
+          !selectableTracksVisible ||
+          !state.tracks.selectedTracks.length
       },
       copy: {
-        disabled: !state.tracks.selectedTracks.length
+        disabled:
+          !selectableTracksVisible || !state.tracks.selectedTracks.length
       },
       paste: {
         disabled:
-          !state.tracks.clipboard.length || !selectVisiblePlaylist(state)
+          !selectVisiblePlaylist(state) ||
+          !selectableTracksVisible ||
+          !state.tracks.clipboard.length
       },
       togglePlaylistLayout: {
         disabled: !selectVisiblePlaylist(state),

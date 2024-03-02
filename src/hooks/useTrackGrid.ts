@@ -46,7 +46,9 @@ export function useTrackGrid() {
   }, [focusCurrentIfNeeded, location]);
 
   const handleGridReady = (params: GridReadyEvent) => {
+    dispatch(setSelectedTracks([]));
     focusCurrentIfNeeded();
+
     let lastHoveredItem: HTMLElement | null = null;
     const treeElement = document.querySelector('[role="tree"]') as HTMLElement;
 
