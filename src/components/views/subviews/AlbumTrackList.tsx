@@ -108,7 +108,12 @@ export const AlbumTrackList = () => {
                 currentAlbumTracks = 0;
               }
               processedTracks.push({
-                artist: track.albumArtist,
+                artist:
+                  track.albumArtist ?? track.artist
+                    ? Array.isArray(track.artist)
+                      ? track.artist.join("/")
+                      : track.artist
+                    : "",
                 album: track.album,
                 year: track.year,
                 artworkUri: track.artworkUri,
