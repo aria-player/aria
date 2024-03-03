@@ -3,7 +3,7 @@ import {
   selectVisibleDisplayMode,
   selectVisiblePlaylist,
   selectVisibleSelectedItem,
-  selectVisibleTracks
+  selectVisibleTrackGroups
 } from "../../features/sharedSelectors";
 import { selectAllTracks } from "../../features/tracks/tracksSlice";
 import { Track } from "../../features/tracks/tracksTypes";
@@ -24,7 +24,6 @@ export default function AlbumGrid() {
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
   const selectedItem = useAppSelector(selectVisibleSelectedItem);
   const visibleDisplayMode = useAppSelector(selectVisibleDisplayMode);
-  const visibleTracks = useAppSelector(selectVisibleTracks);
   const allAlbums = [
     ...new Map(libraryTracks.map((track) => [track.album, track])).values()
   ].sort(
@@ -35,7 +34,7 @@ export default function AlbumGrid() {
       }) ?? 0
   );
   // TODO: Decide how to handle albums with the same name
-  const visibleAlbums = [...new Set(visibleTracks.map((track) => track.album))];
+  const visibleAlbums = useAppSelector(selectVisibleTrackGroups);
 
   function setSelectedItem(album?: string) {
     if (visiblePlaylist?.id) {

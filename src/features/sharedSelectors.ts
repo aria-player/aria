@@ -204,3 +204,20 @@ export const selectCurrentTrackItemId = (state: RootState) => {
   }
   return state.player.queue[state.player.queueIndex].itemId;
 };
+
+export const selectVisibleTrackGroups = createSelector(
+  [
+    (state: RootState) => state.router.location?.pathname,
+    (state: RootState) => state.undoable.present.playlists,
+    (state: RootState) => state.undoable.present.library
+  ],
+  () => {
+    const state = store.getState();
+    if (selectVisibleDisplayMode(state) == DisplayMode.AlbumGrid) {
+      return [
+        ...new Set(selectVisibleTracks(state).map((track) => track.album))
+      ];
+    }
+    return [];
+  }
+);
