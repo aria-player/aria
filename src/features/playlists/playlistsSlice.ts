@@ -28,7 +28,7 @@ import {
   overrideColumnStateSort,
   resetColumnStateExceptSort
 } from "../../app/utils";
-import { DisplayMode } from "../../app/view";
+import { DisplayMode, TrackGrouping } from "../../app/view";
 
 const playlistsAdapter = createEntityAdapter<PlaylistUndoable>();
 const playlistsConfigAdapter = createEntityAdapter<PlaylistConfig>();
@@ -86,7 +86,8 @@ export const playlistsSlice = createSlice({
           columnState: null,
           useCustomLayout: false,
           displayMode: DisplayMode.TrackList,
-          selectedAlbum: null
+          trackGrouping: null,
+          selectedGroup: null
         });
       }
     },
@@ -200,20 +201,29 @@ export const playlistsSlice = createSlice({
       const playlistConfig =
         state.playlistsConfig.entities[action.payload.playlistId];
       if (playlistConfig) {
+        if (action.payload.displayMode != playlistConfig.displayMode) {
+          playlistConfig.selectedGroup = null;
+        }
+        if (action.payload.displayMode == DisplayMode.AlbumGrid) {
+          playlistConfig.trackGrouping = TrackGrouping.Album;
+        }
+        if (action.payload.displayMode == DisplayMode.SplitView) {
+          playlistConfig.trackGrouping = TrackGrouping.AlbumArtist;
+        }
         playlistConfig.displayMode = action.payload.displayMode;
       }
     },
-    setPlaylistSelectedAlbum: (
+    setPlaylistSelectedTrackGroup: (
       state,
       action: PayloadAction<{
         playlistId: PlaylistId;
-        selectedAlbum: string | null;
+        selectedGroup: string | null;
       }>
     ) => {
       const playlistConfig =
         state.playlistsConfig.entities[action.payload.playlistId];
       if (playlistConfig) {
-        playlistConfig.selectedAlbum = action.payload.selectedAlbum;
+        playlistConfig.selectedGroup = action.payload.selectedGroup;
       }
     }
   }
@@ -234,7 +244,7 @@ export const {
   updatePlaylistColumnState,
   togglePlaylistUsesCustomLayout,
   setPlaylistDisplayMode,
-  setPlaylistSelectedAlbum
+  setPlaylistSelectedTrackGroup
 } = playlistsSlice.actions;
 
 export const selectPlaylistsLayout = (state: RootState) =>

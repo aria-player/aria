@@ -21,6 +21,15 @@ export enum LibraryView {
   Years = "years"
 }
 
+export enum TrackGrouping {
+  Album = "album",
+  Artist = "artist",
+  AlbumArtist = "albumArtist",
+  Genre = "genre",
+  Composer = "composer",
+  Year = "year"
+}
+
 export function isLibraryView(view: string) {
   return Object.values(LibraryView).includes(view as LibraryView);
 }

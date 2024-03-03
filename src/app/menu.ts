@@ -28,7 +28,7 @@ import {
   selectVisibleDisplayMode,
   selectVisiblePlaylist,
   selectVisiblePlaylistConfig,
-  selectVisibleSelectedItem,
+  selectVisibleSelectedTrackGroup,
   selectVisibleViewType
 } from "../features/sharedSelectors";
 import {
@@ -285,7 +285,7 @@ export const selectMenuState = createSelector(
     const selectableTracksVisible =
       selectVisibleDisplayMode(state) == DisplayMode.TrackList ||
       (selectVisibleDisplayMode(state) == DisplayMode.AlbumGrid &&
-        selectVisibleSelectedItem(state) != null);
+        selectVisibleSelectedTrackGroup(state) != null);
 
     return {
       back: {
@@ -301,7 +301,7 @@ export const selectMenuState = createSelector(
         disabled:
           !selectableTracksVisible ||
           (selectVisibleDisplayMode(state) == DisplayMode.AlbumGrid &&
-            !selectVisibleSelectedItem(state))
+            !selectVisibleSelectedTrackGroup(state))
       },
       columns: {
         disabled: selectVisibleDisplayMode(state) != DisplayMode.TrackList

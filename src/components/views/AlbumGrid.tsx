@@ -2,7 +2,7 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   selectVisibleDisplayMode,
   selectVisiblePlaylist,
-  selectVisibleSelectedItem,
+  selectVisibleSelectedTrackGroup,
   selectVisibleTrackGroups
 } from "../../features/sharedSelectors";
 import { selectAllTracks } from "../../features/tracks/tracksSlice";
@@ -10,11 +10,11 @@ import { Track } from "../../features/tracks/tracksTypes";
 import { AlbumArt } from "./subviews/AlbumArt";
 import styles from "./AlbumGrid.module.css";
 import LeftArrow from "../../assets/arrow-left-solid.svg?react";
-import { setPlaylistSelectedAlbum } from "../../features/playlists/playlistsSlice";
 import { DisplayMode } from "../../app/view";
 import { AlbumTrackList } from "./subviews/AlbumTrackList";
 import { useTranslation } from "react-i18next";
 import { setSelectedAlbum } from "../../features/library/librarySlice";
+import { setPlaylistSelectedTrackGroup } from "../../features/playlists/playlistsSlice";
 
 export default function AlbumGrid() {
   const dispatch = useAppDispatch();
@@ -22,7 +22,7 @@ export default function AlbumGrid() {
   const { t } = useTranslation();
   const libraryTracks = useAppSelector(selectAllTracks);
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
-  const selectedItem = useAppSelector(selectVisibleSelectedItem);
+  const selectedItem = useAppSelector(selectVisibleSelectedTrackGroup);
   const visibleDisplayMode = useAppSelector(selectVisibleDisplayMode);
   const allAlbums = [
     ...new Map(libraryTracks.map((track) => [track.album, track])).values()
@@ -39,9 +39,9 @@ export default function AlbumGrid() {
   function setSelectedItem(album?: string) {
     if (visiblePlaylist?.id) {
       dispatch(
-        setPlaylistSelectedAlbum({
+        setPlaylistSelectedTrackGroup({
           playlistId: visiblePlaylist?.id,
-          selectedAlbum: album ?? null
+          selectedGroup: album ?? null
         })
       );
     } else {

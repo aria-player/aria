@@ -7,7 +7,7 @@ import { AgGridReact } from "@ag-grid-community/react";
 import { useMemo, useEffect } from "react";
 import { Track } from "../../../features/tracks/tracksTypes";
 import {
-  selectVisibleSelectedItem,
+  selectVisibleSelectedTrackGroup,
   selectVisibleTracks
 } from "../../../features/sharedSelectors";
 import { useAppSelector } from "../../../app/hooks";
@@ -55,7 +55,7 @@ const getRowHeight = (params: RowHeightParams) => {
 export const AlbumTrackList = () => {
   const { gridRef, gridProps } = useTrackGrid();
   const visibleTracks = useAppSelector(selectVisibleTracks);
-  const selectedAlbum = useAppSelector(selectVisibleSelectedItem);
+  const selectedAlbum = useAppSelector(selectVisibleSelectedTrackGroup);
 
   const rowData = useMemo(() => {
     const processTracks = (tracks: Track[]) => {

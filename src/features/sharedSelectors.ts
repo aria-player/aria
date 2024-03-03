@@ -164,11 +164,11 @@ export const selectVisibleDisplayMode = (state: RootState) => {
   );
 };
 
-export const selectVisibleSelectedItem = (state: RootState) => {
+export const selectVisibleSelectedTrackGroup = (state: RootState) => {
   if (selectVisibleViewType(state) == LibraryView.Albums) {
     return state.undoable.present.library.selectedAlbum;
   }
-  return selectVisiblePlaylistConfig(state)?.selectedAlbum;
+  return selectVisiblePlaylistConfig(state)?.selectedGroup;
 };
 
 export const selectCurrentPlaylist = (state: RootState) => {
