@@ -366,6 +366,12 @@ export const selectMenuState = createSelector(
           selectVisiblePlaylistConfig(state)?.displayMode ==
           DisplayMode.AlbumGrid
       },
+      switchToSplitView: {
+        disabled: !selectVisiblePlaylist(state),
+        selected:
+          selectVisiblePlaylistConfig(state)?.displayMode ==
+          DisplayMode.SplitView
+      },
       switchToDebugView: {
         disabled: !selectVisiblePlaylist(state),
         selected:

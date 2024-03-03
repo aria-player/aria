@@ -123,6 +123,7 @@
     "viewType": "View Type",
     "switchToTrackList": "Track List",
     "switchToAlbumGrid": "Album Grid",
+    "switchToSplitView": "Split View",
     "switchToDebugView": "Debug View",
     "togglePlaylistLayout": "Use playlist-specific layout",
     "resetColumns": "Reset to default layout",

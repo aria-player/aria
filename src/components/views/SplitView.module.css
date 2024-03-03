@@ -1,0 +1,53 @@
+.splitView {
+  height: 100%;
+}
+
+.trackGroupsList {
+  height: 100%;
+  padding-inline-start: 0;
+  margin-block: 0 0;
+  overflow-y: auto;
+}
+
+.listItem {
+  border-radius: 0.25rem;
+  margin: 0.25rem;
+}
+
+.listItem button {
+  width: 100%;
+  color: var(--button-text);
+  padding: 0.75rem;
+  font-size: 0.9rem;
+  font-family: inherit;
+  background: none;
+  text-align: left;
+  border: none;
+  cursor: pointer;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.listItem:hover:not(.selected) {
+  background-color: var(--button-background-hover);
+}
+
+.listItem:active:not(.selected) {
+  background-color: var(--button-background-active);
+}
+
+.selected {
+  background-color: var(--accent-color);
+}
+
+.selected button {
+  color: var(--button-text-selected);
+}
+
+.albumTrackList {
+  height: 100%;
+  border-left: 1px solid var(--sidebar-separator);
+  padding-left: 2rem;
+  overflow-y: auto;
+}

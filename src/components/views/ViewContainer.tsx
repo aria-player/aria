@@ -4,6 +4,7 @@ import { DisplayMode } from "../../app/view";
 import { selectVisibleDisplayMode } from "../../features/sharedSelectors";
 import AlbumGrid from "./AlbumGrid";
 import { TrackList } from "./TrackList";
+import { SplitView } from "./SplitView";
 
 export default function ViewContainer() {
   const visibleDisplayMode = useAppSelector(selectVisibleDisplayMode);
@@ -25,6 +26,7 @@ export default function ViewContainer() {
       >
         <AlbumGrid />
       </div>
+      {visibleDisplayMode == DisplayMode.SplitView && <SplitView />}
       {visibleDisplayMode == DisplayMode.DebugView && <DebugView />}
     </>
   );
