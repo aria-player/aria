@@ -11,7 +11,8 @@ export default function AlbumTrackListSeparator(props: ICellRendererParams) {
         </div>
         <h2 className={styles.albumTitle}>{props.node.data.album}</h2>
         <h3 className={styles.albumDetails}>
-          {props.node.data.artist} - {props.node.data.year}
+          {props.node.data.artist}
+          {props.node.data.year && ` - ${props.node.data.year}`}
         </h3>
       </>
     );
