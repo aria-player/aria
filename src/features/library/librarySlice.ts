@@ -10,6 +10,7 @@ import {
 interface LibraryState {
   columnState: ColumnState[] | null;
   layout: Item[];
+  selectedAlbum: string | null;
 }
 
 const initialState: LibraryState = {
@@ -21,7 +22,8 @@ const initialState: LibraryState = {
     { id: "genres", name: "genres" },
     { id: "composers", name: "composers", hidden: true },
     { id: "years", name: "years", hidden: true }
-  ]
+  ],
+  selectedAlbum: null
 };
 
 const librarySlice = createSlice({
@@ -52,6 +54,9 @@ const librarySlice = createSlice({
     },
     resetLibraryLayout: (state) => {
       state.layout = initialState.layout;
+    },
+    setSelectedAlbum: (state, action: PayloadAction<string | null>) => {
+      state.selectedAlbum = action.payload;
     }
   }
 });
@@ -61,7 +66,8 @@ export const {
   resetLibraryColumnState,
   moveLibraryItem,
   updateLibraryItem,
-  resetLibraryLayout
+  resetLibraryLayout,
+  setSelectedAlbum
 } = librarySlice.actions;
 
 export const selectLibraryColumnState = (state: RootState) =>

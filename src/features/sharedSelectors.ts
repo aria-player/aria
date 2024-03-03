@@ -58,7 +58,8 @@ export const selectVisibleTracks = createSelector(
             ...tracks.entities[playlistTrack.trackId]
           };
         })
-      : selectVisibleViewType(state) === LibraryView.Songs
+      : selectVisibleViewType(state) === LibraryView.Songs ||
+          selectVisibleViewType(state) === LibraryView.Albums
         ? (Object.values(tracks.entities).map((track) => ({
             ...track,
             itemId: track?.trackId
@@ -154,6 +155,9 @@ export const selectVisibleDisplayMode = (state: RootState) => {
   )
     return DisplayMode.TrackList;
 
+  if (selectVisibleViewType(state) === LibraryView.Albums)
+    return DisplayMode.AlbumGrid;
+
   return (
     selectVisiblePlaylist(state) != null &&
     selectVisiblePlaylistConfig(state)?.displayMode
@@ -161,6 +165,9 @@ export const selectVisibleDisplayMode = (state: RootState) => {
 };
 
 export const selectVisibleSelectedItem = (state: RootState) => {
+  if (selectVisibleViewType(state) == LibraryView.Albums) {
+    return state.undoable.present.library.selectedAlbum;
+  }
   return selectVisiblePlaylistConfig(state)?.selectedAlbum;
 };
 

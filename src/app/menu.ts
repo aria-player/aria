@@ -28,6 +28,7 @@ import {
   selectVisibleDisplayMode,
   selectVisiblePlaylist,
   selectVisiblePlaylistConfig,
+  selectVisibleSelectedItem,
   selectVisibleViewType
 } from "../features/sharedSelectors";
 import {
@@ -244,8 +245,7 @@ export function handleMenuAction(
 export const selectMenuState = createSelector(
   [
     (state: RootState) => state.router.location,
-    (state: RootState) => state.undoable.present.library.columnState,
-    (state: RootState) => state.undoable.present.library.layout,
+    (state: RootState) => state.undoable.present.library,
     (state: RootState) => state.undoable.present.playlists.layout,
     (state: RootState) => state.undoable.present.playlists.playlists,
     (state: RootState) => state.undoable.present.playlists.playlistsConfig,
@@ -283,7 +283,7 @@ export const selectMenuState = createSelector(
     const selectableTracksVisible =
       selectVisibleDisplayMode(state) == DisplayMode.TrackList ||
       (selectVisibleDisplayMode(state) == DisplayMode.AlbumGrid &&
-        selectVisiblePlaylistConfig(state)?.selectedAlbum);
+        selectVisibleSelectedItem(state) != null);
 
     return {
       back: {
@@ -296,7 +296,10 @@ export const selectMenuState = createSelector(
         )
       },
       selectAll: {
-        disabled: !selectableTracksVisible
+        disabled:
+          !selectableTracksVisible ||
+          (selectVisibleDisplayMode(state) == DisplayMode.AlbumGrid &&
+            !selectVisibleSelectedItem(state))
       },
       columns: {
         disabled: selectVisibleDisplayMode(state) != DisplayMode.TrackList

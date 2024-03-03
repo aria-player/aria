@@ -14,6 +14,7 @@ import { setPlaylistSelectedAlbum } from "../../features/playlists/playlistsSlic
 import { DisplayMode } from "../../app/view";
 import { AlbumTrackList } from "./subviews/AlbumTrackList";
 import { useTranslation } from "react-i18next";
+import { setSelectedAlbum } from "../../features/library/librarySlice";
 
 export default function AlbumGrid() {
   const dispatch = useAppDispatch();
@@ -37,13 +38,16 @@ export default function AlbumGrid() {
   const visibleAlbums = [...new Set(visibleTracks.map((track) => track.album))];
 
   function setSelectedItem(album?: string) {
-    if (visiblePlaylist?.id)
+    if (visiblePlaylist?.id) {
       dispatch(
         setPlaylistSelectedAlbum({
           playlistId: visiblePlaylist?.id,
           selectedAlbum: album ?? null
         })
       );
+    } else {
+      dispatch(setSelectedAlbum(album ?? null));
+    }
   }
 
   return (

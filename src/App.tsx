@@ -59,7 +59,7 @@ function App() {
             <Routes>
               <Route path="/" Component={() => <></>} />
               <Route path="/queue" Component={() => <></>} />
-              <Route path="/albums" Component={() => <>albums</>} />
+              <Route path="/albums" Component={() => <></>} />
               <Route path="/artists" Component={() => <>artists</>} />
               <Route path="/genres" Component={() => <>genres</>} />
               <Route path="/composers" Component={() => <>composers</>} />
