@@ -17,6 +17,10 @@ export function formatDuration(duration: number) {
   return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
 }
 
+export function formatArtist(artist: string | string[] | undefined) {
+  return Array.isArray(artist) ? artist.join("/") : artist ?? "";
+}
+
 export function formatBytes(bytes: number) {
   const sizes = ["B", "KB", "MB", "GB", "TB"];
   const unit = Math.floor(Math.log(bytes) / Math.log(1024));

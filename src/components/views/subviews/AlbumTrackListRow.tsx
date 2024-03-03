@@ -1,5 +1,5 @@
 import { ICellRendererParams } from "@ag-grid-community/core";
-import { formatDuration } from "../../../app/utils";
+import { formatArtist, formatDuration } from "../../../app/utils";
 import { useContextMenu } from "react-contexify";
 import { useContext } from "react";
 import { View } from "../../../app/view";
@@ -107,9 +107,7 @@ export const AlbumTrackListRow = (props: ICellRendererParams) => {
           <span>{props.node.data.title}</span>
           <br />
           <span className={styles.trackArtist}>
-            {Array.isArray(props.node.data.artist)
-              ? props.node.data.artist.join("/")
-              : props.node.data.artist}
+            {formatArtist(props.node.data.artist)}
           </span>
         </div>
         <span className={styles.trackDuration}>

@@ -1,6 +1,6 @@
 import { ColDef } from "@ag-grid-community/core";
 import { Track } from "../tracks/tracksTypes";
-import { formatBytes, formatDuration } from "../../app/utils";
+import { formatArtist, formatBytes, formatDuration } from "../../app/utils";
 import { plugins } from "../../plugins/plugins";
 
 export const defaultColumnDefinitions: ColDef[] = [
@@ -26,10 +26,7 @@ export const defaultColumnDefinitions: ColDef[] = [
   {
     field: "artist",
     valueFormatter: (params: { data: Track; value: string | string[] }) => {
-      if (Array.isArray(params.value)) {
-        return params.value.join("/");
-      }
-      return params.value;
+      return formatArtist(params.value);
     }
   },
   { field: "albumArtist" },

@@ -13,7 +13,7 @@ import {
 import { useAppSelector } from "../../../app/hooks";
 import { AlbumTrackListRow } from "./AlbumTrackListRow";
 import { t } from "i18next";
-import { compareMetadata } from "../../../app/utils";
+import { compareMetadata, formatArtist } from "../../../app/utils";
 import AlbumTrackListSeparator from "./AlbumTrackListSeparator";
 import { useTrackGrid } from "../../../hooks/useTrackGrid";
 
@@ -95,12 +95,7 @@ export const AlbumTrackList = () => {
                 currentAlbumTracks = 0;
               }
               processedTracks.push({
-                artist:
-                  track.albumArtist ?? track.artist
-                    ? Array.isArray(track.artist)
-                      ? track.artist.join("/")
-                      : track.artist
-                    : "",
+                artist: track.albumArtist ?? formatArtist(track.artist),
                 album: track.album,
                 year: track.year,
                 artworkUri: track.artworkUri,
