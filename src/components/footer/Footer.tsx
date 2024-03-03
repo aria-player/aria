@@ -5,6 +5,7 @@ import { selectCurrentTrack } from "../../features/sharedSelectors";
 import { AuxiliaryControls } from "./AuxiliaryControls";
 import { AlbumArt } from "../views/subviews/AlbumArt";
 import { useMenuActions } from "../../hooks/useMenuActions";
+import { formatArtist } from "../../app/utils";
 
 export function Footer() {
   const metadata = useAppSelector(selectCurrentTrack);
@@ -32,7 +33,9 @@ export function Footer() {
             )}
           </div>
           <div className={styles.metadataRow}>
-            <div className={styles.artist}>{metadata?.artist}</div>
+            <div className={styles.artist}>
+              {formatArtist(metadata?.artist)}
+            </div>
           </div>
         </div>
       </section>
