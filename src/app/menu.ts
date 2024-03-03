@@ -136,6 +136,8 @@ export function handleMenuAction(
                 focusCurrent: true
               })
             );
+          } else {
+            dispatch(push(BASEPATH + queueSource, { focusCurrent: true }));
           }
         }
       }
