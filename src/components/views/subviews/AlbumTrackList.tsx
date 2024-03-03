@@ -6,7 +6,10 @@ import {
 import { AgGridReact } from "@ag-grid-community/react";
 import { useMemo, useEffect } from "react";
 import { Track } from "../../../features/tracks/tracksTypes";
-import { selectVisibleTracks } from "../../../features/sharedSelectors";
+import {
+  selectVisiblePlaylistConfig,
+  selectVisibleTracks
+} from "../../../features/sharedSelectors";
 import { useAppSelector } from "../../../app/hooks";
 import { AlbumTrackListRow } from "./AlbumTrackListRow";
 import { t } from "i18next";
@@ -52,6 +55,9 @@ const getRowHeight = (params: RowHeightParams) => {
 export const AlbumTrackList = () => {
   const { gridRef, gridProps } = useTrackGrid();
   const visibleTracks = useAppSelector(selectVisibleTracks);
+  const selectedAlbum = useAppSelector(
+    selectVisiblePlaylistConfig
+  )?.selectedAlbum;
 
   const rowData = useMemo(() => {
     const processTracks = (tracks: Track[]) => {
@@ -61,9 +67,9 @@ export const AlbumTrackList = () => {
       let currentAlbumTracks = 0;
       const processedTracks: AlbumTrackListItem[] = [];
       visibleTracks
+        .filter((track) => track.album == selectedAlbum)
         .sort((a, b) => compareMetadata(a.track, b.track))
         .sort((a, b) => compareMetadata(a.disc, b.disc))
-        .sort((a, b) => compareMetadata(a.album, b.album))
         .forEach((track) => {
           if (
             track.disc != null &&
@@ -119,7 +125,7 @@ export const AlbumTrackList = () => {
       return processedTracks;
     };
     return processTracks(visibleTracks as Track[]);
-  }, [visibleTracks]);
+  }, [selectedAlbum, visibleTracks]);
 
   useEffect(() => {
     gridRef?.current?.api?.resetRowHeights();
