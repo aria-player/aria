@@ -340,9 +340,7 @@ export const selectMenuState = createSelector(
       },
       paste: {
         disabled:
-          !selectVisiblePlaylist(state) ||
-          !selectableTracksVisible ||
-          !state.tracks.clipboard.length
+          !selectVisiblePlaylist(state) || !state.tracks.clipboard.length
       },
       togglePlaylistLayout: {
         disabled: !selectVisiblePlaylist(state),
