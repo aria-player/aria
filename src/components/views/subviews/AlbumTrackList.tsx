@@ -7,6 +7,7 @@ import { AgGridReact } from "@ag-grid-community/react";
 import { useMemo, useEffect } from "react";
 import { Track } from "../../../features/tracks/tracksTypes";
 import {
+  selectVisiblePlaylistConfig,
   selectVisibleSelectedTrackGroup,
   selectVisibleTracks
 } from "../../../features/sharedSelectors";
@@ -16,6 +17,7 @@ import { t } from "i18next";
 import { compareMetadata, formatArtist } from "../../../app/utils";
 import AlbumTrackListSeparator from "./AlbumTrackListSeparator";
 import { useTrackGrid } from "../../../hooks/useTrackGrid";
+import { TrackGrouping } from "../../../app/view";
 
 export interface AlbumTrackListItem {
   itemId: string;
@@ -55,7 +57,10 @@ const getRowHeight = (params: RowHeightParams) => {
 export const AlbumTrackList = () => {
   const { gridRef, gridProps } = useTrackGrid();
   const visibleTracks = useAppSelector(selectVisibleTracks);
-  const selectedAlbum = useAppSelector(selectVisibleSelectedTrackGroup);
+  const selectedTrackGroup = useAppSelector(selectVisibleSelectedTrackGroup);
+  const trackGrouping =
+    useAppSelector(selectVisiblePlaylistConfig)?.trackGrouping ??
+    TrackGrouping.Album;
 
   const rowData = useMemo(() => {
     const processTracks = (tracks: Track[]) => {
@@ -64,51 +69,53 @@ export const AlbumTrackList = () => {
       let currentDisc: number | null = null;
       let currentAlbumTracks = 0;
       const processedTracks: AlbumTrackListItem[] = [];
-      visibleTracks
-        .filter((track) => track.album == selectedAlbum)
-        .sort((a, b) => compareMetadata(a.track, b.track))
-        .sort((a, b) => compareMetadata(a.disc, b.disc))
-        .forEach((track) => {
-          if (
-            track.disc != null &&
-            track.disc != undefined &&
-            currentDisc !== track.disc &&
-            currentAlbum == track.album
-          ) {
-            processedTracks.push({
-              title: t("albumTrackList.disc", { number: track.disc }),
-              separator: true,
-              itemId: `disc-separator-${track.album}-${currentDisc}`
-            });
-          }
-
-          currentDisc = track.disc ?? null;
-          if (currentAlbum !== track.album) {
-            if (currentAlbum !== track.album) {
-              if (currentAlbum !== null) {
-                processedTracks.push({
-                  separator: true,
-                  tracks: currentAlbumTracks,
-                  source: track.source,
-                  itemId: `album-separator-${track.album}`
-                });
-                currentAlbumTracks = 0;
-              }
+      trackGrouping &&
+        visibleTracks
+          .filter((track) => track[trackGrouping] == selectedTrackGroup)
+          .sort((a, b) => compareMetadata(a.track, b.track))
+          .sort((a, b) => compareMetadata(a.disc, b.disc))
+          .sort((a, b) => compareMetadata(a.album, b.album))
+          .forEach((track) => {
+            if (
+              track.disc != null &&
+              track.disc != undefined &&
+              currentDisc !== track.disc &&
+              currentAlbum == track.album
+            ) {
               processedTracks.push({
-                artist: track.albumArtist ?? formatArtist(track.artist),
-                album: track.album,
-                year: track.year,
-                artworkUri: track.artworkUri,
-                source: track.source,
+                title: t("albumTrackList.disc", { number: track.disc }),
                 separator: true,
-                itemId: `album-header-${track.album}-`
+                itemId: `disc-separator-${track.album}-${currentDisc}`
               });
-              currentAlbum = track.album ?? null;
             }
-          }
-          processedTracks.push(track);
-          currentAlbumTracks += 1;
-        });
+
+            currentDisc = track.disc ?? null;
+            if (currentAlbum !== track.album) {
+              if (currentAlbum !== track.album) {
+                if (currentAlbum !== null) {
+                  processedTracks.push({
+                    separator: true,
+                    tracks: currentAlbumTracks,
+                    source: track.source,
+                    itemId: `album-separator-${track.album}`
+                  });
+                  currentAlbumTracks = 0;
+                }
+                processedTracks.push({
+                  artist: track.albumArtist ?? formatArtist(track.artist),
+                  album: track.album,
+                  year: track.year,
+                  artworkUri: track.artworkUri,
+                  source: track.source,
+                  separator: true,
+                  itemId: `album-header-${track.album}-`
+                });
+                currentAlbum = track.album ?? null;
+              }
+            }
+            processedTracks.push(track);
+            currentAlbumTracks += 1;
+          });
       if (visibleTracks.length > 0)
         processedTracks.push({
           separator: true,
@@ -118,7 +125,7 @@ export const AlbumTrackList = () => {
       return processedTracks;
     };
     return processTracks(visibleTracks as Track[]);
-  }, [selectedAlbum, visibleTracks]);
+  }, [selectedTrackGroup, trackGrouping, visibleTracks]);
 
   useEffect(() => {
     gridRef?.current?.api?.resetRowHeights();

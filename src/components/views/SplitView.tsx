@@ -1,14 +1,30 @@
 import { Allotment } from "allotment";
-import { useAppSelector } from "../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { AlbumTrackList } from "./subviews/AlbumTrackList";
-import { selectVisibleTrackGroups } from "../../features/sharedSelectors";
+import {
+  selectVisiblePlaylist,
+  selectVisibleSelectedTrackGroup,
+  selectVisibleTrackGroups
+} from "../../features/sharedSelectors";
 import styles from "./SplitView.module.css";
-import { useState } from "react";
+import { setPlaylistSelectedTrackGroup } from "../../features/playlists/playlistsSlice";
 
 export function SplitView() {
   const visibleItems = useAppSelector(selectVisibleTrackGroups);
+  const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
+  const selectedItem = useAppSelector(selectVisibleSelectedTrackGroup);
+  const dispatch = useAppDispatch();
 
-  const [selectedItem, setSelectedItem] = useState<string | null>(null);
+  function setSelectedItem(group: string | null) {
+    if (visiblePlaylist?.id) {
+      dispatch(
+        setPlaylistSelectedTrackGroup({
+          playlistId: visiblePlaylist?.id,
+          selectedGroup: group
+        })
+      );
+    }
+  }
 
   const buttons = visibleItems.map((itemName, index) => (
     <li
