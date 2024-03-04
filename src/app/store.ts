@@ -72,7 +72,8 @@ export const store = configureStore({
     }).concat([routerMiddleware, listenerMiddleware.middleware])
 });
 
-export type AppDispatch = typeof store.dispatch;
+export type AppStore = typeof store;
+export type AppDispatch = AppStore["dispatch"];
 export type RootState = ReturnType<typeof store.getState>;
 export type UndoableSlices = ReturnType<typeof undoableSlices>;
 export type AppThunk<ReturnType = void> = ThunkAction<

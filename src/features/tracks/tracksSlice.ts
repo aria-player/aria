@@ -10,12 +10,12 @@ import { Track, TrackId } from "./tracksTypes";
 import { PluginId } from "../plugins/pluginsTypes";
 import { PlaylistItem } from "../playlists/playlistsTypes";
 
-const tracksAdapter = createEntityAdapter<Track>({
+const tracksAdapter = createEntityAdapter<Track, TrackId>({
   selectId: (track) => track.trackId
 });
 
 interface TracksState {
-  tracks: EntityState<Track>;
+  tracks: EntityState<Track, TrackId>;
   selectedTracks: PlaylistItem[];
   clipboard: PlaylistItem[];
 }

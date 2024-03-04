@@ -1,4 +1,8 @@
-import { listenForAction, listenForChange } from "../../app/listener";
+import {
+  MatchFunction,
+  listenForAction,
+  listenForChange
+} from "../../app/listener";
 import { push } from "redux-first-history";
 import { BASEPATH } from "../../app/constants";
 import {
@@ -6,10 +10,9 @@ import {
   selectSortedTrackList,
   selectVisiblePlaylist
 } from "../sharedSelectors";
-import { AnyAction, isAnyOf } from "@reduxjs/toolkit";
+import { isAnyOf } from "@reduxjs/toolkit";
 import { cleanupPlaylistConfigs, deletePlaylistItem } from "./playlistsSlice";
 import { ActionTypes } from "redux-undo";
-import { MatchFunction } from "@reduxjs/toolkit/dist/listenerMiddleware/types";
 import { updateQueueAfterChange } from "../player/playerSlice";
 
 export function setupPlaylistsListeners() {
@@ -20,7 +23,7 @@ export function setupPlaylistsListeners() {
         // Check after undo in case createPlaylist is undone with playlist open
         action.type === ActionTypes.UNDO ||
         // Check after redo in case deletePlaylist is redone with playlist open
-        action.type === ActionTypes.REDO) as MatchFunction<AnyAction>
+        action.type === ActionTypes.REDO) as MatchFunction
     ),
     (state, _, dispatch) => {
       if (!selectVisiblePlaylist(state)) {

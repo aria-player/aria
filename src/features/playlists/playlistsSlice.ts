@@ -1,5 +1,4 @@
 import {
-  EntityId,
   EntityState,
   PayloadAction,
   createEntityAdapter,
@@ -35,8 +34,8 @@ const playlistsAdapter = createEntityAdapter<PlaylistUndoable>();
 const playlistsConfigAdapter = createEntityAdapter<PlaylistConfig>();
 
 export interface PlaylistsState {
-  playlists: EntityState<PlaylistUndoable>;
-  playlistsConfig: EntityState<PlaylistConfig>;
+  playlists: EntityState<PlaylistUndoable, PlaylistId>;
+  playlistsConfig: EntityState<PlaylistConfig, PlaylistId>;
   layout: Item[];
   openFolders: string[];
 }
@@ -98,7 +97,7 @@ export const playlistsSlice = createSlice({
     },
     cleanupPlaylistConfigs: (
       state,
-      action: PayloadAction<{ deletedIds: EntityId[] }>
+      action: PayloadAction<{ deletedIds: PlaylistId[] }>
     ) => {
       playlistsConfigAdapter.removeMany(
         state.playlistsConfig,
