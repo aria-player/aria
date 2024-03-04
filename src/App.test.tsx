@@ -4,7 +4,7 @@ import { store } from "./app/store";
 import App from "./App";
 import { BrowserRouter } from "react-router-dom";
 
-test("renders react text", () => {
+test("renders loading state by default", () => {
   class ResizeObserver {
     observe() {}
     unobserve() {}
@@ -12,7 +12,7 @@ test("renders react text", () => {
   }
   window.ResizeObserver = ResizeObserver;
 
-  const { getByText } = render(
+  render(
     <Provider store={store}>
       <BrowserRouter>
         <App />
@@ -20,5 +20,6 @@ test("renders react text", () => {
     </Provider>
   );
 
-  expect(getByText(/React/i)).toBeInTheDocument();
+  const loadingElement = document.querySelector("[class*='loading']");
+  expect(loadingElement).toBeInTheDocument();
 });

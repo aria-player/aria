@@ -29,6 +29,9 @@ export default defineConfig(async () => ({
   envPrefix: ["VITE_", "TAURI_DEBUG"],
   test: {
     globals: true,
+    server: {
+      deps: { inline: ["soprano-ui"] }
+    },
     environment: "jsdom",
     setupFiles: "src/setupTests"
   }
