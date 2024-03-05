@@ -218,11 +218,16 @@ export const selectVisibleTrackGroups = createSelector(
         ...new Set(selectVisibleTracks(state).map((track) => track.album))
       ];
     } else if (selectVisibleDisplayMode(state) == DisplayMode.SplitView) {
-      // TODO: Split view should support more tag types
-      // Artist should also split up array into different groups
-      return [
-        ...new Set(selectVisibleTracks(state).map((track) => track.albumArtist))
-      ];
+      const grouping = selectVisiblePlaylistConfig(state)?.trackGrouping;
+      if (grouping) {
+        return [
+          ...new Set(
+            selectVisibleTracks(state).flatMap(
+              (track) => track[grouping] as string | string[]
+            )
+          )
+        ];
+      }
     }
     return [];
   }

@@ -7,6 +7,7 @@ import { AgGridReact } from "@ag-grid-community/react";
 import { useMemo, useEffect } from "react";
 import { Track } from "../../../features/tracks/tracksTypes";
 import {
+  selectVisibleDisplayMode,
   selectVisiblePlaylistConfig,
   selectVisibleSelectedTrackGroup,
   selectVisibleTracks
@@ -17,7 +18,7 @@ import { t } from "i18next";
 import { compareMetadata, formatArtist } from "../../../app/utils";
 import AlbumTrackListSeparator from "./AlbumTrackListSeparator";
 import { useTrackGrid } from "../../../hooks/useTrackGrid";
-import { TrackGrouping } from "../../../app/view";
+import { DisplayMode, TrackGrouping } from "../../../app/view";
 
 export interface AlbumTrackListItem {
   itemId: string;
@@ -58,9 +59,14 @@ export const AlbumTrackList = () => {
   const { gridRef, gridProps } = useTrackGrid();
   const visibleTracks = useAppSelector(selectVisibleTracks);
   const selectedTrackGroup = useAppSelector(selectVisibleSelectedTrackGroup);
+  const visibleDisplayMode = useAppSelector(selectVisibleDisplayMode);
+  const customGroup = useAppSelector(
+    selectVisiblePlaylistConfig
+  )?.trackGrouping;
   const trackGrouping =
-    useAppSelector(selectVisiblePlaylistConfig)?.trackGrouping ??
-    TrackGrouping.Album;
+    customGroup && visibleDisplayMode == DisplayMode.SplitView
+      ? customGroup
+      : TrackGrouping.Album;
 
   const rowData = useMemo(() => {
     const processTracks = (tracks: Track[]) => {
@@ -71,7 +77,15 @@ export const AlbumTrackList = () => {
       const processedTracks: AlbumTrackListItem[] = [];
       trackGrouping &&
         visibleTracks
-          .filter((track) => track[trackGrouping] == selectedTrackGroup)
+          .filter(
+            (track) =>
+              track[trackGrouping] == selectedTrackGroup ||
+              (selectedTrackGroup &&
+                Array.isArray(track[trackGrouping]) &&
+                (track[trackGrouping] as string[])?.includes(
+                  selectedTrackGroup
+                ))
+          )
           .sort((a, b) => compareMetadata(a.track, b.track))
           .sort((a, b) => compareMetadata(a.disc, b.disc))
           .sort((a, b) => compareMetadata(a.album, b.album))

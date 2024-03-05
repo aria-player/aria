@@ -87,7 +87,7 @@ export const playlistsSlice = createSlice({
           useCustomLayout: false,
           displayMode: DisplayMode.TrackList,
           splitViewSizes: null,
-          trackGrouping: null,
+          trackGrouping: TrackGrouping.Artist,
           selectedGroup: null
         });
       }
@@ -205,13 +205,20 @@ export const playlistsSlice = createSlice({
         if (action.payload.displayMode != playlistConfig.displayMode) {
           playlistConfig.selectedGroup = null;
         }
-        if (action.payload.displayMode == DisplayMode.AlbumGrid) {
-          playlistConfig.trackGrouping = TrackGrouping.Album;
-        }
-        if (action.payload.displayMode == DisplayMode.SplitView) {
-          playlistConfig.trackGrouping = TrackGrouping.AlbumArtist;
-        }
         playlistConfig.displayMode = action.payload.displayMode;
+      }
+    },
+    setPlaylistTrackGrouping: (
+      state,
+      action: PayloadAction<{
+        playlistId: PlaylistId;
+        trackGrouping: TrackGrouping | null;
+      }>
+    ) => {
+      const playlistConfig =
+        state.playlistsConfig.entities[action.payload.playlistId];
+      if (playlistConfig) {
+        playlistConfig.trackGrouping = action.payload.trackGrouping;
       }
     },
     setPlaylistSelectedTrackGroup: (
@@ -259,7 +266,8 @@ export const {
   togglePlaylistUsesCustomLayout,
   setPlaylistDisplayMode,
   setPlaylistSelectedTrackGroup,
-  updatePlaylistSplitViewSizes
+  updatePlaylistSplitViewSizes,
+  setPlaylistTrackGrouping
 } = playlistsSlice.actions;
 
 export const selectPlaylistsLayout = (state: RootState) =>

@@ -36,11 +36,12 @@ import {
   removeTracksFromPlaylist,
   resetPlaylistColumnState,
   setPlaylistDisplayMode,
+  setPlaylistTrackGrouping,
   togglePlaylistUsesCustomLayout
 } from "../features/playlists/playlistsSlice";
 import { copySelectedTracks } from "../features/tracks/tracksSlice";
 import { PlaylistItem } from "../features/playlists/playlistsTypes";
-import { View, DisplayMode, LibraryView } from "./view";
+import { View, DisplayMode, LibraryView, TrackGrouping } from "./view";
 
 export interface MenuItem {
   id: string;
@@ -229,6 +230,17 @@ export function handleMenuAction(
     const isVisible = grid?.api?.getColumn(column)?.isVisible();
     grid?.api.setColumnsVisible([column], !isVisible);
   }
+  if (action.startsWith("groupBy.") && grid?.api) {
+    const visiblePlaylist = selectVisiblePlaylist(state);
+    if (visiblePlaylist?.id) {
+      dispatch(
+        setPlaylistTrackGrouping({
+          playlistId: visiblePlaylist?.id,
+          trackGrouping: action.split(".")[1] as TrackGrouping
+        })
+      );
+    }
+  }
   if (action.startsWith("switchTo")) {
     const visiblePlaylist = selectVisiblePlaylist(state);
     if (visiblePlaylist?.id) {
@@ -280,6 +292,12 @@ export const selectMenuState = createSelector(
         disabled: selectVisibleDisplayMode(state) != DisplayMode.TrackList
       };
     });
+    Object.values(TrackGrouping).forEach((grouping) => {
+      columnVisibility["groupBy." + grouping] = {
+        selected: selectVisiblePlaylistConfig(state)?.trackGrouping == grouping,
+        disabled: !selectVisiblePlaylist(state)
+      };
+    });
 
     // TODO: Should also be false if there is a selected album, but there are no visible tracks
     const selectableTracksVisible =
@@ -305,6 +323,11 @@ export const selectMenuState = createSelector(
       },
       columns: {
         disabled: selectVisibleDisplayMode(state) != DisplayMode.TrackList
+      },
+      groupBy: {
+        disabled:
+          selectVisibleDisplayMode(state) != DisplayMode.SplitView ||
+          !selectVisiblePlaylist(state)
       },
       ...columnVisibility,
       togglePlay: {

@@ -121,6 +121,7 @@
     "about": "About...",
     "columns": "Columns",
     "viewType": "View Type",
+    "groupBy": "Group By",
     "switchToTrackList": "Track List",
     "switchToAlbumGrid": "Album Grid",
     "switchToSplitView": "Split View",
@@ -157,6 +158,13 @@
     "dateAdded": "Date Added",
     "fileSize": "Size",
     "source": "Source"
+  },
+  "groupBy": {
+    "artist": "Artist",
+    "albumArtist": "Album Artist",
+    "genre": "Genre",
+    "year": "Year",
+    "composer": "Composer"
   },
   "albumGrid": {
     "empty": "No albums to display"
