@@ -1,17 +1,25 @@
 import { Allotment } from "allotment";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { AlbumTrackList } from "./subviews/AlbumTrackList";
 import {
   selectVisiblePlaylist,
+  selectVisiblePlaylistConfig,
   selectVisibleSelectedTrackGroup,
   selectVisibleTrackGroups
 } from "../../features/sharedSelectors";
 import styles from "./SplitView.module.css";
-import { setPlaylistSelectedTrackGroup } from "../../features/playlists/playlistsSlice";
+import {
+  setPlaylistSelectedTrackGroup,
+  updatePlaylistSplitViewSizes
+} from "../../features/playlists/playlistsSlice";
+import { useCallback } from "react";
+import { AlbumTrackList } from "./subviews/AlbumTrackList";
 
 export function SplitView() {
   const visibleItems = useAppSelector(selectVisibleTrackGroups);
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
+  const visiblePlaylistSplitViewSizes = useAppSelector(
+    selectVisiblePlaylistConfig
+  )?.splitViewSizes;
   const selectedItem = useAppSelector(selectVisibleSelectedTrackGroup);
   const dispatch = useAppDispatch();
 
@@ -25,6 +33,19 @@ export function SplitView() {
       );
     }
   }
+
+  const handleDragEnd = useCallback(
+    (sizes: number[]) => {
+      if (visiblePlaylist)
+        dispatch(
+          updatePlaylistSplitViewSizes({
+            playlistId: visiblePlaylist?.id,
+            splitSizes: sizes
+          })
+        );
+    },
+    [dispatch, visiblePlaylist]
+  );
 
   const buttons = visibleItems.map((itemName, index) => (
     <li
@@ -44,7 +65,11 @@ export function SplitView() {
 
   return (
     <div className={styles.splitView}>
-      <Allotment proportionalLayout={false}>
+      <Allotment
+        key={visiblePlaylist?.id}
+        onDragEnd={handleDragEnd}
+        defaultSizes={visiblePlaylistSplitViewSizes ?? [2, 8]}
+      >
         <Allotment.Pane minSize={60}>
           <ul className={styles.trackGroupsList}>{buttons}</ul>
         </Allotment.Pane>

@@ -15,6 +15,7 @@ export interface PlaylistConfig {
   columnState: ColumnState[] | null;
   useCustomLayout: boolean;
   displayMode: DisplayMode;
+  splitViewSizes: number[] | null;
   trackGrouping: TrackGrouping | null;
   selectedGroup: string | null;
 }

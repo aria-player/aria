@@ -86,6 +86,7 @@ export const playlistsSlice = createSlice({
           columnState: null,
           useCustomLayout: false,
           displayMode: DisplayMode.TrackList,
+          splitViewSizes: null,
           trackGrouping: null,
           selectedGroup: null
         });
@@ -225,6 +226,19 @@ export const playlistsSlice = createSlice({
       if (playlistConfig) {
         playlistConfig.selectedGroup = action.payload.selectedGroup;
       }
+    },
+    updatePlaylistSplitViewSizes: (
+      state,
+      action: PayloadAction<{
+        playlistId: PlaylistId;
+        splitSizes: number[];
+      }>
+    ) => {
+      const playlistConfig =
+        state.playlistsConfig.entities[action.payload.playlistId];
+      if (playlistConfig) {
+        playlistConfig.splitViewSizes = action.payload.splitSizes;
+      }
     }
   }
 });
@@ -244,7 +258,8 @@ export const {
   updatePlaylistColumnState,
   togglePlaylistUsesCustomLayout,
   setPlaylistDisplayMode,
-  setPlaylistSelectedTrackGroup
+  setPlaylistSelectedTrackGroup,
+  updatePlaylistSplitViewSizes
 } = playlistsSlice.actions;
 
 export const selectPlaylistsLayout = (state: RootState) =>
