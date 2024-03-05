@@ -13,6 +13,7 @@ import {
 } from "../../features/playlists/playlistsSlice";
 import { useCallback } from "react";
 import { AlbumTrackList } from "./subviews/AlbumTrackList";
+import { compareMetadata } from "../../app/utils";
 
 export function SplitView() {
   const visibleItems = useAppSelector(selectVisibleTrackGroups);
@@ -47,21 +48,23 @@ export function SplitView() {
     [dispatch, visiblePlaylist]
   );
 
-  const buttons = visibleItems.map((itemName, index) => (
-    <li
-      key={itemName}
-      className={`${styles.listItem} ${selectedItem == itemName ? styles.selected : ""}`}
-    >
-      <button
-        key={index}
-        onClick={() => {
-          setSelectedItem(itemName ?? null);
-        }}
+  const buttons = visibleItems
+    .sort((a, b) => compareMetadata(a, b))
+    .map((itemName, index) => (
+      <li
+        key={itemName}
+        className={`${styles.listItem} ${selectedItem == itemName ? styles.selected : ""}`}
       >
-        {itemName}
-      </button>
-    </li>
-  ));
+        <button
+          key={index}
+          onClick={() => {
+            setSelectedItem(itemName ?? null);
+          }}
+        >
+          {itemName}
+        </button>
+      </li>
+    ));
 
   return (
     <div className={styles.splitView}>
