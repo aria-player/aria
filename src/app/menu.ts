@@ -329,6 +329,9 @@ export const selectMenuState = createSelector(
       columns: {
         disabled: selectVisibleDisplayMode(state) != DisplayMode.TrackList
       },
+      resetColumns: {
+        disabled: selectVisibleDisplayMode(state) != DisplayMode.TrackList
+      },
       groupBy: {
         disabled:
           selectVisibleDisplayMode(state) != DisplayMode.SplitView ||
