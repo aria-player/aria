@@ -241,15 +241,13 @@ export function handleMenuAction(
       );
     }
   }
-  if (action.startsWith("switchTo")) {
+  if (action.startsWith("viewType.")) {
     const visiblePlaylist = selectVisiblePlaylist(state);
     if (visiblePlaylist?.id) {
       dispatch(
         setPlaylistDisplayMode({
           playlistId: visiblePlaylist?.id,
-          displayMode: action
-            .replace("switchTo", "")
-            .toLowerCase() as DisplayMode
+          displayMode: action.split(".")[1] as DisplayMode
         })
       );
     }
@@ -290,6 +288,13 @@ export const selectMenuState = createSelector(
       columnVisibility["columns." + c.field] = {
         selected: hidden != undefined ? !hidden : !c.hide,
         disabled: selectVisibleDisplayMode(state) != DisplayMode.TrackList
+      };
+    });
+    Object.values(DisplayMode).forEach((displayMode) => {
+      columnVisibility["viewType." + displayMode] = {
+        selected:
+          selectVisiblePlaylistConfig(state)?.displayMode == displayMode,
+        disabled: !selectVisiblePlaylist(state)
       };
     });
     Object.values(TrackGrouping).forEach((grouping) => {
@@ -376,30 +381,6 @@ export const selectMenuState = createSelector(
       },
       viewType: {
         disabled: !selectVisiblePlaylist(state)
-      },
-      switchToTrackList: {
-        disabled: !selectVisiblePlaylist(state),
-        selected:
-          selectVisiblePlaylistConfig(state)?.displayMode ==
-          DisplayMode.TrackList
-      },
-      switchToAlbumGrid: {
-        disabled: !selectVisiblePlaylist(state),
-        selected:
-          selectVisiblePlaylistConfig(state)?.displayMode ==
-          DisplayMode.AlbumGrid
-      },
-      switchToSplitView: {
-        disabled: !selectVisiblePlaylist(state),
-        selected:
-          selectVisiblePlaylistConfig(state)?.displayMode ==
-          DisplayMode.SplitView
-      },
-      switchToDebugView: {
-        disabled: !selectVisiblePlaylist(state),
-        selected:
-          selectVisiblePlaylistConfig(state)?.displayMode ==
-          DisplayMode.DebugView
       }
     };
   }

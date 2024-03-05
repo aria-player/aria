@@ -115,10 +115,10 @@
       {
         "id": "viewType",
         "submenu": [
-          { "id": "switchToTrackList" },
-          { "id": "switchToAlbumGrid" },
-          { "id": "switchToSplitView" },
-          { "id": "switchToDebugView" }
+          { "id": "viewType.trackList" },
+          { "id": "viewType.albumGrid" },
+          { "id": "viewType.splitView" },
+          { "id": "viewType.debugView" }
         ]
       },
       {
