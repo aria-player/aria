@@ -15,7 +15,10 @@ import {
 import { useCallback } from "react";
 import { AlbumTrackList } from "./subviews/AlbumTrackList";
 import { compareMetadata } from "../../app/utils";
-import { updateLibrarySplitState } from "../../features/library/librarySlice";
+import {
+  selectLibrarySplitViewStates,
+  updateLibrarySplitState
+} from "../../features/library/librarySlice";
 
 export function SplitView() {
   const visibleItems = useAppSelector(selectVisibleTrackGroups);
@@ -24,6 +27,9 @@ export function SplitView() {
   const visiblePlaylistSplitViewSizes = useAppSelector(
     selectVisiblePlaylistConfig
   )?.splitViewSizes;
+  const visibleLibrarySplitViewSizes = useAppSelector(
+    selectLibrarySplitViewStates
+  )[visibleViewType]?.paneSizes;
   const selectedItem = useAppSelector(selectVisibleSelectedTrackGroup);
   const dispatch = useAppDispatch();
 
@@ -47,15 +53,23 @@ export function SplitView() {
 
   const handleDragEnd = useCallback(
     (sizes: number[]) => {
-      if (visiblePlaylist)
+      if (visiblePlaylist) {
         dispatch(
           updatePlaylistSplitViewSizes({
             playlistId: visiblePlaylist?.id,
             splitSizes: sizes
           })
         );
+      } else {
+        dispatch(
+          updateLibrarySplitState({
+            view: visibleViewType,
+            splitState: { paneSizes: sizes }
+          })
+        );
+      }
     },
-    [dispatch, visiblePlaylist]
+    [dispatch, visiblePlaylist, visibleViewType]
   );
 
   const buttons = visibleItems
@@ -79,9 +93,12 @@ export function SplitView() {
   return (
     <div className={styles.splitView}>
       <Allotment
-        key={visiblePlaylist?.id}
+        key={visibleViewType + visiblePlaylist?.id}
         onDragEnd={handleDragEnd}
-        defaultSizes={visiblePlaylistSplitViewSizes ?? [2, 8]}
+        defaultSizes={
+          visiblePlaylistSplitViewSizes ??
+          visibleLibrarySplitViewSizes ?? [2, 8]
+        }
       >
         <Allotment.Pane minSize={60}>
           <ul className={styles.trackGroupsList}>{buttons}</ul>
