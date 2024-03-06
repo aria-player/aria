@@ -7,9 +7,8 @@ import { AgGridReact } from "@ag-grid-community/react";
 import { useMemo, useEffect } from "react";
 import { Track } from "../../../features/tracks/tracksTypes";
 import {
-  selectVisibleDisplayMode,
-  selectVisiblePlaylistConfig,
   selectVisibleSelectedTrackGroup,
+  selectVisibleTrackGrouping,
   selectVisibleTracks
 } from "../../../features/sharedSelectors";
 import { useAppSelector } from "../../../app/hooks";
@@ -18,7 +17,6 @@ import { t } from "i18next";
 import { compareMetadata, formatArtist } from "../../../app/utils";
 import AlbumTrackListSeparator from "./AlbumTrackListSeparator";
 import { useTrackGrid } from "../../../hooks/useTrackGrid";
-import { DisplayMode, TrackGrouping } from "../../../app/view";
 
 export interface AlbumTrackListItem {
   itemId: string;
@@ -58,15 +56,8 @@ const getRowHeight = (params: RowHeightParams) => {
 export const AlbumTrackList = () => {
   const { gridRef, gridProps } = useTrackGrid();
   const visibleTracks = useAppSelector(selectVisibleTracks);
+  const trackGrouping = useAppSelector(selectVisibleTrackGrouping);
   const selectedTrackGroup = useAppSelector(selectVisibleSelectedTrackGroup);
-  const visibleDisplayMode = useAppSelector(selectVisibleDisplayMode);
-  const customGroup = useAppSelector(
-    selectVisiblePlaylistConfig
-  )?.trackGrouping;
-  const trackGrouping =
-    customGroup && visibleDisplayMode == DisplayMode.SplitView
-      ? customGroup
-      : TrackGrouping.Album;
 
   const rowData = useMemo(() => {
     const processTracks = (tracks: Track[]) => {

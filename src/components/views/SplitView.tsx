@@ -4,7 +4,8 @@ import {
   selectVisiblePlaylist,
   selectVisiblePlaylistConfig,
   selectVisibleSelectedTrackGroup,
-  selectVisibleTrackGroups
+  selectVisibleTrackGroups,
+  selectVisibleViewType
 } from "../../features/sharedSelectors";
 import styles from "./SplitView.module.css";
 import {
@@ -14,10 +15,12 @@ import {
 import { useCallback } from "react";
 import { AlbumTrackList } from "./subviews/AlbumTrackList";
 import { compareMetadata } from "../../app/utils";
+import { updateLibrarySplitState } from "../../features/library/librarySlice";
 
 export function SplitView() {
   const visibleItems = useAppSelector(selectVisibleTrackGroups);
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
+  const visibleViewType = useAppSelector(selectVisibleViewType);
   const visiblePlaylistSplitViewSizes = useAppSelector(
     selectVisiblePlaylistConfig
   )?.splitViewSizes;
@@ -30,6 +33,13 @@ export function SplitView() {
         setPlaylistSelectedTrackGroup({
           playlistId: visiblePlaylist?.id,
           selectedGroup: group
+        })
+      );
+    } else {
+      dispatch(
+        updateLibrarySplitState({
+          view: visibleViewType,
+          splitState: { selectedGroup: group }
         })
       );
     }

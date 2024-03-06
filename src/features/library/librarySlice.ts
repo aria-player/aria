@@ -6,11 +6,19 @@ import {
   filterHiddenColumnSort,
   resetColumnStateExceptSort
 } from "../../app/utils";
+import { TrackGrouping } from "../../app/view";
+
+type SplitViewState = {
+  paneSizes?: number[] | null;
+  trackGrouping: TrackGrouping | null;
+  selectedGroup?: string | null;
+};
 
 interface LibraryState {
   columnState: ColumnState[] | null;
   layout: Item[];
   selectedAlbum: string | null;
+  splitViewStates: Record<string, SplitViewState>;
 }
 
 const initialState: LibraryState = {
@@ -23,7 +31,13 @@ const initialState: LibraryState = {
     { id: "composers", name: "composers", hidden: true },
     { id: "years", name: "years", hidden: true }
   ],
-  selectedAlbum: null
+  selectedAlbum: null,
+  splitViewStates: {
+    artists: { trackGrouping: TrackGrouping.Artist },
+    genres: { trackGrouping: TrackGrouping.Genre },
+    composers: { trackGrouping: TrackGrouping.Composer },
+    years: { trackGrouping: TrackGrouping.Year }
+  }
 };
 
 const librarySlice = createSlice({
@@ -57,6 +71,18 @@ const librarySlice = createSlice({
     },
     setSelectedAlbum: (state, action: PayloadAction<string | null>) => {
       state.selectedAlbum = action.payload;
+    },
+    updateLibrarySplitState: (
+      state,
+      action: PayloadAction<{
+        view: string;
+        splitState: Partial<SplitViewState>;
+      }>
+    ) => {
+      state.splitViewStates[action.payload.view] = {
+        ...state.splitViewStates[action.payload.view],
+        ...action.payload.splitState
+      };
     }
   }
 });
@@ -67,12 +93,15 @@ export const {
   moveLibraryItem,
   updateLibraryItem,
   resetLibraryLayout,
-  setSelectedAlbum
+  setSelectedAlbum,
+  updateLibrarySplitState
 } = librarySlice.actions;
 
 export const selectLibraryColumnState = (state: RootState) =>
   state.undoable.present.library.columnState;
 export const selectLibraryLayout = (state: RootState) =>
   state.undoable.present.library.layout;
+export const selectLibrarySplitViewStates = (state: RootState) =>
+  state.undoable.present.library.splitViewStates;
 
 export default librarySlice.reducer;

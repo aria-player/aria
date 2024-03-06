@@ -6,9 +6,18 @@ import {
 } from "./playlists/playlistsSlice";
 import { createSelector } from "@reduxjs/toolkit";
 import { TrackListItem } from "./tracks/tracksTypes";
-import { LibraryView, View, DisplayMode, isLibraryView } from "../app/view";
+import {
+  LibraryView,
+  View,
+  DisplayMode,
+  isLibraryView,
+  TrackGrouping
+} from "../app/view";
 import { PlaylistId, PlaylistItem } from "./playlists/playlistsTypes";
-import { selectLibraryColumnState } from "./library/librarySlice";
+import {
+  selectLibraryColumnState,
+  selectLibrarySplitViewStates
+} from "./library/librarySlice";
 import { compareMetadata, overrideColumnStateSort } from "../app/utils";
 
 export const selectVisibleViewType = (state: RootState) => {
@@ -58,8 +67,9 @@ export const selectVisibleTracks = createSelector(
             ...tracks.entities[playlistTrack.trackId]
           };
         })
-      : selectVisibleViewType(state) === LibraryView.Songs ||
-          selectVisibleViewType(state) === LibraryView.Albums
+      : Object.values(LibraryView).includes(
+            selectVisibleViewType(state) as LibraryView
+          )
         ? (Object.values(tracks.entities).map((track) => ({
             ...track,
             itemId: track?.trackId
@@ -158,17 +168,45 @@ export const selectVisibleDisplayMode = (state: RootState) => {
   if (selectVisibleViewType(state) === LibraryView.Albums)
     return DisplayMode.AlbumGrid;
 
+  if (
+    [
+      LibraryView.Artists,
+      LibraryView.Genres,
+      LibraryView.Composers,
+      LibraryView.Years
+    ].includes(selectVisibleViewType(state) as LibraryView)
+  ) {
+    return DisplayMode.SplitView;
+  }
+
   return (
     selectVisiblePlaylist(state) != null &&
     selectVisiblePlaylistConfig(state)?.displayMode
   );
 };
 
+export const selectVisibleTrackGrouping = (state: RootState) => {
+  if (selectVisibleViewType(state) === LibraryView.Albums)
+    return TrackGrouping.Album;
+
+  if (selectVisibleDisplayMode(state) == DisplayMode.SplitView) {
+    const playlistGrouping = selectVisiblePlaylistConfig(state)?.trackGrouping;
+    return playlistGrouping
+      ? playlistGrouping
+      : selectLibrarySplitViewStates(state)[selectVisibleViewType(state)]
+          .trackGrouping;
+  }
+};
+
 export const selectVisibleSelectedTrackGroup = (state: RootState) => {
   if (selectVisibleViewType(state) == LibraryView.Albums) {
     return state.undoable.present.library.selectedAlbum;
+  } else if (selectVisiblePlaylist(state)) {
+    return selectVisiblePlaylistConfig(state)?.selectedGroup;
+  } else {
+    return selectLibrarySplitViewStates(state)[selectVisibleViewType(state)]
+      ?.selectedGroup;
   }
-  return selectVisiblePlaylistConfig(state)?.selectedGroup;
 };
 
 export const selectCurrentPlaylist = (state: RootState) => {
@@ -218,7 +256,11 @@ export const selectVisibleTrackGroups = createSelector(
         ...new Set(selectVisibleTracks(state).map((track) => track.album))
       ];
     } else if (selectVisibleDisplayMode(state) == DisplayMode.SplitView) {
-      const grouping = selectVisiblePlaylistConfig(state)?.trackGrouping;
+      const grouping = selectVisiblePlaylist(state)
+        ? selectVisiblePlaylistConfig(state)?.trackGrouping
+        : selectLibrarySplitViewStates(state)[
+            selectVisibleViewType(state) as string
+          ].trackGrouping;
       if (grouping) {
         return [
           ...new Set(

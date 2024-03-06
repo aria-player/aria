@@ -60,10 +60,10 @@ function App() {
               <Route path="/" Component={() => <></>} />
               <Route path="/queue" Component={() => <></>} />
               <Route path="/albums" Component={() => <></>} />
-              <Route path="/artists" Component={() => <>artists</>} />
-              <Route path="/genres" Component={() => <>genres</>} />
-              <Route path="/composers" Component={() => <>composers</>} />
-              <Route path="/years" Component={() => <>years</>} />
+              <Route path="/artists" Component={() => <></>} />
+              <Route path="/genres" Component={() => <></>} />
+              <Route path="/composers" Component={() => <></>} />
+              <Route path="/years" Component={() => <></>} />
               <Route path="settings" Component={SettingsPage}>
                 <Route index Component={GeneralPage} />
                 <Route path="library" Component={LibraryPage} />
