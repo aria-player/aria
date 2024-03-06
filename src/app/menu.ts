@@ -6,7 +6,9 @@ import { BASEPATH } from "./constants";
 import { AgGridReact } from "@ag-grid-community/react";
 import {
   resetLibraryColumnState,
-  selectLibraryColumnState
+  selectLibraryColumnState,
+  selectLibrarySplitViewStates,
+  updateLibrarySplitState
 } from "../features/library/librarySlice";
 import { defaultColumnDefinitions } from "../features/library/libraryColumns";
 import { Status } from "../features/player/playerTypes";
@@ -241,6 +243,20 @@ export function handleMenuAction(
           }
         })
       );
+    } else {
+      const visibleLibraryView = selectVisibleViewType(state);
+      const librarySplitState =
+        selectLibrarySplitViewStates(state)[visibleLibraryView];
+      if (librarySplitState && visibleLibraryView == LibraryView.Artists) {
+        dispatch(
+          updateLibrarySplitState({
+            view: visibleLibraryView,
+            splitState: {
+              trackGrouping: action.split(".")[1] as TrackGrouping
+            }
+          })
+        );
+      }
     }
   }
   if (action.startsWith("viewType.")) {
@@ -300,11 +316,21 @@ export const selectMenuState = createSelector(
       };
     });
     Object.values(TrackGrouping).forEach((grouping) => {
+      const playlistSplitState =
+        selectVisiblePlaylistConfig(state)?.splitViewState;
+      const librarySplitState =
+        selectLibrarySplitViewStates(state)[selectVisibleViewType(state)];
       columnVisibility["groupBy." + grouping] = {
         selected:
-          selectVisiblePlaylistConfig(state)?.splitViewState.trackGrouping ==
-          grouping,
-        disabled: !selectVisiblePlaylist(state)
+          (playlistSplitState?.trackGrouping ??
+            librarySplitState?.trackGrouping) == grouping,
+        disabled:
+          !selectVisiblePlaylist(state) &&
+          !(
+            selectVisibleViewType(state) == LibraryView.Artists &&
+            (grouping == TrackGrouping.AlbumArtist ||
+              grouping == TrackGrouping.Artist)
+          )
       };
     });
 
@@ -339,7 +365,8 @@ export const selectMenuState = createSelector(
       groupBy: {
         disabled:
           selectVisibleDisplayMode(state) != DisplayMode.SplitView ||
-          !selectVisiblePlaylist(state)
+          (!selectVisiblePlaylist(state) &&
+            selectVisibleViewType(state) != LibraryView.Artists)
       },
       ...columnVisibility,
       togglePlay: {
