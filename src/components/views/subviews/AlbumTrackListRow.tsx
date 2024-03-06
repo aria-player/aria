@@ -37,11 +37,11 @@ export const AlbumTrackListRow = (props: ICellRendererParams) => {
     true
   );
 
-  // Logic mostly duplicated from TrackList
   const handleCellContextMenu = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     rowProps: ICellRendererParams
   ) => {
+    // Logic mostly duplicated from TrackList
     if (!rowProps.node.isSelected()) {
       rowProps.node.setSelected(true, true);
     }
@@ -64,28 +64,34 @@ export const AlbumTrackListRow = (props: ICellRendererParams) => {
     _: React.MouseEvent<HTMLDivElement, MouseEvent>,
     rowProps: ICellRendererParams
   ) => {
-    if (visibleView == View.Queue) {
-      dispatch(skipQueueIndexes(rowProps.node.rowIndex));
-      return;
-    }
-    // We could use selectSortedTrackList here instead,
-    // but then we'd be re-calculating the same sorted tracks that are already displayed
     const queue = [] as PlaylistItem[];
     props.api.forEachNodeAfterFilterAndSort((node) => {
-      queue.push({
-        itemId: node.data.itemId,
-        trackId: node.data.trackId
-      });
+      if (!node.data.separator) {
+        queue.push({
+          itemId: node.data.itemId,
+          trackId: node.data.trackId
+        });
+      }
     });
+
+    if (visibleView == View.Queue) {
+      dispatch(
+        skipQueueIndexes(
+          queue.findIndex((item) => rowProps.node.id == item.itemId)
+        )
+      );
+      return;
+    }
+
     dispatch(
       setQueueToNewSource({
         queue,
-        queueIndex: rowProps.node.rowIndex ?? 0,
+        queueIndex:
+          queue.findIndex((item) => rowProps.node.id == item.itemId) ?? 0,
         queueSource: visibleView
       })
     );
   };
-  // End duplicated functions
 
   return (
     <div
