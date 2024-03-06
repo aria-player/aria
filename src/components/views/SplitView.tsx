@@ -8,10 +8,6 @@ import {
   selectVisibleViewType
 } from "../../features/sharedSelectors";
 import styles from "./SplitView.module.css";
-import {
-  setPlaylistSelectedTrackGroup,
-  updatePlaylistSplitViewSizes
-} from "../../features/playlists/playlistsSlice";
 import { useCallback } from "react";
 import { AlbumTrackList } from "./subviews/AlbumTrackList";
 import { compareMetadata } from "../../app/utils";
@@ -19,6 +15,7 @@ import {
   selectLibrarySplitViewStates,
   updateLibrarySplitState
 } from "../../features/library/librarySlice";
+import { updatePlaylistSplitViewState } from "../../features/playlists/playlistsSlice";
 
 export function SplitView() {
   const visibleItems = useAppSelector(selectVisibleTrackGroups);
@@ -26,7 +23,7 @@ export function SplitView() {
   const visibleViewType = useAppSelector(selectVisibleViewType);
   const visiblePlaylistSplitViewSizes = useAppSelector(
     selectVisiblePlaylistConfig
-  )?.splitViewSizes;
+  )?.splitViewState.paneSizes;
   const visibleLibrarySplitViewSizes = useAppSelector(
     selectLibrarySplitViewStates
   )[visibleViewType]?.paneSizes;
@@ -36,9 +33,9 @@ export function SplitView() {
   function setSelectedItem(group: string | null) {
     if (visiblePlaylist?.id) {
       dispatch(
-        setPlaylistSelectedTrackGroup({
+        updatePlaylistSplitViewState({
           playlistId: visiblePlaylist?.id,
-          selectedGroup: group
+          splitState: { selectedGroup: group }
         })
       );
     } else {
@@ -55,9 +52,9 @@ export function SplitView() {
     (sizes: number[]) => {
       if (visiblePlaylist) {
         dispatch(
-          updatePlaylistSplitViewSizes({
+          updatePlaylistSplitViewState({
             playlistId: visiblePlaylist?.id,
-            splitSizes: sizes
+            splitState: { paneSizes: sizes }
           })
         );
       } else {

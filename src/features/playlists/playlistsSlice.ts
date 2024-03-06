@@ -28,7 +28,7 @@ import {
   overrideColumnStateSort,
   resetColumnStateExceptSort
 } from "../../app/utils";
-import { DisplayMode, TrackGrouping } from "../../app/view";
+import { DisplayMode, SplitViewState, TrackGrouping } from "../../app/view";
 
 const playlistsAdapter = createEntityAdapter<PlaylistUndoable>();
 const playlistsConfigAdapter = createEntityAdapter<PlaylistConfig>();
@@ -86,9 +86,8 @@ export const playlistsSlice = createSlice({
           columnState: null,
           useCustomLayout: false,
           displayMode: DisplayMode.TrackList,
-          splitViewSizes: null,
-          trackGrouping: TrackGrouping.Artist,
-          selectedGroup: null
+          selectedAlbum: null,
+          splitViewState: { trackGrouping: TrackGrouping.Artist }
         });
       }
     },
@@ -203,22 +202,26 @@ export const playlistsSlice = createSlice({
         state.playlistsConfig.entities[action.payload.playlistId];
       if (playlistConfig) {
         if (action.payload.displayMode != playlistConfig.displayMode) {
-          playlistConfig.selectedGroup = null;
+          playlistConfig.selectedAlbum = null;
+          playlistConfig.splitViewState.selectedGroup = null;
         }
         playlistConfig.displayMode = action.payload.displayMode;
       }
     },
-    setPlaylistTrackGrouping: (
+    updatePlaylistSplitViewState: (
       state,
       action: PayloadAction<{
         playlistId: PlaylistId;
-        trackGrouping: TrackGrouping | null;
+        splitState: Partial<SplitViewState>;
       }>
     ) => {
       const playlistConfig =
         state.playlistsConfig.entities[action.payload.playlistId];
       if (playlistConfig) {
-        playlistConfig.trackGrouping = action.payload.trackGrouping;
+        playlistConfig.splitViewState = {
+          ...playlistConfig.splitViewState,
+          ...action.payload.splitState
+        };
       }
     },
     setPlaylistSelectedTrackGroup: (
@@ -230,21 +233,11 @@ export const playlistsSlice = createSlice({
     ) => {
       const playlistConfig =
         state.playlistsConfig.entities[action.payload.playlistId];
-      if (playlistConfig) {
-        playlistConfig.selectedGroup = action.payload.selectedGroup;
-      }
-    },
-    updatePlaylistSplitViewSizes: (
-      state,
-      action: PayloadAction<{
-        playlistId: PlaylistId;
-        splitSizes: number[];
-      }>
-    ) => {
-      const playlistConfig =
-        state.playlistsConfig.entities[action.payload.playlistId];
-      if (playlistConfig) {
-        playlistConfig.splitViewSizes = action.payload.splitSizes;
+      if (playlistConfig.displayMode == DisplayMode.AlbumGrid) {
+        playlistConfig.selectedAlbum = action.payload.selectedGroup;
+      } else if (playlistConfig.displayMode == DisplayMode.SplitView) {
+        playlistConfig.splitViewState.selectedGroup =
+          action.payload.selectedGroup;
       }
     }
   }
@@ -265,9 +258,8 @@ export const {
   updatePlaylistColumnState,
   togglePlaylistUsesCustomLayout,
   setPlaylistDisplayMode,
-  setPlaylistSelectedTrackGroup,
-  updatePlaylistSplitViewSizes,
-  setPlaylistTrackGrouping
+  updatePlaylistSplitViewState,
+  setPlaylistSelectedTrackGroup
 } = playlistsSlice.actions;
 
 export const selectPlaylistsLayout = (state: RootState) =>

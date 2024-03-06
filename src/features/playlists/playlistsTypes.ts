@@ -1,6 +1,6 @@
 import { ColumnState } from "@ag-grid-community/core";
 import { TrackId } from "../tracks/tracksTypes";
-import { DisplayMode, TrackGrouping } from "../../app/view";
+import { DisplayMode, SplitViewState } from "../../app/view";
 
 export type PlaylistId = string;
 export type PlaylistItemId = string;
@@ -15,9 +15,8 @@ export interface PlaylistConfig {
   columnState: ColumnState[] | null;
   useCustomLayout: boolean;
   displayMode: DisplayMode;
-  splitViewSizes: number[] | null;
-  trackGrouping: TrackGrouping | null;
-  selectedGroup: string | null;
+  selectedAlbum: string | null;
+  splitViewState: SplitViewState;
 }
 
 export interface PlaylistItem {

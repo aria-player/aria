@@ -36,8 +36,8 @@ import {
   removeTracksFromPlaylist,
   resetPlaylistColumnState,
   setPlaylistDisplayMode,
-  setPlaylistTrackGrouping,
-  togglePlaylistUsesCustomLayout
+  togglePlaylistUsesCustomLayout,
+  updatePlaylistSplitViewState
 } from "../features/playlists/playlistsSlice";
 import { copySelectedTracks } from "../features/tracks/tracksSlice";
 import { PlaylistItem } from "../features/playlists/playlistsTypes";
@@ -234,9 +234,11 @@ export function handleMenuAction(
     const visiblePlaylist = selectVisiblePlaylist(state);
     if (visiblePlaylist?.id) {
       dispatch(
-        setPlaylistTrackGrouping({
+        updatePlaylistSplitViewState({
           playlistId: visiblePlaylist?.id,
-          trackGrouping: action.split(".")[1] as TrackGrouping
+          splitState: {
+            trackGrouping: action.split(".")[1] as TrackGrouping
+          }
         })
       );
     }
@@ -299,7 +301,9 @@ export const selectMenuState = createSelector(
     });
     Object.values(TrackGrouping).forEach((grouping) => {
       columnVisibility["groupBy." + grouping] = {
-        selected: selectVisiblePlaylistConfig(state)?.trackGrouping == grouping,
+        selected:
+          selectVisiblePlaylistConfig(state)?.splitViewState.trackGrouping ==
+          grouping,
         disabled: !selectVisiblePlaylist(state)
       };
     });

@@ -30,6 +30,12 @@ export enum TrackGrouping {
   Year = "year"
 }
 
+export type SplitViewState = {
+  paneSizes?: number[] | null;
+  trackGrouping: TrackGrouping | null;
+  selectedGroup?: string | null;
+};
+
 export function isLibraryView(view: string) {
   return Object.values(LibraryView).includes(view as LibraryView);
 }

@@ -6,13 +6,7 @@ import {
   filterHiddenColumnSort,
   resetColumnStateExceptSort
 } from "../../app/utils";
-import { TrackGrouping } from "../../app/view";
-
-type SplitViewState = {
-  paneSizes?: number[] | null;
-  trackGrouping: TrackGrouping | null;
-  selectedGroup?: string | null;
-};
+import { SplitViewState, TrackGrouping } from "../../app/view";
 
 interface LibraryState {
   columnState: ColumnState[] | null;

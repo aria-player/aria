@@ -186,11 +186,12 @@ export const selectVisibleDisplayMode = (state: RootState) => {
 };
 
 export const selectVisibleTrackGrouping = (state: RootState) => {
-  if (selectVisibleViewType(state) === LibraryView.Albums)
+  if (selectVisibleDisplayMode(state) === DisplayMode.AlbumGrid)
     return TrackGrouping.Album;
 
   if (selectVisibleDisplayMode(state) == DisplayMode.SplitView) {
-    const playlistGrouping = selectVisiblePlaylistConfig(state)?.trackGrouping;
+    const playlistGrouping =
+      selectVisiblePlaylistConfig(state)?.splitViewState.trackGrouping;
     return playlistGrouping
       ? playlistGrouping
       : selectLibrarySplitViewStates(state)[selectVisibleViewType(state)]
@@ -202,7 +203,12 @@ export const selectVisibleSelectedTrackGroup = (state: RootState) => {
   if (selectVisibleViewType(state) == LibraryView.Albums) {
     return state.undoable.present.library.selectedAlbum;
   } else if (selectVisiblePlaylist(state)) {
-    return selectVisiblePlaylistConfig(state)?.selectedGroup;
+    const playlistConfig = selectVisiblePlaylistConfig(state);
+    if (playlistConfig?.displayMode == DisplayMode.AlbumGrid) {
+      return playlistConfig.selectedAlbum;
+    } else {
+      return playlistConfig?.splitViewState.selectedGroup;
+    }
   } else {
     return selectLibrarySplitViewStates(state)[selectVisibleViewType(state)]
       ?.selectedGroup;
@@ -257,7 +263,7 @@ export const selectVisibleTrackGroups = createSelector(
       ];
     } else if (selectVisibleDisplayMode(state) == DisplayMode.SplitView) {
       const grouping = selectVisiblePlaylist(state)
-        ? selectVisiblePlaylistConfig(state)?.trackGrouping
+        ? selectVisiblePlaylistConfig(state)?.splitViewState.trackGrouping
         : selectLibrarySplitViewStates(state)[
             selectVisibleViewType(state) as string
           ].trackGrouping;
