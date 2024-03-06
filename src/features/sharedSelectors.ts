@@ -270,9 +270,9 @@ export const selectVisibleTrackGroups = createSelector(
       if (grouping) {
         return [
           ...new Set(
-            selectVisibleTracks(state).flatMap(
-              (track) => track[grouping] as string | string[]
-            )
+            selectVisibleTracks(state)
+              .flatMap((track) => track[grouping] as string | string[])
+              .filter((group) => group !== null && group !== undefined)
           )
         ];
       }
