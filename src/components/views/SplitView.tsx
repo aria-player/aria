@@ -2,7 +2,7 @@ import { Allotment } from "allotment";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 
 import styles from "./SplitView.module.css";
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { AlbumTrackList } from "./subviews/AlbumTrackList";
 import { compareMetadata } from "../../app/utils";
 import {
@@ -19,7 +19,9 @@ import {
 } from "../../features/visibleSelectors";
 
 export function SplitView() {
-  const visibleItems = useAppSelector(selectVisibleTrackGroups);
+  const visibleItems = useAppSelector(selectVisibleTrackGroups).sort((a, b) =>
+    compareMetadata(a, b)
+  );
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
   const visibleViewType = useAppSelector(selectVisibleViewType);
   const visiblePlaylistSplitViewSizes = useAppSelector(
@@ -31,23 +33,26 @@ export function SplitView() {
   const selectedItem = useAppSelector(selectVisibleSelectedTrackGroup);
   const dispatch = useAppDispatch();
 
-  function setSelectedItem(group: string | null) {
-    if (visiblePlaylist?.id) {
-      dispatch(
-        updatePlaylistSplitViewState({
-          playlistId: visiblePlaylist?.id,
-          splitState: { selectedGroup: group }
-        })
-      );
-    } else {
-      dispatch(
-        updateLibrarySplitState({
-          view: visibleViewType,
-          splitState: { selectedGroup: group }
-        })
-      );
-    }
-  }
+  const setSelectedItem = useCallback(
+    (group: string | null) => {
+      if (visiblePlaylist?.id) {
+        dispatch(
+          updatePlaylistSplitViewState({
+            playlistId: visiblePlaylist?.id,
+            splitState: { selectedGroup: group }
+          })
+        );
+      } else {
+        dispatch(
+          updateLibrarySplitState({
+            view: visibleViewType,
+            splitState: { selectedGroup: group }
+          })
+        );
+      }
+    },
+    [dispatch, visiblePlaylist?.id, visibleViewType]
+  );
 
   const handleDragEnd = useCallback(
     (sizes: number[]) => {
@@ -70,23 +75,30 @@ export function SplitView() {
     [dispatch, visiblePlaylist, visibleViewType]
   );
 
-  const buttons = visibleItems
-    .sort((a, b) => compareMetadata(a, b))
-    .map((itemName, index) => (
-      <li
-        key={itemName}
-        className={`${styles.listItem} ${selectedItem == itemName ? styles.selected : ""}`}
+  const buttons = visibleItems.map((itemName, index) => (
+    <li
+      key={itemName}
+      className={`${styles.listItem} ${selectedItem == itemName ? styles.selected : ""}`}
+    >
+      <button
+        key={index}
+        onClick={() => {
+          setSelectedItem(itemName ?? null);
+        }}
       >
-        <button
-          key={index}
-          onClick={() => {
-            setSelectedItem(itemName ?? null);
-          }}
-        >
-          {itemName}
-        </button>
-      </li>
-    ));
+        {itemName}
+      </button>
+    </li>
+  ));
+
+  useEffect(() => {
+    if (
+      (!selectedItem || !visibleItems.includes(selectedItem)) &&
+      visibleItems[0]
+    ) {
+      setSelectedItem(visibleItems[0]);
+    }
+  }, [selectedItem, setSelectedItem, visibleItems]);
 
   return (
     <div className={styles.splitView}>
