@@ -77,14 +77,14 @@ export const selectSortedTrackList = (
   }));
 };
 
-export const selectGroupFilteredTrackList = (
+export const selectGroupFilteredTracks = (
   state: RootState,
   trackGrouping?: TrackGrouping | null,
   selectedTrackGroup?: string | null,
   playlistId?: PlaylistId
-): PlaylistItem[] => {
+): TrackListItem[] => {
   if (!trackGrouping) return [];
-  const tracks = selectTrackListMetadata(state, playlistId)
+  return selectTrackListMetadata(state, playlistId)
     .filter(
       (track) =>
         track[trackGrouping] == selectedTrackGroup ||
@@ -95,9 +95,4 @@ export const selectGroupFilteredTrackList = (
     .sort((a, b) => compareMetadata(a.track, b.track))
     .sort((a, b) => compareMetadata(a.disc, b.disc))
     .sort((a, b) => compareMetadata(a.album, b.album));
-
-  return tracks.map((track) => ({
-    itemId: track.itemId,
-    trackId: track.trackId
-  }));
 };

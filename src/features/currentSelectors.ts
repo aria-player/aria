@@ -6,9 +6,9 @@ import {
 } from "./player/playerSlice";
 import { selectPlaylistById } from "./playlists/playlistsSlice";
 import { PlaylistItem } from "./playlists/playlistsTypes";
-import { selectGroupFilteredTrackList } from "./genericSelectors";
 import { selectTrackById } from "./tracks/tracksSlice";
 import { TrackListItem } from "./tracks/tracksTypes";
+import { selectGroupFilteredTracks } from "./genericSelectors";
 
 export const selectCurrentQueueTracks = createSelector(
   [
@@ -66,10 +66,13 @@ export const selectCurrentTrackItemId = (state: RootState) => {
 export const selectCurrentGroupFilteredTrackList = (
   state: RootState
 ): PlaylistItem[] => {
-  return selectGroupFilteredTrackList(
+  return selectGroupFilteredTracks(
     state,
     selectQueueGrouping(state),
     selectQueueSelectedGroup(state),
     selectCurrentPlaylist(state)?.id
-  );
+  ).map((track) => ({
+    itemId: track.itemId,
+    trackId: track.trackId
+  }));
 };

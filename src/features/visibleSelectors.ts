@@ -13,7 +13,7 @@ import {
   selectPlaylistConfigById
 } from "./playlists/playlistsSlice";
 import { PlaylistItem } from "./playlists/playlistsTypes";
-import { selectGroupFilteredTrackList } from "./genericSelectors";
+import { selectGroupFilteredTracks } from "./genericSelectors";
 import { TrackListItem } from "./tracks/tracksTypes";
 
 export const selectVisibleViewType = (state: RootState) => {
@@ -74,15 +74,38 @@ export const selectVisibleTracks = createSelector(
   }
 );
 
+export const selectVisibleGroupFilteredTracks = createSelector(
+  [
+    (state: RootState) => state.tracks.tracks,
+    (state: RootState) => state.router.location?.pathname,
+    (state: RootState) => state.undoable.present.library.splitViewStates,
+    (state: RootState) => state.undoable.present.library.selectedAlbum,
+    (state: RootState) => state.undoable.present.playlists.playlists,
+    (state: RootState) => state.undoable.present.playlists.playlistsConfig
+  ],
+  () => {
+    const state = store.getState();
+    return selectGroupFilteredTracks(
+      state,
+      selectVisibleTrackGrouping(state),
+      selectVisibleSelectedTrackGroup(state),
+      selectVisiblePlaylist(state)?.id
+    );
+  }
+);
+
 export const selectVisibleGroupFilteredTrackList = (
   state: RootState
 ): PlaylistItem[] => {
-  return selectGroupFilteredTrackList(
+  return selectGroupFilteredTracks(
     state,
     selectVisibleTrackGrouping(state),
     selectVisibleSelectedTrackGroup(state),
     selectVisiblePlaylist(state)?.id
-  );
+  ).map((track) => ({
+    itemId: track.itemId,
+    trackId: track.trackId
+  }));
 };
 
 export const selectVisibleDisplayMode = (state: RootState) => {

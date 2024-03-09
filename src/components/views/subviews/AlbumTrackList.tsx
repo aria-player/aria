@@ -9,14 +9,10 @@ import { Track } from "../../../features/tracks/tracksTypes";
 import { useAppSelector } from "../../../app/hooks";
 import { AlbumTrackListRow } from "./AlbumTrackListRow";
 import { t } from "i18next";
-import { compareMetadata, formatArtist } from "../../../app/utils";
+import { formatArtist } from "../../../app/utils";
 import AlbumTrackListSeparator from "./AlbumTrackListSeparator";
 import { useTrackGrid } from "../../../hooks/useTrackGrid";
-import {
-  selectVisibleSelectedTrackGroup,
-  selectVisibleTrackGrouping,
-  selectVisibleTracks
-} from "../../../features/visibleSelectors";
+import { selectVisibleGroupFilteredTracks } from "../../../features/visibleSelectors";
 
 export interface AlbumTrackListItem {
   itemId: string;
@@ -55,9 +51,7 @@ const getRowHeight = (params: RowHeightParams) => {
 
 export const AlbumTrackList = () => {
   const { gridRef, gridProps } = useTrackGrid();
-  const visibleTracks = useAppSelector(selectVisibleTracks);
-  const trackGrouping = useAppSelector(selectVisibleTrackGrouping);
-  const selectedTrackGroup = useAppSelector(selectVisibleSelectedTrackGroup);
+  const visibleTracks = useAppSelector(selectVisibleGroupFilteredTracks);
 
   const rowData = useMemo(() => {
     const processTracks = (tracks: Track[]) => {
@@ -66,61 +60,47 @@ export const AlbumTrackList = () => {
       let currentDisc: number | null = null;
       let currentAlbumTracks = 0;
       const processedTracks: AlbumTrackListItem[] = [];
-      trackGrouping &&
-        visibleTracks
-          .filter(
-            (track) =>
-              track[trackGrouping] == selectedTrackGroup ||
-              (selectedTrackGroup &&
-                Array.isArray(track[trackGrouping]) &&
-                (track[trackGrouping] as string[])?.includes(
-                  selectedTrackGroup
-                ))
-          )
-          .sort((a, b) => compareMetadata(a.track, b.track))
-          .sort((a, b) => compareMetadata(a.disc, b.disc))
-          .sort((a, b) => compareMetadata(a.album, b.album))
-          .forEach((track) => {
-            if (
-              track.disc != null &&
-              track.disc != undefined &&
-              currentDisc !== track.disc &&
-              currentAlbum == track.album
-            ) {
-              processedTracks.push({
-                title: t("albumTrackList.disc", { number: track.disc }),
-                separator: true,
-                itemId: `disc-separator-${track.album}-${currentDisc}`
-              });
-            }
-
-            currentDisc = track.disc ?? null;
-            if (currentAlbum !== track.album) {
-              if (currentAlbum !== track.album) {
-                if (currentAlbum !== null) {
-                  processedTracks.push({
-                    separator: true,
-                    tracks: currentAlbumTracks,
-                    source: track.source,
-                    itemId: `album-separator-${track.album}`
-                  });
-                  currentAlbumTracks = 0;
-                }
-                processedTracks.push({
-                  artist: track.albumArtist ?? formatArtist(track.artist),
-                  album: track.album,
-                  year: track.year,
-                  artworkUri: track.artworkUri,
-                  source: track.source,
-                  separator: true,
-                  itemId: `album-header-${track.album}-`
-                });
-                currentAlbum = track.album ?? null;
-              }
-            }
-            processedTracks.push(track);
-            currentAlbumTracks += 1;
+      visibleTracks.forEach((track) => {
+        if (
+          track.disc != null &&
+          track.disc != undefined &&
+          currentDisc !== track.disc &&
+          currentAlbum == track.album
+        ) {
+          processedTracks.push({
+            title: t("albumTrackList.disc", { number: track.disc }),
+            separator: true,
+            itemId: `disc-separator-${track.album}-${currentDisc}`
           });
+        }
+
+        currentDisc = track.disc ?? null;
+        if (currentAlbum !== track.album) {
+          if (currentAlbum !== track.album) {
+            if (currentAlbum !== null) {
+              processedTracks.push({
+                separator: true,
+                tracks: currentAlbumTracks,
+                source: track.source,
+                itemId: `album-separator-${track.album}`
+              });
+              currentAlbumTracks = 0;
+            }
+            processedTracks.push({
+              artist: track.albumArtist ?? formatArtist(track.artist),
+              album: track.album,
+              year: track.year,
+              artworkUri: track.artworkUri,
+              source: track.source,
+              separator: true,
+              itemId: `album-header-${track.album}-`
+            });
+            currentAlbum = track.album ?? null;
+          }
+        }
+        processedTracks.push(track);
+        currentAlbumTracks += 1;
+      });
       if (visibleTracks.length > 0)
         processedTracks.push({
           separator: true,
@@ -130,7 +110,7 @@ export const AlbumTrackList = () => {
       return processedTracks;
     };
     return processTracks(visibleTracks as Track[]);
-  }, [selectedTrackGroup, trackGrouping, visibleTracks]);
+  }, [visibleTracks]);
 
   useEffect(() => {
     gridRef?.current?.api?.resetRowHeights();
