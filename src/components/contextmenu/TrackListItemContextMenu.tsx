@@ -16,12 +16,16 @@ import { nanoid } from "@reduxjs/toolkit";
 import { PlaylistItem } from "../../features/playlists/playlistsTypes";
 import {
   selectSortedTrackList,
+  selectVisibleDisplayMode,
+  selectVisibleGroupFilteredTrackList,
   selectVisiblePlaylist,
+  selectVisibleSelectedTrackGroup,
+  selectVisibleTrackGrouping,
   selectVisibleViewType
 } from "../../features/sharedSelectors";
 import { selectSelectedTracks } from "../../features/tracks/tracksSlice";
 import { store } from "../../app/store";
-import { LibraryView, View } from "../../app/view";
+import { DisplayMode, LibraryView, View } from "../../app/view";
 import {
   removeFromQueue,
   setQueueToNewSource,
@@ -126,18 +130,22 @@ export function TrackListItemContextMenu() {
           if (menuData.itemSource == View.Queue) {
             dispatch(skipQueueIndexes(menuData.itemIndex));
           } else {
+            const state = store.getState();
             const source = selectPlaylistById(
-              store.getState(),
+              state,
               menuData.itemSource ?? ""
             )?.id;
             dispatch(
               setQueueToNewSource({
-                queue: selectSortedTrackList(
-                  store.getState(),
-                  source ?? undefined
-                ),
+                queue:
+                  selectVisibleDisplayMode(state) == DisplayMode.TrackList
+                    ? selectSortedTrackList(state, source ?? undefined)
+                    : selectVisibleGroupFilteredTrackList(state),
                 queueSource: menuData.itemSource ?? LibraryView.Songs,
-                queueIndex: menuData.itemIndex ?? 0
+                queueIndex: menuData.itemIndex ?? 0,
+                queueGrouping: selectVisibleTrackGrouping(state) ?? null,
+                queueSelectedGroup:
+                  selectVisibleSelectedTrackGroup(state) ?? null
               })
             );
           }

@@ -82,7 +82,9 @@ export function SidebarItemContextMenu() {
                     menuData.itemId
                   ),
                   queueSource: menuData.itemId,
-                  queueIndex: 0
+                  queueIndex: 0,
+                  queueGrouping: null,
+                  queueSelectedGroup: null
                 })
               );
             }}

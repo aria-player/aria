@@ -11,7 +11,7 @@ import {
   PlaylistItem,
   PlaylistItemId
 } from "../playlists/playlistsTypes";
-import { LibraryView } from "../../app/view";
+import { LibraryView, TrackGrouping } from "../../app/view";
 
 interface PlayerState {
   status: Status;
@@ -21,6 +21,8 @@ interface PlayerState {
   queueUnshuffled: PlaylistItem[];
   queueIndex: number | null;
   queueSource: LibraryView | PlaylistId | null;
+  queueGrouping: TrackGrouping | null;
+  queueSelectedGroup: string | null;
   repeatMode: RepeatMode;
   shuffle: boolean;
   currentTrackNotInPlaylist: boolean;
@@ -34,6 +36,8 @@ const initialState: PlayerState = {
   queueUnshuffled: [],
   queueIndex: null,
   queueSource: null,
+  queueGrouping: null,
+  queueSelectedGroup: null,
   repeatMode: RepeatMode.Off,
   shuffle: false,
   currentTrackNotInPlaylist: false
@@ -97,6 +101,8 @@ export const playerSlice = createSlice({
         queue: PlaylistItem[];
         queueIndex: number;
         queueSource: LibraryView | PlaylistId;
+        queueGrouping: TrackGrouping | null;
+        queueSelectedGroup: string | null;
       }>
     ) => {
       state.queueUnshuffled = action.payload.queue;
@@ -109,6 +115,8 @@ export const playerSlice = createSlice({
       }
       state.queueSource = action.payload.queueSource;
       state.currentTrackNotInPlaylist = false;
+      state.queueGrouping = action.payload.queueGrouping;
+      state.queueSelectedGroup = action.payload.queueSelectedGroup;
     },
     updateQueueAfterChange: (state, action: PayloadAction<PlaylistItem[]>) => {
       const newPlaylistTracks = action.payload;
@@ -273,6 +281,10 @@ export const selectMuted = (state: RootState) => state.player.muted;
 export const selectQueue = (state: RootState) => state.player.queue;
 export const selectQueueIndex = (state: RootState) => state.player.queueIndex;
 export const selectQueueSource = (state: RootState) => state.player.queueSource;
+export const selectQueueGrouping = (state: RootState) =>
+  state.player.queueGrouping;
+export const selectQueueSelectedGroup = (state: RootState) =>
+  state.player.queueSelectedGroup;
 export const selectRepeatMode = (state: RootState) => state.player.repeatMode;
 export const selectShuffle = (state: RootState) => state.player.shuffle;
 

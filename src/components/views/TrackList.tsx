@@ -215,7 +215,9 @@ export const TrackList = () => {
       setQueueToNewSource({
         queue,
         queueIndex: event.rowIndex ?? 0,
-        queueSource: visibleView
+        queueSource: visibleView,
+        queueGrouping: null,
+        queueSelectedGroup: null
       })
     );
   };

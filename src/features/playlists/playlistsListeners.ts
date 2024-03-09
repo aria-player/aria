@@ -6,6 +6,7 @@ import {
 import { push } from "redux-first-history";
 import { BASEPATH } from "../../app/constants";
 import {
+  selectCurrentGroupFilteredTrackList,
   selectCurrentPlaylist,
   selectSortedTrackList,
   selectVisiblePlaylist
@@ -41,9 +42,10 @@ export function setupPlaylistsListeners() {
         // If it was deleted, the player should keep playing what it remembers of it
         return;
       }
-      dispatch(
-        updateQueueAfterChange(selectSortedTrackList(state, newPlaylist?.id))
-      );
+      const newQueue = state.player.queueGrouping
+        ? selectCurrentGroupFilteredTrackList(state)
+        : selectSortedTrackList(state, newPlaylist?.id);
+      dispatch(updateQueueAfterChange(newQueue));
     }
   );
 

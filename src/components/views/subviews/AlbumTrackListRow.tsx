@@ -13,10 +13,14 @@ import { PlaylistItem } from "../../../features/playlists/playlistsTypes";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import {
   selectCurrentTrack,
+  selectVisibleGroupFilteredTrackList,
   selectVisiblePlaylist,
+  selectVisibleSelectedTrackGroup,
+  selectVisibleTrackGrouping,
   selectVisibleViewType
 } from "../../../features/sharedSelectors";
 import styles from "./AlbumTrackListRow.module.css";
+import { store } from "../../../app/store";
 
 export const AlbumTrackListRow = (props: ICellRendererParams) => {
   const { show: showCellContextMenu } = useContextMenu({
@@ -46,11 +50,14 @@ export const AlbumTrackListRow = (props: ICellRendererParams) => {
       rowProps.node.setSelected(true, true);
     }
     if (rowProps.node.id) {
+      const visibleTracks = selectVisibleGroupFilteredTrackList(
+        store.getState()
+      );
       setMenuData({
         itemId: rowProps.node.data.trackId,
         itemSource: visibleView,
         itemIndex:
-          visiblePlaylist?.tracks.findIndex(
+          visibleTracks.findIndex(
             (track) => track.itemId == rowProps.node.data.itemId
           ) ?? undefined,
         metadata: rowProps.node.data,
@@ -83,12 +90,15 @@ export const AlbumTrackListRow = (props: ICellRendererParams) => {
       return;
     }
 
+    const state = store.getState();
     dispatch(
       setQueueToNewSource({
         queue,
         queueIndex:
           queue.findIndex((item) => rowProps.node.id == item.itemId) ?? 0,
-        queueSource: visibleView
+        queueSource: visibleView,
+        queueGrouping: selectVisibleTrackGrouping(state) ?? null,
+        queueSelectedGroup: selectVisibleSelectedTrackGroup(state) ?? null
       })
     );
   };

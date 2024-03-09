@@ -19,6 +19,10 @@ import {
   selectLibrarySplitViewStates
 } from "./library/librarySlice";
 import { compareMetadata, overrideColumnStateSort } from "../app/utils";
+import {
+  selectQueueGrouping,
+  selectQueueSelectedGroup
+} from "./player/playerSlice";
 
 export const selectVisibleViewType = (state: RootState) => {
   const firstPath = state.router.location?.pathname.split("/")[1];
@@ -97,15 +101,14 @@ export const selectQueueTracks = createSelector(
   }
 );
 
-export const selectSortedTrackList = (
+export const selectTrackListMetadata = (
   state: RootState,
   playlistId?: PlaylistId
-): PlaylistItem[] => {
-  // 1. Get tracks with metadata
+): TrackListItem[] => {
   const playlist = playlistId
     ? selectPlaylistById(state, playlistId)
     : undefined;
-  const tracks = playlist
+  return playlist
     ? playlist.tracks.map((track) => ({
         ...track,
         ...state.tracks.tracks.entities[track.trackId]
@@ -114,6 +117,14 @@ export const selectSortedTrackList = (
         ...track,
         itemId: track?.trackId
       })) as TrackListItem[]);
+};
+
+export const selectSortedTrackList = (
+  state: RootState,
+  playlistId?: PlaylistId
+): PlaylistItem[] => {
+  // 1. Get tracks with metadata
+  const tracks = selectTrackListMetadata(state, playlistId);
 
   // 2. Get the column state that applies to this playlist
   const playlistConfig = playlistId
@@ -156,6 +167,53 @@ export const selectSortedTrackList = (
     itemId: track.itemId,
     trackId: track.trackId
   }));
+};
+
+export const selectGroupFilteredTrackList = (
+  state: RootState,
+  trackGrouping?: TrackGrouping | null,
+  selectedTrackGroup?: string | null,
+  playlistId?: PlaylistId
+): PlaylistItem[] => {
+  if (!trackGrouping) return [];
+  const tracks = selectTrackListMetadata(state, playlistId)
+    .filter(
+      (track) =>
+        track[trackGrouping] == selectedTrackGroup ||
+        (selectedTrackGroup &&
+          Array.isArray(track[trackGrouping]) &&
+          (track[trackGrouping] as string[])?.includes(selectedTrackGroup))
+    )
+    .sort((a, b) => compareMetadata(a.track, b.track))
+    .sort((a, b) => compareMetadata(a.disc, b.disc))
+    .sort((a, b) => compareMetadata(a.album, b.album));
+
+  return tracks.map((track) => ({
+    itemId: track.itemId,
+    trackId: track.trackId
+  }));
+};
+
+export const selectVisibleGroupFilteredTrackList = (
+  state: RootState
+): PlaylistItem[] => {
+  return selectGroupFilteredTrackList(
+    state,
+    selectVisibleTrackGrouping(state),
+    selectVisibleSelectedTrackGroup(state),
+    selectVisiblePlaylist(state)?.id
+  );
+};
+
+export const selectCurrentGroupFilteredTrackList = (
+  state: RootState
+): PlaylistItem[] => {
+  return selectGroupFilteredTrackList(
+    state,
+    selectQueueGrouping(state),
+    selectQueueSelectedGroup(state),
+    selectCurrentPlaylist(state)?.id
+  );
 };
 
 export const selectVisibleDisplayMode = (state: RootState) => {
