@@ -8,6 +8,7 @@ import {
   resetLibraryColumnState,
   selectLibraryColumnState,
   selectLibrarySplitViewStates,
+  setSelectedAlbum,
   updateLibrarySplitState
 } from "../features/library/librarySlice";
 import { defaultColumnDefinitions } from "../features/library/libraryColumns";
@@ -28,7 +29,9 @@ import {
   addTracksToPlaylist,
   removeTracksFromPlaylist,
   resetPlaylistColumnState,
+  selectPlaylistConfigById,
   setPlaylistDisplayMode,
+  setPlaylistSelectedTrackGroup,
   togglePlaylistUsesCustomLayout,
   updatePlaylistSplitViewState
 } from "../features/playlists/playlistsSlice";
@@ -133,6 +136,45 @@ export function handleMenuAction(
         const currentPlaylist = selectCurrentPlaylist(state);
         const currentTrack = selectCurrentTrack(state);
         if (currentTrack) {
+          if (state.player.queueGrouping == TrackGrouping.Album) {
+            if (
+              currentPlaylist?.id &&
+              selectPlaylistConfigById(state, currentPlaylist.id).displayMode ==
+                DisplayMode.AlbumGrid
+            ) {
+              dispatch(
+                setPlaylistSelectedTrackGroup({
+                  playlistId: currentPlaylist.id,
+                  selectedGroup: state.player.queueSelectedGroup
+                })
+              );
+            } else if (queueSource == LibraryView.Albums) {
+              dispatch(setSelectedAlbum(state.player.queueSelectedGroup));
+            }
+          } else if (state.player.queueGrouping) {
+            if (
+              currentPlaylist?.id &&
+              selectPlaylistConfigById(state, currentPlaylist.id).displayMode ==
+                DisplayMode.SplitView
+            ) {
+              dispatch(
+                updatePlaylistSplitViewState({
+                  playlistId: currentPlaylist.id,
+                  splitState: { selectedGroup: state.player.queueSelectedGroup }
+                })
+              );
+            } else if (
+              queueSource &&
+              Object.values(LibraryView).includes(queueSource as LibraryView)
+            ) {
+              dispatch(
+                updateLibrarySplitState({
+                  view: queueSource,
+                  splitState: { selectedGroup: state.player.queueSelectedGroup }
+                })
+              );
+            }
+          }
           if (queueSource == LibraryView.Songs) {
             dispatch(push(BASEPATH, { focusCurrent: true }));
           } else if (currentPlaylist) {
