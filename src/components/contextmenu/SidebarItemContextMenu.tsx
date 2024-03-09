@@ -12,7 +12,7 @@ import {
 import { nanoid } from "@reduxjs/toolkit";
 import { useTranslation } from "react-i18next";
 import { setQueueToNewSource } from "../../features/player/playerSlice";
-import { selectSortedTrackList } from "../../features/sharedSelectors";
+import { selectSortedTrackList } from "../../features/genericSelectors";
 import { store } from "../../app/store";
 
 const id = "sidebaritem";

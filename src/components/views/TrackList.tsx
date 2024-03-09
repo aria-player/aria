@@ -49,7 +49,7 @@ import {
   selectCurrentQueueTracks,
   selectCurrentPlaylist
 } from "../../features/currentSelectors";
-import { selectSortedTrackList } from "../../features/sharedSelectors";
+import { selectSortedTrackList } from "../../features/genericSelectors";
 import {
   selectVisibleTracks,
   selectVisiblePlaylist,

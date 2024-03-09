@@ -14,7 +14,7 @@ import {
   selectCurrentPlaylist,
   selectCurrentGroupFilteredTrackList
 } from "../currentSelectors";
-import { selectSortedTrackList } from "../sharedSelectors";
+import { selectSortedTrackList } from "../genericSelectors";
 import { selectVisiblePlaylist } from "../visibleSelectors";
 
 export function setupPlaylistsListeners() {

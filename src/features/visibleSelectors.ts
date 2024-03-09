@@ -13,7 +13,7 @@ import {
   selectPlaylistConfigById
 } from "./playlists/playlistsSlice";
 import { PlaylistItem } from "./playlists/playlistsTypes";
-import { selectGroupFilteredTrackList } from "./sharedSelectors";
+import { selectGroupFilteredTrackList } from "./genericSelectors";
 import { TrackListItem } from "./tracks/tracksTypes";
 
 export const selectVisibleViewType = (state: RootState) => {

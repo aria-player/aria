@@ -6,7 +6,7 @@ import {
 } from "./player/playerSlice";
 import { selectPlaylistById } from "./playlists/playlistsSlice";
 import { PlaylistItem } from "./playlists/playlistsTypes";
-import { selectGroupFilteredTrackList } from "./sharedSelectors";
+import { selectGroupFilteredTrackList } from "./genericSelectors";
 import { selectTrackById } from "./tracks/tracksSlice";
 import { TrackListItem } from "./tracks/tracksTypes";
 

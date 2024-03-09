@@ -22,7 +22,7 @@ import {
   setQueueToNewSource,
   skipQueueIndexes
 } from "../../features/player/playerSlice";
-import { selectSortedTrackList } from "../../features/sharedSelectors";
+import { selectSortedTrackList } from "../../features/genericSelectors";
 import {
   selectVisiblePlaylist,
   selectVisibleViewType,
