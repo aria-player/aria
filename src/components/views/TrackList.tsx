@@ -26,16 +26,7 @@ import {
   skipQueueIndexes,
   updateQueueAfterChange
 } from "../../features/player/playerSlice";
-import {
-  selectCurrentPlaylist,
-  selectCurrentTrack,
-  selectQueueTracks,
-  selectSortedTrackList,
-  selectVisiblePlaylist,
-  selectVisiblePlaylistConfig,
-  selectVisibleTracks,
-  selectVisibleViewType
-} from "../../features/sharedSelectors";
+
 import { useTranslation } from "react-i18next";
 import { TriggerEvent, useContextMenu } from "react-contexify";
 import { MenuContext } from "../../contexts/MenuContext";
@@ -53,13 +44,25 @@ import {
 } from "../../app/utils";
 import { store } from "../../app/store";
 import { useTrackGrid } from "../../hooks/useTrackGrid";
+import {
+  selectCurrentTrack,
+  selectCurrentQueueTracks,
+  selectCurrentPlaylist
+} from "../../features/currentSelectors";
+import { selectSortedTrackList } from "../../features/sharedSelectors";
+import {
+  selectVisibleTracks,
+  selectVisiblePlaylist,
+  selectVisibleViewType,
+  selectVisiblePlaylistConfig
+} from "../../features/visibleSelectors";
 
 export const TrackList = () => {
   const dispatch = useAppDispatch();
   const { gridRef, gridProps } = useTrackGrid();
   const currentTrack = useAppSelector(selectCurrentTrack);
   const tracklistData = useAppSelector(selectVisibleTracks);
-  const queueData = useAppSelector(selectQueueTracks);
+  const queueData = useAppSelector(selectCurrentQueueTracks);
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
   const visibleViewType = useAppSelector(selectVisibleViewType);
   const rowData = visibleViewType == View.Queue ? queueData : tracklistData;

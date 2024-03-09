@@ -1,10 +1,10 @@
 import DebugView from "./DebugView";
 import { useAppSelector } from "../../app/hooks";
 import { DisplayMode } from "../../app/view";
-import { selectVisibleDisplayMode } from "../../features/sharedSelectors";
 import AlbumGrid from "./AlbumGrid";
 import { TrackList } from "./TrackList";
 import { SplitView } from "./SplitView";
+import { selectVisibleDisplayMode } from "../../features/visibleSelectors";
 
 export default function ViewContainer() {
   const visibleDisplayMode = useAppSelector(selectVisibleDisplayMode);

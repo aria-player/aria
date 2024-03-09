@@ -25,15 +25,6 @@ import {
 import { restartOrPreviousTrack } from "../features/player/playerTime";
 import { ActionCreators } from "redux-undo";
 import {
-  selectCurrentPlaylist,
-  selectCurrentTrack,
-  selectVisibleDisplayMode,
-  selectVisiblePlaylist,
-  selectVisiblePlaylistConfig,
-  selectVisibleSelectedTrackGroup,
-  selectVisibleViewType
-} from "../features/sharedSelectors";
-import {
   addTracksToPlaylist,
   removeTracksFromPlaylist,
   resetPlaylistColumnState,
@@ -44,6 +35,17 @@ import {
 import { copySelectedTracks } from "../features/tracks/tracksSlice";
 import { PlaylistItem } from "../features/playlists/playlistsTypes";
 import { View, DisplayMode, LibraryView, TrackGrouping } from "./view";
+import {
+  selectCurrentPlaylist,
+  selectCurrentTrack
+} from "../features/currentSelectors";
+import {
+  selectVisiblePlaylist,
+  selectVisiblePlaylistConfig,
+  selectVisibleViewType,
+  selectVisibleDisplayMode,
+  selectVisibleSelectedTrackGroup
+} from "../features/visibleSelectors";
 
 export interface MenuItem {
   id: string;

@@ -1,12 +1,6 @@
 import { Allotment } from "allotment";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import {
-  selectVisiblePlaylist,
-  selectVisiblePlaylistConfig,
-  selectVisibleSelectedTrackGroup,
-  selectVisibleTrackGroups,
-  selectVisibleViewType
-} from "../../features/sharedSelectors";
+
 import styles from "./SplitView.module.css";
 import { useCallback } from "react";
 import { AlbumTrackList } from "./subviews/AlbumTrackList";
@@ -16,6 +10,13 @@ import {
   updateLibrarySplitState
 } from "../../features/library/librarySlice";
 import { updatePlaylistSplitViewState } from "../../features/playlists/playlistsSlice";
+import {
+  selectVisibleTrackGroups,
+  selectVisiblePlaylist,
+  selectVisibleViewType,
+  selectVisiblePlaylistConfig,
+  selectVisibleSelectedTrackGroup
+} from "../../features/visibleSelectors";
 
 export function SplitView() {
   const visibleItems = useAppSelector(selectVisibleTrackGroups);

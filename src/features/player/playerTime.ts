@@ -1,7 +1,7 @@
 import { RootState, store } from "../../app/store";
+import { selectCurrentTrack } from "../currentSelectors";
 import { pluginHandles } from "../plugins/pluginsSlice";
 import { SourceHandle } from "../plugins/pluginsTypes";
-import { selectCurrentTrack } from "../sharedSelectors";
 import { previousTrack } from "./playerSlice";
 
 let playing = false;

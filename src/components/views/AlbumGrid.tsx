@@ -1,10 +1,5 @@
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import {
-  selectVisibleDisplayMode,
-  selectVisiblePlaylist,
-  selectVisibleSelectedTrackGroup,
-  selectVisibleTrackGroups
-} from "../../features/sharedSelectors";
+
 import { selectAllTracks } from "../../features/tracks/tracksSlice";
 import { Track } from "../../features/tracks/tracksTypes";
 import { AlbumArt } from "./subviews/AlbumArt";
@@ -15,6 +10,12 @@ import { AlbumTrackList } from "./subviews/AlbumTrackList";
 import { useTranslation } from "react-i18next";
 import { setSelectedAlbum } from "../../features/library/librarySlice";
 import { setPlaylistSelectedTrackGroup } from "../../features/playlists/playlistsSlice";
+import {
+  selectVisiblePlaylist,
+  selectVisibleSelectedTrackGroup,
+  selectVisibleDisplayMode,
+  selectVisibleTrackGroups
+} from "../../features/visibleSelectors";
 
 export default function AlbumGrid() {
   const dispatch = useAppDispatch();

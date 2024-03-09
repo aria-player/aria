@@ -14,15 +14,6 @@ import {
 import { Item as TreeItem } from "soprano-ui";
 import { nanoid } from "@reduxjs/toolkit";
 import { PlaylistItem } from "../../features/playlists/playlistsTypes";
-import {
-  selectSortedTrackList,
-  selectVisibleDisplayMode,
-  selectVisibleGroupFilteredTrackList,
-  selectVisiblePlaylist,
-  selectVisibleSelectedTrackGroup,
-  selectVisibleTrackGrouping,
-  selectVisibleViewType
-} from "../../features/sharedSelectors";
 import { selectSelectedTracks } from "../../features/tracks/tracksSlice";
 import { store } from "../../app/store";
 import { DisplayMode, LibraryView, View } from "../../app/view";
@@ -31,6 +22,15 @@ import {
   setQueueToNewSource,
   skipQueueIndexes
 } from "../../features/player/playerSlice";
+import { selectSortedTrackList } from "../../features/sharedSelectors";
+import {
+  selectVisiblePlaylist,
+  selectVisibleViewType,
+  selectVisibleDisplayMode,
+  selectVisibleGroupFilteredTrackList,
+  selectVisibleTrackGrouping,
+  selectVisibleSelectedTrackGroup
+} from "../../features/visibleSelectors";
 const id = "tracklistitem";
 
 export function TrackListItemContextMenu() {

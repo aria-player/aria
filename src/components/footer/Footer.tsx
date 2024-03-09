@@ -1,11 +1,11 @@
 import styles from "./Footer.module.css";
 import { PlaybackControls } from "./PlaybackControls";
 import { useAppSelector } from "../../app/hooks";
-import { selectCurrentTrack } from "../../features/sharedSelectors";
 import { AuxiliaryControls } from "./AuxiliaryControls";
 import { AlbumArt } from "../views/subviews/AlbumArt";
 import { useMenuActions } from "../../hooks/useMenuActions";
 import { formatArtist } from "../../app/utils";
+import { selectCurrentTrack } from "../../features/currentSelectors";
 
 export function Footer() {
   const metadata = useAppSelector(selectCurrentTrack);

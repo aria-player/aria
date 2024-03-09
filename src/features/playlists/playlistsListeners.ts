@@ -5,16 +5,17 @@ import {
 } from "../../app/listener";
 import { push } from "redux-first-history";
 import { BASEPATH } from "../../app/constants";
-import {
-  selectCurrentGroupFilteredTrackList,
-  selectCurrentPlaylist,
-  selectSortedTrackList,
-  selectVisiblePlaylist
-} from "../sharedSelectors";
+
 import { isAnyOf } from "@reduxjs/toolkit";
 import { cleanupPlaylistConfigs, deletePlaylistItem } from "./playlistsSlice";
 import { ActionTypes } from "redux-undo";
 import { updateQueueAfterChange } from "../player/playerSlice";
+import {
+  selectCurrentPlaylist,
+  selectCurrentGroupFilteredTrackList
+} from "../currentSelectors";
+import { selectSortedTrackList } from "../sharedSelectors";
+import { selectVisiblePlaylist } from "../visibleSelectors";
 
 export function setupPlaylistsListeners() {
   listenForAction(

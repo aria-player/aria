@@ -4,7 +4,7 @@ import {
   selectVisiblePlaylist,
   selectVisiblePlaylistConfig,
   selectVisibleTracks
-} from "../../features/sharedSelectors";
+} from "../../features/visibleSelectors";
 
 export default function DebugView() {
   const visibleTracks = useAppSelector(selectVisibleTracks);

@@ -6,17 +6,17 @@ import {
 import { AgGridReact } from "@ag-grid-community/react";
 import { useMemo, useEffect } from "react";
 import { Track } from "../../../features/tracks/tracksTypes";
-import {
-  selectVisibleSelectedTrackGroup,
-  selectVisibleTrackGrouping,
-  selectVisibleTracks
-} from "../../../features/sharedSelectors";
 import { useAppSelector } from "../../../app/hooks";
 import { AlbumTrackListRow } from "./AlbumTrackListRow";
 import { t } from "i18next";
 import { compareMetadata, formatArtist } from "../../../app/utils";
 import AlbumTrackListSeparator from "./AlbumTrackListSeparator";
 import { useTrackGrid } from "../../../hooks/useTrackGrid";
+import {
+  selectVisibleSelectedTrackGroup,
+  selectVisibleTrackGrouping,
+  selectVisibleTracks
+} from "../../../features/visibleSelectors";
 
 export interface AlbumTrackListItem {
   itemId: string;

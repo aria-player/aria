@@ -19,7 +19,6 @@ import {
 import { restartOrPreviousTrack } from "../../features/player/playerTime";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { RepeatMode, Status } from "../../features/player/playerTypes";
-import { selectCurrentTrack } from "../../features/sharedSelectors";
 import { formatDuration } from "../../app/utils";
 import { ProgressBar } from "./ProgressBar";
 import { useState } from "react";
@@ -27,6 +26,7 @@ import {
   selectDisplayRemainingTime,
   setDisplayRemainingTime
 } from "../../features/config/configSlice";
+import { selectCurrentTrack } from "../../features/currentSelectors";
 
 export function PlaybackControls() {
   const dispatch = useAppDispatch();

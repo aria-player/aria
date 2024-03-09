@@ -14,12 +14,12 @@ import { replace } from "redux-first-history";
 import { store } from "../app/store";
 import { addTracksToPlaylist } from "../features/playlists/playlistsSlice";
 import { PlaylistItem } from "../features/playlists/playlistsTypes";
-import { selectCurrentTrack } from "../features/sharedSelectors";
 import { setSelectedTracks } from "../features/tracks/tracksSlice";
 import { useAppDispatch } from "../app/hooks";
 import { GridContext } from "../contexts/GridContext";
 import { useLocation } from "react-router-dom";
 import { AgGridReactProps } from "@ag-grid-community/react";
+import { selectCurrentTrack } from "../features/currentSelectors";
 
 export function useTrackGrid() {
   const dispatch = useAppDispatch();

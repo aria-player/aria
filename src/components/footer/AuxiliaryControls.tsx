@@ -16,8 +16,8 @@ import { useDebounce } from "react-use";
 import QueueIcon from "../../assets/list-solid.svg?react";
 import { BASEPATH } from "../../app/constants";
 import { goBack, push } from "redux-first-history";
-import { selectVisibleViewType } from "../../features/sharedSelectors";
 import { View } from "../../app/view";
+import { selectVisibleViewType } from "../../features/visibleSelectors";
 
 export function AuxiliaryControls() {
   const dispatch = useAppDispatch();

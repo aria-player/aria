@@ -11,16 +11,17 @@ import {
 } from "../../../features/player/playerSlice";
 import { PlaylistItem } from "../../../features/playlists/playlistsTypes";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import {
-  selectCurrentTrack,
-  selectVisibleGroupFilteredTrackList,
-  selectVisiblePlaylist,
-  selectVisibleSelectedTrackGroup,
-  selectVisibleTrackGrouping,
-  selectVisibleViewType
-} from "../../../features/sharedSelectors";
+
 import styles from "./AlbumTrackListRow.module.css";
 import { store } from "../../../app/store";
+import { selectCurrentTrack } from "../../../features/currentSelectors";
+import {
+  selectVisiblePlaylist,
+  selectVisibleGroupFilteredTrackList,
+  selectVisibleViewType,
+  selectVisibleTrackGrouping,
+  selectVisibleSelectedTrackGroup
+} from "../../../features/visibleSelectors";
 
 export const AlbumTrackListRow = (props: ICellRendererParams) => {
   const { show: showCellContextMenu } = useContextMenu({

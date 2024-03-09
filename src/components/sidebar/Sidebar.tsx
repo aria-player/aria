@@ -27,9 +27,9 @@ import { push } from "redux-first-history";
 import { BASEPATH } from "../../app/constants";
 import { useDragDropManager } from "react-dnd";
 import {
-  selectVisiblePlaylist,
-  selectVisibleViewType
-} from "../../features/sharedSelectors";
+  selectVisibleViewType,
+  selectVisiblePlaylist
+} from "../../features/visibleSelectors";
 
 import FolderOpenIcon from "../../assets/chevron-down-solid.svg?react";
 import FolderClosedIcon from "../../assets/chevron-right-solid.svg?react";

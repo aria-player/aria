@@ -1,11 +1,11 @@
 import { useState, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { MediaSlider } from "soprano-ui";
-import { selectCurrentTrack } from "../../features/sharedSelectors";
 import { getElapsedPlayerTime, seek } from "../../features/player/playerTime";
 import { nextTrack, selectRepeatMode } from "../../features/player/playerSlice";
 import { RepeatMode } from "../../features/player/playerTypes";
 import { store } from "../../app/store";
+import { selectCurrentTrack } from "../../features/currentSelectors";
 
 export function ProgressBar(props: {
   progressValueState: [number, (progressValue: number) => void];

@@ -16,7 +16,6 @@ import {
   setSidebarConfig
 } from "./features/config/configSlice";
 import { ContextMenuContainer } from "./components/contextmenu/ContextMenuContainer";
-import { selectVisiblePlaylist } from "./features/sharedSelectors";
 import ErrorPage from "./components/pages/ErrorPage";
 import SettingsPage from "./components/pages/SettingsPage";
 import { AboutPage } from "./components/pages/settings/AboutPage";
@@ -25,6 +24,7 @@ import { GeneralPage } from "./components/pages/settings/GeneralPage";
 import { LibraryPage } from "./components/pages/settings/LibraryPage";
 import { PluginsPage } from "./components/pages/settings/PluginsPage";
 import ViewContainer from "./components/views/ViewContainer";
+import { selectVisiblePlaylist } from "./features/visibleSelectors";
 
 function App() {
   const { platform, fullscreen } = useContext(PlatformContext);

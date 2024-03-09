@@ -2,15 +2,16 @@ import { listenForAction, listenForChange } from "../../app/listener";
 import { RootState } from "../../app/store";
 import { pluginHandles, selectActivePlugins } from "../plugins/pluginsSlice";
 import { SourceHandle } from "../plugins/pluginsTypes";
-import {
-  selectCurrentTrack,
-  selectCurrentTrackItemId
-} from "../sharedSelectors";
+
 import { loadAndPlayTrack, selectStatus } from "./playerSlice";
 import { Status } from "./playerTypes";
 import { resetTimer, startTimer, stopTimer } from "./playerTime";
 import { isAnyOf } from "@reduxjs/toolkit";
 import { plugins } from "../../plugins/plugins";
+import {
+  selectCurrentTrack,
+  selectCurrentTrackItemId
+} from "../currentSelectors";
 
 const getCurrentSource = (state: RootState): SourceHandle | null => {
   const currentTrack = selectCurrentTrack(state);
