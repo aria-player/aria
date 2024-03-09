@@ -24,64 +24,6 @@ import {
   selectQueueSelectedGroup
 } from "./player/playerSlice";
 
-export const selectVisibleViewType = (state: RootState) => {
-  const firstPath = state.router.location?.pathname.split("/")[1];
-  if (!firstPath) {
-    return LibraryView.Songs;
-  } else if (isLibraryView(firstPath)) {
-    return firstPath as LibraryView;
-  } else if (Object.values(View).includes(firstPath as View)) {
-    return firstPath as View;
-  }
-  return View.Error;
-};
-
-export const selectVisiblePlaylist = (state: RootState) => {
-  if (state.router.location?.pathname.split("/")[2] != null)
-    return selectPlaylistById(
-      state,
-      state.router.location?.pathname.split("/")[2]
-    );
-};
-
-export const selectVisiblePlaylistConfig = (state: RootState) => {
-  if (state.router.location?.pathname.split("/")[2] != null)
-    return (
-      selectPlaylistConfigById(
-        state,
-        state.router.location?.pathname.split("/")[2]
-      ) ?? null
-    );
-};
-
-export const selectVisibleTracks = createSelector(
-  [
-    (state: RootState) => state.tracks.tracks,
-    (state: RootState) => state.router.location?.pathname,
-    (state: RootState) => state.undoable.present.playlists.playlists
-  ],
-  () => {
-    const state = store.getState();
-    const tracks = state.tracks.tracks;
-    const visiblePlaylist = selectVisiblePlaylist(state)?.tracks;
-    return visiblePlaylist
-      ? visiblePlaylist.map((playlistTrack) => {
-          return {
-            ...playlistTrack,
-            ...tracks.entities[playlistTrack.trackId]
-          };
-        })
-      : Object.values(LibraryView).includes(
-            selectVisibleViewType(state) as LibraryView
-          )
-        ? (Object.values(tracks.entities).map((track) => ({
-            ...track,
-            itemId: track?.trackId
-          })) as TrackListItem[])
-        : [];
-  }
-);
-
 export const selectQueueTracks = createSelector(
   [
     (state: RootState) => state.tracks.tracks,
@@ -194,6 +136,64 @@ export const selectGroupFilteredTrackList = (
   }));
 };
 
+export const selectVisibleViewType = (state: RootState) => {
+  const firstPath = state.router.location?.pathname.split("/")[1];
+  if (!firstPath) {
+    return LibraryView.Songs;
+  } else if (isLibraryView(firstPath)) {
+    return firstPath as LibraryView;
+  } else if (Object.values(View).includes(firstPath as View)) {
+    return firstPath as View;
+  }
+  return View.Error;
+};
+
+export const selectVisiblePlaylist = (state: RootState) => {
+  if (state.router.location?.pathname.split("/")[2] != null)
+    return selectPlaylistById(
+      state,
+      state.router.location?.pathname.split("/")[2]
+    );
+};
+
+export const selectVisiblePlaylistConfig = (state: RootState) => {
+  if (state.router.location?.pathname.split("/")[2] != null)
+    return (
+      selectPlaylistConfigById(
+        state,
+        state.router.location?.pathname.split("/")[2]
+      ) ?? null
+    );
+};
+
+export const selectVisibleTracks = createSelector(
+  [
+    (state: RootState) => state.tracks.tracks,
+    (state: RootState) => state.router.location?.pathname,
+    (state: RootState) => state.undoable.present.playlists.playlists
+  ],
+  () => {
+    const state = store.getState();
+    const tracks = state.tracks.tracks;
+    const visiblePlaylist = selectVisiblePlaylist(state)?.tracks;
+    return visiblePlaylist
+      ? visiblePlaylist.map((playlistTrack) => {
+          return {
+            ...playlistTrack,
+            ...tracks.entities[playlistTrack.trackId]
+          };
+        })
+      : Object.values(LibraryView).includes(
+            selectVisibleViewType(state) as LibraryView
+          )
+        ? (Object.values(tracks.entities).map((track) => ({
+            ...track,
+            itemId: track?.trackId
+          })) as TrackListItem[])
+        : [];
+  }
+);
+
 export const selectVisibleGroupFilteredTrackList = (
   state: RootState
 ): PlaylistItem[] => {
@@ -202,17 +202,6 @@ export const selectVisibleGroupFilteredTrackList = (
     selectVisibleTrackGrouping(state),
     selectVisibleSelectedTrackGroup(state),
     selectVisiblePlaylist(state)?.id
-  );
-};
-
-export const selectCurrentGroupFilteredTrackList = (
-  state: RootState
-): PlaylistItem[] => {
-  return selectGroupFilteredTrackList(
-    state,
-    selectQueueGrouping(state),
-    selectQueueSelectedGroup(state),
-    selectCurrentPlaylist(state)?.id
   );
 };
 
@@ -273,6 +262,38 @@ export const selectVisibleSelectedTrackGroup = (state: RootState) => {
   }
 };
 
+export const selectVisibleTrackGroups = createSelector(
+  [
+    (state: RootState) => state.router.location?.pathname,
+    (state: RootState) => state.undoable.present.playlists,
+    (state: RootState) => state.undoable.present.library
+  ],
+  () => {
+    const state = store.getState();
+    if (selectVisibleDisplayMode(state) == DisplayMode.AlbumGrid) {
+      return [
+        ...new Set(selectVisibleTracks(state).map((track) => track.album))
+      ];
+    } else if (selectVisibleDisplayMode(state) == DisplayMode.SplitView) {
+      const grouping = selectVisiblePlaylist(state)
+        ? selectVisiblePlaylistConfig(state)?.splitViewState.trackGrouping
+        : selectLibrarySplitViewStates(state)[
+            selectVisibleViewType(state) as string
+          ].trackGrouping;
+      if (grouping) {
+        return [
+          ...new Set(
+            selectVisibleTracks(state)
+              .flatMap((track) => track[grouping] as string | string[])
+              .filter((group) => group !== null && group !== undefined)
+          )
+        ];
+      }
+    }
+    return [];
+  }
+);
+
 export const selectCurrentPlaylist = (state: RootState) => {
   if (!state.player.queueSource) return null;
   return selectPlaylistById(state, state.player.queueSource) ?? null;
@@ -307,34 +328,13 @@ export const selectCurrentTrackItemId = (state: RootState) => {
   return state.player.queue[state.player.queueIndex].itemId;
 };
 
-export const selectVisibleTrackGroups = createSelector(
-  [
-    (state: RootState) => state.router.location?.pathname,
-    (state: RootState) => state.undoable.present.playlists,
-    (state: RootState) => state.undoable.present.library
-  ],
-  () => {
-    const state = store.getState();
-    if (selectVisibleDisplayMode(state) == DisplayMode.AlbumGrid) {
-      return [
-        ...new Set(selectVisibleTracks(state).map((track) => track.album))
-      ];
-    } else if (selectVisibleDisplayMode(state) == DisplayMode.SplitView) {
-      const grouping = selectVisiblePlaylist(state)
-        ? selectVisiblePlaylistConfig(state)?.splitViewState.trackGrouping
-        : selectLibrarySplitViewStates(state)[
-            selectVisibleViewType(state) as string
-          ].trackGrouping;
-      if (grouping) {
-        return [
-          ...new Set(
-            selectVisibleTracks(state)
-              .flatMap((track) => track[grouping] as string | string[])
-              .filter((group) => group !== null && group !== undefined)
-          )
-        ];
-      }
-    }
-    return [];
-  }
-);
+export const selectCurrentGroupFilteredTrackList = (
+  state: RootState
+): PlaylistItem[] => {
+  return selectGroupFilteredTrackList(
+    state,
+    selectQueueGrouping(state),
+    selectQueueSelectedGroup(state),
+    selectCurrentPlaylist(state)?.id
+  );
+};
