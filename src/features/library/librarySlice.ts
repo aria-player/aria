@@ -19,8 +19,8 @@ const initialState: LibraryState = {
   columnState: null,
   layout: [
     { id: "songs", name: "songs" },
-    { id: "albums", name: "albums" },
     { id: "artists", name: "artists" },
+    { id: "albums", name: "albums" },
     { id: "genres", name: "genres" },
     { id: "composers", name: "composers", hidden: true },
     { id: "years", name: "years", hidden: true }
