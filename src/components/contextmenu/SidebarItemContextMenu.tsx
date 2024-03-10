@@ -75,12 +75,14 @@ export function SidebarItemContextMenu() {
           <Item
             onClick={() => {
               if (!menuData) return;
+              const queue = selectSortedTrackList(
+                store.getState(),
+                menuData.itemId
+              );
+              if (queue.length == 0) return;
               dispatch(
                 setQueueToNewSource({
-                  queue: selectSortedTrackList(
-                    store.getState(),
-                    menuData.itemId
-                  ),
+                  queue,
                   queueSource: menuData.itemId,
                   queueIndex: 0,
                   queueGrouping: null,
