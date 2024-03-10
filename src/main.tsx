@@ -13,6 +13,7 @@ import { MenuProvider } from "./contexts/MenuContext";
 import { TreeProvider } from "./contexts/TreeContext";
 import { HTML5toTouch } from "rdndmb-html5-to-touch";
 import { DndProvider } from "react-dnd-multi-backend";
+import { ArtworkProvider } from "./contexts/ArtworkContext";
 import App from "./App";
 import "./i18n";
 
@@ -35,9 +36,11 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
             <TreeProvider>
               <MenuProvider>
                 <PlatformProvider>
-                  <DndProvider options={HTML5toTouch}>
-                    <App />
-                  </DndProvider>
+                  <ArtworkProvider>
+                    <DndProvider options={HTML5toTouch}>
+                      <App />
+                    </DndProvider>
+                  </ArtworkProvider>
                 </PlatformProvider>
               </MenuProvider>
             </TreeProvider>
