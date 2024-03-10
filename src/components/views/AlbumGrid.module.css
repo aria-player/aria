@@ -1,10 +1,11 @@
 .grid {
   padding: 1rem;
   grid-gap: 1.5rem;
-  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
 }
 
 .gridItem {
+  width: 100%;
   font-size: 14px;
   padding: 0;
   overflow: hidden;
@@ -32,8 +33,8 @@
 }
 
 .albumText {
+  white-space: nowrap;
   text-overflow: ellipsis;
-  text-wrap: nowrap;
   overflow: hidden;
 }
 
