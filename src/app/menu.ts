@@ -378,10 +378,11 @@ export const selectMenuState = createSelector(
       };
     });
 
-    // TODO: Should also be false if there is a selected album, but there are no visible tracks
+    // TODO: Should also be false if the visible list of tracks is empty
     const selectableTracksVisible =
       selectVisibleDisplayMode(state) == DisplayMode.TrackList ||
-      (selectVisibleDisplayMode(state) == DisplayMode.AlbumGrid &&
+      ((selectVisibleDisplayMode(state) == DisplayMode.AlbumGrid ||
+        selectVisibleDisplayMode(state) == DisplayMode.SplitView) &&
         selectVisibleSelectedTrackGroup(state) != null);
 
     return {
