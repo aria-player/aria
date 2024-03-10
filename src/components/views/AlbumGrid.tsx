@@ -57,11 +57,11 @@ export default function AlbumGrid() {
           className={styles.grid}
           style={{ display: visibleAlbums.length == 0 ? "none" : "grid" }}
         >
-          {allAlbums.map((track) => {
+          {allAlbums.map((track, index) => {
             if (track)
               return (
                 <div
-                  key={track.album}
+                  key={track.album ?? index}
                   style={{
                     display: visibleAlbums.includes(track.album)
                       ? "block"
