@@ -8,12 +8,44 @@ const artworkStore = localforage.createInstance({
   storeName: "webPlayerArtwork"
 });
 
+async function resizeArtwork(
+  artworkBase64: string,
+  maxWidth: number,
+  maxHeight: number
+): Promise<string> {
+  const blob = await fetch(artworkBase64).then((res) => res.blob());
+  const bitmap = await createImageBitmap(blob);
+  const scale = Math.min(
+    1,
+    Math.min(maxWidth / bitmap.width, maxHeight / bitmap.height)
+  );
+  const canvas = new OffscreenCanvas(
+    bitmap.width * scale,
+    bitmap.height * scale
+  );
+  canvas.getContext("2d")?.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+
+  const resizedBlob = await canvas.convertToBlob({
+    type: "image/jpeg",
+    quality: 0.92
+  });
+  return new Promise<string>((resolve) => {
+    const reader = new FileReader();
+    reader.onloadend = () => resolve(reader.result as string);
+    reader.readAsDataURL(resizedBlob);
+  });
+}
+
 async function storeCoverArtGetHash(coverArtData: string) {
   const coverArtHash = SHA256(coverArtData).toString();
   const existingData = await artworkStore.getItem(coverArtHash);
 
   if (!existingData) {
-    await artworkStore.setItem(coverArtHash, coverArtData);
+    // TODO: Awaiting this would slow down metadata scanning too much
+    // Need to handle scenario where resizeArtwork doesn't finish before exit and a coverArtHash ends up with no data in artworkStore
+    resizeArtwork(coverArtData, 1024, 1024).then((resizedCoverArtData) =>
+      artworkStore.setItem(coverArtHash, resizedCoverArtData)
+    );
   }
 
   return coverArtHash;
