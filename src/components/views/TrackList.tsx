@@ -20,10 +20,8 @@ import {
 } from "../../features/library/librarySlice";
 import { defaultColumnDefinitions } from "../../features/library/libraryColumns";
 import {
-  reorderQueue,
   selectQueueSource,
   setQueueToNewSource,
-  skipQueueIndexes,
   updateQueueAfterChange
 } from "../../features/player/playerSlice";
 
@@ -46,7 +44,6 @@ import { store } from "../../app/store";
 import { useTrackGrid } from "../../hooks/useTrackGrid";
 import {
   selectCurrentTrack,
-  selectCurrentQueueTracks,
   selectCurrentPlaylist
 } from "../../features/currentSelectors";
 import { selectSortedTrackList } from "../../features/genericSelectors";
@@ -61,11 +58,9 @@ export const TrackList = () => {
   const dispatch = useAppDispatch();
   const { gridRef, gridProps } = useTrackGrid();
   const currentTrack = useAppSelector(selectCurrentTrack);
-  const tracklistData = useAppSelector(selectVisibleTracks);
-  const queueData = useAppSelector(selectCurrentQueueTracks);
+  const rowData = useAppSelector(selectVisibleTracks);
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
   const visibleViewType = useAppSelector(selectVisibleViewType);
-  const rowData = visibleViewType == View.Queue ? queueData : tracklistData;
   const queueSource = useAppSelector(selectQueueSource);
   const { setMenuData } = useContext(MenuContext);
   const { show: showHeaderContextMenu } = useContextMenu({
@@ -120,7 +115,6 @@ export const TrackList = () => {
         return {
           ...colDef,
           ...colDefOverrides,
-          sortable: visibleViewType != View.Queue ? colDef.sortable : false,
           sort,
           sortIndex,
           headerName:
@@ -201,10 +195,6 @@ export const TrackList = () => {
   };
 
   const handleCellDoubleClicked = (event: RowClickedEvent) => {
-    if (visibleView == View.Queue) {
-      dispatch(skipQueueIndexes(event.rowIndex));
-      return;
-    }
     // We could use selectSortedTrackList here instead,
     // but then we'd be re-calculating the same sorted tracks that are already displayed
     const queue = [] as PlaylistItem[];
@@ -268,7 +258,6 @@ export const TrackList = () => {
   };
 
   const handleSortChanged = (params: SortChangedEvent) => {
-    if (visibleView == View.Queue) return;
     if (visiblePlaylist) {
       dispatch(
         updatePlaylistColumnState({
@@ -336,7 +325,7 @@ export const TrackList = () => {
   };
 
   const handleRowDragEnd = (event: RowDragEndEvent) => {
-    if (!visiblePlaylist?.id && visibleViewType != View.Queue) return;
+    if (!visiblePlaylist?.id) return;
     if (
       event.api.getColumnState().filter((col) => col.sort !== null).length != 0
     )
@@ -350,25 +339,21 @@ export const TrackList = () => {
         });
       }
     });
-    if (visibleViewType == View.Queue) {
-      dispatch(reorderQueue(newOrder));
-    } else if (visiblePlaylist?.id) {
-      dispatch(
-        setPlaylistTracks({ playlistId: visiblePlaylist.id, tracks: newOrder })
-      );
-    }
+    dispatch(
+      setPlaylistTracks({ playlistId: visiblePlaylist.id, tracks: newOrder })
+    );
   };
 
   const highlightCurrentTrack = useCallback(
     (params: RowClassParams) => {
       if (
         params.data.itemId === currentTrack?.itemId &&
-        (queueSource == visibleView || visibleViewType == View.Queue)
+        queueSource == visibleView
       ) {
         return { fontWeight: 700 };
       }
     },
-    [currentTrack?.itemId, queueSource, visibleView, visibleViewType]
+    [currentTrack?.itemId, queueSource, visibleView]
   );
 
   return (
@@ -389,15 +374,11 @@ export const TrackList = () => {
         getRowStyle={highlightCurrentTrack}
         rowHeight={33}
         headerHeight={37}
-        rowDragManaged={
-          visibleViewType == View.Playlist || visibleViewType == View.Queue
-        }
+        rowDragManaged={visibleViewType == View.Playlist}
         overlayNoRowsTemplate={
-          visibleViewType == View.Queue
-            ? t("tracks.emptyQueue")
-            : visibleViewType == View.Playlist
-              ? t("tracks.emptyPlaylist")
-              : t("tracks.emptyLibrary")
+          visibleViewType == View.Playlist
+            ? t("tracks.emptyPlaylist")
+            : t("tracks.emptyLibrary")
         }
         multiSortKey="ctrl"
         rowDragEntireRow
