@@ -144,7 +144,7 @@ body {
     border-radius: 0.25rem;
   }
 
-  .ag-overrides-album-track-list {
+  .ag-overrides-track-summary-rows {
     .ag-row-selected::before {
       content: unset;
     }
@@ -154,8 +154,6 @@ body {
     }
 
     .ag-full-width-container {
-      margin-top: 2rem;
-      margin-left: 22rem;
       position: inherit;
       pointer-events: all;
     }
@@ -174,6 +172,23 @@ body {
         [row-id^="disc-separator"]
       ) {
       background-color: var(--button-background-hover);
+    }
+  }
+
+  .ag-overrides-album-track-list {
+    .ag-full-width-container {
+      margin-top: 2rem;
+      margin-left: 22rem;
+    }
+  }
+
+  .ag-overrides-queue {
+    .ag-full-width-container {
+      margin: 0.5rem;
+    }
+
+    .ag-full-width-row:not([aria-selected]) {
+      pointer-events: none !important;
     }
   }
 }

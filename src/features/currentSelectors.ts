@@ -20,12 +20,21 @@ export const selectCurrentQueueTracks = createSelector(
     const state = store.getState();
     const tracks = state.tracks.tracks;
 
-    return state.player.queue
+    const queue = state.player.queue
       .map((queueTrack) => ({
         ...tracks.entities[queueTrack.trackId],
         itemId: queueTrack.itemId
       }))
       .slice(state.player.queueIndex!);
+
+    const queueWithSeparators = [
+      { itemId: "currentTrackSeparator", separator: true },
+      ...queue.slice(0, 1),
+      { itemId: "playingSourceSeparator", separator: true },
+      ...queue.slice(1)
+    ];
+
+    return queueWithSeparators;
   }
 );
 

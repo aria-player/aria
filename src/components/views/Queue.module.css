@@ -1,0 +1,9 @@
+.separator {
+  padding-left: 0.75rem;
+  font-weight: 500;
+  font-size: 0.8rem;
+  display: flex;
+  align-items: center;
+  color: var(--column-text);
+  height: 100%;
+}
