@@ -16,13 +16,10 @@ import { t } from "i18next";
 import { TrackSummaryRow } from "./subviews/TrackSummaryRow";
 import { selectCurrentQueueTracks } from "../../features/currentSelectors";
 import { useCallback } from "react";
-import {
-  reorderQueue,
-  selectQueueSource
-} from "../../features/player/playerSlice";
-import styles from "./Queue.module.css";
+import { reorderQueue } from "../../features/player/playerSlice";
 import { TrackListItem } from "../../features/tracks/tracksTypes";
 import { store } from "../../app/store";
+import QueueSeparator from "./subviews/QueueSeparator";
 
 const ROW_HEIGHT = 48;
 const PLAYING_SOURCE_SEPARATOR_INDEX = 2;
@@ -30,6 +27,13 @@ const PLAYING_SOURCE_SEPARATOR_INDEX = 2;
 export type QueueItem = TrackListItem & {
   separator?: boolean;
 };
+
+const fullWidthCellRenderer = (params: ICellRendererParams) =>
+  params.node.data.separator ? (
+    <QueueSeparator {...params} />
+  ) : (
+    <TrackSummaryRow {...params} />
+  );
 
 function clearRowHighlights(gridApi: GridApi) {
   gridApi.forEachNode((node) => {
@@ -95,7 +99,6 @@ const handleSelectionChanged = (params: SelectionChangedEvent) => {
 export const Queue = () => {
   const dispatch = useAppDispatch();
   const { gridRef, gridProps } = useTrackGrid();
-  const queueSource = useAppSelector(selectQueueSource);
   const visibleTracks = useAppSelector(selectCurrentQueueTracks).map(
     (track, index) => {
       return {
@@ -104,20 +107,6 @@ export const Queue = () => {
       };
     }
   ) as QueueItem[];
-
-  const fullWidthCellRenderer = useCallback(
-    (params: ICellRendererParams) =>
-      params.node.data.separator ? (
-        params.node.rowIndex == 0 ? (
-          <div className={styles.separator}>Current track</div>
-        ) : (
-          <div className={styles.separator}>Playing from: {queueSource}</div>
-        )
-      ) : (
-        <TrackSummaryRow {...params} />
-      ),
-    [queueSource]
-  );
 
   const handleRowDragEnd = useCallback(
     (event: RowDragEndEvent) => {
