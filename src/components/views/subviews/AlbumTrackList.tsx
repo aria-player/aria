@@ -7,7 +7,7 @@ import { AgGridReact } from "@ag-grid-community/react";
 import { useMemo, useEffect } from "react";
 import { Track } from "../../../features/tracks/tracksTypes";
 import { useAppSelector } from "../../../app/hooks";
-import { AlbumTrackListRow } from "./AlbumTrackListRow";
+import { TrackSummaryRow } from "./TrackSummaryRow";
 import { t } from "i18next";
 import { formatArtist } from "../../../app/utils";
 import AlbumTrackListSeparator from "./AlbumTrackListSeparator";
@@ -30,7 +30,7 @@ const fullWidthCellRenderer = (params: ICellRendererParams) => {
   return params.data.separator ? (
     <AlbumTrackListSeparator {...params} />
   ) : (
-    <AlbumTrackListRow {...params} />
+    <TrackSummaryRow {...params} />
   );
 };
 

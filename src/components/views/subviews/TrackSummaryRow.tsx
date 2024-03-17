@@ -12,7 +12,7 @@ import {
 import { PlaylistItem } from "../../../features/playlists/playlistsTypes";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 
-import styles from "./AlbumTrackListRow.module.css";
+import styles from "./TrackSummaryRow.module.css";
 import { store } from "../../../app/store";
 import { selectCurrentTrack } from "../../../features/currentSelectors";
 import {
@@ -23,7 +23,7 @@ import {
   selectVisibleSelectedTrackGroup
 } from "../../../features/visibleSelectors";
 
-export const AlbumTrackListRow = (props: ICellRendererParams) => {
+export const TrackSummaryRow = (props: ICellRendererParams) => {
   const { show: showCellContextMenu } = useContextMenu({
     id: "tracklistitem"
   });
@@ -106,7 +106,7 @@ export const AlbumTrackListRow = (props: ICellRendererParams) => {
 
   return (
     <div
-      className={`${styles.trackDetailRow} ${
+      className={`${styles.trackSummaryRow} ${
         props.data.itemId === currentTrack?.itemId && queueSource == visibleView
           ? styles.highlighted
           : ""

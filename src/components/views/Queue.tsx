@@ -13,7 +13,7 @@ import { AgGridReact } from "@ag-grid-community/react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useTrackGrid } from "../../hooks/useTrackGrid";
 import { t } from "i18next";
-import { AlbumTrackListRow } from "./subviews/AlbumTrackListRow";
+import { TrackSummaryRow } from "./subviews/TrackSummaryRow";
 import { selectCurrentQueueTracks } from "../../features/currentSelectors";
 import { useCallback } from "react";
 import {
@@ -114,7 +114,7 @@ export const Queue = () => {
           <div className={styles.separator}>Playing from: {queueSource}</div>
         )
       ) : (
-        <AlbumTrackListRow {...params} />
+        <TrackSummaryRow {...params} />
       ),
     [queueSource]
   );
