@@ -20,6 +20,7 @@ import { reorderQueue } from "../../features/player/playerSlice";
 import { TrackListItem } from "../../features/tracks/tracksTypes";
 import { store } from "../../app/store";
 import QueueSeparator from "./subviews/QueueSeparator";
+import { setSelectedTracks } from "../../features/tracks/tracksSlice";
 
 const ROW_HEIGHT = 48;
 const PLAYING_SOURCE_SEPARATOR_INDEX = 2;
@@ -74,26 +75,6 @@ const handleRowDragMove = (event: RowDragMoveEvent) => {
   (
     event.api.getDisplayedRowAtIndex(dropIndex - highlight) as RowNode
   )?.setHighlighted(highlight);
-};
-
-const handleSelectionChanged = (params: SelectionChangedEvent) => {
-  const selectedNodes = params.api.getSelectedNodes();
-  const lastSelectedIndex = selectedNodes[selectedNodes.length - 1]?.rowIndex;
-  if (lastSelectedIndex) {
-    const lastSelectedSection =
-      lastSelectedIndex > PLAYING_SOURCE_SEPARATOR_INDEX
-        ? "playingSource"
-        : "currentTrack";
-    selectedNodes.forEach((node) => {
-      const nodeSection =
-        node.rowIndex && node.rowIndex > PLAYING_SOURCE_SEPARATOR_INDEX
-          ? "playingSource"
-          : "currentTrack";
-      if (nodeSection !== lastSelectedSection) {
-        node.setSelected(false);
-      }
-    });
-  }
 };
 
 export const Queue = () => {
@@ -183,6 +164,34 @@ export const Queue = () => {
     },
     [dispatch, visibleTracks]
   );
+
+  const handleSelectionChanged = (params: SelectionChangedEvent) => {
+    const selectedNodes = params.api.getSelectedNodes();
+    const lastSelectedIndex = selectedNodes[selectedNodes.length - 1]?.rowIndex;
+    if (lastSelectedIndex) {
+      const lastSelectedSection =
+        lastSelectedIndex > PLAYING_SOURCE_SEPARATOR_INDEX
+          ? "playingSource"
+          : "currentTrack";
+      selectedNodes.forEach((node) => {
+        const nodeSection =
+          node.rowIndex && node.rowIndex > PLAYING_SOURCE_SEPARATOR_INDEX
+            ? "playingSource"
+            : "currentTrack";
+        if (nodeSection !== lastSelectedSection) {
+          node.setSelected(false);
+        }
+      });
+    }
+    dispatch(
+      setSelectedTracks(
+        params.api.getSelectedRows().map((node) => ({
+          itemId: node.itemId,
+          trackId: node.trackId
+        }))
+      )
+    );
+  };
 
   return (
     <div
