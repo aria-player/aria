@@ -179,6 +179,10 @@
     "disc": "Disc {{number}}",
     "empty": "No tracks to display"
   },
+  "queue": {
+    "currentTrack": "Current track",
+    "playingFrom": "Playing tracks from:"
+  },
   "accentColors": {
     "blue": "Blue",
     "teal": "Teal",

@@ -7,3 +7,8 @@
   color: var(--column-text);
   height: 100%;
 }
+
+.source {
+  font-weight: 700;
+  margin: 0 0.25rem;
+}
