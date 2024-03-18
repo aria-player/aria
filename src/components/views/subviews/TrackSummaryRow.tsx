@@ -114,7 +114,8 @@ export const TrackSummaryRow = (props: ICellRendererParams) => {
   return (
     <div
       className={`${styles.trackSummaryRow} ${
-        props.data.itemId === currentTrack?.itemId && queueSource == visibleView
+        props.data.itemId === currentTrack?.itemId &&
+        (queueSource == visibleView || visibleView == View.Queue)
           ? styles.highlighted
           : ""
       }`}
