@@ -14,7 +14,10 @@ import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 
 import styles from "./TrackSummaryRow.module.css";
 import { store } from "../../../app/store";
-import { selectCurrentTrack } from "../../../features/currentSelectors";
+import {
+  selectCurrentQueueTracks,
+  selectCurrentTrack
+} from "../../../features/currentSelectors";
 import {
   selectVisiblePlaylist,
   selectVisibleGroupFilteredTrackList,
@@ -22,6 +25,7 @@ import {
   selectVisibleTrackGrouping,
   selectVisibleSelectedTrackGroup
 } from "../../../features/visibleSelectors";
+import { QueueItem } from "../Queue";
 
 export const TrackSummaryRow = (props: ICellRendererParams) => {
   const { show: showCellContextMenu } = useContextMenu({
@@ -51,9 +55,12 @@ export const TrackSummaryRow = (props: ICellRendererParams) => {
       rowProps.node.setSelected(true, true);
     }
     if (rowProps.node.id) {
-      const visibleTracks = selectVisibleGroupFilteredTrackList(
-        store.getState()
-      );
+      const visibleTracks =
+        visibleView == View.Queue
+          ? (selectCurrentQueueTracks(store.getState()) as QueueItem[]).filter(
+              (track) => !track.separator
+            )
+          : selectVisibleGroupFilteredTrackList(store.getState());
       setMenuData({
         itemId: rowProps.node.data.trackId,
         itemSource: visibleView,
