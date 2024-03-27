@@ -15,7 +15,11 @@ import {
   selectCurrentGroupFilteredTrackList
 } from "../currentSelectors";
 import { selectSortedTrackList } from "../genericSelectors";
-import { selectVisiblePlaylist } from "../visibleSelectors";
+import {
+  selectVisiblePlaylist,
+  selectVisibleViewType
+} from "../visibleSelectors";
+import { View } from "../../app/view";
 
 export function setupPlaylistsListeners() {
   listenForAction(
@@ -28,7 +32,10 @@ export function setupPlaylistsListeners() {
         action.type === ActionTypes.REDO) as MatchFunction
     ),
     (state, _, dispatch) => {
-      if (!selectVisiblePlaylist(state)) {
+      if (
+        !selectVisiblePlaylist(state) &&
+        selectVisibleViewType(state) == View.Playlist
+      ) {
         dispatch(push(BASEPATH));
       }
     }
