@@ -23,6 +23,7 @@
   background-color: var(--search-background);
   outline: none;
   border: none;
+  font-family: inherit;
 }
 
 .search:hover,
