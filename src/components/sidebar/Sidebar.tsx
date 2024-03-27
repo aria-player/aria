@@ -113,6 +113,7 @@ export function Sidebar() {
         className={styles.search}
         type="text"
         placeholder={t("sidebar.search")}
+        onKeyDown={(e) => e.stopPropagation()}
       />
       <SectionTree
         ref={treeRef}
