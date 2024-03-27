@@ -16,16 +16,20 @@ import { t } from "i18next";
 import { TrackSummaryRow } from "./subviews/TrackSummaryRow";
 import { selectCurrentQueueTracks } from "../../features/currentSelectors";
 import { useCallback } from "react";
-import { reorderQueue } from "../../features/player/playerSlice";
+import {
+  addStrayTrackToQueue,
+  reorderQueue
+} from "../../features/player/playerSlice";
 import { TrackListItem } from "../../features/tracks/tracksTypes";
 import { store } from "../../app/store";
 import QueueSeparator from "./subviews/QueueSeparator";
 import { setSelectedTracks } from "../../features/tracks/tracksSlice";
+import { nanoid } from "@reduxjs/toolkit";
 
 const ROW_HEIGHT = 48;
 const PLAYING_SOURCE_SEPARATOR_INDEX = 2;
 
-export type QueueItem = TrackListItem & {
+export type QueueListItem = TrackListItem & {
   separator?: boolean;
 };
 
@@ -87,7 +91,7 @@ export const Queue = () => {
         track: index > PLAYING_SOURCE_SEPARATOR_INDEX ? index - 1 : index
       };
     }
-  ) as QueueItem[];
+  ) as QueueListItem[];
 
   const handleRowDragEnd = useCallback(
     (event: RowDragEndEvent) => {
@@ -159,6 +163,13 @@ export const Queue = () => {
                 itemId: track.itemId
               }))
           )
+        );
+      } else if (movingNode.rowIndex == 1) {
+        dispatch(
+          addStrayTrackToQueue({
+            dropIndex: dropIndex - PLAYING_SOURCE_SEPARATOR_INDEX,
+            track: { trackId: movingNode.data.trackId, itemId: nanoid() }
+          })
         );
       }
     },

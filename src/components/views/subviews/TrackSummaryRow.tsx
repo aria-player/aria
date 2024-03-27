@@ -25,7 +25,7 @@ import {
   selectVisibleTrackGrouping,
   selectVisibleSelectedTrackGroup
 } from "../../../features/visibleSelectors";
-import { QueueItem } from "../Queue";
+import { QueueListItem } from "../Queue";
 
 export const TrackSummaryRow = (props: ICellRendererParams) => {
   const { show: showCellContextMenu } = useContextMenu({
@@ -57,9 +57,9 @@ export const TrackSummaryRow = (props: ICellRendererParams) => {
     if (rowProps.node.id) {
       const visibleTracks =
         visibleView == View.Queue
-          ? (selectCurrentQueueTracks(store.getState()) as QueueItem[]).filter(
-              (track) => !track.separator
-            )
+          ? (
+              selectCurrentQueueTracks(store.getState()) as QueueListItem[]
+            ).filter((track) => !track.separator)
           : selectVisibleGroupFilteredTrackList(store.getState());
       setMenuData({
         itemId: rowProps.node.data.trackId,

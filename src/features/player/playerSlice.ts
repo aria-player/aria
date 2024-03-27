@@ -1,31 +1,26 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
-import { RepeatMode, Status } from "./playerTypes";
+import { QueueItem, RepeatMode, Status } from "./playerTypes";
 import { TrackId } from "../tracks/tracksTypes";
 import { pluginHandles } from "../plugins/pluginsSlice";
 import { SourceHandle } from "../plugins/pluginsTypes";
 import { setupPlayerListeners } from "./playerListeners";
 import { selectTrackById } from "../tracks/tracksSlice";
-import {
-  PlaylistId,
-  PlaylistItem,
-  PlaylistItemId
-} from "../playlists/playlistsTypes";
+import { PlaylistId, PlaylistItemId } from "../playlists/playlistsTypes";
 import { LibraryView, TrackGrouping } from "../../app/view";
 
 interface PlayerState {
   status: Status;
   volume: number;
   muted: boolean;
-  queue: PlaylistItem[];
-  queueUnshuffled: PlaylistItem[];
+  queue: QueueItem[];
+  queueUnshuffled: QueueItem[];
   queueIndex: number | null;
   queueSource: LibraryView | PlaylistId | null;
   queueGrouping: TrackGrouping | null;
   queueSelectedGroup: string | null;
   repeatMode: RepeatMode;
   shuffle: boolean;
-  currentTrackNotInPlaylist: boolean;
 }
 
 const initialState: PlayerState = {
@@ -39,16 +34,15 @@ const initialState: PlayerState = {
   queueGrouping: null,
   queueSelectedGroup: null,
   repeatMode: RepeatMode.Off,
-  shuffle: false,
-  currentTrackNotInPlaylist: false
+  shuffle: false
 };
 
-function shuffleQueue(queue: PlaylistItem[], queueIndex: number | null) {
+function shuffleQueue(queue: QueueItem[], queueIndex: number | null) {
   const firstTrack = queueIndex != null ? queue[queueIndex] : null;
   const shuffledTracks = queue.filter((t) => t !== firstTrack);
   shuffledTracks.sort(() => Math.random() - 0.5);
   if (queueIndex != null) {
-    shuffledTracks.unshift(firstTrack as PlaylistItem);
+    shuffledTracks.unshift(firstTrack as QueueItem);
   }
   return shuffledTracks;
 }
@@ -98,7 +92,7 @@ export const playerSlice = createSlice({
     setQueueToNewSource: (
       state,
       action: PayloadAction<{
-        queue: PlaylistItem[];
+        queue: QueueItem[];
         queueIndex: number;
         queueSource: LibraryView | PlaylistId;
         queueGrouping: TrackGrouping | null;
@@ -114,18 +108,17 @@ export const playerSlice = createSlice({
         state.queue = state.queueUnshuffled;
       }
       state.queueSource = action.payload.queueSource;
-      state.currentTrackNotInPlaylist = false;
       state.queueGrouping = action.payload.queueGrouping;
       state.queueSelectedGroup = action.payload.queueSelectedGroup;
     },
-    updateQueueAfterChange: (state, action: PayloadAction<PlaylistItem[]>) => {
+    updateQueueAfterChange: (state, action: PayloadAction<QueueItem[]>) => {
       const newPlaylistTracks = action.payload;
       if (state.queueIndex != null) {
         const currentItemId = state.queue[state.queueIndex].itemId;
         if (!newPlaylistTracks.find((item) => item.itemId == currentItemId)) {
           // The current track isn't in the updated playlist, so it was removed
           // Prevent it from being removed from the queue as this would interrupt playback
-          state.currentTrackNotInPlaylist = true;
+          state.queue[state.queueIndex].stray = true;
           state.queueUnshuffled = state.queueUnshuffled.filter(
             (oldItem) =>
               newPlaylistTracks.some(
@@ -133,7 +126,7 @@ export const playerSlice = createSlice({
               ) || oldItem.itemId === currentItemId
           );
         } else {
-          state.currentTrackNotInPlaylist = false;
+          state.queue[state.queueIndex].stray = false;
           state.queueUnshuffled = newPlaylistTracks;
         }
         state.queueIndex = state.queueUnshuffled.findIndex(
@@ -148,7 +141,7 @@ export const playerSlice = createSlice({
         }
       }
     },
-    reorderQueue: (state, action: PayloadAction<PlaylistItem[]>) => {
+    reorderQueue: (state, action: PayloadAction<QueueItem[]>) => {
       if (state.queueIndex != null) {
         const startOfQueue = state.queue.slice(0, state.queueIndex);
         state.queue = startOfQueue.concat(action.payload);
@@ -169,7 +162,7 @@ export const playerSlice = createSlice({
     },
     nextTrack: (state) => {
       if (state.queueIndex != null) {
-        if (state.currentTrackNotInPlaylist) {
+        if (state.queue[state.queueIndex].stray) {
           const currentItemId = state.queue[state.queueIndex].itemId;
           state.queueUnshuffled = state.queueUnshuffled.filter(
             (item) => item.itemId != currentItemId
@@ -177,7 +170,6 @@ export const playerSlice = createSlice({
           state.queue = state.queue.filter(
             (item) => item.itemId != currentItemId
           );
-          state.currentTrackNotInPlaylist = false;
         } else {
           state.queueIndex += 1;
         }
@@ -200,7 +192,10 @@ export const playerSlice = createSlice({
     },
     previousTrack: (state) => {
       if (state.queueIndex != null) {
-        if (state.currentTrackNotInPlaylist) {
+        if (!state.queue[state.queueIndex]?.stray) {
+          state.queueIndex -= 1;
+        }
+        while (state.queue[state.queueIndex]?.stray) {
           const currentItemId = state.queue[state.queueIndex].itemId;
           state.queueUnshuffled = state.queueUnshuffled.filter(
             (item) => item.itemId != currentItemId
@@ -208,10 +203,9 @@ export const playerSlice = createSlice({
           state.queue = state.queue.filter(
             (item) => item.itemId != currentItemId
           );
-          state.currentTrackNotInPlaylist = false;
+          state.queueIndex -= 1;
         }
 
-        state.queueIndex -= 1;
         if (state.queueIndex < 0) {
           if (state.repeatMode != RepeatMode.Off && state.queue.length > 0) {
             state.queueIndex = state.queue.length - 1;
@@ -231,16 +225,39 @@ export const playerSlice = createSlice({
     toggleShuffle: (state) => {
       state.shuffle = !state.shuffle;
       if (state.queueIndex != null) {
-        const firstTrack = state.queue[state.queueIndex];
         if (state.shuffle) {
           state.queue = shuffleQueue(state.queue, state.queueIndex);
           state.queueIndex = 0;
         } else {
-          state.queue = state.queueUnshuffled;
-          state.queueIndex = state.queue.findIndex(
-            (t) => t.itemId === firstTrack.itemId
-          );
+          let startFromIndex = 0;
+          const newQueue = [...state.queueUnshuffled];
+          if (state.queue[state.queueIndex].stray) {
+            for (let i = state.queueIndex; i >= 0; i--) {
+              if (!state.queue[i].stray) {
+                startFromIndex = i;
+                break;
+              }
+            }
+            newQueue.splice(startFromIndex, 0, state.queue[state.queueIndex]);
+          } else {
+            startFromIndex = state.queueUnshuffled.findIndex(
+              (t) => t.itemId === state.queue[state.queueIndex!].itemId
+            );
+          }
+          state.queue = newQueue;
+          state.queueIndex = startFromIndex;
         }
+      }
+    },
+    addStrayTrackToQueue: (
+      state,
+      action: PayloadAction<{ dropIndex: number; track: QueueItem }>
+    ) => {
+      if (state.queueIndex != null) {
+        state.queue.splice(state.queueIndex + action.payload.dropIndex, 0, {
+          ...action.payload.track,
+          stray: true
+        });
       }
     }
   },
@@ -272,7 +289,8 @@ export const {
   nextTrack,
   previousTrack,
   cycleRepeatMode,
-  toggleShuffle
+  toggleShuffle,
+  addStrayTrackToQueue
 } = playerSlice.actions;
 
 export const selectStatus = (state: RootState) => state.player.status;
