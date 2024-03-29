@@ -145,6 +145,10 @@ body {
   }
 
   .ag-overrides-track-summary-rows {
+    .ag-header {
+      display: none;
+    }
+
     .ag-row-selected::before {
       content: unset;
     }
