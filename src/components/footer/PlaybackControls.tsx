@@ -27,9 +27,11 @@ import {
   setDisplayRemainingTime
 } from "../../features/config/configSlice";
 import { selectCurrentTrack } from "../../features/currentSelectors";
+import { useTranslation } from "react-i18next";
 
 export function PlaybackControls() {
   const dispatch = useAppDispatch();
+  const { t } = useTranslation();
 
   const metadata = useAppSelector(selectCurrentTrack);
   const status = useAppSelector(selectStatus);
@@ -50,6 +52,7 @@ export function PlaybackControls() {
             onClick={() => {
               dispatch(toggleShuffle());
             }}
+            title={t("menu.toggleShuffle")}
           >
             <ShuffleIcon />
           </button>
@@ -58,6 +61,7 @@ export function PlaybackControls() {
             onClick={() => {
               restartOrPreviousTrack();
             }}
+            title={t("menu.previous")}
           >
             <BackwardIcon />
           </button>
@@ -70,6 +74,7 @@ export function PlaybackControls() {
                 dispatch(resume());
               }
             }}
+            title={t("menu.togglePlay")}
           >
             {status === Status.Playing || status === Status.Loading ? (
               <PauseIcon />
@@ -82,6 +87,7 @@ export function PlaybackControls() {
             onClick={() => {
               dispatch(nextTrack());
             }}
+            title={t("menu.next")}
           >
             <ForwardIcon />
           </button>
@@ -92,6 +98,7 @@ export function PlaybackControls() {
             onClick={() => {
               dispatch(cycleRepeatMode());
             }}
+            title={t("menu.toggleRepeat")}
           >
             {repeatMode == RepeatMode.One ? <RepeatOneIcon /> : <RepeatIcon />}
           </button>
@@ -102,6 +109,7 @@ export function PlaybackControls() {
             onClick={() => {
               dispatch(setDisplayRemainingTime(!displayRemainingTime));
             }}
+            title={t("footer.toggleTimeDisplay")}
           >
             {metadata?.duration
               ? (displayRemainingTime ? "-" : "") +

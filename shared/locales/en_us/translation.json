@@ -186,6 +186,9 @@
     "currentTrack": "Current track",
     "playingFrom": "Playing tracks from:"
   },
+  "footer": {
+    "toggleTimeDisplay": "Toggle time display mode"
+  },
   "accentColors": {
     "blue": "Blue",
     "teal": "Teal",

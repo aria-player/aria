@@ -6,8 +6,10 @@ import { AlbumArt } from "../views/subviews/AlbumArt";
 import { useMenuActions } from "../../hooks/useMenuActions";
 import { formatArtist } from "../../app/utils";
 import { selectCurrentTrack } from "../../features/currentSelectors";
+import { useTranslation } from "react-i18next";
 
 export function Footer() {
+  const { t } = useTranslation();
   const metadata = useAppSelector(selectCurrentTrack);
   const currentTrack = useAppSelector(selectCurrentTrack);
   const { invokeMenuAction } = useMenuActions();
@@ -27,6 +29,7 @@ export function Footer() {
                   if (!metadata) return;
                   invokeMenuAction("goToCurrent");
                 }}
+                title={t("menu.goToCurrent")}
               >
                 {metadata.title}
               </button>

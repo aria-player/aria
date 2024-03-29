@@ -18,9 +18,12 @@ import { BASEPATH } from "../../app/constants";
 import { goBack, push } from "redux-first-history";
 import { View } from "../../app/view";
 import { selectVisibleViewType } from "../../features/visibleSelectors";
+import { useTranslation } from "react-i18next";
 
 export function AuxiliaryControls() {
   const dispatch = useAppDispatch();
+  const { t } = useTranslation();
+
   const muted = useAppSelector(selectMuted);
   const volume = useAppSelector(selectVolume);
   const visibleViewType = useAppSelector(selectVisibleViewType);
@@ -73,6 +76,7 @@ export function AuxiliaryControls() {
         onClick={() => {
           dispatch(setMuted(!muted));
         }}
+        title={t("menu.toggleMute")}
       >
         <VolumeIcon />
       </button>
@@ -85,6 +89,7 @@ export function AuxiliaryControls() {
             dispatch(goBack());
           }
         }}
+        title={t("views.queue")}
       >
         <QueueIcon />
       </button>
