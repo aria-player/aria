@@ -48,7 +48,10 @@
     "artists": "Artists",
     "genres": "Genres",
     "composers": "Composers",
-    "years": "Years"
+    "years": "Years",
+    "queue": "Queue",
+    "error": "Error",
+    "settings": "Settings"
   },
   "settings": {
     "sections": {
