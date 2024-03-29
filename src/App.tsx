@@ -56,6 +56,7 @@ function App() {
         </Allotment.Pane>
         <Allotment.Pane>
           <div className={styles.outlet}>
+            <ViewContainer />
             <Routes>
               <Route path="/" Component={() => <></>} />
               <Route path="/queue" Component={() => <></>} />
@@ -77,7 +78,6 @@ function App() {
               />
               <Route path="*" Component={ErrorPage} />
             </Routes>
-            <ViewContainer />
           </div>
         </Allotment.Pane>
       </Allotment>

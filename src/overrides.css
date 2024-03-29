@@ -62,7 +62,7 @@ body {
   .ag-root-wrapper {
     border: none;
 
-    --ag-borders-critical: none;
+    --ag-border-color: var(--sidebar-separator);
   }
 
   .ag-header .ag-header-cell:hover {
