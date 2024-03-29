@@ -52,7 +52,7 @@ export default function AlbumGrid() {
 
   return (
     <>
-      <div style={{ overflowY: "auto" }}>
+      <div className={styles.albumGrid}>
         <div
           className={styles.grid}
           style={{ display: visibleAlbums.length == 0 ? "none" : "grid" }}
