@@ -13,7 +13,7 @@ edition = "2021"
 tauri-build = { version = "1.5", features = [] }
 
 [dependencies]
-tauri = { version = "1.5", features = [ "dialog-confirm",
+tauri = { version = "1.5", features = [ "protocol-asset", "path-all", "dialog-open", "dialog-confirm",
     "window-set-fullscreen",
     "system-tray",
     "os-all",
@@ -32,6 +32,7 @@ window-shadows = "0.2.2"
 tauri-plugin-window-state = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
 tauri-plugin-single-instance = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
 tauri-plugin-store = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
+lofty = "0.19.2"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem

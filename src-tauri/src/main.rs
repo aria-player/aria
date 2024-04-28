@@ -5,6 +5,7 @@ mod commands;
 mod menu;
 mod translation;
 mod utils;
+mod player;
 
 use serde_json::json;
 use std::env::consts::OS;
@@ -139,7 +140,9 @@ fn main() {
             commands::update_app_config,
             commands::get_app_config,
             commands::update_menu_state,
-            commands::set_initial_language
+            commands::set_initial_language,
+            player::get_audio_files_from_directory,
+            player::get_metadata,
         ]);
     if OS != "windows" {
         let (default_labels, _) = translation::get_translations("en-US");

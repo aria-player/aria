@@ -32,7 +32,15 @@
         "all": true
       },
       "dialog": {
-        "confirm": true
+        "confirm": true,
+        "open": true
+      },
+      "path": {
+        "all": true
+      },
+      "protocol": {
+        "asset": true,
+        "assetScope": ["**", "**/*"]
       }
     },
 
