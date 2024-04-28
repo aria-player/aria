@@ -33,6 +33,7 @@ tauri-plugin-window-state = { git = "https://github.com/tauri-apps/plugins-works
 tauri-plugin-single-instance = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
 tauri-plugin-store = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
 lofty = "0.19.2"
+sha2 = "0.10.8"
 
 [features]
 # this feature is used for production builds or when `devPath` points to the filesystem

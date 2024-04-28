@@ -1,8 +1,11 @@
 use lofty::prelude::{Accessor, AudioFile, ItemKey, TaggedFileExt};
 use lofty::probe::Probe;
+use sha2::{Digest, Sha256};
 use std::fs::metadata;
+use std::io::Write;
 use std::time::UNIX_EPOCH;
 use std::{collections::HashMap, fs, path::Path};
+use tauri::AppHandle;
 
 #[tauri::command]
 pub fn get_audio_files_from_directory(directory_path: &Path) -> Result<Vec<String>, String> {
@@ -32,7 +35,7 @@ pub fn get_audio_files_from_directory(directory_path: &Path) -> Result<Vec<Strin
 }
 
 #[tauri::command]
-pub fn get_metadata(file_path: String) -> Result<HashMap<String, String>, String> {
+pub fn get_metadata(app: AppHandle, file_path: String) -> Result<HashMap<String, String>, String> {
     let path = Path::new(&file_path);
     let file_metadata = metadata(path).map_err(|e| e.to_string())?;
 
@@ -100,6 +103,22 @@ pub fn get_metadata(file_path: String) -> Result<HashMap<String, String>, String
     }
     if let Some(value) = tag.get_string(&ItemKey::Composer) {
         metadata.insert("composer".to_string(), value.to_string());
+    }
+    if let Some(cover) = tag.pictures().first() {
+        let mut hasher = Sha256::new();
+        hasher.update(cover.data());
+        let hash = format!("{:x}", hasher.finalize());
+        if let Some(app_data_dir) = app.path_resolver().app_data_dir() {
+            let artwork_subdir = app_data_dir.join(".artwork-cache");
+            fs::create_dir_all(&artwork_subdir).unwrap();
+            let artwork_path = artwork_subdir.join(&hash);
+            if !artwork_path.exists() {
+                if let Ok(mut file) = fs::File::create(&artwork_path) {
+                    file.write_all(cover.data()).unwrap();
+                }
+            }
+        }
+        metadata.insert("artworkUri".to_string(), hash);
     }
     Ok(metadata)
 }

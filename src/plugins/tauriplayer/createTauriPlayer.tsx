@@ -5,6 +5,7 @@ import {
 } from "../../features/plugins/pluginsTypes";
 import { open } from "@tauri-apps/api/dialog";
 import { Track, TrackMetadata } from "../../features/tracks/tracksTypes";
+import { appDataDir } from "@tauri-apps/api/path";
 
 export function createTauriPlayer(host: SourceCallbacks): SourceHandle {
   const initialConfig = host.getData() as { folders: Record<string, string[]> };
@@ -81,6 +82,7 @@ export function createTauriPlayer(host: SourceCallbacks): SourceHandle {
                   genre: metadata.genre,
                   composer: metadata.composer,
                   comments: metadata.comments,
+                  artworkUri: metadata.artworkUri,
                   year: parseNumber(metadata.year),
                   track: parseNumber(metadata.track),
                   disc: parseNumber(metadata.disc),
@@ -155,6 +157,15 @@ export function createTauriPlayer(host: SourceCallbacks): SourceHandle {
           audio.play().then(resolve).catch(reject);
         }
       });
+    },
+
+    async getTrackArtwork(track: Track) {
+      if (track.artworkUri) {
+        const directory = await appDataDir();
+        return await convertFileSrc(
+          directory + "/.artwork-cache/" + track.artworkUri
+        );
+      }
     },
 
     pause() {
