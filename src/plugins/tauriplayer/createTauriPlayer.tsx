@@ -70,18 +70,17 @@ export function createTauriPlayer(host: SourceCallbacks): SourceHandle {
             invoke("get_metadata", { filePath: track.uri })
               .then((result: unknown) => {
                 const metadata = result as Partial<Record<keyof Track, string>>;
-                // TODO: Array support
                 return {
                   uri: track.uri,
                   title: metadata.title,
                   metadataLoaded: true,
                   duration: parseNumber(metadata.duration),
-                  artist: metadata.artist,
+                  artist: JSON.parse(metadata.artist!),
                   albumArtist: metadata.albumArtist,
                   album: metadata.album,
-                  genre: metadata.genre,
-                  composer: metadata.composer,
-                  comments: metadata.comments,
+                  genre: JSON.parse(metadata.genre!),
+                  composer: JSON.parse(metadata.composer!),
+                  comments: JSON.parse(metadata.comments!),
                   artworkUri: metadata.artworkUri,
                   year: parseNumber(metadata.year),
                   track: parseNumber(metadata.track),

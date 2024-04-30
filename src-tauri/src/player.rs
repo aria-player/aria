@@ -60,6 +60,22 @@ pub fn get_metadata(app: AppHandle, file_path: String) -> Result<HashMap<String,
 
     let mut metadata = HashMap::new();
 
+    let artists: Vec<&str> = tag.get_strings(&ItemKey::TrackArtist).collect();
+    let artists_json = serde_json::to_string(&artists).unwrap_or_else(|_| "[]".to_string());
+    metadata.insert("artist".to_string(), artists_json);
+
+    let genres: Vec<&str> = tag.get_strings(&ItemKey::Genre).collect();
+    let genres_json = serde_json::to_string(&genres).unwrap_or_else(|_| "[]".to_string());
+    metadata.insert("genre".to_string(), genres_json);
+
+    let composers: Vec<&str> = tag.get_strings(&ItemKey::Composer).collect();
+    let composers_json = serde_json::to_string(&composers).unwrap_or_else(|_| "[]".to_string());
+    metadata.insert("composer".to_string(), composers_json);
+
+    let comments: Vec<&str> = tag.get_strings(&ItemKey::Comment).collect();
+    let comments_json = serde_json::to_string(&comments).unwrap_or_else(|_| "[]".to_string());
+    metadata.insert("comments".to_string(), comments_json);
+
     metadata.insert("dateModified".to_string(), modified);
     metadata.insert("fileSize".to_string(), size);
     metadata.insert(
@@ -71,24 +87,12 @@ pub fn get_metadata(app: AppHandle, file_path: String) -> Result<HashMap<String,
         tagged_file.properties().duration().as_millis().to_string(),
     );
     metadata.insert(
-        "artist".to_string(),
-        tag.artist().unwrap_or_default().to_string(),
-    );
-    metadata.insert(
         "album".to_string(),
         tag.album().unwrap_or_default().to_string(),
     );
     metadata.insert(
-        "genre".to_string(),
-        tag.genre().unwrap_or_default().to_string(),
-    );
-    metadata.insert(
         "year".to_string(),
         tag.year().unwrap_or_default().to_string(),
-    );
-    metadata.insert(
-        "comments".to_string(),
-        tag.comment().unwrap_or_default().to_string(),
     );
     metadata.insert(
         "track".to_string(),
@@ -100,9 +104,6 @@ pub fn get_metadata(app: AppHandle, file_path: String) -> Result<HashMap<String,
     );
     if let Some(value) = tag.get_string(&ItemKey::AlbumArtist) {
         metadata.insert("albumArtist".to_string(), value.to_string());
-    }
-    if let Some(value) = tag.get_string(&ItemKey::Composer) {
-        metadata.insert("composer".to_string(), value.to_string());
     }
     if let Some(cover) = tag.pictures().first() {
         let mut hasher = Sha256::new();
