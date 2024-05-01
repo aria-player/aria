@@ -35,12 +35,18 @@ export function LibraryPage() {
         </>
       ) : (
         <>
-          <h4>{"Library info"}</h4>
+          <h4>{t("settings.library.info")}</h4>
           {scannedTracks == totalTracks ? (
-            `Total tracks in library: ${totalTracks}`
+            t("settings.library.tracksCount", {
+              totalTracks
+            })
           ) : (
             <>
-              Scanning in progress ({scannedTracks}/{totalTracks}) <br />
+              {t("settings.library.scanProgress", {
+                scannedTracks,
+                totalTracks
+              })}
+              <br />
               <progress value={scannedTracks} max={totalTracks} />
             </>
           )}

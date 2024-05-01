@@ -70,7 +70,10 @@
     "library": {
       "managePlugin": "Manage {{plugin}}",
       "noSources": "No sources",
-      "noSourcesDetail": "No sources are enabled, please add a plugin that provides music."
+      "noSourcesDetail": "No sources are enabled, please add a plugin that provides music.",
+      "info": "Library info",
+      "tracksCount": "Total tracks in library: {{totalTracks}}",
+      "scanProgress": "Scanning in progress ({{scannedTracks}}/{{totalTracks}})"
     },
     "appearance": {
       "theme": "Theme",
