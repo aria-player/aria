@@ -12,6 +12,7 @@ export function createTauriPlayer(host: SourceCallbacks): SourceHandle {
   let folders = { ...initialConfig.folders };
   let audio: HTMLAudioElement | null;
   console.log("Created a new tauri player");
+  getMetadata(host.getTracks().filter((track) => !track.metadataLoaded));
 
   async function getAudioFileNames(directoryPath: string) {
     try {
@@ -42,12 +43,55 @@ export function createTauriPlayer(host: SourceCallbacks): SourceHandle {
     }
   }
 
-  const handleButtonClick = async () => {
+  async function getMetadata(tracks: Track[]) {
     function parseNumber(value: string | undefined): number | undefined {
       const parsedValue = parseInt(value ?? "0", 10);
       return parsedValue !== 0 ? parsedValue : undefined;
     }
+    for (let i = 0; i < tracks.length; i += 10) {
+      const batch = tracks.slice(i, i + 10);
+      const metadataPromises = batch.map((track) =>
+        invoke("get_metadata", { filePath: track.uri })
+          .then((result: unknown) => {
+            const metadata = result as Partial<Record<keyof Track, string>>;
+            return {
+              uri: track.uri,
+              title: metadata.title,
+              metadataLoaded: true,
+              duration: parseNumber(metadata.duration),
+              artist: JSON.parse(metadata.artist!),
+              albumArtist: metadata.albumArtist,
+              album: metadata.album,
+              genre: JSON.parse(metadata.genre!),
+              composer: JSON.parse(metadata.composer!),
+              comments: JSON.parse(metadata.comments!),
+              artworkUri: metadata.artworkUri,
+              year: parseNumber(metadata.year),
+              track: parseNumber(metadata.track),
+              disc: parseNumber(metadata.disc),
+              fileSize: parseNumber(metadata.fileSize),
+              dateModified: parseNumber(metadata.dateModified)
+            } as Track;
+          })
+          .catch((err) => {
+            console.error(`Error fetching metadata for ${track.uri}:`, err);
+            return null;
+          })
+      );
 
+      const batchMetadata = (await Promise.all(metadataPromises)).filter(
+        (m) => m !== null
+      );
+
+      if (batchMetadata.length > 0) {
+        host.updateMetadata(
+          batchMetadata.filter((item) => item != null) as TrackMetadata[]
+        );
+      }
+    }
+  }
+
+  const handleButtonClick = async () => {
     pickDirectory().then(async (folderInfo) => {
       if (folderInfo) {
         folders = { ...folders, [folderInfo.path]: folderInfo.items };
@@ -64,47 +108,7 @@ export function createTauriPlayer(host: SourceCallbacks): SourceHandle {
         );
 
         host.addTracks(tracks);
-        for (let i = 0; i < tracks.length; i += 10) {
-          const batch = tracks.slice(i, i + 10);
-          const metadataPromises = batch.map((track) =>
-            invoke("get_metadata", { filePath: track.uri })
-              .then((result: unknown) => {
-                const metadata = result as Partial<Record<keyof Track, string>>;
-                return {
-                  uri: track.uri,
-                  title: metadata.title,
-                  metadataLoaded: true,
-                  duration: parseNumber(metadata.duration),
-                  artist: JSON.parse(metadata.artist!),
-                  albumArtist: metadata.albumArtist,
-                  album: metadata.album,
-                  genre: JSON.parse(metadata.genre!),
-                  composer: JSON.parse(metadata.composer!),
-                  comments: JSON.parse(metadata.comments!),
-                  artworkUri: metadata.artworkUri,
-                  year: parseNumber(metadata.year),
-                  track: parseNumber(metadata.track),
-                  disc: parseNumber(metadata.disc),
-                  fileSize: parseNumber(metadata.fileSize),
-                  dateModified: parseNumber(metadata.dateModified)
-                } as Track;
-              })
-              .catch((err) => {
-                console.error(`Error fetching metadata for ${track.uri}:`, err);
-                return null;
-              })
-          );
-
-          const batchMetadata = (await Promise.all(metadataPromises)).filter(
-            (m) => m !== null
-          );
-
-          if (batchMetadata.length > 0) {
-            host.updateMetadata(
-              batchMetadata.filter((item) => item != null) as TrackMetadata[]
-            );
-          }
-        }
+        getMetadata(tracks);
       }
     });
   };
