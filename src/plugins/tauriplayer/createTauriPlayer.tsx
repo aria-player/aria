@@ -7,8 +7,12 @@ import { open } from "@tauri-apps/api/dialog";
 import { Track, TrackMetadata } from "../../features/tracks/tracksTypes";
 import { appDataDir } from "@tauri-apps/api/path";
 
+export type TauriPlayerData = {
+  folders: Record<string, string[]>;
+};
+
 export function createTauriPlayer(host: SourceCallbacks): SourceHandle {
-  const initialConfig = host.getData() as { folders: Record<string, string[]> };
+  const initialConfig = host.getData() as TauriPlayerData;
   let folders = { ...initialConfig.folders };
   let audio: HTMLAudioElement | null;
   console.log("Created a new tauri player");
