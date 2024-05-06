@@ -35,6 +35,7 @@ export function setupPluginListeners() {
   listenForChange(
     (state) => state.plugins.activePlugins,
     (state, _action, dispatch) => {
+      if (!state.tracks._persist?.rehydrated) return;
       Object.keys(pluginHandles).forEach((plugin) => {
         if (!state.plugins.activePlugins.includes(plugin)) {
           disposePluginInstance(plugin);
@@ -42,6 +43,15 @@ export function setupPluginListeners() {
         }
       });
       state.plugins.activePlugins.forEach(createPluginInstance);
+    }
+  );
+
+  listenForChange(
+    (state) => state.tracks._persist?.rehydrated,
+    (state) => {
+      if (state.tracks._persist?.rehydrated) {
+        state.plugins.activePlugins.forEach(createPluginInstance);
+      }
     }
   );
 }
