@@ -10,6 +10,7 @@
   --menubar-button-icon: rgb(187 187 187);
   --menubar-button-icon-disabled: rgb(77 77 77);
   --player-controls: #ececec;
+  --missing-artwork-foreground: rgb(53 53 53);
 
   /* Borders */
   --sidebar-separator: rgb(17 17 17);
@@ -30,4 +31,5 @@
   --footer-background: rgb(2 2 2);
   --player-slider-background: #1f1f1f;
   --odd-row-background: rgb(17 17 17);
+  --missing-artwork-background: rgb(15 15 15);
 }
