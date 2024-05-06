@@ -12,8 +12,6 @@ import { wrap } from "comlink";
 
 export type WebPlayerData = {
   folder: string;
-  scanned: number;
-  total: number;
 };
 
 export function createWebPlayer(host: SourceCallbacks): SourceHandle {
@@ -31,6 +29,7 @@ export function createWebPlayer(host: SourceCallbacks): SourceHandle {
   let folder = initialConfig?.folder;
   let fileHandles: { [key: TrackUri]: File } = {};
   let audio: HTMLAudioElement | null;
+  let loaded: boolean;
 
   async function pickDirectory() {
     const directoryHandle = await window.showDirectoryPicker({
@@ -38,6 +37,7 @@ export function createWebPlayer(host: SourceCallbacks): SourceHandle {
       startIn: "music"
     });
     if (directoryHandle != undefined) {
+      loaded = true;
       if (directoryHandle.name != folder) {
         host.removeTracks();
       }
@@ -73,9 +73,6 @@ export function createWebPlayer(host: SourceCallbacks): SourceHandle {
         .map((track) => parseMetadata(track, fileHandles[track.uri]));
       const newMetadata = await Promise.all(metadataPromises);
       host.updateMetadata(newMetadata);
-      host.updateData({
-        scanned: (host.getData() as WebPlayerData).scanned + newMetadata.length
-      });
     }
   }
 
@@ -104,7 +101,7 @@ export function createWebPlayer(host: SourceCallbacks): SourceHandle {
   }
 
   return {
-    Config: (props) => Config({ ...props, host, pickDirectory, fileHandles }),
+    Config: (props) => Config({ ...props, host, loaded, pickDirectory }),
 
     async loadAndPlayTrack(track: Track): Promise<void> {
       let file = fileHandles[track.uri];
@@ -122,9 +119,6 @@ export function createWebPlayer(host: SourceCallbacks): SourceHandle {
       if (!track.metadataLoaded) {
         const metadata = await parseMetadata(track, fileHandles[track.uri]);
         host.updateMetadata([metadata]);
-        host.updateData({
-          scanned: (host.getData() as WebPlayerData).scanned + 1
-        });
       }
 
       if (audio) {
