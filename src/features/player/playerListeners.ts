@@ -29,6 +29,16 @@ export function setupPlayerListeners() {
     (state, _action, dispatch) => {
       stopTimer();
       resetTimer();
+      const activePlugins = selectActivePlugins(state);
+      Object.keys(pluginHandles).forEach((plugin) => {
+        if (
+          activePlugins.includes(plugin) &&
+          plugin != selectCurrentTrack(state)?.source &&
+          plugins[plugin].type == "source"
+        ) {
+          (pluginHandles[plugin] as SourceHandle).pause();
+        }
+      });
       if (state.player.queueIndex != null) {
         dispatch(
           loadAndPlayTrack(state.player.queue[state.player.queueIndex].trackId)
