@@ -166,7 +166,8 @@ export const selectVisibleTrackGroups = createSelector(
   [
     (state: RootState) => state.router.location?.pathname,
     (state: RootState) => state.undoable.present.playlists,
-    (state: RootState) => state.undoable.present.library
+    (state: RootState) => state.undoable.present.library,
+    (state: RootState) => state.tracks.tracks
   ],
   () => {
     const state = store.getState();
