@@ -40,7 +40,8 @@ import { PlaylistItem } from "../features/playlists/playlistsTypes";
 import { View, DisplayMode, LibraryView, TrackGrouping } from "./view";
 import {
   selectCurrentPlaylist,
-  selectCurrentTrack
+  selectCurrentTrack,
+  selectCurrentTrackItemId
 } from "../features/currentSelectors";
 import {
   selectVisiblePlaylist,
@@ -220,14 +221,21 @@ export function handleMenuAction(
       }
       break;
     case "cut": {
-      const visiblePlaylist = selectVisiblePlaylist(state);
-      if (visiblePlaylist?.id) {
-        dispatch(copySelectedTracks());
+      const visibleView = selectVisibleViewType(state);
+      const visiblePlaylist = selectVisiblePlaylist(state)?.id;
+      dispatch(copySelectedTracks());
+      if (visiblePlaylist) {
         dispatch(
           removeTracksFromPlaylist({
-            playlistId: visiblePlaylist.id,
+            playlistId: visiblePlaylist,
             itemIds: state.tracks.selectedTracks.map((track) => track.itemId)
           })
+        );
+      } else if (visibleView == View.Queue) {
+        dispatch(
+          removeFromQueue(
+            state.tracks.selectedTracks.map((track) => track.itemId)
+          )
         );
       }
       break;
@@ -325,7 +333,9 @@ export const selectMenuState = createSelector(
     (state: RootState) => state.undoable.present.playlists.playlistsConfig,
     (state: RootState) => state.tracks.selectedTracks,
     (state: RootState) => state.tracks.clipboard,
-    (state: RootState) => state.player.status
+    (state: RootState) => state.player.status,
+    (state: RootState) => state.player.queue,
+    (state: RootState) => state.player.queueIndex
   ],
   () => {
     const state = store.getState();
@@ -380,10 +390,22 @@ export const selectMenuState = createSelector(
 
     // TODO: Should also be false if the visible list of tracks is empty
     const selectableTracksVisible =
+      selectVisibleViewType(state) == View.Queue ||
       selectVisibleDisplayMode(state) == DisplayMode.TrackList ||
       ((selectVisibleDisplayMode(state) == DisplayMode.AlbumGrid ||
         selectVisibleDisplayMode(state) == DisplayMode.SplitView) &&
         selectVisibleSelectedTrackGroup(state) != null);
+
+    const canDelete =
+      (selectVisiblePlaylist(state) ||
+        selectVisibleViewType(state) == View.Queue) &&
+      selectableTracksVisible &&
+      state.tracks.selectedTracks.length &&
+      !(
+        selectVisibleViewType(state) == View.Queue &&
+        state.tracks.selectedTracks.find((track) => track.itemId)?.itemId ==
+          selectCurrentTrackItemId(state)
+      );
 
     return {
       back: {
@@ -398,6 +420,7 @@ export const selectMenuState = createSelector(
       selectAll: {
         disabled:
           !selectableTracksVisible ||
+          selectVisibleViewType(state) == View.Queue ||
           (selectVisibleDisplayMode(state) == DisplayMode.AlbumGrid &&
             !selectVisibleSelectedTrackGroup(state))
       },
@@ -433,18 +456,10 @@ export const selectMenuState = createSelector(
         disabled: !state.undoable.future.length
       },
       delete: {
-        disabled:
-          (!selectVisiblePlaylist(state) &&
-            selectVisibleViewType(state) != View.Queue) ||
-          !selectableTracksVisible ||
-          !state.tracks.selectedTracks.length
+        disabled: !canDelete
       },
       cut: {
-        disabled:
-          (!selectVisiblePlaylist(state) &&
-            selectVisibleViewType(state) != View.Queue) ||
-          !selectableTracksVisible ||
-          !state.tracks.selectedTracks.length
+        disabled: !canDelete
       },
       copy: {
         disabled:
