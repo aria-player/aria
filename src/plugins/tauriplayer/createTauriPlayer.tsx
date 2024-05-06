@@ -148,6 +148,10 @@ export function createTauriPlayer(host: SourceCallbacks): SourceHandle {
       if (!file) {
         if (!file) throw new Error("File not found");
       }
+      if (!track.metadataLoaded) {
+        getMetadata([track]);
+      }
+
       if (audio) {
         audio.pause();
         audio.src = "";
