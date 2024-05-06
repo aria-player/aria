@@ -23,5 +23,5 @@ export const AccentColors: Record<string, string> = {
   grape: "#9c36b5",
   violet: "#6741d9",
   indigo: "#3b5bdb",
-  gray: "#343a40"
+  gray: "#495057"
 };
