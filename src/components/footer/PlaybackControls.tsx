@@ -8,6 +8,7 @@ import RepeatOneIcon from "../../assets/repeat-solid-one.svg?react";
 import ShuffleIcon from "../../assets/shuffle-solid.svg?react";
 import {
   cycleRepeatMode,
+  loadAndPlayTrack,
   nextTrack,
   pause,
   resume,
@@ -28,6 +29,7 @@ import {
 } from "../../features/config/configSlice";
 import { selectCurrentTrack } from "../../features/currentSelectors";
 import { useTranslation } from "react-i18next";
+import { store } from "../../app/store";
 
 export function PlaybackControls() {
   const dispatch = useAppDispatch();
@@ -72,6 +74,14 @@ export function PlaybackControls() {
                 dispatch(pause());
               } else if (status == Status.Paused) {
                 dispatch(resume());
+              } else {
+                const state = store.getState();
+                if (state.player.queueIndex == null) return;
+                dispatch(
+                  loadAndPlayTrack(
+                    state.player.queue[state.player.queueIndex].trackId
+                  )
+                );
               }
             }}
             title={t("menu.togglePlay")}
