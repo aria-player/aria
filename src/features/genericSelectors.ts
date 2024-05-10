@@ -51,7 +51,7 @@ export const selectSortedTrackList = (
   if (filteredColumnState && filteredColumnState.length > 0) {
     // 3. Determine the sorted column state
     const sortedColumnState = filteredColumnState
-      .filter((col) => col.sort !== null)
+      .filter((col) => col.sort)
       .sort((a, b) => (a.sortIndex ?? 0) - (b.sortIndex ?? 0));
 
     // 4. Finally, sort the tracks
