@@ -5,7 +5,8 @@ import {
   RowDragLeaveEvent,
   RowDragEndEvent,
   GetRowIdParams,
-  IRowDragItem
+  IRowDragItem,
+  GridApi
 } from "@ag-grid-community/core";
 import { nanoid } from "@reduxjs/toolkit";
 import { t } from "i18next";
@@ -27,6 +28,16 @@ export function useTrackGrid() {
   const location = useLocation();
 
   const getRowId = (params: GetRowIdParams) => params.data.itemId;
+
+  const getSortedSelectedTracks = (api: GridApi) => {
+    const sortedSelectedTracks: PlaylistItem[] = [];
+    api.forEachNodeAfterFilterAndSort((node) => {
+      if (node.isSelected()) {
+        sortedSelectedTracks.push(node.data);
+      }
+    });
+    return sortedSelectedTracks;
+  };
 
   const focusCurrentIfNeeded = useCallback(() => {
     const currentTrack = selectCurrentTrack(store.getState());
@@ -140,8 +151,7 @@ export function useTrackGrid() {
             }
           ];
         } else {
-          newTracks = params.api
-            .getSelectedRows()
+          newTracks = getSortedSelectedTracks(params.api)
             .map((node) => {
               return { itemId: nanoid(), trackId: node.trackId };
             })
@@ -160,9 +170,11 @@ export function useTrackGrid() {
   };
 
   const handleSelectionChanged = (event: SelectionChangedEvent) => {
+    // TODO: Need to also update selection state when sort changes
+    // Currently, the 'Copy' action might not use the correct order if it changes after selection
     dispatch(
       setSelectedTracks(
-        event.api.getSelectedRows().map((node) => ({
+        getSortedSelectedTracks(event.api).map((node) => ({
           itemId: node.itemId,
           trackId: node.trackId
         }))
