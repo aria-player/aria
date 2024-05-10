@@ -36,7 +36,7 @@ export function setupPlayerListeners() {
           plugin != selectCurrentTrack(state)?.source &&
           plugins[plugin].type == "source"
         ) {
-          (pluginHandles[plugin] as SourceHandle).pause();
+          (pluginHandles[plugin] as SourceHandle)?.pause();
         }
       });
       if (state.player.queueIndex != null) {
@@ -64,7 +64,7 @@ export function setupPlayerListeners() {
         resetTimer();
         for (const plugin of activePlugins) {
           if (plugins[plugin].type === "source") {
-            (pluginHandles[plugin] as SourceHandle).pause();
+            (pluginHandles[plugin] as SourceHandle)?.pause();
           }
         }
       }
