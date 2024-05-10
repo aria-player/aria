@@ -50,7 +50,7 @@ const reducer = combineReducers({
     {
       key: "player",
       storage,
-      blacklist: ["status", "queueIndex"]
+      blacklist: ["status"]
     },
     playerReducer
   ),
