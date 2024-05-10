@@ -30,8 +30,12 @@ export const selectCurrentQueueTracks = createSelector(
     const queueWithSeparators = [
       { itemId: "currentTrackSeparator", separator: true },
       ...queue.slice(0, 1),
-      { itemId: "playingSourceSeparator", separator: true },
-      ...queue.slice(1)
+      ...(queue.slice(1).length > 0
+        ? [
+            { itemId: "playingSourceSeparator", separator: true },
+            ...queue.slice(1)
+          ]
+        : [])
     ];
 
     return queueWithSeparators;
