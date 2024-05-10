@@ -25,6 +25,7 @@ import { store } from "../../app/store";
 import QueueSeparator from "./subviews/QueueSeparator";
 import { setSelectedTracks } from "../../features/tracks/tracksSlice";
 import { nanoid } from "@reduxjs/toolkit";
+import styles from "./Queue.module.css";
 
 const ROW_HEIGHT = 48;
 const PLAYING_SOURCE_SEPARATOR_INDEX = 2;
@@ -204,7 +205,7 @@ export const Queue = () => {
     );
   };
 
-  return (
+  return visibleTracks.length >= 2 ? (
     <div
       style={{ height: "100%" }}
       className={
@@ -231,5 +232,7 @@ export const Queue = () => {
         suppressMoveWhenRowDragging
       />
     </div>
+  ) : (
+    <div className={styles.empty}>{t("queue.empty")}</div>
   );
 };

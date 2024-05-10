@@ -187,7 +187,8 @@
   },
   "queue": {
     "currentTrack": "Current track",
-    "playingFrom": "Playing tracks from:"
+    "playingFrom": "Playing tracks from:",
+    "empty": "Queue is empty"
   },
   "footer": {
     "toggleTimeDisplay": "Toggle time display mode"
