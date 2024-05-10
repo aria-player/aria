@@ -5,6 +5,7 @@ import styles from "./QueueSeparator.module.css";
 import { selectCurrentPlaylist } from "../../../features/currentSelectors";
 import { selectPlaylistsLayoutItemById } from "../../../features/playlists/playlistsSlice";
 import { useTranslation } from "react-i18next";
+import { isLibraryView } from "../../../app/view";
 
 export default function QueueSeparator(props: ICellRendererParams) {
   const { t } = useTranslation();
@@ -23,7 +24,11 @@ export default function QueueSeparator(props: ICellRendererParams) {
     <div className={styles.separator}>
       {t("queue.playingFrom")}
       <span className={styles.source}>
-        {playlistName || currentGroup || t(`views.${queueSource}`)}
+        {playlistName ||
+          currentGroup ||
+          (queueSource && isLibraryView(queueSource)
+            ? t(`views.${queueSource}`)
+            : t("queue.deletedPlaylist"))}
         {playlistName && currentGroup && ` / ${currentGroup}`}
       </span>
     </div>

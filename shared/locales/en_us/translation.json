@@ -188,7 +188,8 @@
   "queue": {
     "currentTrack": "Current track",
     "playingFrom": "Playing tracks from:",
-    "empty": "Queue is empty"
+    "empty": "Queue is empty",
+    "deletedPlaylist": "(deleted playlist)"
   },
   "footer": {
     "toggleTimeDisplay": "Toggle time display mode"
