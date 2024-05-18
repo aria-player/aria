@@ -18,6 +18,7 @@ import { selectSelectedTracks } from "../../features/tracks/tracksSlice";
 import { store } from "../../app/store";
 import { DisplayMode, LibraryView, View } from "../../app/view";
 import {
+  addTracksToUpNext,
   removeFromQueue,
   setQueueToNewSource,
   skipQueueIndexes
@@ -154,6 +155,36 @@ export function TrackListItemContextMenu() {
         {t("tracks.playNamedTrack", {
           title: menuData?.metadata?.title
         })}
+      </Item>
+      <Separator />
+      <Item
+        onClick={() => {
+          dispatch(
+            addTracksToUpNext({
+              dropIndex: 0,
+              tracks: store.getState().tracks.selectedTracks.map((track) => ({
+                trackId: track.trackId,
+                itemId: nanoid()
+              }))
+            })
+          );
+        }}
+      >
+        {t("tracks.playNext")}
+      </Item>
+      <Item
+        onClick={() => {
+          dispatch(
+            addTracksToUpNext({
+              tracks: store.getState().tracks.selectedTracks.map((track) => ({
+                trackId: track.trackId,
+                itemId: nanoid()
+              }))
+            })
+          );
+        }}
+      >
+        {t("tracks.addToQueue")}
       </Item>
       <Separator />
       <Submenu label={t("tracks.addToPlaylist")}>

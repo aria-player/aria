@@ -40,7 +40,9 @@
     "emptyLibrary": "Library is empty",
     "emptyPlaylist": "Playlist is empty",
     "emptyQueue": "Queue is empty",
-    "playNamedTrack": "Play '{{title}}'"
+    "playNamedTrack": "Play '{{title}}'",
+    "playNext": "Play next",
+    "addToQueue": "Add to queue"
   },
   "views": {
     "songs": "Songs",
