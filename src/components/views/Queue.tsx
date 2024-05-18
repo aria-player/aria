@@ -18,7 +18,9 @@ import { selectCurrentQueueTracks } from "../../features/currentSelectors";
 import { useCallback } from "react";
 import {
   addStrayTrackToQueue,
-  reorderQueue
+  addTracksToUpNext,
+  reorderQueue,
+  selectUpNext
 } from "../../features/player/playerSlice";
 import { TrackListItem } from "../../features/tracks/tracksTypes";
 import { store } from "../../app/store";
@@ -28,7 +30,6 @@ import { nanoid } from "@reduxjs/toolkit";
 import styles from "./Queue.module.css";
 
 const ROW_HEIGHT = 48;
-const PLAYING_SOURCE_SEPARATOR_INDEX = 2;
 
 export type QueueListItem = TrackListItem & {
   separator?: boolean;
@@ -85,11 +86,25 @@ const handleRowDragMove = (event: RowDragMoveEvent) => {
 export const Queue = () => {
   const dispatch = useAppDispatch();
   const { gridRef, gridProps } = useTrackGrid();
+  const upNext = useAppSelector(selectUpNext).map((track) => track.itemId);
+
+  const upNextSeparatorIndex = 2;
+  const queueSourceSeparatorIndex =
+    upNextSeparatorIndex + (upNext.length ? upNext.length + 1 : 0);
+
+  const getTrackSection = (index: number) =>
+    index > queueSourceSeparatorIndex &&
+    queueSourceSeparatorIndex != upNextSeparatorIndex
+      ? 2
+      : index > upNextSeparatorIndex
+        ? 1
+        : 0;
+
   const visibleTracks = useAppSelector(selectCurrentQueueTracks).map(
     (track, index) => {
       return {
         ...track,
-        track: index > PLAYING_SOURCE_SEPARATOR_INDEX ? index - 1 : index
+        track: index - getTrackSection(index)
       };
     }
   ) as QueueListItem[];
@@ -131,12 +146,14 @@ export const Queue = () => {
       const dropIndex = getDropIndex(event.y, overNode);
       if (
         movingNode.rowIndex &&
-        movingNode.rowIndex > PLAYING_SOURCE_SEPARATOR_INDEX &&
-        dropIndex > PLAYING_SOURCE_SEPARATOR_INDEX
+        movingNode.rowIndex > queueSourceSeparatorIndex &&
+        dropIndex > queueSourceSeparatorIndex
       ) {
         const movingTrackIds = movingTracks.map((track) => track.itemId);
         const newQueueTail = visibleTracks.filter(
-          (track) => !movingTrackIds.includes(track.itemId)
+          (track) =>
+            !movingTrackIds.includes(track.itemId) &&
+            !upNext.includes(track.itemId)
         );
 
         let offset = 0;
@@ -150,7 +167,7 @@ export const Queue = () => {
         });
 
         const adjustedDropIndex = Math.min(
-          dropIndex - offset,
+          dropIndex - offset - upNext.length,
           newQueueTail.length
         );
         newQueueTail.splice(adjustedDropIndex, 0, ...movingTracks);
@@ -165,44 +182,53 @@ export const Queue = () => {
               }))
           )
         );
+      } else if (dropIndex <= queueSourceSeparatorIndex) {
+        const movingTrackIds = movingTracks.map((track) => track.itemId);
+        console.log(dropIndex);
+        dispatch(
+          addTracksToUpNext({
+            dropIndex:
+              dropIndex > upNextSeparatorIndex
+                ? dropIndex - upNextSeparatorIndex - 1
+                : undefined,
+            tracks: movingTrackIds.map((trackId) => ({
+              trackId: trackId,
+              itemId: nanoid()
+            }))
+          })
+        );
       } else if (movingNode.rowIndex == 1) {
         dispatch(
           addStrayTrackToQueue({
-            dropIndex: dropIndex - PLAYING_SOURCE_SEPARATOR_INDEX,
+            dropIndex: dropIndex - queueSourceSeparatorIndex,
             track: { trackId: movingNode.data.trackId, itemId: nanoid() }
           })
         );
       }
     },
-    [dispatch, visibleTracks]
+    [dispatch, visibleTracks, queueSourceSeparatorIndex, upNext]
   );
 
   const handleSelectionChanged = (params: SelectionChangedEvent) => {
     const selectedNodes = params.api.getSelectedNodes();
     const lastSelectedIndex = selectedNodes[selectedNodes.length - 1]?.rowIndex;
     if (lastSelectedIndex) {
-      const lastSelectedSection =
-        lastSelectedIndex > PLAYING_SOURCE_SEPARATOR_INDEX
-          ? "playingSource"
-          : "currentTrack";
+      const lastSelectedSection = getTrackSection(lastSelectedIndex);
       selectedNodes.forEach((node) => {
-        const nodeSection =
-          node.rowIndex && node.rowIndex > PLAYING_SOURCE_SEPARATOR_INDEX
-            ? "playingSource"
-            : "currentTrack";
+        const nodeSection = getTrackSection(node.rowIndex!);
         if (nodeSection !== lastSelectedSection) {
           node.setSelected(false);
         }
       });
+      dispatch(
+        setSelectedTracks(
+          params.api.getSelectedRows().map((node) => ({
+            itemId: node.itemId,
+            trackId: node.trackId
+          }))
+        )
+      );
     }
-    dispatch(
-      setSelectedTracks(
-        params.api.getSelectedRows().map((node) => ({
-          itemId: node.itemId,
-          trackId: node.trackId
-        }))
-      )
-    );
   };
 
   return visibleTracks.length >= 2 ? (

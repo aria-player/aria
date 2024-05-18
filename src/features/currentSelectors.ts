@@ -14,7 +14,8 @@ export const selectCurrentQueueTracks = createSelector(
   [
     (state: RootState) => state.tracks.tracks,
     (state: RootState) => state.player.queue,
-    (state: RootState) => state.player.queueIndex
+    (state: RootState) => state.player.queueIndex,
+    (state: RootState) => state.player.upNext
   ],
   () => {
     const state = store.getState();
@@ -27,9 +28,17 @@ export const selectCurrentQueueTracks = createSelector(
       }))
       .slice(state.player.queueIndex!);
 
+    const upNext = state.player.upNext.map((queueTrack) => ({
+      ...tracks.entities[queueTrack.trackId],
+      itemId: queueTrack.itemId
+    }));
+
     const queueWithSeparators = [
       { itemId: "currentTrackSeparator", separator: true },
       ...queue.slice(0, 1),
+      ...(upNext.length > 0
+        ? [{ itemId: "upNextSeparator", separator: true }, ...upNext]
+        : []),
       ...(queue.slice(1).length > 0
         ? [
             { itemId: "playingSourceSeparator", separator: true },

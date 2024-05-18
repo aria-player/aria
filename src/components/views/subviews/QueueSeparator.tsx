@@ -18,19 +18,25 @@ export default function QueueSeparator(props: ICellRendererParams) {
     (state) => state.player.queueSelectedGroup
   );
 
-  return props.node.rowIndex === 0 ? (
-    <div className={styles.separator}>{t("queue.currentTrack")}</div>
-  ) : (
+  return (
     <div className={styles.separator}>
-      {t("queue.playingFrom")}
-      <span className={styles.source}>
-        {playlistName ||
-          currentGroup ||
-          (queueSource && isLibraryView(queueSource)
-            ? t(`views.${queueSource}`)
-            : t("queue.deletedPlaylist"))}
-        {playlistName && currentGroup && ` / ${currentGroup}`}
-      </span>
+      {props.node.id === "currentTrackSeparator" ? (
+        t("queue.currentTrack")
+      ) : props.node.id === "upNextSeparator" ? (
+        t("queue.queuedTracks")
+      ) : (
+        <>
+          {t("queue.playingFrom")}
+          <span className={styles.source}>
+            {playlistName ||
+              currentGroup ||
+              (queueSource && isLibraryView(queueSource)
+                ? t(`views.${queueSource}`)
+                : t("queue.deletedPlaylist"))}
+            {playlistName && currentGroup && ` / ${currentGroup}`}
+          </span>
+        </>
+      )}
     </div>
   );
 }

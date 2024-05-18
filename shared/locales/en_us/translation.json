@@ -187,6 +187,7 @@
   },
   "queue": {
     "currentTrack": "Current track",
+    "queuedTracks": "Queued tracks",
     "playingFrom": "Playing tracks from:",
     "empty": "Queue is empty",
     "deletedPlaylist": "(deleted playlist)"
