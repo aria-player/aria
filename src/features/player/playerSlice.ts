@@ -19,6 +19,7 @@ interface PlayerState {
   queueSource: LibraryView | PlaylistId | null;
   queueGrouping: TrackGrouping | null;
   queueSelectedGroup: string | null;
+  upNext: QueueItem[];
   repeatMode: RepeatMode;
   shuffle: boolean;
 }
@@ -33,6 +34,7 @@ const initialState: PlayerState = {
   queueSource: null,
   queueGrouping: null,
   queueSelectedGroup: null,
+  upNext: [],
   repeatMode: RepeatMode.Off,
   shuffle: false
 };
@@ -156,6 +158,9 @@ export const playerSlice = createSlice({
       state.queueUnshuffled = state.queueUnshuffled.filter(
         (track) => !action.payload.includes(track.itemId)
       );
+      state.upNext = state.upNext.filter(
+        (track) => !action.payload.includes(track.itemId)
+      );
     },
     skipQueueIndexes: (state, action) => {
       state.queueIndex = state.queueIndex + action.payload;
@@ -259,6 +264,22 @@ export const playerSlice = createSlice({
           stray: true
         });
       }
+    },
+    addTracksToUpNext: (
+      state,
+      action: PayloadAction<{
+        dropIndex?: number;
+        tracks: QueueItem[];
+      }>
+    ) => {
+      state.upNext.splice(
+        action.payload.dropIndex ?? state.upNext.length,
+        0,
+        ...action.payload.tracks
+      );
+    },
+    reorderUpNext: (state, action: PayloadAction<QueueItem[]>) => {
+      state.upNext = action.payload;
     }
   },
   extraReducers: (builder) => {
@@ -290,7 +311,9 @@ export const {
   previousTrack,
   cycleRepeatMode,
   toggleShuffle,
-  addStrayTrackToQueue
+  addStrayTrackToQueue,
+  addTracksToUpNext,
+  reorderUpNext
 } = playerSlice.actions;
 
 export const selectStatus = (state: RootState) => state.player.status;
@@ -303,6 +326,7 @@ export const selectQueueGrouping = (state: RootState) =>
   state.player.queueGrouping;
 export const selectQueueSelectedGroup = (state: RootState) =>
   state.player.queueSelectedGroup;
+export const selectUpNext = (state: RootState) => state.player.upNext;
 export const selectRepeatMode = (state: RootState) => state.player.repeatMode;
 export const selectShuffle = (state: RootState) => state.player.shuffle;
 
