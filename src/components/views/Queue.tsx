@@ -19,6 +19,7 @@ import { useCallback } from "react";
 import {
   addStrayTracksToQueue,
   addTracksToUpNext,
+  reorderUpNext,
   reorderQueue,
   selectUpNext
 } from "../../features/player/playerSlice";
@@ -28,11 +29,36 @@ import QueueSeparator from "./subviews/QueueSeparator";
 import { setSelectedTracks } from "../../features/tracks/tracksSlice";
 import { nanoid } from "@reduxjs/toolkit";
 import styles from "./Queue.module.css";
+import { QueueItem } from "../../features/player/playerTypes";
 
 const ROW_HEIGHT = 48;
 
 export type QueueListItem = TrackListItem & {
   separator?: boolean;
+};
+
+const copyTracksToUpNext = (tracks: QueueItem[], dropIndex?: number) => {
+  store.dispatch(
+    addTracksToUpNext({
+      dropIndex,
+      tracks: tracks.map((track) => ({
+        trackId: track.trackId,
+        itemId: nanoid()
+      }))
+    })
+  );
+};
+
+const copyStrayTracksToQueue = (tracks: QueueItem[], dropIndex: number) => {
+  store.dispatch(
+    addStrayTracksToQueue({
+      dropIndex,
+      tracks: tracks.map((track) => ({
+        trackId: track.trackId,
+        itemId: nanoid()
+      }))
+    })
+  );
 };
 
 const fullWidthCellRenderer = (params: ICellRendererParams) =>
@@ -92,13 +118,16 @@ export const Queue = () => {
   const queueSourceSeparatorIndex =
     upNextSeparatorIndex + (upNext.length ? upNext.length + 1 : 0);
 
-  const getTrackSection = (index: number) =>
-    index > queueSourceSeparatorIndex &&
-    queueSourceSeparatorIndex != upNextSeparatorIndex
-      ? 2
-      : index > upNextSeparatorIndex
-        ? 1
-        : 0;
+  const getTrackSection = useCallback(
+    (index: number) =>
+      index > queueSourceSeparatorIndex &&
+      queueSourceSeparatorIndex != upNextSeparatorIndex
+        ? 2
+        : index > upNextSeparatorIndex
+          ? 1
+          : 0,
+    [queueSourceSeparatorIndex]
+  );
 
   const visibleTracks = useAppSelector(selectCurrentQueueTracks).map(
     (track, index) => {
@@ -142,18 +171,22 @@ export const Queue = () => {
             })
         : [movingNode.data];
 
-      // 3. Build the reordered queue
+      // 3. Build the new queue
       const dropIndex = getDropIndex(event.y, overNode);
-      if (
-        movingNode.rowIndex &&
-        movingNode.rowIndex > queueSourceSeparatorIndex &&
-        dropIndex > queueSourceSeparatorIndex
-      ) {
+      const dropSection = getTrackSection(dropIndex);
+      const dragSection = getTrackSection(
+        isMovingNodeSelected ? selectedNodes[0].rowIndex! : movingNode.rowIndex!
+      );
+
+      if (dragSection == dropSection) {
+        if (dragSection == 0) return;
+        const reorderingUpNext =
+          dragSection == 1 && dropIndex <= queueSourceSeparatorIndex;
         const movingTrackIds = movingTracks.map((track) => track.itemId);
         const newQueueTail = visibleTracks.filter(
           (track) =>
             !movingTrackIds.includes(track.itemId) &&
-            !upNext.includes(track.itemId)
+            upNext.includes(track.itemId) === reorderingUpNext
         );
 
         let offset = 0;
@@ -167,46 +200,54 @@ export const Queue = () => {
         });
 
         const adjustedDropIndex = Math.min(
-          dropIndex - offset - upNext.length,
+          dropIndex -
+            offset -
+            (reorderingUpNext ? upNextSeparatorIndex + 1 : upNext.length),
           newQueueTail.length
         );
         newQueueTail.splice(adjustedDropIndex, 0, ...movingTracks);
 
-        dispatch(
-          reorderQueue(
-            newQueueTail
-              .filter((track) => !track.separator)
-              .map((track) => ({
-                trackId: track.trackId,
-                itemId: track.itemId
-              }))
-          )
-        );
+        if (reorderingUpNext) {
+          dispatch(
+            reorderUpNext(
+              newQueueTail
+                .filter((track) => !track.separator)
+                .map((track) => ({
+                  trackId: track.trackId,
+                  itemId: track.itemId
+                }))
+            )
+          );
+        } else {
+          dispatch(
+            reorderQueue(
+              newQueueTail
+                .filter((track) => !track.separator)
+                .map((track) => ({
+                  trackId: track.trackId,
+                  itemId: track.itemId
+                }))
+            )
+          );
+        }
+      } else if (dropIndex <= upNextSeparatorIndex) {
+        copyTracksToUpNext(movingTracks);
       } else if (dropIndex <= queueSourceSeparatorIndex) {
-        const movingTrackIds = movingTracks.map((track) => track.itemId);
-        console.log(dropIndex);
-        dispatch(
-          addTracksToUpNext({
-            dropIndex:
-              dropIndex > upNextSeparatorIndex
-                ? dropIndex - upNextSeparatorIndex - 1
-                : undefined,
-            tracks: movingTrackIds.map((trackId) => ({
-              trackId: trackId,
-              itemId: nanoid()
-            }))
-          })
-        );
-      } else if (movingNode.rowIndex == 1) {
-        dispatch(
-          addStrayTracksToQueue({
-            dropIndex: dropIndex - queueSourceSeparatorIndex,
-            tracks: [{ trackId: movingNode.data.trackId, itemId: nanoid() }]
-          })
+        copyTracksToUpNext(movingTracks, dropIndex - upNextSeparatorIndex - 1);
+      } else {
+        copyStrayTracksToQueue(
+          movingTracks,
+          dropIndex - queueSourceSeparatorIndex
         );
       }
     },
-    [dispatch, visibleTracks, queueSourceSeparatorIndex, upNext]
+    [
+      dispatch,
+      getTrackSection,
+      visibleTracks,
+      queueSourceSeparatorIndex,
+      upNext
+    ]
   );
 
   const handleSelectionChanged = (params: SelectionChangedEvent) => {
