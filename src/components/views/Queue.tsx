@@ -17,7 +17,7 @@ import { TrackSummaryRow } from "./subviews/TrackSummaryRow";
 import { selectCurrentQueueTracks } from "../../features/currentSelectors";
 import { useCallback } from "react";
 import {
-  addStrayTrackToQueue,
+  addStrayTracksToQueue,
   addTracksToUpNext,
   reorderQueue,
   selectUpNext
@@ -199,9 +199,9 @@ export const Queue = () => {
         );
       } else if (movingNode.rowIndex == 1) {
         dispatch(
-          addStrayTrackToQueue({
+          addStrayTracksToQueue({
             dropIndex: dropIndex - queueSourceSeparatorIndex,
-            track: { trackId: movingNode.data.trackId, itemId: nanoid() }
+            tracks: [{ trackId: movingNode.data.trackId, itemId: nanoid() }]
           })
         );
       }

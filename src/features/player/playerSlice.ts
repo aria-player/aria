@@ -254,15 +254,19 @@ export const playerSlice = createSlice({
         }
       }
     },
-    addStrayTrackToQueue: (
+    addStrayTracksToQueue: (
       state,
-      action: PayloadAction<{ dropIndex: number; track: QueueItem }>
+      action: PayloadAction<{ dropIndex: number; tracks: QueueItem[] }>
     ) => {
       if (state.queueIndex != null) {
-        state.queue.splice(state.queueIndex + action.payload.dropIndex, 0, {
-          ...action.payload.track,
-          stray: true
-        });
+        state.queue.splice(
+          state.queueIndex + action.payload.dropIndex,
+          0,
+          ...action.payload.tracks.map((track) => ({
+            ...track,
+            stray: true
+          }))
+        );
       }
     },
     addTracksToUpNext: (
@@ -311,7 +315,7 @@ export const {
   previousTrack,
   cycleRepeatMode,
   toggleShuffle,
-  addStrayTrackToQueue,
+  addStrayTracksToQueue,
   addTracksToUpNext,
   reorderUpNext
 } = playerSlice.actions;
