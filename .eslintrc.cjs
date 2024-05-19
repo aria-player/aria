@@ -8,7 +8,8 @@ module.exports = {
     "plugin:@typescript-eslint/recommended",
     "plugin:react/recommended",
     "plugin:react-hooks/recommended",
-    "plugin:prettier/recommended"
+    "plugin:prettier/recommended",
+    "plugin:deprecation/recommended"
   ],
   ignorePatterns: ["**/*.css", "**/*.svg", "node_modules/", "**/*.json"],
   overrides: [
@@ -24,6 +25,7 @@ module.exports = {
   ],
   parser: "@typescript-eslint/parser",
   parserOptions: {
+    project: ["./tsconfig.json", "./tsconfig.node.json"],
     ecmaVersion: "latest",
     sourceType: "module"
   },
