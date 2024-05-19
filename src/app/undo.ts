@@ -1,5 +1,5 @@
 import { Reducer } from "react";
-import { AnyAction } from "redux";
+import { Action } from "redux";
 import {
   moveLibraryItem,
   resetLibraryLayout,
@@ -32,8 +32,8 @@ export const undoableActions = [
 ];
 
 export const excludeStateFromUndo =
-  (reducer: Reducer<UndoableSlices, AnyAction>) =>
-  (state: UndoableSlices, action: AnyAction) => {
+  (reducer: Reducer<UndoableSlices, Action>) =>
+  (state: UndoableSlices, action: Action) => {
     switch (action.type) {
       case ActionTypes.UNDO:
       case ActionTypes.REDO: {
