@@ -169,6 +169,7 @@ export const playerSlice = createSlice({
       );
     },
     skipQueueIndexes: (state, action) => {
+      if (action.payload == 0) return;
       if (action.payload <= state.upNext.length) {
         state.currentTrack = state.upNext[action.payload - 1];
         state.upNext.splice(0, action.payload);
