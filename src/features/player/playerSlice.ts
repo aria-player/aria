@@ -13,6 +13,7 @@ interface PlayerState {
   status: Status;
   volume: number;
   muted: boolean;
+  currentTrack: QueueItem | null;
   queue: QueueItem[];
   queueUnshuffled: QueueItem[];
   queueIndex: number | null;
@@ -28,6 +29,7 @@ const initialState: PlayerState = {
   status: Status.Stopped,
   volume: 100,
   muted: false,
+  currentTrack: null,
   queue: [],
   queueUnshuffled: [],
   queueIndex: null,
@@ -105,9 +107,13 @@ export const playerSlice = createSlice({
       state.queueIndex = action.payload.queueIndex;
       if (state.shuffle) {
         state.queue = shuffleQueue(state.queueUnshuffled, state.queueIndex);
-        if (state.queueIndex != null) state.queueIndex = 0;
+        if (state.queueIndex != null) {
+          state.queueIndex = 0;
+          state.currentTrack = state.queue[0];
+        }
       } else {
         state.queue = state.queueUnshuffled;
+        state.currentTrack = state.queue[state.queueIndex];
       }
       state.queueSource = action.payload.queueSource;
       state.queueGrouping = action.payload.queueGrouping;
@@ -163,10 +169,19 @@ export const playerSlice = createSlice({
       );
     },
     skipQueueIndexes: (state, action) => {
-      state.queueIndex = state.queueIndex + action.payload;
+      if (action.payload <= state.upNext.length) {
+        state.currentTrack = state.upNext[action.payload - 1];
+        state.upNext.splice(0, action.payload);
+      } else {
+        state.queueIndex =
+          state.queueIndex! + action.payload - state.upNext.length;
+        state.currentTrack = state.queue[state.queueIndex!];
+      }
     },
     nextTrack: (state) => {
-      if (state.queueIndex != null) {
+      if (state.upNext.length > 0) {
+        state.currentTrack = state.upNext.shift() || null;
+      } else if (state.queueIndex != null) {
         if (state.queue[state.queueIndex].stray) {
           const currentItemId = state.queue[state.queueIndex].itemId;
           state.queueUnshuffled = state.queueUnshuffled.filter(
@@ -191,13 +206,19 @@ export const playerSlice = createSlice({
           } else {
             state.queueIndex = null;
             state.status = Status.Stopped;
+            state.currentTrack = null;
           }
         }
+        state.currentTrack =
+          state.queueIndex != null ? state.queue[state.queueIndex] : null;
       }
     },
     previousTrack: (state) => {
       if (state.queueIndex != null) {
-        if (!state.queue[state.queueIndex]?.stray) {
+        if (
+          !state.queue[state.queueIndex]?.stray &&
+          state.currentTrack?.itemId == state.queue[state.queueIndex].itemId
+        ) {
           state.queueIndex -= 1;
         }
         while (state.queue[state.queueIndex]?.stray) {
@@ -220,6 +241,8 @@ export const playerSlice = createSlice({
           }
         }
       }
+      state.currentTrack =
+        state.queueIndex != null ? state.queue[state.queueIndex] : null;
     },
     cycleRepeatMode: (state) => {
       const modes = Object.values(RepeatMode).filter(

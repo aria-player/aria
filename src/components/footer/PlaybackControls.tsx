@@ -76,12 +76,8 @@ export function PlaybackControls() {
                 dispatch(resume());
               } else {
                 const state = store.getState();
-                if (state.player.queueIndex == null) return;
-                dispatch(
-                  loadAndPlayTrack(
-                    state.player.queue[state.player.queueIndex].trackId
-                  )
-                );
+                if (state.player.currentTrack == null) return;
+                dispatch(loadAndPlayTrack(state.player.currentTrack.trackId));
               }
             }}
             title={t("menu.togglePlay")}

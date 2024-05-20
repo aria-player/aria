@@ -39,10 +39,8 @@ export function setupPlayerListeners() {
           (pluginHandles[plugin] as SourceHandle)?.pause();
         }
       });
-      if (state.player.queueIndex != null) {
-        dispatch(
-          loadAndPlayTrack(state.player.queue[state.player.queueIndex].trackId)
-        );
+      if (state.player.currentTrack != null) {
+        dispatch(loadAndPlayTrack(state.player.currentTrack.trackId));
       }
     }
   );

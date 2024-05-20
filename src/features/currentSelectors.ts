@@ -13,13 +13,20 @@ import { selectGroupFilteredTracks } from "./genericSelectors";
 export const selectCurrentQueueTracks = createSelector(
   [
     (state: RootState) => state.tracks.tracks,
+    (state: RootState) => state.player.currentTrack,
     (state: RootState) => state.player.queue,
     (state: RootState) => state.player.queueIndex,
     (state: RootState) => state.player.upNext
   ],
   () => {
     const state = store.getState();
+    if (!state.player.currentTrack) return [];
     const tracks = state.tracks.tracks;
+
+    const currentTrack = {
+      ...tracks.entities[state.player.currentTrack.trackId],
+      itemId: state.player.currentTrack.itemId
+    };
 
     const queue = state.player.queue
       .map((queueTrack) => ({
@@ -35,7 +42,7 @@ export const selectCurrentQueueTracks = createSelector(
 
     const queueWithSeparators = [
       { itemId: "currentTrackSeparator", separator: true },
-      ...queue.slice(0, 1),
+      currentTrack,
       ...(upNext.length > 0
         ? [{ itemId: "upNextSeparator", separator: true }, ...upNext]
         : []),
@@ -58,31 +65,24 @@ export const selectCurrentPlaylist = (state: RootState) => {
 
 export const selectCurrentTrack = createSelector(
   [
-    (state: RootState) => state.player.queue,
-    (state: RootState) => state.player.queueIndex,
+    (state: RootState) => state.player.currentTrack,
     (state: RootState) => state.tracks.tracks.entities
   ],
   () => {
     const state = store.getState();
-    if (state.player.queueIndex == null) {
-      return null;
-    }
-    const currentTrackId = state.player.queue[state.player.queueIndex];
-    if (currentTrackId == null) {
+    const currentTrack = state.player.currentTrack;
+    if (currentTrack == null) {
       return null;
     }
     return {
-      ...selectTrackById(state, currentTrackId.trackId),
-      itemId: currentTrackId.itemId
+      ...selectTrackById(state, currentTrack.trackId),
+      itemId: currentTrack.itemId
     } as TrackListItem;
   }
 );
 
 export const selectCurrentTrackItemId = (state: RootState) => {
-  if (state.player.queueIndex == null) {
-    return null;
-  }
-  return state.player.queue[state.player.queueIndex].itemId;
+  return state.player.currentTrack?.itemId;
 };
 
 export const selectCurrentGroupFilteredTrackList = (
