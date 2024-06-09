@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useMemo } from "react";
+import { useContext, useEffect, useMemo } from "react";
 import { AgGridReact } from "@ag-grid-community/react";
 import {
   CellContextMenuEvent,
@@ -144,7 +144,16 @@ export const TrackList = () => {
         compareMetadata(valueA, valueB),
       hide: false,
       lockPinned: true,
-      flex: 0.3
+      flex: 0.3,
+      cellStyle: (params: RowClassParams) => {
+        return {
+          fontWeight:
+            params.data.itemId === selectCurrentTrack(store.getState())?.itemId
+              ? 700
+              : 400,
+          fontStyle: !params.data.metadataLoaded ? "italic" : "normal"
+        };
+      }
     }),
     []
   );
@@ -286,7 +295,10 @@ export const TrackList = () => {
   };
 
   useEffect(() => {
-    if (gridRef?.current?.api) gridRef.current?.api.redrawRows();
+    if (gridRef?.current?.api)
+      gridRef.current.api.refreshCells({
+        force: true
+      });
   }, [gridRef, currentTrack]);
 
   useEffect(() => {
@@ -344,18 +356,6 @@ export const TrackList = () => {
     );
   };
 
-  const highlightCurrentTrack = useCallback(
-    (params: RowClassParams) => {
-      if (
-        params.data.itemId === currentTrack?.itemId &&
-        queueSource == visibleView
-      ) {
-        return { fontWeight: 700 };
-      }
-    },
-    [currentTrack?.itemId, queueSource, visibleView]
-  );
-
   return (
     <div className={`${styles.tracklist} ag-theme-balham`}>
       <AgGridReact
@@ -371,7 +371,6 @@ export const TrackList = () => {
         onColumnVisible={handleColumnVisible}
         onCellContextMenu={handleCellContextMenu}
         onRowDragEnd={handleRowDragEnd}
-        getRowStyle={highlightCurrentTrack}
         rowHeight={33}
         headerHeight={37}
         rowDragManaged={visibleViewType == View.Playlist}

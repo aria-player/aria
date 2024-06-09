@@ -8,10 +8,7 @@ export const defaultColumnDefinitions: ColDef[] = [
   { field: "uri", hide: true, filter: false },
   {
     field: "title",
-    flex: 1,
-    cellStyle: (params: { data: Track }) => {
-      return { fontStyle: params.data.metadataLoaded ? "normal" : "italic" };
-    }
+    flex: 1
   },
   {
     field: "duration",
@@ -31,10 +28,7 @@ export const defaultColumnDefinitions: ColDef[] = [
   },
   { field: "albumArtist" },
   {
-    field: "album",
-    cellStyle: (params: { data: Track }) => {
-      return { fontStyle: params.data.metadataLoaded ? "normal" : "italic" };
-    }
+    field: "album"
   },
   { field: "genre" },
   { field: "year" },
