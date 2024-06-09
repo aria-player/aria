@@ -7,6 +7,8 @@ interface Window {
   __TAURI__?: unknown;
 }
 
+const sortCache: { [key: string]: number } = {};
+
 export function isTauri() {
   return (window as Window).__TAURI__ !== undefined;
 }
@@ -80,26 +82,27 @@ export const compareMetadata = (
   isDescending?: boolean
 ): number => {
   const order = isDescending ? -1 : 1;
+  const cacheKey = `${valueA}-${valueB}`;
+  if (sortCache[cacheKey] !== undefined) return sortCache[cacheKey] * order;
 
-  if (valueA == null && valueB == null) return 0;
-  if (valueA == null) return 1 * order;
-  if (valueB == null) return -1 * order;
+  if (valueA == null && valueB == null) return (sortCache[cacheKey] = 0);
+  if (valueA == null) return (sortCache[cacheKey] = 1 * order);
+  if (valueB == null) return (sortCache[cacheKey] = -1 * order);
 
   if (Array.isArray(valueA)) valueA = valueA.length > 0 ? valueA[0] : "";
   if (Array.isArray(valueB)) valueB = valueB.length > 0 ? valueB[0] : "";
 
   if (typeof valueA === "string" && typeof valueB === "string") {
-    return (
+    return (sortCache[cacheKey] =
       valueA.localeCompare(valueB, undefined, {
         sensitivity: "base",
         ignorePunctuation: true
-      }) * order
-    );
+      }) * order);
   }
 
   if (typeof valueA === "number" && typeof valueB === "number") {
-    return (valueA - valueB) * order;
+    return (sortCache[cacheKey] = (valueA - valueB) * order);
   }
 
-  return 0;
+  return (sortCache[cacheKey] = 0);
 };
