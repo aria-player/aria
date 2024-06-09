@@ -2,8 +2,12 @@ import { useState, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { MediaSlider } from "soprano-ui";
 import { getElapsedPlayerTime, seek } from "../../features/player/playerTime";
-import { nextTrack, selectRepeatMode } from "../../features/player/playerSlice";
-import { RepeatMode } from "../../features/player/playerTypes";
+import {
+  nextTrack,
+  selectRepeatMode,
+  selectStatus
+} from "../../features/player/playerSlice";
+import { RepeatMode, Status } from "../../features/player/playerTypes";
 import { store } from "../../app/store";
 import { selectCurrentTrack } from "../../features/currentSelectors";
 
@@ -12,6 +16,7 @@ export function ProgressBar(props: {
 }) {
   const dispatch = useAppDispatch();
   const duration = useAppSelector(selectCurrentTrack)?.duration;
+  const status = useAppSelector(selectStatus);
   const [progressValue, setProgressValue] = props.progressValueState;
   const [dragging, setDragging] = useState(false);
 
@@ -43,7 +48,7 @@ export function ProgressBar(props: {
       keyboardStepMultiplier={100000}
       thumbAlignment="center"
       keyboardFocusOnly={true}
-      disabled={duration == null}
+      disabled={duration == null || status == Status.Stopped}
       value={[progressValue ?? 1]}
       onPointerDown={() => {
         setDragging(true);
