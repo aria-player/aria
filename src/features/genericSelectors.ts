@@ -7,7 +7,8 @@ import { TrackListItem } from "./tracks/tracksTypes";
 import { TrackGrouping } from "../app/view";
 import { PlaylistId, PlaylistItem } from "./playlists/playlistsTypes";
 import { selectLibraryColumnState } from "./library/librarySlice";
-import { compareMetadata, overrideColumnStateSort } from "../app/utils";
+import { overrideColumnStateSort } from "../app/utils";
+import { compareMetadata } from "../app/sort";
 
 export const selectTrackListMetadata = (
   state: RootState,

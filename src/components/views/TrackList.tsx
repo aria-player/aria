@@ -36,7 +36,6 @@ import {
 import { PlaylistItem } from "../../features/playlists/playlistsTypes";
 import { LibraryView, View } from "../../app/view";
 import {
-  compareMetadata,
   filterHiddenColumnSort,
   overrideColumnStateSort
 } from "../../app/utils";
@@ -53,6 +52,7 @@ import {
   selectVisibleViewType,
   selectVisiblePlaylistConfig
 } from "../../features/visibleSelectors";
+import { compareMetadata } from "../../app/sort";
 import {
   addToSearchHistory,
   selectSearch

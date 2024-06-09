@@ -4,7 +4,6 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import styles from "./SplitView.module.css";
 import { useCallback, useEffect, useRef } from "react";
 import { AlbumTrackList } from "./subviews/AlbumTrackList";
-import { compareMetadata } from "../../app/utils";
 import {
   selectLibrarySplitViewStates,
   updateLibrarySplitState
@@ -17,6 +16,7 @@ import {
   selectVisiblePlaylistConfig,
   selectVisibleSelectedTrackGroup
 } from "../../features/visibleSelectors";
+import { compareMetadata } from "../../app/sort";
 import { useLocation } from "react-router-dom";
 import { store } from "../../app/store";
 
