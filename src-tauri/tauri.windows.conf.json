@@ -2,6 +2,7 @@
   "tauri": {
     "windows": [
       {
+        "visible": false,
         "decorations": false,
         "fileDropEnabled": false
       }

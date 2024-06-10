@@ -14,13 +14,20 @@ pub struct MenuItemState {
 }
 
 #[tauri::command]
+pub fn ready(app_handle: tauri::AppHandle) {
+    let window = app_handle.get_window("main").unwrap();
+    window.show().unwrap();
+}
+
+#[tauri::command]
 pub fn greet(name: &str) -> String {
     format!("Hello, {}! You've been greeted from Rust!", name)
 }
 
 #[tauri::command]
 pub fn exit(app_handle: tauri::AppHandle) {
-    let _ = app_handle.save_window_state(StateFlags::all());
+    app_handle.get_window("main").unwrap().hide().unwrap();
+    let _ = app_handle.save_window_state(StateFlags::all() - StateFlags::VISIBLE);
     app_handle.exit(0);
 }
 

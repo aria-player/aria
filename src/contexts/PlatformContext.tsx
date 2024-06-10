@@ -72,6 +72,7 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
           configItem: "minimisetotray"
         })
       );
+      invoke("ready");
     }
 
     initialise();

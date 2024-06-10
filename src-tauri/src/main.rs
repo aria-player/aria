@@ -3,9 +3,9 @@
 
 mod commands;
 mod menu;
+mod player;
 mod translation;
 mod utils;
-mod player;
 
 use serde_json::json;
 use std::env::consts::OS;
@@ -134,6 +134,7 @@ fn main() {
         })
         .invoke_handler(tauri::generate_handler![
             commands::greet,
+            commands::ready,
             commands::exit,
             commands::close,
             commands::toggle_fullscreen,
