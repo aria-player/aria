@@ -56,7 +56,7 @@ import {
 
 export const TrackList = () => {
   const dispatch = useAppDispatch();
-  const { gridRef, gridProps } = useTrackGrid();
+  const { gridRef, gridProps, isGridReady } = useTrackGrid();
   const currentTrack = useAppSelector(selectCurrentTrack);
   const rowData = useAppSelector(selectVisibleTracks);
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
@@ -358,32 +358,34 @@ export const TrackList = () => {
 
   return (
     <div className={`${styles.tracklist} ag-theme-balham`}>
-      <AgGridReact
-        {...gridProps}
-        ref={gridRef}
-        rowData={rowData}
-        columnDefs={columnDefs}
-        defaultColDef={defaultColDef}
-        onCellDoubleClicked={handleCellDoubleClicked}
-        onSortChanged={handleSortChanged}
-        onColumnMoved={handleColumnMovedOrResized}
-        onColumnResized={handleColumnMovedOrResized}
-        onColumnVisible={handleColumnVisible}
-        onCellContextMenu={handleCellContextMenu}
-        onRowDragEnd={handleRowDragEnd}
-        rowHeight={33}
-        headerHeight={37}
-        rowDragManaged={visibleViewType == View.Playlist}
-        overlayNoRowsTemplate={
-          visibleViewType == View.Playlist
-            ? t("tracks.emptyPlaylist")
-            : t("tracks.emptyLibrary")
-        }
-        multiSortKey="ctrl"
-        rowDragEntireRow
-        suppressDragLeaveHidesColumns
-        suppressMoveWhenRowDragging
-      />
+      <div style={{ display: isGridReady ? "block" : "none", height: "100%" }}>
+        <AgGridReact
+          {...gridProps}
+          ref={gridRef}
+          rowData={rowData}
+          columnDefs={columnDefs}
+          defaultColDef={defaultColDef}
+          onCellDoubleClicked={handleCellDoubleClicked}
+          onSortChanged={handleSortChanged}
+          onColumnMoved={handleColumnMovedOrResized}
+          onColumnResized={handleColumnMovedOrResized}
+          onColumnVisible={handleColumnVisible}
+          onCellContextMenu={handleCellContextMenu}
+          onRowDragEnd={handleRowDragEnd}
+          rowHeight={33}
+          headerHeight={37}
+          rowDragManaged={visibleViewType == View.Playlist}
+          overlayNoRowsTemplate={
+            visibleViewType == View.Playlist
+              ? t("tracks.emptyPlaylist")
+              : t("tracks.emptyLibrary")
+          }
+          multiSortKey="ctrl"
+          rowDragEntireRow
+          suppressDragLeaveHidesColumns
+          suppressMoveWhenRowDragging
+        />
+      </div>
     </div>
   );
 };

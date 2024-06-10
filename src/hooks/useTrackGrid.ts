@@ -10,7 +10,7 @@ import {
 } from "@ag-grid-community/core";
 import { nanoid } from "@reduxjs/toolkit";
 import { t } from "i18next";
-import { useCallback, useContext, useEffect } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { replace } from "redux-first-history";
 import { store } from "../app/store";
 import { addTracksToPlaylist } from "../features/playlists/playlistsSlice";
@@ -55,6 +55,8 @@ export function useTrackGrid() {
   useEffect(() => {
     focusCurrentIfNeeded();
   }, [focusCurrentIfNeeded, location]);
+
+  const [isGridReady, setIsGridReady] = useState(false);
 
   const handleGridReady = (params: GridReadyEvent) => {
     dispatch(setSelectedTracks([]));
@@ -167,6 +169,7 @@ export function useTrackGrid() {
     };
 
     params.api.addRowDropZone(playlistDropZone);
+    setIsGridReady(true);
   };
 
   const handleSelectionChanged = (event: SelectionChangedEvent) => {
@@ -205,6 +208,7 @@ export function useTrackGrid() {
 
   return {
     gridRef,
-    gridProps
+    gridProps,
+    isGridReady
   };
 }
