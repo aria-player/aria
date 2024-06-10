@@ -140,6 +140,7 @@ export const playerSlice = createSlice({
         state.queueIndex = state.queueUnshuffled.findIndex(
           (track) => track.itemId == currentItemId
         );
+        if (state.queueIndex == -1) state.queueIndex = 0;
         // Re-shuffle the queue
         if (state.shuffle) {
           state.queue = shuffleQueue(state.queueUnshuffled, state.queueIndex);
