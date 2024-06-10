@@ -33,8 +33,8 @@ fn main() {
             let window = app.get_window("main").unwrap();
             if !window.is_visible().unwrap() {
                 window.show().unwrap();
-                window.set_focus().unwrap();
             }
+            window.set_focus().unwrap();
         }))
         .plugin(tauri_plugin_store::Builder::default().build())
         .setup(|app| {
