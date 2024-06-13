@@ -15,6 +15,7 @@ import {
 import { PlaylistItem } from "./playlists/playlistsTypes";
 import { selectGroupFilteredTracks } from "./genericSelectors";
 import { TrackListItem } from "./tracks/tracksTypes";
+import { selectSearch } from "./tracks/tracksSlice";
 
 export const selectVisibleViewType = (state: RootState) => {
   const firstPath = state.router.location?.pathname.split("/")[1];
@@ -109,7 +110,10 @@ export const selectVisibleGroupFilteredTrackList = (
 };
 
 export const selectVisibleDisplayMode = (state: RootState) => {
-  if (selectVisibleViewType(state) === LibraryView.Songs)
+  if (
+    selectVisibleViewType(state) === LibraryView.Songs ||
+    (selectVisibleViewType(state) === View.Search && selectSearch(state) != "")
+  )
     return DisplayMode.TrackList;
 
   if (selectVisibleViewType(state) === LibraryView.Albums)

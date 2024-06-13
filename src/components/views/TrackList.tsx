@@ -376,9 +376,11 @@ export const TrackList = () => {
           headerHeight={37}
           rowDragManaged={visibleViewType == View.Playlist}
           overlayNoRowsTemplate={
-            visibleViewType == View.Playlist
-              ? t("tracks.emptyPlaylist")
-              : t("tracks.emptyLibrary")
+            visibleViewType == View.Search
+              ? t("search.noResults")
+              : visibleViewType == View.Playlist
+                ? t("tracks.emptyPlaylist")
+                : t("tracks.emptyLibrary")
           }
           multiSortKey="ctrl"
           rowDragEntireRow
