@@ -130,6 +130,18 @@ export function Sidebar() {
         onClick={() => {
           goToSearch();
         }}
+        onBlur={(e) => {
+          if (
+            (e.relatedTarget as HTMLElement)?.role == "treeitem" &&
+            (
+              e.nativeEvent as FocusEvent & {
+                sourceCapabilities?: { firesTouchEvents?: boolean };
+              }
+            )?.sourceCapabilities === null
+          ) {
+            e.target.focus();
+          }
+        }}
       />
       <SectionTree
         ref={treeRef}
