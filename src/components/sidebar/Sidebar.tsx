@@ -30,6 +30,8 @@ import {
   selectVisibleViewType,
   selectVisiblePlaylist
 } from "../../features/visibleSelectors";
+import { View } from "../../app/view";
+import { setSearch } from "../../features/tracks/tracksSlice";
 
 import FolderOpenIcon from "../../assets/chevron-down-solid.svg?react";
 import FolderClosedIcon from "../../assets/chevron-right-solid.svg?react";
@@ -102,6 +104,10 @@ export function Sidebar() {
     syncSelectionWithRoute(true);
   }, [syncSelectionWithRoute, treeRef, visiblePlaylist, visibleViewType]);
 
+  function goToSearch() {
+    if (visibleViewType != View.Search) dispatch(push(BASEPATH + "search/"));
+  }
+
   return (
     <div className={styles.sideBar}>
       {!isTauri() && (
@@ -113,7 +119,17 @@ export function Sidebar() {
         className={styles.search}
         type="text"
         placeholder={t("sidebar.search")}
-        onKeyDown={(e) => e.stopPropagation()}
+        onKeyDown={(e) => {
+          e.stopPropagation();
+          if (e.key == "Enter") goToSearch();
+        }}
+        onChange={(e) => {
+          dispatch(setSearch((e.target as HTMLInputElement).value));
+          goToSearch();
+        }}
+        onClick={() => {
+          goToSearch();
+        }}
       />
       <SectionTree
         ref={treeRef}

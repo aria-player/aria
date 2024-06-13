@@ -56,7 +56,11 @@ const reducer = combineReducers({
   ),
   plugins: persistReducer({ key: "plugins", storage }, pluginsReducer),
   tracks: persistReducer(
-    { key: "tracks", storage, blacklist: ["selectedTracks", "clipboard"] },
+    {
+      key: "tracks",
+      storage,
+      blacklist: ["selectedTracks", "clipboard", "search"]
+    },
     tracksReducer
   ),
   undoable: excludeStateFromUndo(undoableSlices) as Reducer<UndoableSlices>

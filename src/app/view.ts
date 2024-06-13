@@ -6,6 +6,7 @@ export enum DisplayMode {
 }
 
 export enum View {
+  Search = "search",
   Playlist = "playlist",
   Queue = "queue",
   Settings = "settings",

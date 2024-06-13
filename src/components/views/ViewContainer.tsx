@@ -13,6 +13,7 @@ import {
 import { Queue } from "./Queue";
 import { useTranslation } from "react-i18next";
 import { selectPlaylistsLayoutItemById } from "../../features/playlists/playlistsSlice";
+import { selectSearch } from "../../features/tracks/tracksSlice";
 
 export default function ViewContainer() {
   const visibleDisplayMode = useAppSelector(selectVisibleDisplayMode);
@@ -22,6 +23,7 @@ export default function ViewContainer() {
   const playlistName = useAppSelector((state) =>
     selectPlaylistsLayoutItemById(state, currentPlaylistId ?? "")
   )?.name;
+  const search = useAppSelector(selectSearch);
 
   return (
     <>
@@ -34,7 +36,13 @@ export default function ViewContainer() {
               : ""
         }}
       >
-        <h1>{playlistName || t(`views.${visibleViewType}`)}</h1>
+        <h1>
+          {visibleViewType == View.Search
+            ? search == ""
+              ? "Search"
+              : `Search results for "${search}"`
+            : playlistName || t(`views.${visibleViewType}`)}
+        </h1>
       </header>
       {visibleViewType == View.Queue && <Queue />}
       {visibleDisplayMode == DisplayMode.TrackList && (
