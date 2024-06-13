@@ -39,8 +39,8 @@ export default function ViewContainer() {
         <h1>
           {visibleViewType == View.Search
             ? search == ""
-              ? "Search"
-              : `Search results for "${search}"`
+              ? t("views.search")
+              : t("search.resultsFor", { search })
             : playlistName || t(`views.${visibleViewType}`)}
         </h1>
       </header>

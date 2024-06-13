@@ -53,7 +53,11 @@
     "years": "Years",
     "queue": "Queue",
     "error": "Error",
-    "settings": "Settings"
+    "settings": "Settings",
+    "search": "Search"
+  },
+  "search": {
+    "resultsFor": "Search results for \"{{search}}\""
   },
   "settings": {
     "sections": {
