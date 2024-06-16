@@ -50,6 +50,7 @@ export const selectVisiblePlaylistConfig = (state: RootState) => {
 export const selectVisibleTracks = createSelector(
   [
     (state: RootState) => state.tracks.tracks,
+    (state: RootState) => state.tracks.search,
     (state: RootState) => state.router.location?.pathname,
     (state: RootState) => state.undoable.present.playlists.playlists
   ],
@@ -57,6 +58,7 @@ export const selectVisibleTracks = createSelector(
     const state = store.getState();
     const tracks = state.tracks.tracks;
     const visiblePlaylist = selectVisiblePlaylist(state)?.tracks;
+    const search = selectSearch(state);
     return visiblePlaylist
       ? visiblePlaylist.map((playlistTrack) => {
           return {
@@ -71,7 +73,20 @@ export const selectVisibleTracks = createSelector(
             ...track,
             itemId: track?.trackId
           })) as TrackListItem[])
-        : [];
+        : selectVisibleViewType(state) == View.Search
+          ? (Object.values(tracks.entities)
+              .filter((track) => {
+                return Object.values(track).flat().some(
+                  (value) =>
+                    typeof value === "string" &&
+                    value.toLowerCase().includes(search.toLowerCase())
+                );
+              })
+              .map((track) => ({
+                ...track,
+                itemId: track?.trackId
+              })) as TrackListItem[])
+          : [];
   }
 );
 
