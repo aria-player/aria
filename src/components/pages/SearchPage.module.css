@@ -1,0 +1,48 @@
+.historyHeader {
+  margin: 0.5rem 0.5rem 0;
+  padding: 0.5rem 0.5rem 0;
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--column-text);
+}
+
+.historyList {
+  margin: 0;
+  padding: 0.5rem;
+  list-style-type: none;
+  max-width: 20rem;
+}
+
+.historyItem {
+  padding: 0.5rem;
+  display: flex;
+  justify-content: space-between;
+}
+
+.searchLink {
+  background: none;
+  border: none;
+  color: var(--accent-color);
+  font-size: 1rem;
+  margin-right: 0.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.searchLink:hover {
+  text-decoration: underline;
+}
+
+.removeButton {
+  background: none;
+  border: none;
+  color: var(--button-text);
+  height: 1.4rem;
+  width: 1.4rem;
+  padding: 0.1rem;
+}
+
+.removeButton:hover {
+  background-color: var(--button-background-hover);
+  border-radius: 0.25rem;
+}

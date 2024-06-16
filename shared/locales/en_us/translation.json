@@ -58,7 +58,8 @@
   },
   "search": {
     "resultsFor": "Search results for \"{{search}}\"",
-    "noResults": "No results"
+    "noResults": "No results",
+    "previousSearches": "Previous searches"
   },
   "settings": {
     "sections": {

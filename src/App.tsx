@@ -25,6 +25,7 @@ import { LibraryPage } from "./components/pages/settings/LibraryPage";
 import { PluginsPage } from "./components/pages/settings/PluginsPage";
 import ViewContainer from "./components/views/ViewContainer";
 import { selectVisiblePlaylist } from "./features/visibleSelectors";
+import SearchPage from "./components/pages/SearchPage";
 
 function App() {
   const { platform, fullscreen } = useContext(PlatformContext);
@@ -76,7 +77,7 @@ function App() {
                 path="playlist/:id"
                 Component={() => (visiblePlaylist?.id ? <></> : <ErrorPage />)}
               />
-              <Route path="/search" Component={() => <></>} />
+              <Route path="/search" Component={SearchPage} />
               <Route path="*" Component={ErrorPage} />
             </Routes>
           </div>
