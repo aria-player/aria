@@ -53,7 +53,10 @@ import {
   selectVisibleViewType,
   selectVisiblePlaylistConfig
 } from "../../features/visibleSelectors";
-import { selectSearch } from "../../features/search/searchSlice";
+import {
+  addToSearchHistory,
+  selectSearch
+} from "../../features/search/searchSlice";
 
 export const TrackList = () => {
   const dispatch = useAppDispatch();
@@ -215,6 +218,9 @@ export const TrackList = () => {
         trackId: node.data.trackId
       });
     });
+    if (visibleView == View.Search) {
+      dispatch(addToSearchHistory(search));
+    }
     dispatch(
       setQueueToNewSource({
         queue,
