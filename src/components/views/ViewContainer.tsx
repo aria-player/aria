@@ -13,7 +13,7 @@ import {
 import { Queue } from "./Queue";
 import { useTranslation } from "react-i18next";
 import { selectPlaylistsLayoutItemById } from "../../features/playlists/playlistsSlice";
-import { selectSearch } from "../../features/tracks/tracksSlice";
+import { selectSearch } from "../../features/search/searchSlice";
 
 export default function ViewContainer() {
   const visibleDisplayMode = useAppSelector(selectVisibleDisplayMode);

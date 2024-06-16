@@ -18,14 +18,12 @@ interface TracksState {
   tracks: EntityState<Track, TrackId>;
   selectedTracks: PlaylistItem[];
   clipboard: PlaylistItem[];
-  search: string;
 }
 
 const initialState: TracksState = {
   tracks: tracksAdapter.getInitialState(),
   selectedTracks: [],
-  clipboard: [],
-  search: ""
+  clipboard: []
 };
 
 const tracksSlice = createSlice({
@@ -54,9 +52,6 @@ const tracksSlice = createSlice({
     },
     copySelectedTracks: (state) => {
       state.clipboard = state.selectedTracks;
-    },
-    setSearch: (state, action) => {
-      state.search = action.payload;
     }
   }
 });
@@ -65,8 +60,7 @@ export const {
   addTracks,
   removeTracks,
   setSelectedTracks,
-  copySelectedTracks,
-  setSearch
+  copySelectedTracks
 } = tracksSlice.actions;
 
 export const {
@@ -77,7 +71,6 @@ export const {
 export const selectSelectedTracks = (state: RootState) =>
   state.tracks.selectedTracks;
 export const selectClipboard = (state: RootState) => state.tracks.clipboard;
-export const selectSearch = (state: RootState) => state.tracks.search;
 
 export default tracksSlice.reducer;
 

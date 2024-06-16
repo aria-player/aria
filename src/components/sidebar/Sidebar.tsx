@@ -31,12 +31,12 @@ import {
   selectVisiblePlaylist
 } from "../../features/visibleSelectors";
 import { View } from "../../app/view";
-import { setSearch } from "../../features/tracks/tracksSlice";
 
 import FolderOpenIcon from "../../assets/chevron-down-solid.svg?react";
 import FolderClosedIcon from "../../assets/chevron-right-solid.svg?react";
 import OptionsButtonIcon from "../../assets/ellipsis-solid.svg?react";
 import DoneButtonIcon from "../../assets/check-solid.svg?react";
+import { setSearch } from "../../features/search/searchSlice";
 
 export function Sidebar() {
   const dispatch = useAppDispatch();

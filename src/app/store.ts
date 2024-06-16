@@ -5,6 +5,7 @@ import libraryReducer from "../features/library/librarySlice";
 import pluginsReducer from "../features/plugins/pluginsSlice";
 import playlistsReducer from "../features/playlists/playlistsSlice";
 import tracksReducer from "../features/tracks/tracksSlice";
+import searchReducer from "../features/search/searchSlice";
 import localforage from "localforage";
 import {
   FLUSH,
@@ -59,9 +60,17 @@ const reducer = combineReducers({
     {
       key: "tracks",
       storage,
-      blacklist: ["selectedTracks", "clipboard", "search"]
+      blacklist: ["selectedTracks", "clipboard"]
     },
     tracksReducer
+  ),
+  search: persistReducer(
+    {
+      key: "search",
+      storage,
+      blacklist: ["search"]
+    },
+    searchReducer
   ),
   undoable: excludeStateFromUndo(undoableSlices) as Reducer<UndoableSlices>
 });

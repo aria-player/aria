@@ -53,7 +53,7 @@ import {
   selectVisibleViewType,
   selectVisiblePlaylistConfig
 } from "../../features/visibleSelectors";
-import { selectSearch } from "../../features/tracks/tracksSlice";
+import { selectSearch } from "../../features/search/searchSlice";
 
 export const TrackList = () => {
   const dispatch = useAppDispatch();

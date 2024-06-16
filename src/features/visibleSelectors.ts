@@ -15,8 +15,8 @@ import {
 import { PlaylistItem } from "./playlists/playlistsTypes";
 import { selectGroupFilteredTracks } from "./genericSelectors";
 import { TrackListItem } from "./tracks/tracksTypes";
-import { selectSearch } from "./tracks/tracksSlice";
 import { searchTracks } from "../app/search";
+import { selectSearch } from "./search/searchSlice";
 
 export const selectVisibleViewType = (state: RootState) => {
   const firstPath = state.router.location?.pathname.split("/")[1];
@@ -51,7 +51,7 @@ export const selectVisiblePlaylistConfig = (state: RootState) => {
 export const selectVisibleTracks = createSelector(
   [
     (state: RootState) => state.tracks.tracks,
-    (state: RootState) => state.tracks.search,
+    (state: RootState) => state.search.search,
     (state: RootState) => state.router.location?.pathname,
     (state: RootState) => state.undoable.present.playlists.playlists
   ],
