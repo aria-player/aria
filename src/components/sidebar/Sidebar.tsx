@@ -31,12 +31,13 @@ import {
   selectVisiblePlaylist
 } from "../../features/visibleSelectors";
 import { View } from "../../app/view";
+import { selectSearch, setSearch } from "../../features/search/searchSlice";
 
 import FolderOpenIcon from "../../assets/chevron-down-solid.svg?react";
 import FolderClosedIcon from "../../assets/chevron-right-solid.svg?react";
 import OptionsButtonIcon from "../../assets/ellipsis-solid.svg?react";
 import DoneButtonIcon from "../../assets/check-solid.svg?react";
-import { selectSearch, setSearch } from "../../features/search/searchSlice";
+import ClearIcon from "../../assets/xmark-solid.svg?react";
 
 export function Sidebar() {
   const dispatch = useAppDispatch();
@@ -116,35 +117,45 @@ export function Sidebar() {
           <MenuButton />
         </div>
       )}
-      <input
-        className={styles.search}
-        type="text"
-        value={search}
-        placeholder={t("sidebar.search")}
-        onKeyDown={(e) => {
-          e.stopPropagation();
-          if (e.key == "Enter") goToSearch();
-        }}
-        onChange={(e) => {
-          dispatch(setSearch((e.target as HTMLInputElement).value));
-          goToSearch();
-        }}
-        onClick={() => {
-          goToSearch();
-        }}
-        onBlur={(e) => {
-          if (
-            (e.relatedTarget as HTMLElement)?.role == "treeitem" &&
-            (
-              e.nativeEvent as FocusEvent & {
-                sourceCapabilities?: { firesTouchEvents?: boolean };
-              }
-            )?.sourceCapabilities === null
-          ) {
-            e.target.focus();
-          }
-        }}
-      />
+      <div className={styles.search}>
+        <input
+          className={styles.searchInput}
+          type="text"
+          value={search}
+          placeholder={t("sidebar.search")}
+          onKeyDown={(e) => {
+            e.stopPropagation();
+            if (e.key == "Enter") goToSearch();
+          }}
+          onChange={(e) => {
+            dispatch(setSearch((e.target as HTMLInputElement).value));
+            goToSearch();
+          }}
+          onClick={() => {
+            goToSearch();
+          }}
+          onBlur={(e) => {
+            if (
+              (e.relatedTarget as HTMLElement)?.role == "treeitem" &&
+              (
+                e.nativeEvent as FocusEvent & {
+                  sourceCapabilities?: { firesTouchEvents?: boolean };
+                }
+              )?.sourceCapabilities === null
+            ) {
+              e.target.focus();
+            }
+          }}
+        />
+        {search && (
+          <button
+            className={styles.searchClear}
+            onClick={() => dispatch(setSearch(""))}
+          >
+            <ClearIcon />
+          </button>
+        )}
+      </div>
       <SectionTree
         ref={treeRef}
         sections={sections}
