@@ -30,6 +30,7 @@ export default function SearchPage() {
             </button>
             <button
               className={styles.removeButton}
+              title={t("search.remove")}
               onClick={() => dispatch(removeFromSearchHistory(item))}
             >
               <ClearIcon />

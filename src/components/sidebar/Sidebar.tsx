@@ -150,6 +150,7 @@ export function Sidebar() {
         {search && (
           <button
             className={styles.searchClear}
+            title={t("search.clear")}
             onClick={() => dispatch(setSearch(""))}
           >
             <ClearIcon />

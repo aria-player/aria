@@ -59,7 +59,9 @@
   "search": {
     "resultsFor": "Search results for \"{{search}}\"",
     "noResults": "No results",
-    "previousSearches": "Previous searches"
+    "previousSearches": "Previous searches",
+    "clear": "Clear",
+    "remove": "Remove from list"
   },
   "settings": {
     "sections": {
