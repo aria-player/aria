@@ -53,6 +53,7 @@ import {
   selectVisibleViewType,
   selectVisiblePlaylistConfig
 } from "../../features/visibleSelectors";
+import { selectSearch } from "../../features/tracks/tracksSlice";
 
 export const TrackList = () => {
   const dispatch = useAppDispatch();
@@ -206,6 +207,7 @@ export const TrackList = () => {
   const handleCellDoubleClicked = (event: RowClickedEvent) => {
     // We could use selectSortedTrackList here instead,
     // but then we'd be re-calculating the same sorted tracks that are already displayed
+    const search = selectSearch(store.getState());
     const queue = [] as PlaylistItem[];
     event.api.forEachNodeAfterFilterAndSort((node) => {
       queue.push({
@@ -217,7 +219,8 @@ export const TrackList = () => {
       setQueueToNewSource({
         queue,
         queueIndex: event.rowIndex ?? 0,
-        queueSource: visibleView,
+        queueSource:
+          visibleView == View.Search ? visibleView + "/" + search : visibleView,
         queueGrouping: null,
         queueSelectedGroup: null
       })

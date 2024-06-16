@@ -32,7 +32,11 @@ export default function QueueSeparator(props: ICellRendererParams) {
               currentGroup ||
               (queueSource && isLibraryView(queueSource)
                 ? t(`views.${queueSource}`)
-                : t("queue.deletedPlaylist"))}
+                : queueSource && queueSource.startsWith("search")
+                  ? t("search.resultsFor", {
+                      search: queueSource.split("/")[1]
+                    })
+                  : t("queue.deletedPlaylist"))}
             {playlistName && currentGroup && ` / ${currentGroup}`}
           </span>
         </>
