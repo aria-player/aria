@@ -36,7 +36,7 @@ import FolderOpenIcon from "../../assets/chevron-down-solid.svg?react";
 import FolderClosedIcon from "../../assets/chevron-right-solid.svg?react";
 import OptionsButtonIcon from "../../assets/ellipsis-solid.svg?react";
 import DoneButtonIcon from "../../assets/check-solid.svg?react";
-import { setSearch } from "../../features/search/searchSlice";
+import { selectSearch, setSearch } from "../../features/search/searchSlice";
 
 export function Sidebar() {
   const dispatch = useAppDispatch();
@@ -46,6 +46,7 @@ export function Sidebar() {
   const playlistsLayout = useAppSelector(selectPlaylistsLayout);
   const visibleViewType = useAppSelector(selectVisibleViewType);
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
+  const search = useAppSelector(selectSearch);
 
   const { show, hideAll } = useContextMenu();
   const { visibility, setMenuData } = useContext(MenuContext);
@@ -118,6 +119,7 @@ export function Sidebar() {
       <input
         className={styles.search}
         type="text"
+        value={search}
         placeholder={t("sidebar.search")}
         onKeyDown={(e) => {
           e.stopPropagation();
