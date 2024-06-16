@@ -16,6 +16,7 @@ import { PlaylistItem } from "./playlists/playlistsTypes";
 import { selectGroupFilteredTracks } from "./genericSelectors";
 import { TrackListItem } from "./tracks/tracksTypes";
 import { selectSearch } from "./tracks/tracksSlice";
+import { searchTracks } from "../app/search";
 
 export const selectVisibleViewType = (state: RootState) => {
   const firstPath = state.router.location?.pathname.split("/")[1];
@@ -74,18 +75,12 @@ export const selectVisibleTracks = createSelector(
             itemId: track?.trackId
           })) as TrackListItem[])
         : selectVisibleViewType(state) == View.Search
-          ? (Object.values(tracks.entities)
-              .filter((track) => {
-                return Object.values(track).flat().some(
-                  (value) =>
-                    typeof value === "string" &&
-                    value.toLowerCase().includes(search.toLowerCase())
-                );
-              })
-              .map((track) => ({
+          ? (searchTracks(Object.values(tracks.entities), search).map(
+              (track) => ({
                 ...track,
                 itemId: track?.trackId
-              })) as TrackListItem[])
+              })
+            ) as TrackListItem[])
           : [];
   }
 );
