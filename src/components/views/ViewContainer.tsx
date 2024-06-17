@@ -41,7 +41,8 @@ export default function ViewContainer() {
             ? search == ""
               ? t("views.search")
               : t("search.resultsFor", { search })
-            : playlistName || t(`views.${visibleViewType}`)}
+            : playlistName ||
+              t(`views.${visibleViewType}`, { defaultValue: t("views.error") })}
         </h1>
       </header>
       {visibleViewType == View.Queue && <Queue />}
