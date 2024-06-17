@@ -50,6 +50,7 @@ import {
   selectVisibleDisplayMode,
   selectVisibleSelectedTrackGroup
 } from "../features/visibleSelectors";
+import { setSearch } from "../features/search/searchSlice";
 
 export interface MenuItem {
   id: string;
@@ -184,6 +185,9 @@ export function handleMenuAction(
                 focusCurrent: true
               })
             );
+          } else if (queueSource?.startsWith(View.Search)) {
+            dispatch(setSearch(queueSource.split("/")[1]));
+            dispatch(push(BASEPATH + "search/", { focusCurrent: true }));
           } else {
             dispatch(push(BASEPATH + queueSource, { focusCurrent: true }));
           }
