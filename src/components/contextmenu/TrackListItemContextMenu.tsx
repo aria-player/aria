@@ -30,8 +30,13 @@ import {
   selectVisibleDisplayMode,
   selectVisibleGroupFilteredTrackList,
   selectVisibleTrackGrouping,
-  selectVisibleSelectedTrackGroup
+  selectVisibleSelectedTrackGroup,
+  selectVisibleTracks
 } from "../../features/visibleSelectors";
+import {
+  addToSearchHistory,
+  selectSearch
+} from "../../features/search/searchSlice";
 const id = "tracklistitem";
 
 export function TrackListItemContextMenu() {
@@ -136,11 +141,16 @@ export function TrackListItemContextMenu() {
               state,
               menuData.itemSource ?? ""
             )?.id;
+            if (visibleView == View.Search) {
+              dispatch(addToSearchHistory(selectSearch(state)));
+            }
             dispatch(
               setQueueToNewSource({
                 queue:
                   selectVisibleDisplayMode(state) == DisplayMode.TrackList
-                    ? selectSortedTrackList(state, source ?? undefined)
+                    ? visibleView == View.Search
+                      ? selectVisibleTracks(state)
+                      : selectSortedTrackList(state, source ?? undefined)
                     : selectVisibleGroupFilteredTrackList(state),
                 queueSource: menuData.itemSource ?? LibraryView.Songs,
                 queueIndex: menuData.itemIndex ?? 0,

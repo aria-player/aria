@@ -334,9 +334,11 @@ export const TrackList = () => {
       event.node.setSelected(true, true);
     }
     if (event.node.id) {
+      const search = selectSearch(store.getState());
       setMenuData({
         itemId: event.node.data.trackId,
-        itemSource: visibleView,
+        itemSource:
+          visibleView == View.Search ? visibleView + "/" + search : visibleView,
         itemIndex: event.rowIndex ?? undefined,
         metadata: event.node.data,
         type: "tracklistitem"
