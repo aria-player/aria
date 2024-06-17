@@ -121,6 +121,7 @@ export const TrackList = () => {
           ...colDefOverrides,
           sort,
           sortIndex,
+          sortable: visibleViewType != View.Search,
           headerName:
             colDef.field != "trackId" && colDef.field != "uri"
               ? t(`columns.${colDef.field}`)
