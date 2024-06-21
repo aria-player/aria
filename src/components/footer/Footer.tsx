@@ -4,7 +4,7 @@ import { useAppSelector } from "../../app/hooks";
 import { AuxiliaryControls } from "./AuxiliaryControls";
 import { AlbumArt } from "../views/subviews/AlbumArt";
 import { useMenuActions } from "../../hooks/useMenuActions";
-import { formatArtist } from "../../app/utils";
+import { formatStringArray } from "../../app/utils";
 import { selectCurrentTrack } from "../../features/currentSelectors";
 import { useTranslation } from "react-i18next";
 
@@ -37,7 +37,7 @@ export function Footer() {
           </div>
           <div className={styles.metadataRow}>
             <div className={styles.artist}>
-              {formatArtist(metadata?.artist)}
+              {formatStringArray(metadata?.artist)}
             </div>
           </div>
         </div>

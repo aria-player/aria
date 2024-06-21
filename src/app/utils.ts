@@ -17,8 +17,8 @@ export function formatDuration(duration: number) {
   return `${minutes}:${seconds < 10 ? "0" : ""}${seconds}`;
 }
 
-export function formatArtist(artist: string | string[] | undefined) {
-  return Array.isArray(artist) ? artist.join("/") : artist ?? "";
+export function formatStringArray(value: string | string[] | undefined) {
+  return Array.isArray(value) ? value.join("/") : value ?? "";
 }
 
 export function formatBytes(bytes: number) {

@@ -1,5 +1,5 @@
 import { ICellRendererParams } from "@ag-grid-community/core";
-import { formatArtist, formatDuration } from "../../../app/utils";
+import { formatStringArray, formatDuration } from "../../../app/utils";
 import { useContextMenu } from "react-contexify";
 import { useContext } from "react";
 import { View } from "../../../app/view";
@@ -132,7 +132,7 @@ export const TrackSummaryRow = (props: ICellRendererParams) => {
           <span>{props.node.data.title}</span>
           <br />
           <span className={styles.trackArtist}>
-            {formatArtist(props.node.data.artist)}
+            {formatStringArray(props.node.data.artist)}
           </span>
         </div>
         <span className={styles.trackDuration}>

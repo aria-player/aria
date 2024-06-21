@@ -9,7 +9,7 @@ import { Track } from "../../../features/tracks/tracksTypes";
 import { useAppSelector } from "../../../app/hooks";
 import { TrackSummaryRow } from "./TrackSummaryRow";
 import { t } from "i18next";
-import { formatArtist } from "../../../app/utils";
+import { formatStringArray } from "../../../app/utils";
 import AlbumTrackListSeparator from "./AlbumTrackListSeparator";
 import { useTrackGrid } from "../../../hooks/useTrackGrid";
 import { selectVisibleGroupFilteredTracks } from "../../../features/visibleSelectors";
@@ -87,7 +87,7 @@ export const AlbumTrackList = () => {
               currentAlbumTracks = 0;
             }
             processedTracks.push({
-              artist: track.albumArtist ?? formatArtist(track.artist),
+              artist: track.albumArtist ?? formatStringArray(track.artist),
               album: track.album,
               year: track.year,
               artworkUri: track.artworkUri,
