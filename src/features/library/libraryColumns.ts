@@ -13,8 +13,12 @@ export const defaultColumnDefinitions: ColDef[] = [
   {
     field: "duration",
     filter: false,
-    valueFormatter: (params: { data: Track; value: number }) => {
-      if (!params.data.metadataLoaded) {
+    valueFormatter: (params: { data: Track; value: number | null }) => {
+      if (
+        !params.data.metadataLoaded ||
+        params.value == undefined ||
+        params.value == null
+      ) {
         return "-";
       }
       return formatDuration(params.value);
@@ -50,24 +54,30 @@ export const defaultColumnDefinitions: ColDef[] = [
     field: "dateModified",
     hide: true,
     filter: false,
-    valueFormatter: (params: { value: number }) => {
-      return new Date(params.value).toUTCString();
+    valueFormatter: (params: { value: number | null }) => {
+      return params.value !== undefined && params.value !== null
+        ? new Date(params.value).toUTCString()
+        : "";
     }
   },
   {
     field: "dateAdded",
     hide: true,
     filter: false,
-    valueFormatter: (params: { value: number }) => {
-      return new Date(params.value).toUTCString();
+    valueFormatter: (params: { value: number | null }) => {
+      return params.value !== undefined && params.value !== null
+        ? new Date(params.value).toUTCString()
+        : "";
     }
   },
   {
     field: "fileSize",
     hide: true,
     filter: false,
-    valueFormatter: (params: { value: number }) => {
-      return formatBytes(params.value);
+    valueFormatter: (params: { value: number | null }) => {
+      return params.value !== undefined && params.value !== null
+        ? formatBytes(params.value)
+        : "";
     },
     type: "rightAligned"
   },
