@@ -38,10 +38,27 @@ export const defaultColumnDefinitions: ColDef[] = [
   {
     field: "album"
   },
-  { field: "genre" },
+  {
+    field: "genre",
+    valueFormatter: (params: { data: Track; value: string | string[] }) => {
+      return formatStringArray(params.value);
+    }
+  },
   { field: "year" },
-  { field: "composer", hide: true },
-  { field: "comments", hide: true },
+  {
+    field: "composer",
+    hide: true,
+    valueFormatter: (params: { data: Track; value: string | string[] }) => {
+      return formatStringArray(params.value);
+    }
+  },
+  {
+    field: "comments",
+    hide: true,
+    valueFormatter: (params: { data: Track; value: string | string[] }) => {
+      return formatStringArray(params.value);
+    }
+  },
   {
     field: "track",
     hide: true,
