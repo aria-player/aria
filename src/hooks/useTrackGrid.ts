@@ -16,17 +16,19 @@ import { store } from "../app/store";
 import { addTracksToPlaylist } from "../features/playlists/playlistsSlice";
 import { PlaylistItem } from "../features/playlists/playlistsTypes";
 import { setSelectedTracks } from "../features/tracks/tracksSlice";
-import { useAppDispatch } from "../app/hooks";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { GridContext } from "../contexts/GridContext";
 import { useLocation } from "react-router-dom";
 import { AgGridReactProps } from "@ag-grid-community/react";
 import { selectCurrentTrack } from "../features/currentSelectors";
+import { selectVisibleSelectedTrackGroup } from "../features/visibleSelectors";
 
 export function useTrackGrid() {
   const dispatch = useAppDispatch();
   const { gridRef } = useContext(GridContext);
   const location = useLocation();
   const [isGridReady, setIsGridReady] = useState(false);
+  const selectedTrackGroup = useAppSelector(selectVisibleSelectedTrackGroup);
 
   const getRowId = (params: GetRowIdParams) => params.data.itemId;
 
@@ -39,6 +41,25 @@ export function useTrackGrid() {
     });
     return sortedSelectedTracks;
   };
+
+  useEffect(() => {
+    // If this happens after the grid data changes,
+    // it can cause the grid to become blank until the user scrolls.
+    // Wrapping it in setTimeout seems to mitigate this issue
+    const resetScrollPosition = () => {
+      gridRef?.current?.api.ensureIndexVisible(0, "top");
+    };
+
+    let timeout: number;
+    if (
+      gridRef?.current?.api &&
+      !(store.getState().router.location?.state as { focusCurrent: boolean })
+        ?.focusCurrent
+    ) {
+      timeout = setTimeout(resetScrollPosition, 0);
+    }
+    return () => clearTimeout(timeout);
+  }, [dispatch, gridRef, location.pathname, selectedTrackGroup]);
 
   useEffect(() => {
     const currentTrack = selectCurrentTrack(store.getState());

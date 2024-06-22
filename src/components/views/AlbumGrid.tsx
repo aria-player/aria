@@ -16,10 +16,12 @@ import {
   selectVisibleDisplayMode,
   selectVisibleTrackGroups
 } from "../../features/visibleSelectors";
+import { useEffect, useRef } from "react";
 
 export default function AlbumGrid() {
   const dispatch = useAppDispatch();
 
+  const scrollDivRef = useRef(null);
   const { t } = useTranslation();
   const libraryTracks = useAppSelector(selectAllTracks);
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
@@ -50,10 +52,17 @@ export default function AlbumGrid() {
     }
   }
 
+  useEffect(() => {
+    if (scrollDivRef.current) {
+      (scrollDivRef.current as HTMLDivElement).scrollTop = 0;
+    }
+  }, [visiblePlaylist, visibleDisplayMode]);
+
   return (
     <>
       <div className={styles.albumGrid}>
         <div
+          ref={scrollDivRef}
           className={styles.grid}
           style={{ display: visibleAlbums.length == 0 ? "none" : "grid" }}
         >
