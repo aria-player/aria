@@ -17,11 +17,15 @@ import {
   selectVisibleTrackGroups
 } from "../../features/visibleSelectors";
 import { useEffect, useRef } from "react";
+import { store } from "../../app/store";
+import { useLocation } from "react-router-dom";
 
 export default function AlbumGrid() {
   const dispatch = useAppDispatch();
 
-  const scrollDivRef = useRef(null);
+  const location = useLocation();
+  const scrollDivRef = useRef<HTMLDivElement>(null);
+  const albumRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const { t } = useTranslation();
   const libraryTracks = useAppSelector(selectAllTracks);
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
@@ -54,9 +58,18 @@ export default function AlbumGrid() {
 
   useEffect(() => {
     if (scrollDivRef.current) {
-      (scrollDivRef.current as HTMLDivElement).scrollTop = 0;
+      const selectedItem = selectVisibleSelectedTrackGroup(store.getState());
+      if (selectedItem == null) {
+        scrollDivRef.current.scrollTop = 0;
+      } else {
+        if (selectedItem && albumRefs.current[selectedItem]) {
+          albumRefs.current[selectedItem]?.scrollIntoView({
+            block: "center"
+          });
+        }
+      }
     }
-  }, [visiblePlaylist, visibleDisplayMode]);
+  }, [location]);
 
   return (
     <>
@@ -71,6 +84,9 @@ export default function AlbumGrid() {
               return (
                 <div
                   key={track.album ?? index}
+                  ref={(el) => {
+                    albumRefs.current[track.album ?? index] = el;
+                  }}
                   style={{
                     display: visibleAlbums.includes(track.album)
                       ? "block"
