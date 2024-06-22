@@ -45,7 +45,7 @@ export function PlaybackControls() {
     <>
       <ProgressBar progressValueState={[progressValue, setProgressValue]} />
       <div className={styles.playback}>
-        {status != Status.Stopped && (
+        {metadata && (
           <div className={styles.time}>{formatDuration(progressValue)}</div>
         )}
         <div className={styles.controls}>
@@ -109,7 +109,7 @@ export function PlaybackControls() {
             {repeatMode == RepeatMode.One ? <RepeatOneIcon /> : <RepeatIcon />}
           </button>
         </div>
-        {status != Status.Stopped && (
+        {metadata && (
           <button
             className={`${styles.time} ${styles.durationButton}`}
             onClick={() => {
