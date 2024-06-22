@@ -10,7 +10,7 @@ import {
 } from "@ag-grid-community/core";
 import { nanoid } from "@reduxjs/toolkit";
 import { t } from "i18next";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { replace } from "redux-first-history";
 import { store } from "../app/store";
 import { addTracksToPlaylist } from "../features/playlists/playlistsSlice";
@@ -26,6 +26,7 @@ export function useTrackGrid() {
   const dispatch = useAppDispatch();
   const { gridRef } = useContext(GridContext);
   const location = useLocation();
+  const [isGridReady, setIsGridReady] = useState(false);
 
   const getRowId = (params: GetRowIdParams) => params.data.itemId;
 
@@ -39,9 +40,14 @@ export function useTrackGrid() {
     return sortedSelectedTracks;
   };
 
-  const focusCurrentIfNeeded = useCallback(() => {
+  useEffect(() => {
     const currentTrack = selectCurrentTrack(store.getState());
-    if (location.state?.focusCurrent && gridRef?.current?.api && currentTrack) {
+    if (
+      isGridReady &&
+      location.state?.focusCurrent &&
+      gridRef?.current?.api &&
+      currentTrack
+    ) {
       const row = gridRef.current.api.getRowNode(currentTrack.itemId);
       if (row != null && row.rowIndex != null) {
         gridRef.current.api.ensureIndexVisible(row.rowIndex, "middle");
@@ -50,17 +56,16 @@ export function useTrackGrid() {
         dispatch(replace(location.pathname, {}));
       }
     }
-  }, [dispatch, gridRef, location.pathname, location.state?.focusCurrent]);
-
-  useEffect(() => {
-    focusCurrentIfNeeded();
-  }, [focusCurrentIfNeeded, location]);
-
-  const [isGridReady, setIsGridReady] = useState(false);
+  }, [
+    dispatch,
+    gridRef,
+    isGridReady,
+    location.pathname,
+    location.state?.focusCurrent
+  ]);
 
   const handleGridReady = (params: GridReadyEvent) => {
     dispatch(setSelectedTracks([]));
-    focusCurrentIfNeeded();
 
     let lastHoveredItem: HTMLElement | null = null;
     const treeElement = document.querySelector('[role="tree"]') as HTMLElement;
