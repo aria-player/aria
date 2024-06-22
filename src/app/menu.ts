@@ -451,7 +451,7 @@ export const selectMenuState = createSelector(
         disabled: state.player.status == Status.Stopped
       },
       goToCurrent: {
-        disabled: state.player.status == Status.Stopped
+        disabled: !state.player.currentTrack
       },
       undo: {
         disabled: !state.undoable.past.length
