@@ -1,7 +1,6 @@
 import { Item, Separator, Submenu, useContextMenu } from "react-contexify";
 import { MenuContext } from "../../../contexts/MenuContext";
 import { useContext } from "react";
-import { GridContext } from "../../../contexts/GridContext";
 import { t } from "i18next";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import {
@@ -12,7 +11,7 @@ import {
 import { Item as TreeItem } from "soprano-ui";
 import { nanoid } from "@reduxjs/toolkit";
 import { PlaylistItem } from "../../../features/playlists/playlistsTypes";
-import { store } from "../../../app/store";
+import { selectSelectedTracks } from "../../../features/tracks/tracksSlice";
 import { LibraryView, TrackGrouping } from "../../../app/view";
 import { addTracksToUpNext } from "../../../features/player/playerSlice";
 import {
@@ -31,15 +30,19 @@ export function TrackMenuItems() {
   const dispatch = useAppDispatch();
   const { hideAll } = useContextMenu();
   const { menuData } = useContext(MenuContext);
-  const gridRef = useContext(GridContext).gridRef;
   const playlists = useAppSelector(selectPlaylistsLayout);
   const visibleView = useAppSelector(selectVisibleViewType);
   const visibleSelectedGroup = useAppSelector(selectVisibleSelectedTrackGroup);
+  const selectedTracks = useAppSelector(selectSelectedTracks);
   const librarySplitViewStates = useAppSelector(selectLibrarySplitViewStates);
 
+  const tracksForActions =
+    menuData?.type == "track" && menuData.metadata
+      ? [menuData.metadata]
+      : selectedTracks;
+
   const addTracks = (playlistId: string) => {
-    const newItems: PlaylistItem[] = gridRef?.current?.api
-      .getSelectedRows()
+    const newItems: PlaylistItem[] = tracksForActions
       .map((node) => {
         return { itemId: nanoid(), trackId: node.trackId };
       })
@@ -186,7 +189,7 @@ export function TrackMenuItems() {
           dispatch(
             addTracksToUpNext({
               dropIndex: 0,
-              tracks: store.getState().tracks.selectedTracks.map((track) => ({
+              tracks: tracksForActions.map((track) => ({
                 trackId: track.trackId,
                 itemId: nanoid()
               }))
@@ -200,7 +203,7 @@ export function TrackMenuItems() {
         onClick={() => {
           dispatch(
             addTracksToUpNext({
-              tracks: store.getState().tracks.selectedTracks.map((track) => ({
+              tracks: tracksForActions.map((track) => ({
                 trackId: track.trackId,
                 itemId: nanoid()
               }))
