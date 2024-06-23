@@ -1,11 +1,12 @@
 import { useContext } from "react";
-import { Item, Menu } from "react-contexify";
+import { Menu } from "react-contexify";
 import { MenuContext } from "../../contexts/MenuContext";
+import { TrackMenuItems } from "./items/TrackMenuItems";
 
 const id = "track";
 
 export function TrackContextMenu() {
-  const { updateVisibility, menuData } = useContext(MenuContext);
+  const { updateVisibility } = useContext(MenuContext);
 
   return (
     <Menu
@@ -17,7 +18,7 @@ export function TrackContextMenu() {
       animation={false}
       onVisibilityChange={(isVisible) => updateVisibility(id, isVisible)}
     >
-      <Item>{menuData?.metadata?.title}</Item>
+      <TrackMenuItems />
     </Menu>
   );
 }
