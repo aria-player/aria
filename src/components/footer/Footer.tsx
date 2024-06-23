@@ -7,12 +7,19 @@ import { useMenuActions } from "../../hooks/useMenuActions";
 import { formatStringArray } from "../../app/utils";
 import { selectCurrentTrack } from "../../features/currentSelectors";
 import { useTranslation } from "react-i18next";
+import { TriggerEvent, useContextMenu } from "react-contexify";
+import { useContext } from "react";
+import { MenuContext } from "../../contexts/MenuContext";
 
 export function Footer() {
   const { t } = useTranslation();
   const metadata = useAppSelector(selectCurrentTrack);
   const currentTrack = useAppSelector(selectCurrentTrack);
   const { invokeMenuAction } = useMenuActions();
+  const { setMenuData } = useContext(MenuContext);
+  const { show: showTrackContextMenu } = useContextMenu({
+    id: "track"
+  });
 
   return (
     <footer className={styles.footer}>
@@ -28,6 +35,16 @@ export function Footer() {
                 onClick={() => {
                   if (!metadata) return;
                   invokeMenuAction("goToCurrent");
+                }}
+                onContextMenu={(event) => {
+                  setMenuData({
+                    itemId: metadata.itemId,
+                    itemSource: undefined,
+                    itemIndex: undefined,
+                    metadata: metadata,
+                    type: "track"
+                  });
+                  showTrackContextMenu({ event: event as TriggerEvent });
                 }}
                 title={t("menu.goToCurrent")}
               >

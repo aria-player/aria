@@ -7,7 +7,7 @@ type MenuData = {
   itemSource?: string;
   itemIndex?: number;
   metadata?: Track;
-  type: "sidebaritem" | "tracklistitem";
+  type: "sidebaritem" | "tracklistitem" | "track";
 };
 
 export const MenuContext = createContext<{
