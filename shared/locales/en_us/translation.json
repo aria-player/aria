@@ -43,7 +43,8 @@
     "playNamedTrack": "Play '{{title}}'",
     "playNext": "Play next",
     "addToQueue": "Add to queue",
-    "goToAlbum": "Go to album"
+    "goToAlbum": "Go to album",
+    "goToArtist": "Go to artist"
   },
   "views": {
     "songs": "Songs",

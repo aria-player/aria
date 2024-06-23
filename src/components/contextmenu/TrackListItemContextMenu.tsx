@@ -22,7 +22,7 @@ import { nanoid } from "@reduxjs/toolkit";
 import { PlaylistItem } from "../../features/playlists/playlistsTypes";
 import { selectSelectedTracks } from "../../features/tracks/tracksSlice";
 import { store } from "../../app/store";
-import { DisplayMode, LibraryView, View } from "../../app/view";
+import { DisplayMode, LibraryView, TrackGrouping, View } from "../../app/view";
 import {
   addTracksToUpNext,
   removeFromQueue,
@@ -45,7 +45,11 @@ import {
 } from "../../features/search/searchSlice";
 import { BASEPATH } from "../../app/constants";
 import { push } from "redux-first-history";
-import { setSelectedAlbum } from "../../features/library/librarySlice";
+import {
+  selectLibrarySplitViewStates,
+  setSelectedAlbum,
+  updateLibrarySplitState
+} from "../../features/library/librarySlice";
 const id = "tracklistitem";
 
 export function TrackListItemContextMenu() {
@@ -58,6 +62,7 @@ export function TrackListItemContextMenu() {
   const visibleView = useAppSelector(selectVisibleViewType);
   const visibleSelectedGroup = useAppSelector(selectVisibleSelectedTrackGroup);
   const selectedTracks = useAppSelector(selectSelectedTracks);
+  const librarySplitViewStates = useAppSelector(selectLibrarySplitViewStates);
 
   const addTracks = (playlistId: string) => {
     const newItems: PlaylistItem[] = gridRef?.current?.api
@@ -97,6 +102,41 @@ export function TrackListItemContextMenu() {
       }
     });
   };
+
+  const showGoTo = (
+    view: LibraryView,
+    group?: string | string[],
+    grouping?: TrackGrouping
+  ) =>
+    group != null &&
+    !(visibleView == view && visibleSelectedGroup == group) &&
+    (grouping === undefined ||
+      librarySplitViewStates[view].trackGrouping == grouping);
+
+  const showGoToAlbum = showGoTo(LibraryView.Albums, menuData?.metadata?.album);
+  const showGoToAlbumArtist = showGoTo(
+    LibraryView.Artists,
+    menuData?.metadata?.albumArtist,
+    TrackGrouping.AlbumArtist
+  );
+  const showGoToArtist = showGoTo(
+    LibraryView.Artists,
+    menuData?.metadata?.artist,
+    TrackGrouping.Artist
+  );
+
+  function goToArtist(artist?: string | string[]) {
+    dispatch(push(BASEPATH + "artists"));
+    dispatch(
+      updateLibrarySplitState({
+        view: LibraryView.Artists,
+        splitState: {
+          selectedGroup: Array.isArray(artist) ? artist[0] : artist
+        }
+      })
+    );
+    hideAll();
+  }
 
   const renderItems = (items: TreeItem[], parentId?: string) => {
     return (
@@ -178,25 +218,47 @@ export function TrackListItemContextMenu() {
         })}
       </Item>
       <Separator />
-      {menuData?.metadata?.album != null &&
-        !(
-          visibleView == LibraryView.Albums &&
-          visibleSelectedGroup == menuData.metadata.album
-        ) && (
-          <>
-            <Item
-              onClick={() => {
-                if (menuData?.metadata?.album == undefined) return;
-                dispatch(push(BASEPATH + "albums"));
-                dispatch(setSelectedAlbum(menuData.metadata.album));
-                hideAll();
-              }}
-            >
-              {t("tracks.goToAlbum")}
-            </Item>
-            <Separator />
-          </>
-        )}
+      {showGoToAlbum && (
+        <>
+          <Item
+            onClick={() => {
+              if (menuData?.metadata?.album == undefined) return;
+              dispatch(push(BASEPATH + "albums"));
+              dispatch(setSelectedAlbum(menuData.metadata.album));
+              hideAll();
+            }}
+          >
+            {t("tracks.goToAlbum")}
+          </Item>
+        </>
+      )}
+      {showGoToAlbumArtist ? (
+        <Item onClick={() => goToArtist(menuData?.metadata?.albumArtist)}>
+          {t("tracks.goToArtist")}
+        </Item>
+      ) : showGoToArtist ? (
+        menuData?.metadata?.artist &&
+        Array.isArray(menuData.metadata.artist) &&
+        menuData.metadata.artist.length > 1 ? (
+          <Submenu label={t("tracks.goToArtist")}>
+            {menuData.metadata.artist.map(
+              (artist) =>
+                showGoTo(LibraryView.Artists, artist, TrackGrouping.Artist) && (
+                  <Item onClick={() => goToArtist(artist)} key={artist}>
+                    {artist}
+                  </Item>
+                )
+            )}
+          </Submenu>
+        ) : (
+          <Item onClick={() => goToArtist(menuData?.metadata?.artist)}>
+            {t("tracks.goToArtist")}
+          </Item>
+        )
+      ) : null}
+      {(showGoToAlbum || showGoToAlbumArtist || showGoToArtist) && (
+        <Separator />
+      )}
       <Item
         onClick={() => {
           dispatch(
