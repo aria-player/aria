@@ -7,7 +7,7 @@ import { MenuContext } from "../../contexts/MenuContext";
 
 const id = "tracklistheader";
 
-export function ColumnVisibilityContextMenu() {
+export function TrackListHeaderContextMenu() {
   const { updateVisibility } = useContext(MenuContext);
 
   const columns = (

@@ -1,4 +1,4 @@
-import { ColumnVisibilityContextMenu } from "./ColumnVisibilityContextMenu";
+import { TrackListHeaderContextMenu } from "./TrackListHeaderContextMenu";
 import { SidebarItemContextMenu } from "./SidebarItemContextMenu";
 import { SidebarLibraryContextMenu } from "./SidebarLibraryContextMenu";
 import { SidebarPlaylistsContextMenu } from "./SidebarPlaylistsContextMenu";
@@ -8,7 +8,7 @@ import { TrackListItemContextMenu } from "./TrackListItemContextMenu";
 export function ContextMenuContainer() {
   return (
     <>
-      <ColumnVisibilityContextMenu />
+      <TrackListHeaderContextMenu />
       <SidebarLibraryContextMenu />
       <SidebarPlaylistsContextMenu />
       <SidebarItemContextMenu />
