@@ -1,4 +1,10 @@
-import { Item, Menu, Separator, Submenu } from "react-contexify";
+import {
+  Item,
+  Menu,
+  Separator,
+  Submenu,
+  useContextMenu
+} from "react-contexify";
 import { MenuContext } from "../../contexts/MenuContext";
 import { useContext } from "react";
 import { GridContext } from "../../contexts/GridContext";
@@ -37,15 +43,20 @@ import {
   addToSearchHistory,
   selectSearch
 } from "../../features/search/searchSlice";
+import { BASEPATH } from "../../app/constants";
+import { push } from "redux-first-history";
+import { setSelectedAlbum } from "../../features/library/librarySlice";
 const id = "tracklistitem";
 
 export function TrackListItemContextMenu() {
   const dispatch = useAppDispatch();
+  const { hideAll } = useContextMenu();
   const { updateVisibility, menuData } = useContext(MenuContext);
   const gridRef = useContext(GridContext).gridRef;
   const playlists = useAppSelector(selectPlaylistsLayout);
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
   const visibleView = useAppSelector(selectVisibleViewType);
+  const visibleSelectedGroup = useAppSelector(selectVisibleSelectedTrackGroup);
   const selectedTracks = useAppSelector(selectSelectedTracks);
 
   const addTracks = (playlistId: string) => {
@@ -167,6 +178,25 @@ export function TrackListItemContextMenu() {
         })}
       </Item>
       <Separator />
+      {menuData?.metadata?.album != null &&
+        !(
+          visibleView == LibraryView.Albums &&
+          visibleSelectedGroup == menuData.metadata.album
+        ) && (
+          <>
+            <Item
+              onClick={() => {
+                if (menuData?.metadata?.album == undefined) return;
+                dispatch(push(BASEPATH + "albums"));
+                dispatch(setSelectedAlbum(menuData.metadata.album));
+                hideAll();
+              }}
+            >
+              {t("tracks.goToAlbum")}
+            </Item>
+            <Separator />
+          </>
+        )}
       <Item
         onClick={() => {
           dispatch(

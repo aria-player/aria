@@ -42,7 +42,8 @@
     "emptyQueue": "Queue is empty",
     "playNamedTrack": "Play '{{title}}'",
     "playNext": "Play next",
-    "addToQueue": "Add to queue"
+    "addToQueue": "Add to queue",
+    "goToAlbum": "Go to album"
   },
   "views": {
     "songs": "Songs",
