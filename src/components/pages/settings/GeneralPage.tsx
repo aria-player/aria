@@ -44,13 +44,12 @@ export function GeneralPage() {
   };
 
   return (
-    <div>
-      <h3 className={styles.title}>{t("settings.sections.general")}</h3>
+    <div className={styles.page}>
+      <h3>{t("settings.sections.general")}</h3>
       <p>{t("settings.general.subtitle")}</p>
-      <hr className={styles.divider} />
-      <h4 className={styles.header}>{t("settings.general.language")}</h4>
+      <hr />
+      <h4>{t("settings.general.language")}</h4>
       <select
-        className={styles.select}
         onChange={handleLanguageChange}
         defaultValue={language ?? "default"}
       >
@@ -63,7 +62,7 @@ export function GeneralPage() {
       </select>
       {isTauri() && platform != Platform.Mac && (
         <>
-          <h4 className={styles.header}>{t("settings.general.behaviour")}</h4>
+          <h4>{t("settings.general.behaviour")}</h4>
           <div>
             <input
               className={styles.checkbox}

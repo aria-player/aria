@@ -25,16 +25,14 @@ export function LibraryPage() {
   );
 
   return (
-    <>
-      <h3 className={styles.title}>{t("settings.sections.library")}</h3>
+    <div className={styles.page}>
+      <h3>{t("settings.sections.library")}</h3>
       <p>{t("settings.library.subtitle")}</p>
-      <hr className={styles.divider} />
+      <hr />
       {activeSourcePlugins.length == 0 ? (
         <>
           <h4>{t("settings.library.noSources")}</h4>
-          <i className={styles.header}>
-            {t("settings.library.noSourcesDetail")}
-          </i>
+          <i>{t("settings.library.noSourcesDetail")}</i>
         </>
       ) : (
         <>
@@ -61,7 +59,7 @@ export function LibraryPage() {
 
         return (
           <React.Fragment key={plugin}>
-            <h4 className={styles.header}>
+            <h4>
               {t("settings.library.managePlugin", {
                 plugin: plugins[plugin].name
               })}
@@ -72,6 +70,6 @@ export function LibraryPage() {
           </React.Fragment>
         );
       })}
-    </>
+    </div>
   );
 }

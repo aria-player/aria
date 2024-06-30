@@ -6,11 +6,11 @@ export function AboutPage() {
   const { t } = useTranslation();
 
   return (
-    <>
-      <h3 className={styles.title}>{t("settings.sections.about")}</h3>
+    <div className={styles.page}>
+      <h3>{t("settings.sections.about")}</h3>
       <p>{t("settings.about.subtitle")}</p>
-      <hr className={styles.divider} />
-      <h4 className={styles.header}>{t("settings.about.version")}</h4>
+      <hr />
+      <h4>{t("settings.about.version")}</h4>
       1.0
       <br />
       <button
@@ -24,6 +24,6 @@ export function AboutPage() {
       >
         {t("settings.about.reset")}
       </button>
-    </>
+    </div>
   );
 }

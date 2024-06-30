@@ -28,13 +28,11 @@ export function PluginsPage() {
   );
 
   return (
-    <>
-      <h3 className={styles.title}>{t("settings.sections.plugins")}</h3>
+    <div className={styles.page}>
+      <h3>{t("settings.sections.plugins")}</h3>
       <p>{t("settings.plugins.subtitle")}</p>
-      <hr className={styles.divider} />
-      <h4 className={styles.header}>
-        {t("settings.plugins.availablePlugins")}
-      </h4>
+      <hr />
+      <h4>{t("settings.plugins.availablePlugins")}</h4>
       {Object.keys(plugins).map(
         (plugin, index) =>
           shouldShowPlugin(plugin) && (
@@ -71,7 +69,7 @@ export function PluginsPage() {
         <i>{t("settings.plugins.configureSources")}</i>
       </p>
       {activeNonSourcePlugins.length > 0 && (
-        <h4 className={styles.header}>{t("settings.plugins.pluginConfig")}</h4>
+        <h4>{t("settings.plugins.pluginConfig")}</h4>
       )}
       {activeNonSourcePlugins?.map((plugin: PluginId) => {
         const pluginHandle = pluginHandles[plugin];
@@ -83,6 +81,6 @@ export function PluginsPage() {
           </React.Fragment>
         );
       })}
-    </>
+    </div>
   );
 }

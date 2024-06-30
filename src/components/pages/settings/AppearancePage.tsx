@@ -37,16 +37,12 @@ export function AppearancePage() {
   const accentsEnabled = Themes[currentTheme].supportsAccent;
 
   return (
-    <div>
-      <h3 className={styles.title}>{t("settings.sections.appearance")}</h3>
+    <div className={styles.page}>
+      <h3>{t("settings.sections.appearance")}</h3>
       <p>{t("settings.appearance.subtitle")}</p>
-      <hr className={styles.divider} />
-      <h4 className={styles.header}>{t("settings.appearance.theme")}</h4>
-      <select
-        className={styles.select}
-        value={currentTheme}
-        onChange={handleThemeChange}
-      >
+      <hr />
+      <h4>{t("settings.appearance.theme")}</h4>
+      <select value={currentTheme} onChange={handleThemeChange}>
         {Object.keys(Themes).map((theme) => (
           <option key={theme} value={theme}>
             {Themes[theme as keyof typeof Themes].label}
@@ -64,9 +60,7 @@ export function AppearancePage() {
           {t("settings.appearance.windowsControls")}
         </div>
       )}
-      <h4
-        className={`${styles.header} ${!accentsEnabled ? styles.disabledSection : ""}`}
-      >
+      <h4 className={`${!accentsEnabled ? styles.disabledSection : ""}`}>
         {t("settings.appearance.accent")}
       </h4>
       <div className={styles.accentContainer}>
