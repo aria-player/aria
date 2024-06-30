@@ -49,6 +49,7 @@ export function AppearancePage() {
           </option>
         ))}
       </select>
+      <h4>{t("settings.appearance.window")}</h4>
       {isTauri() && platform == Platform.Windows && (
         <div>
           <input

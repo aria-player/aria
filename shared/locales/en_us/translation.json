@@ -92,6 +92,7 @@
     "appearance": {
       "subtitle": "Adjust the theme and layout of the application.",
       "theme": "Theme",
+      "window": "Window",
       "windowsControls": "Use system window controls",
       "accent": "Accent color"
     },
@@ -106,6 +107,7 @@
       "subtitle": "View information about the application.",
       "version": "Version",
       "reset": "Factory reset",
+      "resetApplication": "Reset application",
       "confirmReset": "Are you sure you want to reset? All data and settings will be deleted."
     }
   },

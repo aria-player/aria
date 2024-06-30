@@ -12,7 +12,7 @@ export function AboutPage() {
       <hr />
       <h4>{t("settings.about.version")}</h4>
       1.0
-      <br />
+      <h4>{t("settings.about.reset")}</h4>
       <button
         onClick={async () => {
           const confirmed = await confirm(t("settings.about.confirmReset"));
@@ -22,7 +22,7 @@ export function AboutPage() {
           }
         }}
       >
-        {t("settings.about.reset")}
+        {t("settings.about.resetApplication")}
       </button>
     </div>
   );
