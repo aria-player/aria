@@ -2,7 +2,6 @@ import { useTranslation } from "react-i18next";
 import styles from "./settings.module.css";
 import { plugins } from "../../../plugins/plugins";
 import { PluginId } from "../../../features/plugins/pluginsTypes";
-import React from "react";
 import { useAppSelector } from "../../../app/hooks";
 import {
   pluginHandles,
@@ -30,12 +29,12 @@ export function LibraryPage() {
       <p>{t("settings.library.subtitle")}</p>
       <hr />
       {activeSourcePlugins.length == 0 ? (
-        <>
+        <section>
           <h4>{t("settings.library.noSources")}</h4>
           <i>{t("settings.library.noSourcesDetail")}</i>
-        </>
+        </section>
       ) : (
-        <>
+        <section>
           <h4>{t("settings.library.info")}</h4>
           {scannedTracks == totalTracks ? (
             t("settings.library.tracksCount", {
@@ -51,14 +50,14 @@ export function LibraryPage() {
               <progress value={scannedTracks} max={totalTracks} />
             </>
           )}
-        </>
+        </section>
       )}
       {activePlugins?.map((plugin: PluginId) => {
         const pluginHandle = pluginHandles[plugin];
         if (plugins[plugin].type != "source") return null;
 
         return (
-          <React.Fragment key={plugin}>
+          <section key={plugin}>
             <h4>
               {t("settings.library.managePlugin", {
                 plugin: plugins[plugin].name
@@ -67,7 +66,7 @@ export function LibraryPage() {
             {pluginHandle?.Config && (
               <pluginHandle.Config data={pluginData[plugin] ?? {}} />
             )}
-          </React.Fragment>
+          </section>
         );
       })}
     </div>

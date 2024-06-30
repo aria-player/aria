@@ -10,20 +10,24 @@ export function AboutPage() {
       <h3>{t("settings.sections.about")}</h3>
       <p>{t("settings.about.subtitle")}</p>
       <hr />
-      <h4>{t("settings.about.version")}</h4>
-      1.0
-      <h4>{t("settings.about.reset")}</h4>
-      <button
-        onClick={async () => {
-          const confirmed = await confirm(t("settings.about.confirmReset"));
-          if (confirmed) {
-            await localforage.clear();
-            window.location.reload();
-          }
-        }}
-      >
-        {t("settings.about.resetApplication")}
-      </button>
+      <section>
+        <h4>{t("settings.about.version")}</h4>
+        1.0
+      </section>
+      <section>
+        <h4>{t("settings.about.reset")}</h4>
+        <button
+          onClick={async () => {
+            const confirmed = await confirm(t("settings.about.confirmReset"));
+            if (confirmed) {
+              await localforage.clear();
+              window.location.reload();
+            }
+          }}
+        >
+          {t("settings.about.resetApplication")}
+        </button>
+      </section>
     </div>
   );
 }

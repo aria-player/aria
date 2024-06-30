@@ -48,20 +48,24 @@ export function GeneralPage() {
       <h3>{t("settings.sections.general")}</h3>
       <p>{t("settings.general.subtitle")}</p>
       <hr />
-      <h4>{t("settings.general.language")}</h4>
-      <select
-        onChange={handleLanguageChange}
-        defaultValue={language ?? "default"}
-      >
-        <option value="default">{t("settings.general.defaultLanguage")}</option>
-        {Object.entries(supportedLanguages).map(([langCode, { title }]) => (
-          <option key={langCode} value={langCode}>
-            {title}
+      <section>
+        <h4>{t("settings.general.language")}</h4>
+        <select
+          onChange={handleLanguageChange}
+          defaultValue={language ?? "default"}
+        >
+          <option value="default">
+            {t("settings.general.defaultLanguage")}
           </option>
-        ))}
-      </select>
+          {Object.entries(supportedLanguages).map(([langCode, { title }]) => (
+            <option key={langCode} value={langCode}>
+              {title}
+            </option>
+          ))}
+        </select>
+      </section>
       {isTauri() && platform != Platform.Mac && (
-        <>
+        <section>
           <h4>{t("settings.general.behaviour")}</h4>
           <div>
             <input
@@ -72,7 +76,7 @@ export function GeneralPage() {
             />
             {t("settings.general.minimiseToTray")}
           </div>
-        </>
+        </section>
       )}
     </div>
   );

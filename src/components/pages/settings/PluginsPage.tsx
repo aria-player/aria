@@ -32,55 +32,59 @@ export function PluginsPage() {
       <h3>{t("settings.sections.plugins")}</h3>
       <p>{t("settings.plugins.subtitle")}</p>
       <hr />
-      <h4>{t("settings.plugins.availablePlugins")}</h4>
-      {Object.keys(plugins).map(
-        (plugin, index) =>
-          shouldShowPlugin(plugin) && (
-            <React.Fragment key={index}>
-              <input
-                type="checkbox"
-                readOnly
-                checked={activePlugins.includes(plugin)}
-                onClick={async () => {
-                  if (activePlugins.includes(plugin)) {
-                    const confirmed = await confirm(
-                      t("settings.plugins.confirmDisable", {
-                        plugin: plugins[plugin].name
+      <section>
+        <h4>{t("settings.plugins.availablePlugins")}</h4>
+        {Object.keys(plugins).map(
+          (plugin, index) =>
+            shouldShowPlugin(plugin) && (
+              <React.Fragment key={index}>
+                <input
+                  type="checkbox"
+                  readOnly
+                  checked={activePlugins.includes(plugin)}
+                  onClick={async () => {
+                    if (activePlugins.includes(plugin)) {
+                      const confirmed = await confirm(
+                        t("settings.plugins.confirmDisable", {
+                          plugin: plugins[plugin].name
+                        })
+                      );
+                      if (!confirmed) {
+                        return;
+                      }
+                    }
+                    dispatch(
+                      setPluginActive({
+                        plugin: plugin,
+                        active: !activePlugins.includes(plugin)
                       })
                     );
-                    if (!confirmed) {
-                      return;
-                    }
-                  }
-                  dispatch(
-                    setPluginActive({
-                      plugin: plugin,
-                      active: !activePlugins.includes(plugin)
-                    })
-                  );
-                }}
-              />
-              {plugins[plugin].name}
-              <br />
+                  }}
+                />
+                {plugins[plugin].name}
+                <br />
+              </React.Fragment>
+            )
+        )}
+        <p>
+          <i>{t("settings.plugins.configureSources")}</i>
+        </p>
+      </section>
+      <section>
+        {activeNonSourcePlugins.length > 0 && (
+          <h4>{t("settings.plugins.pluginConfig")}</h4>
+        )}
+        {activeNonSourcePlugins?.map((plugin: PluginId) => {
+          const pluginHandle = pluginHandles[plugin];
+          return (
+            <React.Fragment key={plugin}>
+              {pluginHandle?.Config && (
+                <pluginHandle.Config data={pluginData[plugin] ?? {}} />
+              )}
             </React.Fragment>
-          )
-      )}
-      <p>
-        <i>{t("settings.plugins.configureSources")}</i>
-      </p>
-      {activeNonSourcePlugins.length > 0 && (
-        <h4>{t("settings.plugins.pluginConfig")}</h4>
-      )}
-      {activeNonSourcePlugins?.map((plugin: PluginId) => {
-        const pluginHandle = pluginHandles[plugin];
-        return (
-          <React.Fragment key={plugin}>
-            {pluginHandle?.Config && (
-              <pluginHandle.Config data={pluginData[plugin] ?? {}} />
-            )}
-          </React.Fragment>
-        );
-      })}
+          );
+        })}
+      </section>
     </div>
   );
 }

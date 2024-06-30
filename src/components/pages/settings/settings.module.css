@@ -18,14 +18,31 @@
   border-top: 1px solid var(--sidebar-separator);
 }
 
+.page section {
+  margin-bottom: 2rem;
+}
+
 .page select {
   width: 100%;
   padding: 0.5rem 1rem;
   border-radius: 0.25rem;
   background-color: var(--input-background);
   color: var(--text-color);
-  margin-bottom: 1.5rem;
   font-size: 0.9rem;
+}
+
+.page button:not(.accentButton) {
+  background-color: transparent;
+  border: 1px solid var(--player-controls);
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.page button:hover:not(.accentButton) {
+  background-color: var(--button-background-hover);
 }
 
 .checkbox {

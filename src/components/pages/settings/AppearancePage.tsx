@@ -41,41 +41,49 @@ export function AppearancePage() {
       <h3>{t("settings.sections.appearance")}</h3>
       <p>{t("settings.appearance.subtitle")}</p>
       <hr />
-      <h4>{t("settings.appearance.theme")}</h4>
-      <select value={currentTheme} onChange={handleThemeChange}>
-        {Object.keys(Themes).map((theme) => (
-          <option key={theme} value={theme}>
-            {Themes[theme as keyof typeof Themes].label}
-          </option>
-        ))}
-      </select>
-      <h4>{t("settings.appearance.window")}</h4>
-      {isTauri() && platform == Platform.Windows && (
-        <div>
-          <input
-            className={styles.checkbox}
-            type="checkbox"
-            checked={decorations ?? false}
-            onChange={handleCheckboxChange}
-          />
-          {t("settings.appearance.windowsControls")}
+      <section>
+        <h4>{t("settings.appearance.theme")}</h4>
+        <select value={currentTheme} onChange={handleThemeChange}>
+          {Object.keys(Themes).map((theme) => (
+            <option key={theme} value={theme}>
+              {Themes[theme as keyof typeof Themes].label}
+            </option>
+          ))}
+        </select>
+      </section>
+      <section>
+        <h4>{t("settings.appearance.window")}</h4>
+        {isTauri() && platform == Platform.Windows && (
+          <div>
+            <input
+              className={styles.checkbox}
+              type="checkbox"
+              checked={decorations ?? false}
+              onChange={handleCheckboxChange}
+            />
+            {t("settings.appearance.windowsControls")}
+          </div>
+        )}
+      </section>
+      <section>
+        <h4 className={`${!accentsEnabled ? styles.disabledSection : ""}`}>
+          {t("settings.appearance.accent")}
+        </h4>
+        <div className={styles.accentContainer}>
+          {Object.keys(AccentColors).map((color) => (
+            <button
+              key={color}
+              title={t(`accentColors.${color}`)}
+              style={{ backgroundColor: AccentColors[color] }}
+              className={`${styles.accentButton} ${currentAccentColor === color ? styles.selected : ""}`}
+              onClick={() =>
+                accentsEnabled ? handleAccentChange(color) : null
+              }
+              disabled={!accentsEnabled}
+            ></button>
+          ))}
         </div>
-      )}
-      <h4 className={`${!accentsEnabled ? styles.disabledSection : ""}`}>
-        {t("settings.appearance.accent")}
-      </h4>
-      <div className={styles.accentContainer}>
-        {Object.keys(AccentColors).map((color) => (
-          <button
-            key={color}
-            title={t(`accentColors.${color}`)}
-            style={{ backgroundColor: AccentColors[color] }}
-            className={`${styles.accentButton} ${currentAccentColor === color ? styles.selected : ""}`}
-            onClick={() => (accentsEnabled ? handleAccentChange(color) : null)}
-            disabled={!accentsEnabled}
-          ></button>
-        ))}
-      </div>
+      </section>
     </div>
   );
 }
