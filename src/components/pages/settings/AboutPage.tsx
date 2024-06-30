@@ -7,6 +7,9 @@ export function AboutPage() {
 
   return (
     <>
+      <h3 className={styles.title}>{t("settings.sections.about")}</h3>
+      <p>{t("settings.about.subtitle")}</p>
+      <hr className={styles.divider} />
       <h4 className={styles.header}>{t("settings.about.version")}</h4>
       1.0
       <br />

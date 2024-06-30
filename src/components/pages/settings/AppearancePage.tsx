@@ -38,6 +38,9 @@ export function AppearancePage() {
 
   return (
     <div>
+      <h3 className={styles.title}>{t("settings.sections.appearance")}</h3>
+      <p>{t("settings.appearance.subtitle")}</p>
+      <hr className={styles.divider} />
       <h4 className={styles.header}>{t("settings.appearance.theme")}</h4>
       <select
         className={styles.select}

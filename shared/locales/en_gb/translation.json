@@ -1,8 +1,12 @@
 {
   "settings": {
     "general": {
+      "subtitle": "Manage the application language and behaviour.",
       "behaviour": "Application behaviour",
       "minimiseToTray": "Close button minimises app to system tray"
+    },
+    "library": {
+      "subtitle": "Configure your music sources and organise your library."
     },
     "appearance": {
       "accent": "Accent colour"

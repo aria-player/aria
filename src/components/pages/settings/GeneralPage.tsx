@@ -45,6 +45,9 @@ export function GeneralPage() {
 
   return (
     <div>
+      <h3 className={styles.title}>{t("settings.sections.general")}</h3>
+      <p>{t("settings.general.subtitle")}</p>
+      <hr className={styles.divider} />
       <h4 className={styles.header}>{t("settings.general.language")}</h4>
       <select
         className={styles.select}

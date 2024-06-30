@@ -29,6 +29,9 @@ export function PluginsPage() {
 
   return (
     <>
+      <h3 className={styles.title}>{t("settings.sections.plugins")}</h3>
+      <p>{t("settings.plugins.subtitle")}</p>
+      <hr className={styles.divider} />
       <h4 className={styles.header}>
         {t("settings.plugins.availablePlugins")}
       </h4>

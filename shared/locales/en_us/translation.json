@@ -74,12 +74,14 @@
       "about": "About"
     },
     "general": {
+      "subtitle": "Manage the application language and behavior.",
       "language": "Language",
       "defaultLanguage": "System (default)",
       "behaviour": "Application behavior",
       "minimiseToTray": "Close button minimizes app to system tray"
     },
     "library": {
+      "subtitle": "Configure your music sources and organize your library.",
       "managePlugin": "Manage {{plugin}}",
       "noSources": "No sources",
       "noSourcesDetail": "No sources are enabled, please add a plugin that provides music.",
@@ -88,17 +90,20 @@
       "scanProgress": "Scanning in progress ({{scannedTracks}}/{{totalTracks}})"
     },
     "appearance": {
+      "subtitle": "Adjust the theme and layout of the application.",
       "theme": "Theme",
       "windowsControls": "Use system window controls",
       "accent": "Accent color"
     },
     "plugins": {
+      "subtitle": "Manage plugins to provide additional functionality.",
       "availablePlugins": "Available plugins",
       "configureSources": "Configure enabled music sources from the 'Library' tab.",
       "confirmDisable": "Are you sure you want to disable '{{plugin}}'?",
       "pluginConfig": "Plugin configuration"
     },
     "about": {
+      "subtitle": "View information about the application.",
       "version": "Version",
       "reset": "Factory reset",
       "confirmReset": "Are you sure you want to reset? All data and settings will be deleted."

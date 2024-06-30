@@ -26,6 +26,9 @@ export function LibraryPage() {
 
   return (
     <>
+      <h3 className={styles.title}>{t("settings.sections.library")}</h3>
+      <p>{t("settings.library.subtitle")}</p>
+      <hr className={styles.divider} />
       {activeSourcePlugins.length == 0 ? (
         <>
           <h4>{t("settings.library.noSources")}</h4>
