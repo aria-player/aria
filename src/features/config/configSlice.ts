@@ -1,6 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
-import { AccentColors } from "../../themes/themes";
 import { LibraryView } from "../../app/view";
 
 export interface ConfigState {
@@ -16,7 +15,7 @@ export interface ConfigState {
 
 const initialState: ConfigState = {
   theme: "system",
-  accentColor: AccentColors["blue"],
+  accentColor: "blue",
   language: null,
   displayRemainingTime: false,
   sidebarWidth: 220,
