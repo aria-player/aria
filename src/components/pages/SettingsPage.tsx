@@ -21,17 +21,17 @@ export default function SettingsPage() {
           className={({ isActive }) =>
             `${styles.link} ${isActive ? styles.selected : ""}`
           }
-          to={"library"}
+          to={"appearance"}
         >
-          {t("settings.sections.library")}
+          {t("settings.sections.appearance")}
         </NavLink>
         <NavLink
           className={({ isActive }) =>
             `${styles.link} ${isActive ? styles.selected : ""}`
           }
-          to={"appearance"}
+          to={"library"}
         >
-          {t("settings.sections.appearance")}
+          {t("settings.sections.library")}
         </NavLink>
         <NavLink
           className={({ isActive }) =>

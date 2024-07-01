@@ -28,29 +28,10 @@ export function LibraryPage() {
       <h3>{t("settings.sections.library")}</h3>
       <p>{t("settings.library.subtitle")}</p>
       <hr />
-      {activeSourcePlugins.length == 0 ? (
-        <section>
-          <h4>{t("settings.library.noSources")}</h4>
-          <i>{t("settings.library.noSourcesDetail")}</i>
-        </section>
-      ) : (
-        <section>
-          <h4>{t("settings.library.info")}</h4>
-          {scannedTracks == totalTracks ? (
-            t("settings.library.tracksCount", {
-              totalTracks
-            })
-          ) : (
-            <>
-              {t("settings.library.scanProgress", {
-                scannedTracks,
-                totalTracks
-              })}
-              <br />
-              <progress value={scannedTracks} max={totalTracks} />
-            </>
-          )}
-        </section>
+      {activeSourcePlugins.length == 0 && (
+        <div className={styles.alert}>
+          <i>{t("settings.library.noSources")}</i>
+        </div>
       )}
       {activePlugins?.map((plugin: PluginId) => {
         const pluginHandle = pluginHandles[plugin];
@@ -69,6 +50,23 @@ export function LibraryPage() {
           </section>
         );
       })}
+      <section>
+        <h4>{t("settings.library.info")}</h4>
+        {scannedTracks == totalTracks ? (
+          t("settings.library.tracksCount", {
+            totalTracks
+          })
+        ) : (
+          <>
+            {t("settings.library.scanProgress", {
+              scannedTracks,
+              totalTracks
+            })}
+            <br />
+            <progress value={scannedTracks} max={totalTracks} />
+          </>
+        )}
+      </section>
     </div>
   );
 }

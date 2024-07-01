@@ -74,3 +74,14 @@
 .accentButton.selected {
   border: 2px solid var(--focus-outline);
 }
+
+.alert {
+  margin: 1rem 0;
+  background-color: var(--search-background);
+  padding: 1rem;
+  border-radius: 0.25rem;
+}
+
+.alert h4 {
+  margin: 0.5rem 0;
+}

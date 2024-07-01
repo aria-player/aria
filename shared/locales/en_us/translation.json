@@ -83,9 +83,8 @@
     "library": {
       "subtitle": "Configure your music sources and organize your library.",
       "managePlugin": "Manage {{plugin}}",
-      "noSources": "No sources",
-      "noSourcesDetail": "No sources are enabled, please add a plugin that provides music.",
-      "info": "Library info",
+      "noSources": "No sources are enabled, please add a plugin that provides music.",
+      "info": "Statistics",
       "tracksCount": "Total tracks in library: {{totalTracks}}",
       "scanProgress": "Scanning in progress ({{scannedTracks}}/{{totalTracks}})"
     },
