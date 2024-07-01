@@ -2,11 +2,21 @@ import { invoke } from "@tauri-apps/api";
 import { type } from "@tauri-apps/api/os";
 import { appWindow } from "@tauri-apps/api/window";
 import { ReactNode, createContext, useEffect, useRef, useState } from "react";
-import { useAppSelector } from "../app/hooks";
+import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { selectMenuState } from "../app/menu";
 import { isTauri } from "../app/utils";
 import i18n from "../i18n";
 import { useMenuActions } from "../hooks/useMenuActions";
+import { replace } from "redux-first-history";
+import { BASEPATH } from "../app/constants";
+import {
+  selectInitialView,
+  selectLastView,
+  setLastView
+} from "../features/config/configSlice";
+import { store } from "../app/store";
+import { useLocation } from "react-router-dom";
+import { LibraryView } from "../app/view";
 
 export enum Platform {
   Unknown = "Unknown",
@@ -33,10 +43,13 @@ export const PlatformContext = createContext<{
 });
 
 export function PlatformProvider({ children }: { children: ReactNode }) {
+  const dispatch = useAppDispatch();
   const menuState = useAppSelector(selectMenuState);
   const { invokeMenuAction } = useMenuActions();
+  const location = useLocation();
 
   const listeningToTauri = useRef(false);
+  const [ready, setReady] = useState(false);
   const [platform, setPlatform] = useState<Platform>(Platform.Unknown);
   const [fullscreen, setFullscreen] = useState<boolean | null>(null);
   const [decorations, setDecorations] = useState<boolean | null>(null);
@@ -48,6 +61,16 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
       if (!isTauri()) {
         setPlatform(Platform.Web);
         return;
+      }
+      const initialView = selectInitialView(store.getState());
+      if (initialView == "continue") {
+        dispatch(
+          replace(window.location.origin + selectLastView(store.getState()))
+        );
+      } else if (initialView == LibraryView.Songs) {
+        dispatch(replace(window.location.origin + BASEPATH));
+      } else {
+        dispatch(replace(window.location.origin + BASEPATH + initialView));
       }
       const osType = await type();
       switch (osType) {
@@ -72,11 +95,18 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
           configItem: "minimisetotray"
         })
       );
+      setReady(true);
       invoke("ready");
     }
 
     initialise();
-  }, [platform]);
+  }, [dispatch, platform]);
+
+  useEffect(() => {
+    if (ready && selectInitialView(store.getState()) == "continue") {
+      dispatch(setLastView(location.pathname));
+    }
+  }, [dispatch, location.pathname, ready]);
 
   useEffect(() => {
     let unlisten: (() => void) | undefined;

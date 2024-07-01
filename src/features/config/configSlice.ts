@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 import { AccentColors } from "../../themes/themes";
+import { LibraryView } from "../../app/view";
 
 export interface ConfigState {
   theme: string;
@@ -9,6 +10,8 @@ export interface ConfigState {
   displayRemainingTime: boolean;
   sidebarWidth: number;
   sidebarCollapsed: boolean;
+  initialView: LibraryView | "continue";
+  lastView: string;
 }
 
 const initialState: ConfigState = {
@@ -17,7 +20,9 @@ const initialState: ConfigState = {
   language: null,
   displayRemainingTime: false,
   sidebarWidth: 220,
-  sidebarCollapsed: false
+  sidebarCollapsed: false,
+  initialView: LibraryView.Songs,
+  lastView: "/"
 };
 
 export const configSlice = createSlice({
@@ -42,6 +47,15 @@ export const configSlice = createSlice({
     ) => {
       state.sidebarWidth = action.payload.width;
       state.sidebarCollapsed = action.payload.collapsed;
+    },
+    setInitialView: (
+      state,
+      action: PayloadAction<LibraryView | "continue">
+    ) => {
+      state.initialView = action.payload;
+    },
+    setLastView: (state, action: PayloadAction<string>) => {
+      state.lastView = action.payload;
     }
   }
 });
@@ -51,7 +65,9 @@ export const {
   setAccentColor,
   setLanguage,
   setDisplayRemainingTime,
-  setSidebarConfig
+  setSidebarConfig,
+  setInitialView,
+  setLastView
 } = configSlice.actions;
 
 export const selectTheme = (state: RootState) => state.config.theme;
@@ -63,5 +79,7 @@ export const selectSidebarWidth = (state: RootState) =>
   state.config.sidebarWidth;
 export const selectSidebarCollapsed = (state: RootState) =>
   state.config.sidebarCollapsed;
+export const selectInitialView = (state: RootState) => state.config.initialView;
+export const selectLastView = (state: RootState) => state.config.lastView;
 
 export default configSlice.reducer;

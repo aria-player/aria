@@ -6,10 +6,14 @@ import { useTranslation } from "react-i18next";
 import { supportedLanguages } from "../../../i18n";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import {
+  selectInitialView,
   selectLanguage,
-  setLanguage
+  setInitialView,
+  setLanguage,
+  setLastView
 } from "../../../features/config/configSlice";
 import { invoke } from "@tauri-apps/api";
+import { LibraryView } from "../../../app/view";
 
 export function GeneralPage() {
   const { t, i18n } = useTranslation();
@@ -17,6 +21,7 @@ export function GeneralPage() {
   const language = useAppSelector(selectLanguage);
   const { platform, minimiseToTray, setMinimiseToTray } =
     useContext(PlatformContext);
+  const initialView = useAppSelector(selectInitialView);
 
   const handleCheckboxChange = async (
     event: React.ChangeEvent<HTMLInputElement>
@@ -43,6 +48,13 @@ export function GeneralPage() {
     }
   };
 
+  const handleInitialViewChange = (
+    event: React.ChangeEvent<HTMLSelectElement>
+  ) => {
+    dispatch(setInitialView(event.target.value as LibraryView | "continue"));
+    dispatch(setLastView(location.pathname));
+  };
+
   return (
     <div className={styles.page}>
       <h3>{t("settings.sections.general")}</h3>
@@ -64,6 +76,27 @@ export function GeneralPage() {
           ))}
         </select>
       </section>
+      {isTauri() && (
+        <section>
+          <h4>{t("settings.general.initialView")}</h4>
+          <div>
+            <select
+              onChange={handleInitialViewChange}
+              defaultValue={initialView}
+            >
+              {Object.values(LibraryView).map((view) => (
+                <option key={view} value={view}>
+                  {t("views." + view)}
+                </option>
+              ))}
+              <option key="continue" value="continue">
+                {t("settings.general.continueFromLastView")}
+              </option>
+            </select>
+            <p>{t("settings.general.initialViewLabel")}</p>
+          </div>
+        </section>
+      )}
       {isTauri() && platform != Platform.Mac && (
         <section>
           <h4>{t("settings.general.behaviour")}</h4>

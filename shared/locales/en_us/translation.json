@@ -77,6 +77,9 @@
       "subtitle": "Manage the application language and behavior.",
       "language": "Language",
       "defaultLanguage": "System (default)",
+      "initialView": "Initial view",
+      "continueFromLastView": "Continue from last open view",
+      "initialViewLabel": "Choose which view should appear when starting the application.",
       "behaviour": "Application behavior",
       "minimiseToTray": "Close button minimizes app to system tray"
     },
