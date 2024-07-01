@@ -74,14 +74,7 @@ fn main() {
                 std::thread::sleep(std::time::Duration::from_nanos(1));
             }
             if let WindowEvent::CloseRequested { api, .. } = e.event() {
-                #[cfg(target_os = "macos")]
-                {
-                    tauri::AppHandle::hide(&e.window().app_handle()).unwrap();
-                }
-                #[cfg(not(target_os = "macos"))]
-                {
-                    commands::close(e.window().app_handle());
-                }
+                commands::close(e.window().app_handle());
                 api.prevent_close();
             }
         })
