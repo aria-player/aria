@@ -63,14 +63,16 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
         return;
       }
       const initialView = selectInitialView(store.getState());
-      if (initialView == "continue") {
-        dispatch(
-          replace(window.location.origin + selectLastView(store.getState()))
-        );
-      } else if (initialView == LibraryView.Songs) {
-        dispatch(replace(window.location.origin + BASEPATH));
-      } else {
-        dispatch(replace(window.location.origin + BASEPATH + initialView));
+      if (window.location.pathname == BASEPATH) {
+        if (initialView == "continue") {
+          dispatch(
+            replace(window.location.origin + selectLastView(store.getState()))
+          );
+        } else if (initialView == LibraryView.Songs) {
+          dispatch(replace(window.location.origin + BASEPATH));
+        } else {
+          dispatch(replace(window.location.origin + BASEPATH + initialView));
+        }
       }
       const osType = await type();
       switch (osType) {
