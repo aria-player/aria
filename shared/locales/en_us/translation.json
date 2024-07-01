@@ -66,6 +66,7 @@
     "remove": "Remove from list"
   },
   "settings": {
+    "default": "(default)",
     "sections": {
       "general": "General",
       "library": "Library",
@@ -76,7 +77,7 @@
     "general": {
       "subtitle": "Manage the application language and behavior.",
       "language": "Language",
-      "defaultLanguage": "System (default)",
+      "defaultLanguage": "System",
       "initialView": "Initial view",
       "continueFromLastView": "Continue from last open view",
       "initialViewLabel": "Choose which view should appear when starting the application.",

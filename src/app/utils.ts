@@ -31,6 +31,10 @@ export function getTrackId(source: PluginId, uri: TrackUri): TrackId {
   return source + ":" + uri;
 }
 
+export function getStringIfFirst(value: string, index: number) {
+  return index === 0 ? value : "";
+}
+
 export function filterHiddenColumnSort(columnState: ColumnState[]) {
   return columnState.map((column) => {
     return {

@@ -1,4 +1,4 @@
-import { isTauri } from "../../../app/utils";
+import { getStringIfFirst, isTauri } from "../../../app/utils";
 import styles from "./settings.module.css";
 import { useContext } from "react";
 import { Platform, PlatformContext } from "../../../contexts/PlatformContext";
@@ -67,7 +67,9 @@ export function GeneralPage() {
           defaultValue={language ?? "default"}
         >
           <option value="default">
-            {t("settings.general.defaultLanguage")}
+            {t("settings.general.defaultLanguage") +
+              " " +
+              t("settings.default")}
           </option>
           {Object.entries(supportedLanguages).map(([langCode, { title }]) => (
             <option key={langCode} value={langCode}>
@@ -84,9 +86,10 @@ export function GeneralPage() {
               onChange={handleInitialViewChange}
               defaultValue={initialView}
             >
-              {Object.values(LibraryView).map((view) => (
+              {Object.values(LibraryView).map((view, index) => (
                 <option key={view} value={view}>
-                  {t("views." + view)}
+                  {t("views." + view) +
+                    getStringIfFirst(" " + t("settings.default"), index)}
                 </option>
               ))}
               <option key="continue" value="continue">

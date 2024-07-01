@@ -1,6 +1,6 @@
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { AccentColors, Themes } from "../../../themes/themes";
-import { isTauri } from "../../../app/utils";
+import { getStringIfFirst, isTauri } from "../../../app/utils";
 import {
   selectAccentColor,
   selectTheme,
@@ -44,9 +44,10 @@ export function AppearancePage() {
       <section>
         <h4>{t("settings.appearance.theme")}</h4>
         <select value={currentTheme} onChange={handleThemeChange}>
-          {Object.keys(Themes).map((theme) => (
+          {Object.keys(Themes).map((theme, index) => (
             <option key={theme} value={theme}>
-              {Themes[theme as keyof typeof Themes].label}
+              {Themes[theme as keyof typeof Themes].label +
+                getStringIfFirst(" " + t("settings.default"), index)}
             </option>
           ))}
         </select>
@@ -70,10 +71,13 @@ export function AppearancePage() {
           {t("settings.appearance.accent")}
         </h4>
         <div className={styles.accentContainer}>
-          {Object.keys(AccentColors).map((color) => (
+          {Object.keys(AccentColors).map((color, index) => (
             <button
               key={color}
-              title={t(`accentColors.${color}`)}
+              title={
+                t(`accentColors.${color}`) +
+                getStringIfFirst(" " + t("settings.default"), index)
+              }
               style={{ backgroundColor: AccentColors[color] }}
               className={`${styles.accentButton} ${currentAccentColor === color ? styles.selected : ""}`}
               onClick={() =>

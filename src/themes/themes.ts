@@ -5,7 +5,7 @@ export interface Theme {
 }
 
 export const Themes: Record<string, Theme> = {
-  system: { label: "System (default)", supportsAccent: true },
+  system: { label: "System", supportsAccent: true },
   light: { label: "Light", base: "light", supportsAccent: true },
   dark: { label: "Dark", base: "dark", supportsAccent: true },
   midnight: { label: "Midnight", base: "dark", supportsAccent: true }
