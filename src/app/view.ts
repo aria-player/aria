@@ -15,8 +15,8 @@ export enum View {
 
 export enum LibraryView {
   Songs = "songs",
-  Albums = "albums",
   Artists = "artists",
+  Albums = "albums",
   Genres = "genres",
   Composers = "composers",
   Years = "years"
