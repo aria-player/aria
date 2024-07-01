@@ -51,9 +51,9 @@ export function AppearancePage() {
           ))}
         </select>
       </section>
-      <section>
-        <h4>{t("settings.appearance.window")}</h4>
-        {isTauri() && platform == Platform.Windows && (
+      {isTauri() && platform == Platform.Windows && (
+        <section>
+          <h4>{t("settings.appearance.window")}</h4>
           <div>
             <input
               className={styles.checkbox}
@@ -63,8 +63,8 @@ export function AppearancePage() {
             />
             {t("settings.appearance.windowsControls")}
           </div>
-        )}
-      </section>
+        </section>
+      )}
       <section>
         <h4 className={`${!accentsEnabled ? styles.disabledSection : ""}`}>
           {t("settings.appearance.accent")}
