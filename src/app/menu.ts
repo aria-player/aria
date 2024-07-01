@@ -177,9 +177,7 @@ export function handleMenuAction(
               );
             }
           }
-          if (queueSource == LibraryView.Songs) {
-            dispatch(push(BASEPATH, { focusCurrent: true }));
-          } else if (currentPlaylist) {
+          if (currentPlaylist) {
             dispatch(
               push(BASEPATH + "playlist/" + currentPlaylist.id, {
                 focusCurrent: true

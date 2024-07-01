@@ -243,11 +243,7 @@ export function Sidebar() {
         onSelectedItemChange={(section, itemId) => {
           if (!itemId) return;
           if (section == "library") {
-            if (itemId === "songs") {
-              dispatch(push(BASEPATH));
-            } else {
-              dispatch(push(BASEPATH + itemId));
-            }
+            dispatch(push(BASEPATH + itemId));
           } else {
             dispatch(push(BASEPATH + "playlist/" + itemId));
           }

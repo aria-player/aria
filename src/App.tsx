@@ -60,6 +60,7 @@ function App() {
             <ViewContainer />
             <Routes>
               <Route path="/" Component={() => <></>} />
+              <Route path="/songs" Component={() => <></>} />
               <Route path="/queue" Component={() => <></>} />
               <Route path="/albums" Component={() => <></>} />
               <Route path="/artists" Component={() => <></>} />

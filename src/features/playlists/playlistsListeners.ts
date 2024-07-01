@@ -36,7 +36,7 @@ export function setupPlaylistsListeners() {
         !selectVisiblePlaylist(state) &&
         selectVisibleViewType(state) == View.Playlist
       ) {
-        dispatch(push(BASEPATH));
+        dispatch(push(BASEPATH + "songs"));
       }
     }
   );

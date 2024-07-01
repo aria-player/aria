@@ -16,7 +16,6 @@ import {
 } from "../features/config/configSlice";
 import { store } from "../app/store";
 import { useLocation } from "react-router-dom";
-import { LibraryView } from "../app/view";
 
 export enum Platform {
   Unknown = "Unknown",
@@ -68,8 +67,6 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
           dispatch(
             replace(window.location.origin + selectLastView(store.getState()))
           );
-        } else if (initialView == LibraryView.Songs) {
-          dispatch(replace(window.location.origin + BASEPATH));
         } else {
           dispatch(replace(window.location.origin + BASEPATH + initialView));
         }
