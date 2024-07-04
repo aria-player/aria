@@ -17,9 +17,12 @@ import { selectGroupFilteredTracks } from "./genericSelectors";
 import { TrackListItem } from "./tracks/tracksTypes";
 import { searchTracks } from "../app/search";
 import { selectSearch } from "./search/searchSlice";
+import { BASEPATH } from "../app/constants";
 
 export const selectVisibleViewType = (state: RootState) => {
-  const firstPath = state.router.location?.pathname.split("/")[1];
+  const firstPath = state.router.location?.pathname
+    .substring(BASEPATH.length)
+    .split("/")[0];
   if (!firstPath) {
     return LibraryView.Songs;
   } else if (isLibraryView(firstPath)) {
@@ -31,21 +34,21 @@ export const selectVisibleViewType = (state: RootState) => {
 };
 
 export const selectVisiblePlaylist = (state: RootState) => {
-  if (state.router.location?.pathname.split("/")[2] != null)
-    return selectPlaylistById(
-      state,
-      state.router.location?.pathname.split("/")[2]
-    );
+  const pathParts = state.router.location?.pathname
+    .substring(BASEPATH.length)
+    .split("/");
+  if (pathParts && pathParts.length > 1 && pathParts[0] === View.Playlist) {
+    return selectPlaylistById(state, pathParts[1]);
+  }
 };
 
 export const selectVisiblePlaylistConfig = (state: RootState) => {
-  if (state.router.location?.pathname.split("/")[2] != null)
-    return (
-      selectPlaylistConfigById(
-        state,
-        state.router.location?.pathname.split("/")[2]
-      ) ?? null
-    );
+  const pathParts = state.router.location?.pathname
+    .substring(BASEPATH.length)
+    .split("/");
+  if (pathParts && pathParts.length > 1 && pathParts[0] === View.Playlist) {
+    return selectPlaylistConfigById(state, pathParts[1]);
+  }
 };
 
 export const selectVisibleTracks = createSelector(

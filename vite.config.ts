@@ -5,7 +5,6 @@ import { nodePolyfills } from "vite-plugin-node-polyfills";
 
 // https://vitejs.dev/config/
 export default defineConfig(async () => ({
-  base: process.env.VITE_BASEPATH || "./",
   plugins: [
     react(),
     svgr(),
