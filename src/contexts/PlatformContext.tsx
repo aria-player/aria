@@ -57,10 +57,6 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     async function initialise() {
       if (platform !== Platform.Unknown) return;
-      if (!isTauri()) {
-        setPlatform(Platform.Web);
-        return;
-      }
       const initialView = selectInitialView(store.getState());
       if (window.location.pathname == BASEPATH) {
         if (initialView == "continue") {
@@ -70,6 +66,11 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
         } else {
           dispatch(replace(window.location.origin + BASEPATH + initialView));
         }
+      }
+      if (!isTauri()) {
+        setPlatform(Platform.Web);
+        setReady(true);
+        return;
       }
       const osType = await type();
       switch (osType) {
