@@ -60,11 +60,9 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
       const initialView = selectInitialView(store.getState());
       if (window.location.pathname == BASEPATH) {
         if (initialView == "continue") {
-          dispatch(
-            replace(window.location.origin + selectLastView(store.getState()))
-          );
+          dispatch(replace(BASEPATH + selectLastView(store.getState())));
         } else {
-          dispatch(replace(window.location.origin + BASEPATH + initialView));
+          dispatch(replace(BASEPATH + initialView));
         }
       }
       if (!isTauri()) {
@@ -100,7 +98,7 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
     }
 
     initialise();
-  }, [dispatch, platform]);
+  }, [dispatch, platform, location]);
 
   useEffect(() => {
     if (ready && selectInitialView(store.getState()) == "continue") {

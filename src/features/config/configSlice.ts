@@ -54,7 +54,9 @@ export const configSlice = createSlice({
       state.initialView = action.payload;
     },
     setLastView: (state, action: PayloadAction<string>) => {
-      state.lastView = action.payload;
+      state.lastView = action.payload.startsWith("/")
+        ? action.payload.substring(1)
+        : action.payload;
     }
   }
 });

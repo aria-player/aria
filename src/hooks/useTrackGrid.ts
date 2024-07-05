@@ -22,6 +22,7 @@ import { useLocation } from "react-router-dom";
 import { AgGridReactProps } from "@ag-grid-community/react";
 import { selectCurrentTrack } from "../features/currentSelectors";
 import { selectVisibleSelectedTrackGroup } from "../features/visibleSelectors";
+import { BASEPATH } from "../app/constants";
 
 export function useTrackGrid() {
   const dispatch = useAppDispatch();
@@ -74,7 +75,7 @@ export function useTrackGrid() {
         gridRef.current.api.ensureIndexVisible(row.rowIndex, "middle");
         gridRef.current.api.deselectAll();
         gridRef.current.api.setNodesSelected({ nodes: [row], newValue: true });
-        dispatch(replace(location.pathname, {}));
+        dispatch(replace(BASEPATH + location.pathname.substring(1), {}));
       }
     }
   }, [
