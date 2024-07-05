@@ -73,12 +73,11 @@ export default function AlbumGrid() {
 
   return (
     <>
-      <div className={styles.albumGrid}>
-        <div
-          ref={scrollDivRef}
-          className={styles.grid}
-          style={{ display: visibleAlbums.length == 0 ? "none" : "grid" }}
-        >
+      <div
+        className={styles.albumGrid}
+        style={{ display: visibleAlbums.length == 0 ? "none" : "block" }}
+      >
+        <div ref={scrollDivRef} className={styles.grid}>
           {allAlbums.map((track, index) => {
             if (track)
               return (
