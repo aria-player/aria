@@ -91,6 +91,7 @@
       {
         "id": "columns",
         "submenu": [
+          { "id": "columns.art", "keepopen": true },
           { "id": "columns.title", "keepopen": true },
           { "id": "columns.duration", "keepopen": true },
           { "id": "columns.artist", "keepopen": true },

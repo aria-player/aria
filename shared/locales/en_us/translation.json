@@ -171,6 +171,7 @@
     "exit": "Exit"
   },
   "columns": {
+    "art": "Artwork",
     "title": "Title",
     "duration": "Duration",
     "artist": "Artist",
