@@ -1,7 +1,7 @@
 import { listenForAction, listenForChange } from "../../app/listener";
 import { RootState } from "../../app/store";
 import { pluginHandles, selectActivePlugins } from "../plugins/pluginsSlice";
-import { SourceHandle } from "../plugins/pluginsTypes";
+import { IntegrationHandle, SourceHandle } from "../plugins/pluginsTypes";
 
 import { loadAndPlayTrack, selectStatus } from "./playerSlice";
 import { Status } from "./playerTypes";
@@ -26,7 +26,7 @@ export function setupPlayerListeners() {
 
   listenForChange(
     (state) => selectCurrentTrackItemId(state),
-    (state, _action, dispatch) => {
+    async (state, _action, dispatch) => {
       stopTimer();
       resetTimer();
       const activePlugins = selectActivePlugins(state);
@@ -42,6 +42,19 @@ export function setupPlayerListeners() {
       if (state.player.currentTrack != null) {
         dispatch(loadAndPlayTrack(state.player.currentTrack.trackId));
       }
+      const currentTrack = selectCurrentTrack(state);
+      if (!currentTrack) return;
+      const artwork = await (
+        pluginHandles[currentTrack?.source] as SourceHandle
+      )?.getTrackArtwork?.(currentTrack);
+      for (const plugin of activePlugins) {
+        if (["integration", "source"].includes(plugins[plugin].type)) {
+          (pluginHandles[plugin] as IntegrationHandle)?.onPlay?.(
+            currentTrack,
+            artwork
+          );
+        }
+      }
     }
   );
 
@@ -54,15 +67,28 @@ export function setupPlayerListeners() {
       if (status === Status.Playing) {
         currentSource?.resume();
         startTimer();
+        for (const plugin of activePlugins) {
+          if (["integration", "source"].includes(plugins[plugin].type)) {
+            (pluginHandles[plugin] as IntegrationHandle)?.onResume?.();
+          }
+        }
       } else if (status === Status.Paused) {
         currentSource?.pause();
         stopTimer();
+        for (const plugin of activePlugins) {
+          if (["integration", "source"].includes(plugins[plugin].type)) {
+            (pluginHandles[plugin] as IntegrationHandle)?.onPause?.();
+          }
+        }
       } else if (status === Status.Stopped) {
         stopTimer();
         resetTimer();
         for (const plugin of activePlugins) {
           if (plugins[plugin].type === "source") {
             (pluginHandles[plugin] as SourceHandle)?.pause();
+          }
+          if (["integration", "source"].includes(plugins[plugin].type)) {
+            (pluginHandles[plugin] as IntegrationHandle)?.onStop?.();
           }
         }
       }
