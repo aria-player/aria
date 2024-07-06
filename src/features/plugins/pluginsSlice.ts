@@ -12,7 +12,7 @@ type PluginsState = {
 export const pluginHandles: Partial<Record<PluginId, PluginHandle>> = {};
 
 const initialState: PluginsState = {
-  activePlugins: isTauri() ? ["tauriplayer"] : ["webplayer"],
+  activePlugins: ["mediasession", isTauri() ? "tauriplayer" : "webplayer"],
   pluginData: {}
 };
 
