@@ -2,13 +2,13 @@ import { useContext, useEffect, useMemo } from "react";
 import { AgGridReact } from "@ag-grid-community/react";
 import {
   CellContextMenuEvent,
+  CellDoubleClickedEvent,
   ColDef,
   ColumnMovedEvent,
   ColumnResizedEvent,
   ColumnVisibleEvent,
   GridApi,
   RowClassParams,
-  RowClickedEvent,
   RowDragEndEvent,
   SortChangedEvent
 } from "@ag-grid-community/core";
@@ -209,7 +209,7 @@ export const TrackList = () => {
     }
   };
 
-  const handleCellDoubleClicked = (event: RowClickedEvent) => {
+  const handleCellDoubleClicked = (event: CellDoubleClickedEvent) => {
     // We could use selectSortedTrackList here instead,
     // but then we'd be re-calculating the same sorted tracks that are already displayed
     const search = selectSearch(store.getState());
