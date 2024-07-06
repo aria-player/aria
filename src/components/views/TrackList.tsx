@@ -57,6 +57,7 @@ import {
   addToSearchHistory,
   selectSearch
 } from "../../features/search/searchSlice";
+import NoRowsOverlay from "./subviews/NoRowsOverlay";
 
 export const TrackList = () => {
   const dispatch = useAppDispatch();
@@ -387,13 +388,7 @@ export const TrackList = () => {
           rowHeight={33}
           headerHeight={37}
           rowDragManaged={visibleViewType == View.Playlist}
-          overlayNoRowsTemplate={
-            visibleViewType == View.Search
-              ? t("search.noResults")
-              : visibleViewType == View.Playlist
-                ? t("tracks.emptyPlaylist")
-                : t("tracks.emptyLibrary")
-          }
+          noRowsOverlayComponent={NoRowsOverlay}
           multiSortKey="ctrl"
           rowDragEntireRow
           suppressDragLeaveHidesColumns

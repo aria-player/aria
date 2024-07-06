@@ -13,6 +13,7 @@ import { formatStringArray } from "../../../app/utils";
 import AlbumTrackListSeparator from "./AlbumTrackListSeparator";
 import { useTrackGrid } from "../../../hooks/useTrackGrid";
 import { selectVisibleGroupFilteredTracks } from "../../../features/visibleSelectors";
+import NoRowsOverlay from "./NoRowsOverlay";
 
 export interface AlbumTrackListItem {
   itemId: string;
@@ -134,7 +135,7 @@ export const AlbumTrackList = () => {
         isFullWidthRow={() => true}
         headerHeight={0}
         rowHeight={48}
-        overlayNoRowsTemplate={t("albumTrackList.empty")}
+        noRowsOverlayComponent={NoRowsOverlay}
         suppressHeaderFocus
       />
     </div>

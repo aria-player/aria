@@ -30,6 +30,7 @@ import { setSelectedTracks } from "../../features/tracks/tracksSlice";
 import { nanoid } from "@reduxjs/toolkit";
 import styles from "./Queue.module.css";
 import { QueueItem } from "../../features/player/playerTypes";
+import NoRowsOverlay from "./subviews/NoRowsOverlay";
 
 const ROW_HEIGHT = 48;
 
@@ -293,7 +294,7 @@ export const Queue = () => {
         isRowSelectable={(params) => !params.data.separator}
         headerHeight={0}
         rowHeight={ROW_HEIGHT}
-        overlayNoRowsTemplate={t("tracks.emptyQueue")}
+        noRowsOverlayComponent={NoRowsOverlay}
         suppressHeaderFocus
         alwaysShowVerticalScroll
         suppressMoveWhenRowDragging
