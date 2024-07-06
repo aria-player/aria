@@ -1,7 +1,16 @@
-import { BasePlugin, PluginId, SourcePlugin } from "./pluginsTypes";
+import {
+  BasePlugin,
+  IntegrationPlugin,
+  PluginId,
+  SourcePlugin
+} from "./pluginsTypes";
 import { pluginHandles } from "./pluginsSlice";
 import { plugins } from "../../plugins/plugins";
-import { getBaseCallbacks, getSourceCallbacks } from "./pluginsCallbacks";
+import {
+  getBaseCallbacks,
+  getIntegrationCallbacks,
+  getSourceCallbacks
+} from "./pluginsCallbacks";
 import { listenForChange } from "../../app/listener";
 import { removeTracks } from "../tracks/tracksSlice";
 
@@ -15,6 +24,11 @@ const createPluginInstance = (pluginId: PluginId) => {
       case "base":
         pluginHandles[pluginId] = (plugin as BasePlugin).create(
           getBaseCallbacks(pluginId)
+        );
+        break;
+      case "integration":
+        pluginHandles[pluginId] = (plugin as IntegrationPlugin).create(
+          getIntegrationCallbacks(pluginId)
         );
         break;
       case "source":

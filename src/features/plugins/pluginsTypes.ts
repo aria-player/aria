@@ -4,7 +4,7 @@ export type PluginId = string;
 
 export type PluginInfo<H, C> = {
   id: PluginId;
-  type: "base" | "source";
+  type: "base" | "integration" | "source";
   name: string;
   needsTauri: boolean;
   create: (callbacks: C) => H;
@@ -21,7 +21,22 @@ export interface BaseCallbacks {
   getData: () => object;
 }
 
-export interface SourceHandle extends BaseHandle {
+export interface IntegrationHandle extends BaseHandle {
+  onPlay?: (metadata: Track, artwork?: string) => void;
+  onPause?: () => void;
+  onResume?: () => void;
+  onStop?: () => void;
+}
+
+export interface IntegrationCallbacks extends BaseCallbacks {
+  pause: () => void;
+  resume: () => void;
+  stop: () => void;
+  next: () => void;
+  previous: () => void;
+}
+
+export interface SourceHandle extends IntegrationHandle {
   loadAndPlayTrack: (track: Track) => void;
   getTrackArtwork?: (track: Track) => Promise<string | undefined>;
   onTracksUpdate?: (tracks: Track[]) => void;
@@ -32,7 +47,7 @@ export interface SourceHandle extends BaseHandle {
   setTime: (position: number) => void;
 }
 
-export interface SourceCallbacks extends BaseCallbacks {
+export interface SourceCallbacks extends IntegrationCallbacks {
   addTracks: (metadata: TrackMetadata[]) => void;
   removeTracks: (uris?: TrackUri[]) => void;
   updateMetadata: (metadata: TrackMetadata[]) => void;
@@ -43,9 +58,16 @@ export interface SourceCallbacks extends BaseCallbacks {
 }
 
 export type BasePlugin = PluginInfo<BaseHandle, BaseCallbacks>;
+export type IntegrationPlugin = PluginInfo<
+  IntegrationHandle,
+  IntegrationCallbacks
+>;
 export type SourcePlugin = PluginInfo<SourceHandle, SourceCallbacks>;
 
-export type PluginHandle = BaseHandle | SourceHandle;
-export type PluginCallbacks = BaseCallbacks | SourceCallbacks;
+export type PluginHandle = BaseHandle | IntegrationHandle | SourceHandle;
+export type PluginCallbacks =
+  | BaseCallbacks
+  | IntegrationHandle
+  | SourceCallbacks;
 
-export type Plugin = BasePlugin | SourcePlugin;
+export type Plugin = BasePlugin | IntegrationPlugin | SourcePlugin;

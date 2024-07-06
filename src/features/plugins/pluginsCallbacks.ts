@@ -9,7 +9,14 @@ import {
   selectTrackIds
 } from "../tracks/tracksSlice";
 import { selectActivePlugins, setPluginData } from "./pluginsSlice";
-import { PluginId, BaseCallbacks, SourceCallbacks } from "./pluginsTypes";
+import {
+  PluginId,
+  BaseCallbacks,
+  SourceCallbacks,
+  IntegrationCallbacks
+} from "./pluginsTypes";
+import { nextTrack, pause, resume, stop } from "../player/playerSlice";
+import { restartOrPreviousTrack } from "../player/playerTime";
 
 function isPluginActive(pluginId: PluginId): boolean {
   const activePlugins = selectActivePlugins(store.getState());
@@ -72,9 +79,22 @@ export const getBaseCallbacks = (pluginId: PluginId): BaseCallbacks => {
   };
 };
 
-export const getSourceCallbacks = (pluginId: PluginId): SourceCallbacks => {
+export const getIntegrationCallbacks = (
+  pluginId: PluginId
+): IntegrationCallbacks => {
   return {
     ...getBaseCallbacks(pluginId),
+    pause: () => store.dispatch(pause()),
+    resume: () => store.dispatch(resume()),
+    stop: () => store.dispatch(stop()),
+    next: () => store.dispatch(nextTrack()),
+    previous: () => restartOrPreviousTrack()
+  };
+};
+
+export const getSourceCallbacks = (pluginId: PluginId): SourceCallbacks => {
+  return {
+    ...getIntegrationCallbacks(pluginId),
     addTracks: (metadata: TrackMetadata[]) =>
       handleAddTracks(pluginId, metadata),
     removeTracks: (uris?: TrackUri[]) => handleRemoveTracks(pluginId, uris),
