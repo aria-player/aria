@@ -12,6 +12,7 @@ import { wrap } from "comlink";
 import { t } from "i18next";
 import i18n from "i18next";
 import en_us from "./locales/en_us/translation.json";
+import QuickStart from "./QuickStart";
 
 export type WebPlayerData = {
   folder: string;
@@ -106,6 +107,8 @@ export function createWebPlayer(host: SourceCallbacks): SourceHandle {
 
   return {
     Config: (props) => Config({ ...props, host, loaded, pickDirectory }),
+
+    QuickStart: (props) => QuickStart({ ...props, pickDirectory }),
 
     async loadAndPlayTrack(track: Track): Promise<void> {
       let file = fileHandles[track.uri];

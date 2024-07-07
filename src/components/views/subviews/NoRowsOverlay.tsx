@@ -5,11 +5,19 @@ import {
   selectVisibleDisplayMode,
   selectVisibleViewType
 } from "../../../features/visibleSelectors";
+import {
+  pluginHandles,
+  selectActivePlugins
+} from "../../../features/plugins/pluginsSlice";
+import { plugins } from "../../../plugins/plugins";
+import { SourceHandle } from "../../../features/plugins/pluginsTypes";
+import styles from "./NoRowsOverlay.module.css";
 
 export default function NoRowsOverlay() {
   const { t } = useTranslation();
   const visibleViewType = useAppSelector(selectVisibleViewType);
   const visibleDisplayMode = useAppSelector(selectVisibleDisplayMode);
+  const activePlugins = useAppSelector(selectActivePlugins);
 
   switch (visibleViewType) {
     case View.Search:
@@ -25,7 +33,22 @@ export default function NoRowsOverlay() {
       ) {
         return <div>{t("albumTrackList.empty")}</div>;
       } else {
-        return <div>{t("tracks.emptyLibrary")}</div>;
+        return (
+          <div className={styles.quickStart}>
+            <h2>{t("tracks.quickStart")}</h2>
+            {activePlugins?.map((plugin) => {
+              if (plugins[plugin].type != "source") return null;
+              const pluginHandle = pluginHandles[plugin] as SourceHandle;
+              return (
+                pluginHandle?.QuickStart && (
+                  <section key={plugin}>
+                    <pluginHandle.QuickStart />
+                  </section>
+                )
+              );
+            })}
+          </div>
+        );
       }
   }
 }

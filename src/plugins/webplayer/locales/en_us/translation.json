@@ -1,5 +1,6 @@
 {
   "fileNotLoaded": "This file hasn't been loaded. Please re-select the '{{folder}}' folder.",
+  "quickStart": "Choose music library folder",
   "config": {
     "folder": "Music folder",
     "chooseFolder": "Choose folder",

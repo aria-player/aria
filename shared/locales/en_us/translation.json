@@ -37,14 +37,14 @@
     "addNamedTrackToPlaylist": "Add '{{title}}' to '{{playlist}}'",
     "addSelectedToPlaylist_one": "Add {{count}} track to '{{playlist}}'",
     "addSelectedToPlaylist_other": "Add {{count}} tracks to '{{playlist}}'",
-    "emptyLibrary": "Library is empty",
     "emptyPlaylist": "Playlist is empty",
     "emptyQueue": "Queue is empty",
     "playNamedTrack": "Play '{{title}}'",
     "playNext": "Play next",
     "addToQueue": "Add to queue",
     "goToAlbum": "Go to album",
-    "goToArtist": "Go to artist"
+    "goToArtist": "Go to artist",
+    "quickStart": "To get started, add some music"
   },
   "views": {
     "songs": "Songs",

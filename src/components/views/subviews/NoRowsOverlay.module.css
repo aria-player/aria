@@ -1,0 +1,24 @@
+.quickStart {
+  pointer-events: auto;
+}
+
+.quickStart h2 {
+  font-weight: 500;
+  font-size: 1.2rem;
+  color: var(--button-text);
+}
+
+.quickStart button {
+  background-color: transparent;
+  border: 1px solid var(--player-controls);
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+.quickStart button:hover {
+  background-color: var(--button-background-hover);
+}

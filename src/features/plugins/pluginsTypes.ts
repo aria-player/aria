@@ -37,6 +37,7 @@ export interface IntegrationCallbacks extends BaseCallbacks {
 }
 
 export interface SourceHandle extends IntegrationHandle {
+  QuickStart?: React.FC;
   loadAndPlayTrack: (track: Track) => void;
   getTrackArtwork?: (track: Track) => Promise<string | undefined>;
   onTracksUpdate?: (tracks: Track[]) => void;

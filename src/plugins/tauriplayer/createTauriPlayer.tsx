@@ -156,6 +156,10 @@ export function createTauriPlayer(host: SourceCallbacks): SourceHandle {
       );
     },
 
+    QuickStart: () => (
+      <button onClick={handleButtonClick}>{t("tauriplayer:quickStart")}</button>
+    ),
+
     async loadAndPlayTrack(track: Track): Promise<void> {
       const file = await convertFileSrc(track.uri);
       if (!file) {
