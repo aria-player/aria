@@ -133,6 +133,7 @@ export function createTauriPlayer(host: SourceCallbacks): SourceHandle {
       const { t } = useTranslation();
       return (
         <>
+          <h4>{t("tauriplayer:config.folders")}</h4>
           <button onClick={handleButtonClick}>
             {t("tauriplayer:config.addFolder")}
           </button>

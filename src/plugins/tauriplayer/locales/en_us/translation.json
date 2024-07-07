@@ -1,6 +1,7 @@
 {
   "chooseFolder": "Choose a folder",
   "config": {
+    "folders": "Music folders",
     "addFolder": "Add folder",
     "remove": "Remove"
   }

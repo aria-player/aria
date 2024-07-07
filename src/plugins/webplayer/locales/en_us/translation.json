@@ -1,6 +1,7 @@
 {
   "fileNotLoaded": "This file hasn't been loaded. Please re-select the '{{folder}}' folder.",
   "config": {
+    "folder": "Music folder",
     "chooseFolder": "Choose folder",
     "remove": "Remove",
     "currentFolder": "Folder: {{folder}}",

@@ -19,7 +19,8 @@ export function Config(props: {
   }
 
   return (
-    <div>
+    <>
+      <h4>{t("webplayer:config.folder")}</h4>
       <button onClick={() => props.pickDirectory()}>
         {t("webplayer:config.chooseFolder")}
       </button>
@@ -40,6 +41,6 @@ export function Config(props: {
           })}
         </p>
       )}
-    </div>
+    </>
   );
 }

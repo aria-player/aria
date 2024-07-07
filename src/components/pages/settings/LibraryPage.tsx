@@ -39,11 +39,6 @@ export function LibraryPage() {
 
         return (
           <section key={plugin}>
-            <h4>
-              {t("settings.library.managePlugin", {
-                plugin: plugins[plugin].name
-              })}
-            </h4>
             {pluginHandle?.Config && (
               <pluginHandle.Config data={pluginData[plugin] ?? {}} />
             )}
