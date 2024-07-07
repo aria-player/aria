@@ -31,6 +31,7 @@
 
 .searchLink:hover {
   text-decoration: underline;
+  cursor: pointer;
 }
 
 .removeButton {
