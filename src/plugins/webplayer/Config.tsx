@@ -28,7 +28,9 @@ export function Config(props: {
           folder: webPlayerData.folder || t("webplayer:config.noFolder")
         })}
         {webPlayerData?.folder && (
-          <button onClick={removeFolder}>{t("webplayer:config.remove")}</button>
+          <button style={{ margin: "0 1rem" }} onClick={removeFolder}>
+            {t("webplayer:config.remove")}
+          </button>
         )}
       </p>
       {!props.loaded && webPlayerData?.folder && (
