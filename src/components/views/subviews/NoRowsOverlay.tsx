@@ -1,5 +1,5 @@
-import { useTranslation } from "react-i18next";
-import { useAppSelector } from "../../../app/hooks";
+import { Trans, useTranslation } from "react-i18next";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { DisplayMode, View } from "../../../app/view";
 import {
   selectVisibleDisplayMode,
@@ -12,8 +12,11 @@ import {
 import { plugins } from "../../../plugins/plugins";
 import { SourceHandle } from "../../../features/plugins/pluginsTypes";
 import styles from "./NoRowsOverlay.module.css";
+import { BASEPATH } from "../../../app/constants";
+import { push } from "redux-first-history";
 
 export default function NoRowsOverlay() {
+  const dispatch = useAppDispatch();
   const { t } = useTranslation();
   const visibleViewType = useAppSelector(selectVisibleViewType);
   const visibleDisplayMode = useAppSelector(selectVisibleDisplayMode);
@@ -47,6 +50,21 @@ export default function NoRowsOverlay() {
                 )
               );
             })}
+            <p>
+              <Trans
+                i18nKey="tracks.librarySettingsShortcut"
+                components={{
+                  a: (
+                    <button
+                      onClick={() =>
+                        dispatch(push(BASEPATH + "settings/library"))
+                      }
+                      className={styles.link}
+                    />
+                  )
+                }}
+              />
+            </p>
           </div>
         );
       }

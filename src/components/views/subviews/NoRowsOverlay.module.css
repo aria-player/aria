@@ -8,7 +8,7 @@
   color: var(--button-text);
 }
 
-.quickStart button {
+.quickStart button:not(.link) {
   background-color: transparent;
   border: 1px solid var(--player-controls);
   padding: 0.5rem 1rem;
@@ -19,6 +19,24 @@
   margin-bottom: 0.5rem;
 }
 
-.quickStart button:hover {
+.quickStart button:hover:not(.link) {
   background-color: var(--button-background-hover);
+}
+
+.quickStart p {
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+}
+
+.link {
+  font-family: inherit;
+  font-size: 0.8rem;
+  background: none;
+  border: none;
+  padding: 0;
+  color: var(--accent-color);
+}
+
+.link:hover {
+  text-decoration: underline;
 }

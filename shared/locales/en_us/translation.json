@@ -44,7 +44,8 @@
     "addToQueue": "Add to queue",
     "goToAlbum": "Go to album",
     "goToArtist": "Go to artist",
-    "quickStart": "To get started, add some music"
+    "quickStart": "To get started, add some music",
+    "librarySettingsShortcut": "Additional sources can be managed in <a>library settings</a>"
   },
   "views": {
     "songs": "Songs",
