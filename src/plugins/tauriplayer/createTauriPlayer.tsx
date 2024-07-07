@@ -6,12 +6,17 @@ import {
 import { open } from "@tauri-apps/api/dialog";
 import { Track, TrackMetadata } from "../../features/tracks/tracksTypes";
 import { appDataDir } from "@tauri-apps/api/path";
+import { t } from "i18next";
+import { useTranslation } from "react-i18next";
+import i18n from "i18next";
+import en_us from "./locales/en_us/translation.json";
 
 export type TauriPlayerData = {
   folders: Record<string, string[]>;
 };
 
 export function createTauriPlayer(host: SourceCallbacks): SourceHandle {
+  i18n.addResourceBundle("en-US", "tauriplayer", en_us);
   const initialConfig = host.getData() as TauriPlayerData;
   let folders = { ...initialConfig.folders };
   let audio: HTMLAudioElement | null;
@@ -32,7 +37,7 @@ export function createTauriPlayer(host: SourceCallbacks): SourceHandle {
     try {
       const selectedDirectory = (await open({
         directory: true,
-        title: "Choose a directory"
+        title: t("tauriplayer:chooseFolder")
       })) as string | null | undefined;
 
       if (!selectedDirectory) return;
@@ -125,9 +130,12 @@ export function createTauriPlayer(host: SourceCallbacks): SourceHandle {
 
   return {
     Config: () => {
+      const { t } = useTranslation();
       return (
         <>
-          <button onClick={handleButtonClick}>Add folder</button>
+          <button onClick={handleButtonClick}>
+            {t("tauriplayer:config.addFolder")}
+          </button>
           <ul>
             {Object.keys(folders).map((folder) => (
               <li key={folder}>
@@ -137,7 +145,7 @@ export function createTauriPlayer(host: SourceCallbacks): SourceHandle {
                     removeFolder(folder);
                   }}
                 >
-                  Remove
+                  {t("tauriplayer:config.remove")}
                 </button>
                 {folders[folder]?.length}
               </li>

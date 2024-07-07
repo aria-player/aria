@@ -1,5 +1,6 @@
 import { SourceCallbacks } from "../../features/plugins/pluginsTypes";
 import { WebPlayerData } from "./createWebPlayer";
+import { useTranslation } from "react-i18next";
 
 export function Config(props: {
   data: object;
@@ -8,6 +9,7 @@ export function Config(props: {
   pickDirectory: () => void;
 }) {
   const webPlayerData = props.data as WebPlayerData;
+  const { t } = useTranslation();
 
   function removeFolder() {
     props.host.updateData({
@@ -18,18 +20,22 @@ export function Config(props: {
 
   return (
     <div>
-      <button onClick={() => props.pickDirectory()}>Choose folder</button>
+      <button onClick={() => props.pickDirectory()}>
+        {t("webplayer:config.chooseFolder")}
+      </button>
       <p>
-        Folder:
-        {webPlayerData?.folder ? ` ${webPlayerData.folder} ` : " None set "}
+        {t("webplayer:config.currentFolder", {
+          folder: webPlayerData.folder || t("webplayer:config.noFolder")
+        })}
         {webPlayerData?.folder && (
-          <button onClick={removeFolder}>Remove</button>
+          <button onClick={removeFolder}>{t("webplayer:config.remove")}</button>
         )}
       </p>
       {!props.loaded && webPlayerData?.folder && (
         <p>
-          Folder not current loaded. Please locate the &apos;
-          {webPlayerData.folder}&apos; folder.
+          {t("webplayer:config.folderNotLoaded", {
+            folder: webPlayerData.folder
+          })}
         </p>
       )}
     </div>

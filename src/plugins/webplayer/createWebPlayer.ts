@@ -9,12 +9,16 @@ import {
 } from "../../features/plugins/pluginsTypes";
 import { Config } from "./Config";
 import { wrap } from "comlink";
+import { t } from "i18next";
+import i18n from "i18next";
+import en_us from "./locales/en_us/translation.json";
 
 export type WebPlayerData = {
   folder: string;
 };
 
 export function createWebPlayer(host: SourceCallbacks): SourceHandle {
+  i18n.addResourceBundle("en-US", "webplayer", en_us);
   const initialConfig = host.getData() as WebPlayerData | null;
 
   const metadataWorker = new Worker(
@@ -107,9 +111,7 @@ export function createWebPlayer(host: SourceCallbacks): SourceHandle {
       let file = fileHandles[track.uri];
       if (!file) {
         const confirmed = await confirm(
-          "This file hasn't been loaded. Please re-select the '" +
-            folder +
-            "' folder."
+          t("webplayer:fileNotLoaded", { folder })
         );
         if (!confirmed) throw new Error("Re-selection cancelled");
         await pickDirectory();

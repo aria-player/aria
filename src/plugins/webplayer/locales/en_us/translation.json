@@ -1,0 +1,10 @@
+{
+  "fileNotLoaded": "This file hasn't been loaded. Please re-select the '{{folder}}' folder.",
+  "config": {
+    "chooseFolder": "Choose folder",
+    "remove": "Remove",
+    "currentFolder": "Folder: {{folder}}",
+    "noFolder": "None set",
+    "folderNotLoaded": "Folder not currently loaded. Please locate the '{{folder}}' folder."
+  }
+}
