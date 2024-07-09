@@ -7,6 +7,8 @@ export interface TrackMetadata {
   uri: TrackUri;
   title: string;
   metadataLoaded: boolean;
+  dateAdded: number;
+  dateModified?: number;
   duration?: number;
   artist?: string | string[];
   albumArtist?: string;
@@ -18,8 +20,6 @@ export interface TrackMetadata {
   track?: number;
   disc?: number;
   fileSize?: number;
-  dateModified?: number;
-  dateAdded?: number;
   artworkUri?: string;
 }
 

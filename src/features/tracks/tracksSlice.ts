@@ -11,7 +11,8 @@ import { PluginId } from "../plugins/pluginsTypes";
 import { PlaylistItem } from "../playlists/playlistsTypes";
 
 const tracksAdapter = createEntityAdapter<Track, TrackId>({
-  selectId: (track) => track.trackId
+  selectId: (track) => track.trackId,
+  sortComparer: (a, b) => b.dateAdded - a.dateAdded
 });
 
 interface TracksState {
