@@ -64,7 +64,6 @@ export const defaultColumnDefinitions: ColDef[] = [
       return formatStringArray(params.value);
     }
   },
-  { field: "albumArtist" },
   {
     field: "album"
   },
@@ -75,6 +74,7 @@ export const defaultColumnDefinitions: ColDef[] = [
     }
   },
   { field: "year" },
+  { field: "albumArtist", hide: true },
   {
     field: "composer",
     hide: true,
