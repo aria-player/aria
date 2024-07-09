@@ -9,6 +9,7 @@ import { PlaylistId, PlaylistItem } from "./playlists/playlistsTypes";
 import { selectLibraryColumnState } from "./library/librarySlice";
 import { overrideColumnStateSort } from "../app/utils";
 import { compareMetadata } from "../app/sort";
+import { selectAllTracks } from "./tracks/tracksSlice";
 
 export const selectTrackListMetadata = (
   state: RootState,
@@ -22,7 +23,7 @@ export const selectTrackListMetadata = (
         ...track,
         ...state.tracks.tracks.entities[track.trackId]
       }))
-    : (Object.values(state.tracks.tracks.entities).map((track) => ({
+    : (selectAllTracks(state).map((track) => ({
         ...track,
         itemId: track?.trackId
       })) as TrackListItem[]);

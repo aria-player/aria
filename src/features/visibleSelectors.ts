@@ -15,6 +15,7 @@ import {
 import { PlaylistItem } from "./playlists/playlistsTypes";
 import { selectGroupFilteredTracks } from "./genericSelectors";
 import { TrackListItem } from "./tracks/tracksTypes";
+import { selectAllTracks } from "./tracks/tracksSlice";
 import { searchTracks } from "../app/search";
 import { selectSearch } from "./search/searchSlice";
 import { BASEPATH } from "../app/constants";
@@ -60,30 +61,28 @@ export const selectVisibleTracks = createSelector(
   ],
   () => {
     const state = store.getState();
-    const tracks = state.tracks.tracks;
+    const tracksById = state.tracks.tracks.entities;
     const visiblePlaylist = selectVisiblePlaylist(state)?.tracks;
     const search = selectSearch(state);
     return visiblePlaylist
       ? visiblePlaylist.map((playlistTrack) => {
           return {
             ...playlistTrack,
-            ...tracks.entities[playlistTrack.trackId]
+            ...tracksById[playlistTrack.trackId]
           };
         })
       : Object.values(LibraryView).includes(
             selectVisibleViewType(state) as LibraryView
           )
-        ? (Object.values(tracks.entities).map((track) => ({
+        ? (selectAllTracks(state).map((track) => ({
             ...track,
             itemId: track?.trackId
           })) as TrackListItem[])
         : selectVisibleViewType(state) == View.Search
-          ? (searchTracks(Object.values(tracks.entities), search).map(
-              (track) => ({
-                ...track,
-                itemId: track?.trackId
-              })
-            ) as TrackListItem[])
+          ? (searchTracks(selectAllTracks(state), search).map((track) => ({
+              ...track,
+              itemId: track?.trackId
+            })) as TrackListItem[])
           : [];
   }
 );
