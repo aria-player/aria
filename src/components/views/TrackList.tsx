@@ -122,7 +122,7 @@ export const TrackList = () => {
           ...colDefOverrides,
           sort,
           sortIndex,
-          sortable: visibleViewType != View.Search,
+          sortable: visibleViewType != View.Search && colDef.field != "art",
           headerName:
             colDef.field != "trackId" && colDef.field != "uri"
               ? t(`columns.${colDef.field}`)
