@@ -2,6 +2,7 @@ import { TrackUri, TrackId } from "../features/tracks/tracksTypes";
 import { PluginId } from "../features/plugins/pluginsTypes";
 import { ColumnState } from "@ag-grid-community/core";
 import { defaultColumnDefinitions } from "../features/library/libraryColumns";
+import i18n from "../i18n";
 
 interface Window {
   __TAURI__?: unknown;
@@ -25,6 +26,16 @@ export function formatBytes(bytes: number) {
   const sizes = ["B", "KB", "MB", "GB", "TB"];
   const unit = Math.floor(Math.log(bytes) / Math.log(1024));
   return (bytes / Math.pow(1024, unit)).toFixed(2) + " " + sizes[unit];
+}
+
+export function formatDate(date: number) {
+  return new Date(date).toLocaleString(i18n.language, {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit"
+  });
 }
 
 export function getTrackId(source: PluginId, uri: TrackUri): TrackId {

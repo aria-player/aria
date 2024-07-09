@@ -3,7 +3,8 @@ import { Track, TrackListItem } from "../tracks/tracksTypes";
 import {
   formatStringArray,
   formatBytes,
-  formatDuration
+  formatDuration,
+  formatDate
 } from "../../app/utils";
 import { plugins } from "../../plugins/plugins";
 import { AlbumArt } from "../../components/views/subviews/AlbumArt";
@@ -106,7 +107,7 @@ export const defaultColumnDefinitions: ColDef[] = [
     filter: false,
     valueFormatter: (params: { value: number | null }) => {
       return params.value !== undefined && params.value !== null
-        ? new Date(params.value).toUTCString()
+        ? formatDate(params.value)
         : "";
     }
   },
@@ -116,7 +117,7 @@ export const defaultColumnDefinitions: ColDef[] = [
     filter: false,
     valueFormatter: (params: { value: number | null }) => {
       return params.value !== undefined && params.value !== null
-        ? new Date(params.value).toUTCString()
+        ? formatDate(params.value)
         : "";
     }
   },
