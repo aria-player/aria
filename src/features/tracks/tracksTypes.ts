@@ -19,6 +19,7 @@ export interface TrackMetadata {
   year?: number;
   track?: number;
   disc?: number;
+  filePath?: string;
   fileSize?: number;
   artworkUri?: string;
 }

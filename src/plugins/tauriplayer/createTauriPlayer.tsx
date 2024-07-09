@@ -113,6 +113,7 @@ export function createTauriPlayer(host: SourceCallbacks): SourceHandle {
               title: key.split("\\").pop(),
               album: key.split("\\").slice(-2, -1)[0],
               dateAdded,
+              filePath: key,
               metadataLoaded: false
             }) as Track
         );

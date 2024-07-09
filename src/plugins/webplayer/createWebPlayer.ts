@@ -61,6 +61,7 @@ export function createWebPlayer(host: SourceCallbacks): SourceHandle {
         title: fileHandles[uri].name,
         dateModified: fileHandles[uri].lastModified,
         dateAdded,
+        filePath: uri,
         fileSize: fileHandles[uri].size,
         album: uri.split("/").slice(-2, -1)[0],
         metadataLoaded: false

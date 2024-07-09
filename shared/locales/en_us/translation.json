@@ -186,6 +186,7 @@
     "disc": "Disc #",
     "dateModified": "Date Modified",
     "dateAdded": "Date Added",
+    "filePath": "Path",
     "fileSize": "Size",
     "source": "Source"
   },

@@ -121,6 +121,7 @@ export const defaultColumnDefinitions: ColDef[] = [
         : "";
     }
   },
+  { field: "filePath", hide: true },
   {
     field: "fileSize",
     hide: true,
