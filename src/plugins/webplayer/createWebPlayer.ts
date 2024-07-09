@@ -55,11 +55,12 @@ export function createWebPlayer(host: SourceCallbacks): SourceHandle {
         total: Object.keys(fileHandles).length
       });
 
+      const dateAdded = Date.now();
       const tracks = Object.keys(fileHandles).map((uri: TrackUri) => ({
         uri,
         title: fileHandles[uri].name,
         dateModified: fileHandles[uri].lastModified,
-        dateAdded: Date.now(),
+        dateAdded,
         fileSize: fileHandles[uri].size,
         album: uri.split("/").slice(-2, -1)[0],
         metadataLoaded: false

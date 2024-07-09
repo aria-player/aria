@@ -105,13 +105,14 @@ export function createTauriPlayer(host: SourceCallbacks): SourceHandle {
       if (folderInfo) {
         folders = { ...folders, [folderInfo.path]: folderInfo.items };
         host.updateData({ folders });
+        const dateAdded = Date.now();
         const tracks = folderInfo.items.map(
           (key: string) =>
             ({
               uri: key,
               title: key.split("\\").pop(),
               album: key.split("\\").slice(-2, -1)[0],
-              dateAdded: Date.now(),
+              dateAdded,
               metadataLoaded: false
             }) as Track
         );
