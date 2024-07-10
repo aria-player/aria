@@ -184,8 +184,8 @@
     "comments": "Comments",
     "track": "Track #",
     "disc": "Disc #",
-    "dateModified": "Date Modified",
     "dateAdded": "Date Added",
+    "dateModified": "Date Modified",
     "filePath": "Path",
     "fileSize": "Size",
     "source": "Source"

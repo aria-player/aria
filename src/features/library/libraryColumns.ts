@@ -102,7 +102,7 @@ export const defaultColumnDefinitions: ColDef[] = [
     type: "rightAligned"
   },
   {
-    field: "dateModified",
+    field: "dateAdded",
     hide: true,
     filter: false,
     valueFormatter: (params: { value: number | null }) => {
@@ -112,7 +112,7 @@ export const defaultColumnDefinitions: ColDef[] = [
     }
   },
   {
-    field: "dateAdded",
+    field: "dateModified",
     hide: true,
     filter: false,
     valueFormatter: (params: { value: number | null }) => {
