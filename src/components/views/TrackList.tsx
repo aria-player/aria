@@ -310,7 +310,7 @@ export const TrackList = () => {
       gridRef.current.api.refreshCells({
         force: true
       });
-  }, [gridRef, currentTrack]);
+  }, [gridRef, currentTrack, rowData]);
 
   useEffect(() => {
     const headerContextArea = document.querySelector(".ag-header");
