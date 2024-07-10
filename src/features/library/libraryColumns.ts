@@ -42,10 +42,11 @@ export const defaultColumnDefinitions: ColDef[] = [
   },
   {
     field: "title",
-    flex: 1
+    flex: 0.8
   },
   {
     field: "duration",
+    flex: 0.2,
     filter: false,
     valueFormatter: (params: { data: Track; value: number | null }) => {
       if (
