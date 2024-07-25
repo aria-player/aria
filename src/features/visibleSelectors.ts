@@ -151,7 +151,7 @@ export const selectVisibleDisplayMode = (state: RootState) => {
 
 export const selectVisibleTrackGrouping = (state: RootState) => {
   if (selectVisibleDisplayMode(state) === DisplayMode.AlbumGrid)
-    return TrackGrouping.Album;
+    return TrackGrouping.AlbumId;
 
   if (selectVisibleDisplayMode(state) == DisplayMode.SplitView) {
     const playlistGrouping =

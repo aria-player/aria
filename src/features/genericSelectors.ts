@@ -89,9 +89,7 @@ export const selectGroupFilteredTracks = (
   return selectTrackListMetadata(state, playlistId)
     .filter(
       (track) =>
-        track[
-          trackGrouping == TrackGrouping.Album ? "albumId" : trackGrouping
-        ] == selectedTrackGroup ||
+        track[trackGrouping] == selectedTrackGroup ||
         (selectedTrackGroup &&
           Array.isArray(track[trackGrouping]) &&
           (track[trackGrouping] as string[])?.includes(selectedTrackGroup))

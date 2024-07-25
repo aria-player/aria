@@ -24,7 +24,7 @@ export enum LibraryView {
 }
 
 export enum TrackGrouping {
-  Album = "album",
+  AlbumId = "albumId",
   Artist = "artist",
   AlbumArtist = "albumArtist",
   Genre = "genre",

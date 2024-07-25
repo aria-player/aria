@@ -138,7 +138,7 @@ export function handleMenuAction(
         const currentPlaylist = selectCurrentPlaylist(state);
         const currentTrack = selectCurrentTrack(state);
         if (currentTrack) {
-          if (state.player.queueGrouping == TrackGrouping.Album) {
+          if (state.player.queueGrouping == TrackGrouping.AlbumId) {
             if (
               currentPlaylist?.id &&
               selectPlaylistConfigById(state, currentPlaylist.id).displayMode ==
