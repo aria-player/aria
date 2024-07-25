@@ -136,7 +136,8 @@ export const selectVisibleDisplayMode = (state: RootState) => {
       LibraryView.Artists,
       LibraryView.Genres,
       LibraryView.Composers,
-      LibraryView.Years
+      LibraryView.Years,
+      LibraryView.Folders
     ].includes(selectVisibleViewType(state) as LibraryView)
   ) {
     return DisplayMode.SplitView;

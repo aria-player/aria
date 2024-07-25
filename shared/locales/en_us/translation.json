@@ -54,6 +54,7 @@
     "genres": "Genres",
     "composers": "Composers",
     "years": "Years",
+    "folders": "Folders",
     "queue": "Queue",
     "error": "Error",
     "settings": "Settings",
@@ -202,7 +203,8 @@
     "albumArtist": "Album Artist",
     "genre": "Genre",
     "year": "Year",
-    "composer": "Composer"
+    "composer": "Composer",
+    "fileFolder": "Folder"
   },
   "albumGrid": {
     "empty": "No albums to display"

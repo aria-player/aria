@@ -23,14 +23,16 @@ const initialState: LibraryState = {
     { id: "albums", name: "albums" },
     { id: "genres", name: "genres" },
     { id: "composers", name: "composers", hidden: true },
-    { id: "years", name: "years", hidden: true }
+    { id: "years", name: "years", hidden: true },
+    { id: "folders", name: "folders", hidden: true }
   ],
   selectedAlbum: null,
   splitViewStates: {
     artists: { trackGrouping: TrackGrouping.Artist },
     genres: { trackGrouping: TrackGrouping.Genre },
     composers: { trackGrouping: TrackGrouping.Composer },
-    years: { trackGrouping: TrackGrouping.Year }
+    years: { trackGrouping: TrackGrouping.Year },
+    folders: { trackGrouping: TrackGrouping.FileFolder }
   }
 };
 

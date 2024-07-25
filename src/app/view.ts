@@ -19,7 +19,8 @@ export enum LibraryView {
   Albums = "albums",
   Genres = "genres",
   Composers = "composers",
-  Years = "years"
+  Years = "years",
+  Folders = "folders"
 }
 
 export enum TrackGrouping {
@@ -28,7 +29,8 @@ export enum TrackGrouping {
   AlbumArtist = "albumArtist",
   Genre = "genre",
   Composer = "composer",
-  Year = "year"
+  Year = "year",
+  FileFolder = "fileFolder"
 }
 
 export type SplitViewState = {

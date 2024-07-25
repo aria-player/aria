@@ -67,6 +67,7 @@ function App() {
               <Route path="/genres" Component={() => <></>} />
               <Route path="/composers" Component={() => <></>} />
               <Route path="/years" Component={() => <></>} />
+              <Route path="/folders" Component={() => <></>} />
               <Route path="settings" Component={SettingsPage}>
                 <Route index Component={GeneralPage} />
                 <Route path="library" Component={LibraryPage} />

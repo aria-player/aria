@@ -131,7 +131,8 @@
           { "id": "groupBy.albumArtist" },
           { "id": "groupBy.composer" },
           { "id": "groupBy.genre" },
-          { "id": "groupBy.year" }
+          { "id": "groupBy.year" },
+          { "id": "groupBy.fileFolder" }
         ]
       },
       {
