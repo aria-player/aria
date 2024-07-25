@@ -105,6 +105,7 @@
           { "id": "columns.disc", "keepopen": true },
           { "id": "columns.dateAdded", "keepopen": true },
           { "id": "columns.dateModified", "keepopen": true },
+          { "id": "columns.fileFolder", "keepopen": true },
           { "id": "columns.filePath", "keepopen": true },
           { "id": "columns.fileSize", "keepopen": true },
           { "id": "columns.source", "keepopen": true },

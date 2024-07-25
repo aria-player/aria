@@ -123,6 +123,7 @@ export const defaultColumnDefinitions: ColDef[] = [
     }
   },
   { field: "filePath", hide: true },
+  { field: "fileFolder", hide: true },
   {
     field: "fileSize",
     hide: true,

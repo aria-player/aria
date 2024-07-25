@@ -114,6 +114,7 @@ export function createTauriPlayer(host: SourceCallbacks): SourceHandle {
               album: key.split("\\").slice(-2, -1)[0],
               dateAdded,
               filePath: key,
+              fileFolder: key.split("\\").slice(-2, -1)[0],
               metadataLoaded: false
             }) as Track
         );
