@@ -89,12 +89,15 @@ export const selectGroupFilteredTracks = (
   return selectTrackListMetadata(state, playlistId)
     .filter(
       (track) =>
-        track[trackGrouping] == selectedTrackGroup ||
+        track[
+          trackGrouping == TrackGrouping.Album ? "albumId" : trackGrouping
+        ] == selectedTrackGroup ||
         (selectedTrackGroup &&
           Array.isArray(track[trackGrouping]) &&
           (track[trackGrouping] as string[])?.includes(selectedTrackGroup))
     )
     .sort((a, b) => compareMetadata(a.track, b.track))
     .sort((a, b) => compareMetadata(a.disc, b.disc))
-    .sort((a, b) => compareMetadata(a.album, b.album));
+    .sort((a, b) => compareMetadata(a.album, b.album))
+    .sort((a, b) => compareMetadata(a.albumId, b.albumId));
 };

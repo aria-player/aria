@@ -190,7 +190,7 @@ export const selectVisibleTrackGroups = createSelector(
     const state = store.getState();
     if (selectVisibleDisplayMode(state) == DisplayMode.AlbumGrid) {
       return [
-        ...new Set(selectVisibleTracks(state).map((track) => track.album))
+        ...new Set(selectVisibleTracks(state).map((track) => track.albumId))
       ];
     } else if (selectVisibleDisplayMode(state) == DisplayMode.SplitView) {
       const grouping = selectVisiblePlaylist(state)

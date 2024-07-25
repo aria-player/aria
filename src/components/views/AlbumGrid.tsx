@@ -32,7 +32,7 @@ export default function AlbumGrid() {
   const selectedItem = useAppSelector(selectVisibleSelectedTrackGroup);
   const visibleDisplayMode = useAppSelector(selectVisibleDisplayMode);
   const allAlbums = [
-    ...new Map(libraryTracks.map((track) => [track.album, track])).values()
+    ...new Map(libraryTracks.map((track) => [track.albumId, track])).values()
   ].sort(
     (a, b) =>
       a.album?.localeCompare(b.album!, undefined, {
@@ -43,16 +43,16 @@ export default function AlbumGrid() {
   // TODO: Decide how to handle albums with the same name
   const visibleAlbums = useAppSelector(selectVisibleTrackGroups);
 
-  function setSelectedItem(album?: string) {
+  function setSelectedItem(albumId?: string) {
     if (visiblePlaylist?.id) {
       dispatch(
         setPlaylistSelectedTrackGroup({
           playlistId: visiblePlaylist?.id,
-          selectedGroup: album ?? null
+          selectedGroup: albumId ?? null
         })
       );
     } else {
-      dispatch(setSelectedAlbum(album ?? null));
+      dispatch(setSelectedAlbum(albumId ?? null));
     }
   }
 
@@ -82,19 +82,19 @@ export default function AlbumGrid() {
             if (track)
               return (
                 <div
-                  key={track.album ?? index}
+                  key={track.albumId ?? index}
                   ref={(el) => {
-                    albumRefs.current[track.album ?? index] = el;
+                    albumRefs.current[track.albumId ?? index] = el;
                   }}
                   style={{
-                    display: visibleAlbums.includes(track.album)
+                    display: visibleAlbums.includes(track.albumId)
                       ? "block"
                       : "none"
                   }}
                 >
                   <button
                     className={styles.gridItem}
-                    onClick={() => setSelectedItem(track.album)}
+                    onClick={() => setSelectedItem(track.albumId)}
                     disabled={
                       selectedItem ||
                       visibleDisplayMode != DisplayMode.AlbumGrid

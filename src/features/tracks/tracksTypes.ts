@@ -1,6 +1,7 @@
 import { PluginId } from "../plugins/pluginsTypes";
 
 export type TrackId = string;
+export type AlbumId = string;
 export type TrackUri = string;
 
 export interface TrackMetadata {
@@ -13,6 +14,7 @@ export interface TrackMetadata {
   artist?: string | string[];
   albumArtist?: string;
   album?: string;
+  albumId?: string;
   genre?: string | string[];
   composer?: string | string[];
   comments?: string | string[];

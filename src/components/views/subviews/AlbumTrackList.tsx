@@ -66,38 +66,36 @@ export const AlbumTrackList = () => {
           track.disc != null &&
           track.disc != undefined &&
           currentDisc !== track.disc &&
-          currentAlbum == track.album
+          currentAlbum == track.albumId
         ) {
           processedTracks.push({
             title: t("albumTrackList.disc", { number: track.disc }),
             separator: true,
-            itemId: `disc-separator-${track.album}-${currentDisc}`
+            itemId: `disc-separator-${track.albumId}-${currentDisc}`
           });
         }
 
         currentDisc = track.disc ?? null;
-        if (currentAlbum !== track.album) {
-          if (currentAlbum !== track.album) {
-            if (currentAlbum !== null) {
-              processedTracks.push({
-                separator: true,
-                tracks: currentAlbumTracks,
-                source: track.source,
-                itemId: `album-separator-${track.album}`
-              });
-              currentAlbumTracks = 0;
-            }
+        if (currentAlbum !== track.albumId) {
+          if (currentAlbum !== null) {
             processedTracks.push({
-              artist: track.albumArtist ?? formatStringArray(track.artist),
-              album: track.album,
-              year: track.year,
-              artworkUri: track.artworkUri,
-              source: track.source,
               separator: true,
-              itemId: `album-header-${track.album}-`
+              tracks: currentAlbumTracks,
+              source: track.source,
+              itemId: `album-separator-${track.albumId}`
             });
-            currentAlbum = track.album ?? null;
+            currentAlbumTracks = 0;
           }
+          processedTracks.push({
+            artist: track.albumArtist ?? formatStringArray(track.artist),
+            album: track.album,
+            year: track.year,
+            artworkUri: track.artworkUri,
+            source: track.source,
+            separator: true,
+            itemId: `album-header-${track.albumId}-`
+          });
+          currentAlbum = track.albumId ?? null;
         }
         processedTracks.push(track);
         currentAlbumTracks += 1;

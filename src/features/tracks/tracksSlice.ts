@@ -35,7 +35,13 @@ const tracksSlice = createSlice({
       state,
       action: PayloadAction<{ source: PluginId; tracks?: Track[] }>
     ) => {
-      tracksAdapter.upsertMany(state.tracks, action.payload.tracks ?? []);
+      tracksAdapter.upsertMany(
+        state.tracks,
+        action.payload.tracks?.map((track) => ({
+          ...track,
+          albumId: track.albumId ?? (track.album ?? "") + track.albumArtist
+        })) ?? []
+      );
     },
     removeTracks: (
       state,
