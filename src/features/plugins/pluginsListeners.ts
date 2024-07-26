@@ -22,21 +22,27 @@ const createPluginInstance = (pluginId: PluginId) => {
     }
     try {
       switch (plugin.type) {
-        case "base":
-          pluginHandles[pluginId] = (plugin as BasePlugin).create(
+        case "base": {
+          const handle = (plugin as BasePlugin).create(
             getBaseCallbacks(pluginId)
           );
+          if (handle) pluginHandles[pluginId] = handle;
           break;
-        case "integration":
-          pluginHandles[pluginId] = (plugin as IntegrationPlugin).create(
+        }
+        case "integration": {
+          const handle = (plugin as IntegrationPlugin).create(
             getIntegrationCallbacks(pluginId)
           );
+          if (handle) pluginHandles[pluginId] = handle;
           break;
-        case "source":
-          pluginHandles[pluginId] = (plugin as SourcePlugin).create(
+        }
+        case "source": {
+          const handle = (plugin as SourcePlugin).create(
             getSourceCallbacks(pluginId)
           );
+          if (handle) pluginHandles[pluginId] = handle;
           break;
+        }
       }
     } catch (error) {
       console.error(
