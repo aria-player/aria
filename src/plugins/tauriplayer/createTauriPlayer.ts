@@ -7,9 +7,10 @@ import { open } from "@tauri-apps/api/dialog";
 import { Track, TrackMetadata } from "../../features/tracks/tracksTypes";
 import { appDataDir } from "@tauri-apps/api/path";
 import { t } from "i18next";
-import { useTranslation } from "react-i18next";
 import i18n from "i18next";
 import en_us from "./locales/en_us/translation.json";
+import QuickStart from "./QuickStart";
+import { Config } from "./Config";
 
 export type TauriPlayerData = {
   folders: Record<string, string[]>;
@@ -132,36 +133,10 @@ export function createTauriPlayer(host: SourceCallbacks): SourceHandle {
   }
 
   return {
-    Config: () => {
-      const { t } = useTranslation();
-      return (
-        <>
-          <h4>{t("tauriplayer:config.folders")}</h4>
-          <button onClick={handleButtonClick}>
-            {t("tauriplayer:config.addFolder")}
-          </button>
-          <ul>
-            {Object.keys(folders).map((folder) => (
-              <li key={folder}>
-                {folder}
-                <button
-                  onClick={() => {
-                    removeFolder(folder);
-                  }}
-                >
-                  {t("tauriplayer:config.remove")}
-                </button>
-                {folders[folder]?.length}
-              </li>
-            ))}
-          </ul>
-        </>
-      );
-    },
+    Config: (props) =>
+      Config({ ...props, folders, handleButtonClick, removeFolder }),
 
-    QuickStart: () => (
-      <button onClick={handleButtonClick}>{t("tauriplayer:quickStart")}</button>
-    ),
+    QuickStart: (props) => QuickStart({ ...props, handleButtonClick }),
 
     async loadAndPlayTrack(track: Track): Promise<void> {
       const file = await convertFileSrc(track.uri);
