@@ -20,22 +20,28 @@ const createPluginInstance = (pluginId: PluginId) => {
     if (!plugin) {
       throw new Error(`Plugin "${pluginId}" not found`);
     }
-    switch (plugin.type) {
-      case "base":
-        pluginHandles[pluginId] = (plugin as BasePlugin).create(
-          getBaseCallbacks(pluginId)
-        );
-        break;
-      case "integration":
-        pluginHandles[pluginId] = (plugin as IntegrationPlugin).create(
-          getIntegrationCallbacks(pluginId)
-        );
-        break;
-      case "source":
-        pluginHandles[pluginId] = (plugin as SourcePlugin).create(
-          getSourceCallbacks(pluginId)
-        );
-        break;
+    try {
+      switch (plugin.type) {
+        case "base":
+          pluginHandles[pluginId] = (plugin as BasePlugin).create(
+            getBaseCallbacks(pluginId)
+          );
+          break;
+        case "integration":
+          pluginHandles[pluginId] = (plugin as IntegrationPlugin).create(
+            getIntegrationCallbacks(pluginId)
+          );
+          break;
+        case "source":
+          pluginHandles[pluginId] = (plugin as SourcePlugin).create(
+            getSourceCallbacks(pluginId)
+          );
+          break;
+      }
+    } catch (error) {
+      console.error(
+        `Failed to create plugin "${pluginId}" with error: ${error}`
+      );
     }
   }
 };
