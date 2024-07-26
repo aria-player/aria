@@ -101,7 +101,7 @@ export function createTauriPlayer(host: SourceCallbacks): SourceHandle {
     }
   }
 
-  const handleButtonClick = async () => {
+  const addFolder = async () => {
     pickDirectory().then(async (folderInfo) => {
       if (folderInfo) {
         folders = { ...folders, [folderInfo.path]: folderInfo.items };
@@ -133,10 +133,9 @@ export function createTauriPlayer(host: SourceCallbacks): SourceHandle {
   }
 
   return {
-    Config: (props) =>
-      Config({ ...props, folders, handleButtonClick, removeFolder }),
+    Config: (props) => Config({ ...props, folders, addFolder, removeFolder }),
 
-    QuickStart: (props) => QuickStart({ ...props, handleButtonClick }),
+    QuickStart: (props) => QuickStart({ ...props, addFolder }),
 
     async loadAndPlayTrack(track: Track): Promise<void> {
       const file = await convertFileSrc(track.uri);

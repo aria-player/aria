@@ -2,7 +2,7 @@ import { useTranslation } from "react-i18next";
 
 export function Config(props: {
   folders: Record<string, string[]>;
-  handleButtonClick: () => void;
+  addFolder: () => void;
   removeFolder: (folder: string) => void;
 }) {
   const { t } = useTranslation();
@@ -10,7 +10,7 @@ export function Config(props: {
   return (
     <>
       <h4>{t("tauriplayer:config.folders")}</h4>
-      <button onClick={props.handleButtonClick}>
+      <button onClick={props.addFolder}>
         {t("tauriplayer:config.addFolder")}
       </button>
       <ul>
