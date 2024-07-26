@@ -4,6 +4,10 @@
   "config": {
     "folders": "Music folders",
     "addFolder": "Add folder",
-    "remove": "Remove"
+    "removeFolder": "Remove folder",
+    "path": "Path",
+    "tracks": "Tracks",
+    "actions": "Actions",
+    "noFolders": "No folders added"
   }
 }
