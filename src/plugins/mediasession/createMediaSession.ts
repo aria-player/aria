@@ -6,7 +6,10 @@ import { Track } from "../../features/tracks/tracksTypes";
 
 export function createMediaSession(
   host: IntegrationCallbacks
-): IntegrationHandle {
+): IntegrationHandle | null {
+  if (!("mediaSession" in navigator)) {
+    return null;
+  }
   console.log("Created mediasession integration");
   navigator.mediaSession.metadata = null;
   navigator.mediaSession.setActionHandler("play", host.resume);
