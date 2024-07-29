@@ -22,6 +22,7 @@ export function createTauriPlayer(host: SourceCallbacks): SourceHandle {
   let folders = { ...initialConfig.folders };
   let audio: HTMLAudioElement | null;
   console.log("Created a new tauri player");
+  rescanFolders();
   getMetadata(host.getTracks().filter((track) => !track.metadataLoaded));
 
   async function getAudioFileNames(directoryPath: string) {
@@ -101,27 +102,44 @@ export function createTauriPlayer(host: SourceCallbacks): SourceHandle {
     }
   }
 
+  function addNewTracks(fileNames: string[]) {
+    const dateAdded = Date.now();
+    const tracks = fileNames.map(
+      (fileName) =>
+        ({
+          uri: fileName,
+          title: fileName.split("\\").pop(),
+          album: fileName.split("\\").slice(-2, -1)[0],
+          dateAdded,
+          filePath: fileName,
+          fileFolder: fileName.split("\\").slice(-2, -1)[0],
+          metadataLoaded: false
+        }) as Track
+    );
+    host.addTracks(tracks);
+    getMetadata(tracks);
+  }
+
+  async function rescanFolders() {
+    for (const folder in folders) {
+      const fileNames = (await getAudioFileNames(folder)) as string[];
+      const newFileNames = fileNames.filter(
+        (fileName) => !folders[folder].includes(fileName)
+      );
+      if (newFileNames.length > 0) {
+        folders[folder] = [...folders[folder], ...newFileNames];
+        host.updateData({ folders });
+        addNewTracks(newFileNames);
+      }
+    }
+  }
+
   const addFolder = async () => {
     pickDirectory().then(async (folderInfo) => {
       if (folderInfo) {
         folders = { ...folders, [folderInfo.path]: folderInfo.items };
         host.updateData({ folders });
-        const dateAdded = Date.now();
-        const tracks = folderInfo.items.map(
-          (key: string) =>
-            ({
-              uri: key,
-              title: key.split("\\").pop(),
-              album: key.split("\\").slice(-2, -1)[0],
-              dateAdded,
-              filePath: key,
-              fileFolder: key.split("\\").slice(-2, -1)[0],
-              metadataLoaded: false
-            }) as Track
-        );
-
-        host.addTracks(tracks);
-        getMetadata(tracks);
+        addNewTracks(folderInfo.items);
       }
     });
   };
