@@ -86,7 +86,10 @@ export function createTauriPlayer(host: SourceCallbacks): SourceHandle {
           })
           .catch((err) => {
             console.error(`Error fetching metadata for ${track.uri}:`, err);
-            return null;
+            return {
+              ...track,
+              metadataLoaded: true
+            } as Track;
           })
       );
 
