@@ -89,7 +89,10 @@ export function TrackMenuItems() {
     (grouping === undefined ||
       librarySplitViewStates[view].trackGrouping == grouping);
 
-  const showGoToAlbum = showGoTo(LibraryView.Albums, menuData?.metadata?.album);
+  const showGoToAlbum = showGoTo(
+    LibraryView.Albums,
+    menuData?.metadata?.albumId
+  );
   const showGoToAlbumArtist = showGoTo(
     LibraryView.Artists,
     menuData?.metadata?.albumArtist,
@@ -147,9 +150,9 @@ export function TrackMenuItems() {
         <>
           <Item
             onClick={() => {
-              if (menuData?.metadata?.album == undefined) return;
+              if (menuData?.metadata?.albumId == undefined) return;
               dispatch(push(BASEPATH + "albums"));
-              dispatch(setSelectedAlbum(menuData.metadata.album));
+              dispatch(setSelectedAlbum(menuData.metadata.albumId));
               hideAll();
             }}
           >
