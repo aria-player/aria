@@ -14,6 +14,8 @@ import { TreeProvider } from "./contexts/TreeContext";
 import { HTML5toTouch } from "rdndmb-html5-to-touch";
 import { DndProvider } from "react-dnd-multi-backend";
 import { ArtworkProvider } from "./contexts/ArtworkContext";
+import { ErrorBoundary } from "react-error-boundary";
+import { CrashPage } from "./components/pages/CrashPage";
 import App from "./App";
 import "./i18n";
 
@@ -29,24 +31,28 @@ ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <HistoryRouter history={history} basename={BASEPATH}>
-          <GridProvider>
-            <TreeProvider>
-              <MenuProvider>
-                <PlatformProvider>
-                  <ArtworkProvider>
-                    <DndProvider options={HTML5toTouch}>
-                      <App />
-                    </DndProvider>
-                  </ArtworkProvider>
-                </PlatformProvider>
-              </MenuProvider>
-            </TreeProvider>
-          </GridProvider>
-        </HistoryRouter>
-      </PersistGate>
-    </Provider>
+    <ErrorBoundary FallbackComponent={CrashPage}>
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <HistoryRouter history={history} basename={BASEPATH}>
+            <GridProvider>
+              <TreeProvider>
+                <MenuProvider>
+                  <PlatformProvider>
+                    <ArtworkProvider>
+                      <DndProvider options={HTML5toTouch}>
+                        <ErrorBoundary FallbackComponent={CrashPage}>
+                          <App />
+                        </ErrorBoundary>
+                      </DndProvider>
+                    </ArtworkProvider>
+                  </PlatformProvider>
+                </MenuProvider>
+              </TreeProvider>
+            </GridProvider>
+          </HistoryRouter>
+        </PersistGate>
+      </Provider>
+    </ErrorBoundary>
   </React.StrictMode>
 );

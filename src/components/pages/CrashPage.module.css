@@ -1,0 +1,35 @@
+.window {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  font-family:
+    "Segoe UI",
+    -apple-system,
+    BlinkMacSystemFont,
+    Oxygen-Sans,
+    Ubuntu,
+    Cantarell,
+    "Helvetica Neue",
+    sans-serif;
+  background-color: var(--primary-background);
+  color: var(--primary-text);
+}
+
+.error {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  text-align: center;
+  height: 100%;
+}
+
+.error h1 {
+  font-weight: 500;
+  padding: 2rem;
+  margin: 0;
+  display: inline;
+}
+
+.error p {
+  margin: 0;
+}
