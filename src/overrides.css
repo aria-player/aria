@@ -1,4 +1,15 @@
 body {
+  font-family:
+    "Segoe UI",
+    -apple-system,
+    BlinkMacSystemFont,
+    Oxygen-Sans,
+    Ubuntu,
+    Cantarell,
+    "Helvetica Neue",
+    sans-serif;
+  color: var(--primary-text);
+  background-color: var(--primary-background);
   margin: 0;
   overscroll-behavior: none;
   user-select: none;
