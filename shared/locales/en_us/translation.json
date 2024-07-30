@@ -120,6 +120,13 @@
     "title": "Error",
     "notFound": "Page not found"
   },
+  "crash": {
+    "heading": "Something went wrong",
+    "headingAlt": "Something went catastrophically wrong",
+    "errorMessage": "Error message: \"{{error}}\"",
+    "showErrorDetails": "Show error details",
+    "hideErrorDetails": "Hide error details"
+  },
   "labels": {
     "menu": "Menu",
     "forward": "Forward",

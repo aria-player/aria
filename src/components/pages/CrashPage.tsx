@@ -3,9 +3,11 @@ import { PlatformContext, Platform } from "../../contexts/PlatformContext";
 import { MacTitleBar } from "../platforms/mac/MacTitleBar";
 import { WindowsMenuBar } from "../platforms/windows/WindowsMenuBar";
 import styles from "./CrashPage.module.css";
+import { useTranslation } from "react-i18next";
 
 export const CrashPage = ({ error }: { error: DOMException }) => {
   const { platform, fullscreen } = useContext(PlatformContext);
+  const { t } = useTranslation();
   const [showDetails, setShowDetails] = useState(false);
   const contextError = platform == Platform.Unknown;
   const tauriDragRegion = contextError
@@ -18,17 +20,20 @@ export const CrashPage = ({ error }: { error: DOMException }) => {
       {platform == Platform.Windows && <WindowsMenuBar />}
       <div className={styles.error} {...tauriDragRegion}>
         <h1 {...tauriDragRegion}>
-          Something went {contextError && "catastrophically "}
-          wrong
+          {t(contextError ? "crash.headingAlt" : "crash.heading")}
         </h1>
-        <p {...tauriDragRegion}>Error message: &quot;{error.message}&quot;</p>
+        <p {...tauriDragRegion}>
+          {t("crash.errorMessage", { error: error.message })}
+        </p>
         <div className={styles.details} {...tauriDragRegion}>
           <button
             onClick={() => {
               setShowDetails(!showDetails);
             }}
           >
-            {showDetails ? "Hide error details" : "Show error details"}
+            {showDetails
+              ? t("crash.hideErrorDetails")
+              : t("crash.showErrorDetails")}
           </button>
           <div
             className={styles.collapsible}
