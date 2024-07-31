@@ -13,6 +13,7 @@ body {
   margin: 0;
   overscroll-behavior: none;
   user-select: none;
+  overflow: hidden;
 
   /* Soprano overrides */
   --slider-thumb-size: 8px;
