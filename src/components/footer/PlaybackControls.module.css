@@ -16,7 +16,6 @@
 
 .durationButton {
   border: none;
-  font-family: inherit;
   font-weight: inherit;
   color: var(--player-controls);
   background: none;

@@ -208,4 +208,11 @@ body {
       pointer-events: none !important;
     }
   }
+
+  /* Elements */
+  button,
+  select,
+  input {
+    font-family: inherit;
+  }
 }

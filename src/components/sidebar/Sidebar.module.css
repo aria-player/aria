@@ -28,7 +28,6 @@
   background-color: var(--search-background);
   outline: none;
   border: none;
-  font-family: inherit;
   width: 100%;
 }
 
