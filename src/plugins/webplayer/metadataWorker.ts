@@ -1,4 +1,4 @@
-import { parseBlob } from "music-metadata-browser";
+import { parseBlob } from "music-metadata";
 import { TrackMetadata } from "../../features/tracks/tracksTypes";
 import localforage from "localforage";
 import { expose } from "comlink";
@@ -36,6 +36,17 @@ async function resizeArtwork(
   });
 }
 
+function chunkedUint8ArrayToBase64(uint8Array: Uint8Array) {
+  let binaryString = "";
+  const chunkSize = 32768;
+  for (let i = 0; i < uint8Array.length; i += chunkSize) {
+    binaryString += String.fromCharCode.apply(null, [
+      ...uint8Array.subarray(i, i + chunkSize)
+    ]);
+  }
+  return btoa(binaryString);
+}
+
 async function storeCoverArtGetHash(coverArtData: string) {
   const coverArtHash = SHA256(coverArtData).toString();
   const existingData = await artworkStore.getItem(coverArtHash);
@@ -62,9 +73,7 @@ export async function parseMetadata(track: TrackMetadata, file: File) {
   newTrack.duration = (metadata.format.duration ?? 0) * 1000;
   if (metadata.common.picture && metadata.common.picture[0]) {
     const picture = metadata.common.picture[0];
-    const pictureData = `data:${picture.format};base64,${picture.data.toString(
-      "base64"
-    )}`;
+    const pictureData = `data:${picture.format};base64,${chunkedUint8ArrayToBase64(picture.data)}`;
     const hash = await storeCoverArtGetHash(pictureData);
     if (hash != null) newTrack.artworkUri = hash;
   }
@@ -113,7 +122,9 @@ export async function parseMetadata(track: TrackMetadata, file: File) {
     newTrack.album = metadata.common.album;
     newTrack.genre = metadata.common.genre?.join(", ");
     newTrack.composer = metadata.common.composer;
-    newTrack.comments = metadata.common.comment;
+    newTrack.comments = metadata.common.comment
+      ?.map((comment) => comment.text)
+      .filter((text) => text !== undefined);
     newTrack.year = metadata.common.year;
     newTrack.disc = Number(metadata.common.disk);
     newTrack.track = Number(metadata.common.track.no);
