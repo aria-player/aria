@@ -48,7 +48,11 @@ function App() {
       <ContextMenuContainer />
       {platform == Platform.Mac && fullscreen === false && <MacTitleBar />}
       {platform == Platform.Windows && <WindowsMenuBar />}
-      <Allotment snap proportionalLayout={false} onDragEnd={handleDragEnd}>
+      <Allotment
+        proportionalLayout={false}
+        onDragEnd={handleDragEnd}
+        minSize={44}
+      >
         <Allotment.Pane
           preferredSize={sidebarWidth}
           visible={!sidebarCollapsed}
