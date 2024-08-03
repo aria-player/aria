@@ -4,22 +4,22 @@
   --button-text: #e7e7e7;
   --button-text-selected: #fff;
   --column-text: rgb(187 187 187);
-  --menubar-button-text: rgb(187 187 187);
+  --menubar-button-text: #e7e7e7;
 
   /* Icons */
-  --menubar-button-icon: rgb(187 187 187);
+  --menubar-button-icon: #e7e7e7;
   --menubar-button-icon-disabled: rgb(77 77 77);
   --player-controls: #ececec;
   --missing-artwork-foreground: rgb(53 53 53);
 
   /* Borders */
   --sidebar-separator: rgb(17 17 17);
-  --focus-outline: #e0e0e0;
+  --focus-outline: #e7e7e7;
 
   /* Backgrounds */
   --primary-background: #000;
   --menubar-background: #000;
-  --menubar-button-background-hover: rgb(41 41 41);
+  --menubar-button-background-hover: rgb(36 36 36);
   --windows-control-background-hover: rgb(255 255 255 / 6%);
   --windows-control-background-active: rgb(255 255 255 / 4%);
   --button-background-hover: rgb(36 36 36);
@@ -28,7 +28,7 @@
   --search-background: #0c0c0c;
   --search-background-active: #242424;
   --input-background: rgb(17 17 17);
-  --footer-background: rgb(2 2 2);
+  --footer-background: #000;
   --player-slider-background: #1f1f1f;
   --odd-row-background: rgb(17 17 17);
   --missing-artwork-background: rgb(15 15 15);
