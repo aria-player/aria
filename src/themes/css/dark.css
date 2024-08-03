@@ -22,9 +22,9 @@
   --menubar-button-background-hover: rgb(68 68 68);
   --windows-control-background-hover: rgb(255 255 255 / 6%);
   --windows-control-background-active: rgb(255 255 255 / 4%);
-  --button-background: rgb(66 66 66);
   --button-background-hover: rgb(76 76 76);
   --button-background-active: rgb(86 86 86);
+  --context-menu-background: rgb(66 66 66);
   --search-background: #252525;
   --search-background-active: #1a1a1a;
   --input-background: rgb(40 40 40);
