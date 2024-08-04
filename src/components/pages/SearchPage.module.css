@@ -3,7 +3,7 @@
   padding: 0.5rem 0.5rem 0;
   font-size: 1rem;
   font-weight: 500;
-  color: var(--column-text);
+  color: var(--secondary-text);
 }
 
 .historyList {

@@ -50,7 +50,7 @@ body {
   /* AG-Grid overrides */
   .ag-theme-balham {
     --ag-header-background-color: var(--primary-background);
-    --ag-header-foreground-color: var(--column-text);
+    --ag-header-foreground-color: var(--secondary-text);
     --ag-foreground-color: var(--primary-text);
     --ag-background-color: var(--primary-background);
     --ag-modal-overlay-background-color: transparent;

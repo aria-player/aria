@@ -4,7 +4,7 @@
   font-size: 0.8rem;
   display: flex;
   align-items: center;
-  color: var(--column-text);
+  color: var(--secondary-text);
   height: 100%;
 }
 

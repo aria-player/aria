@@ -1,8 +1,8 @@
 [data-theme="dark"] {
   /* Text */
   --primary-text: #f6f6f6;
+  --secondary-text: rgb(236 236 236);
   --button-text-selected: #fff;
-  --column-text: rgb(236 236 236);
   --menubar-button-text: #f6f6f6;
 
   /* Icons */
