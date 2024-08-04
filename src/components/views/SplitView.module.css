@@ -43,7 +43,7 @@
 
 .albumTrackList {
   height: 100%;
-  border-left: 1px solid var(--sidebar-separator);
+  border-left: 1px solid var(--primary-border);
   padding-left: 2rem;
   overflow-y: auto;
 }

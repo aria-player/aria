@@ -32,7 +32,7 @@ export default function ViewContainer() {
         style={{
           borderBottom:
             visibleDisplayMode != DisplayMode.TrackList
-              ? `1px solid var(--sidebar-separator)`
+              ? `1px solid var(--primary-border)`
               : ""
         }}
       >

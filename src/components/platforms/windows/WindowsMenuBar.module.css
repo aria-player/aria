@@ -5,7 +5,7 @@
   align-items: flex-end;
   background-color: var(--menubar-background);
   padding-left: 0.5rem;
-  border-bottom: 1px solid var(--sidebar-separator);
+  border-bottom: 1px solid var(--primary-border);
   user-select: none;
 }
 

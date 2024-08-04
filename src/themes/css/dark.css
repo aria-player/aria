@@ -12,7 +12,7 @@
   --missing-artwork-foreground: rgb(97 97 97);
 
   /* Borders */
-  --sidebar-separator: rgb(36 36 36);
+  --primary-border: rgb(36 36 36);
   --focus-outline: #f1f1f1;
 
   /* Backgrounds */
