@@ -73,7 +73,7 @@
 
 .alert {
   margin: 1rem 0;
-  background-color: var(--search-background);
+  background-color: var(--inset-background);
   padding: 1rem;
   border-radius: 0.25rem;
 }
