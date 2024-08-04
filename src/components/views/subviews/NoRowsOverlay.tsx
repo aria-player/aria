@@ -24,17 +24,17 @@ export default function NoRowsOverlay() {
 
   switch (visibleViewType) {
     case View.Search:
-      return <div>{t("search.noResults")}</div>;
+      return <div className={styles.empty}>{t("search.noResults")}</div>;
     case View.Playlist:
-      return <div>{t("tracks.emptyPlaylist")}</div>;
+      return <div className={styles.empty}>{t("tracks.emptyPlaylist")}</div>;
     case View.Queue:
-      return <div>{t("tracks.emptyQueue")}</div>;
+      return <div className={styles.empty}>{t("tracks.emptyQueue")}</div>;
     default:
       if (
         visibleDisplayMode == DisplayMode.AlbumGrid ||
         visibleDisplayMode == DisplayMode.SplitView
       ) {
-        return <div>{t("albumTrackList.empty")}</div>;
+        return <div className={styles.empty}>{t("albumTrackList.empty")}</div>;
       } else {
         return (
           <div className={styles.quickStart}>

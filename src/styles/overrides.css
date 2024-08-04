@@ -12,7 +12,7 @@ body {
   --tree-item-background-hover: var(--button-background-hover);
   --tree-item-background-active: var(--button-background-active);
   --tree-item-background-selected: var(--accent-color);
-  --tree-empty-text: var(--menubar-button-icon-disabled);
+  --tree-empty-text: var(--empty-list-text);
   --tree-item-editing-text: var(--primary-text);
   --tree-item-editing-background: var(--primary-background);
   --tree-item-margin: 0.125rem 0.25rem;
