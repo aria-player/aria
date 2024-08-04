@@ -37,7 +37,6 @@
 .removeButton {
   background: none;
   border: none;
-  color: var(--primary-text);
   height: 1.4rem;
   width: 1.4rem;
   padding: 0.1rem;

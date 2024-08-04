@@ -216,5 +216,6 @@ body {
   select,
   input {
     font-family: inherit;
+    color: var(--primary-text);
   }
 }
