@@ -24,10 +24,8 @@
 }
 
 .error button {
-  background-color: transparent;
   border: 1px solid;
   padding: 0.5rem 1rem;
-  border-radius: 0.25rem;
   font-size: 0.9rem;
   font-weight: 500;
 }

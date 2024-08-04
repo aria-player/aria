@@ -5,8 +5,7 @@
 
 .windowsControl {
   width: 46px;
-  border: none;
-  background-color: transparent;
+  border-radius: 0;
   color: var(--menubar-button-icon);
 }
 

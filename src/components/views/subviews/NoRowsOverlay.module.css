@@ -8,10 +8,8 @@
 }
 
 .quickStart button:not(.link) {
-  background-color: transparent;
   border: 1px solid var(--player-controls);
   padding: 0.5rem 1rem;
-  border-radius: 0.25rem;
   font-size: 0.9rem;
   font-weight: 500;
   margin-bottom: 0.5rem;
@@ -28,8 +26,6 @@
 
 .link {
   font-size: 0.8rem;
-  background: none;
-  border: none;
   padding: 0;
   color: var(--accent-color);
 }

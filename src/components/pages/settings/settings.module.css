@@ -32,10 +32,8 @@
 }
 
 .page button:not(.accentButton) {
-  background-color: transparent;
   border: 1px solid var(--player-controls);
   padding: 0.5rem 1rem;
-  border-radius: 0.25rem;
   font-size: 0.9rem;
   font-weight: 500;
 }
@@ -58,7 +56,6 @@
 }
 
 .accentButton {
-  border: none;
   border-radius: 50%;
   width: 2rem;
   height: 2rem;

@@ -2,13 +2,10 @@
   width: 1.5rem;
   height: 1.5rem;
   padding: 0.15rem;
-  border: none;
-  background-color: transparent;
   color: var(--menubar-button-icon);
   cursor: pointer;
 }
 
 .menuButton:hover {
   background-color: var(--menubar-button-background-hover);
-  border-radius: 0.25rem;
 }

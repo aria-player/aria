@@ -1,14 +1,11 @@
 .menuButton {
   height: 1.5rem;
   color: var(--menubar-button-text);
-  background: transparent;
-  border-radius: 0.25rem;
   padding: 0.1rem 0.5rem;
   margin-left: 0.1rem;
   font-size: 0.9rem;
   justify-content: center;
   align-items: center;
-  border: none;
   line-height: normal;
 }
 

@@ -218,4 +218,10 @@ body {
     font-family: inherit;
     color: var(--primary-text);
   }
+
+  button {
+    background: none;
+    border: none;
+    border-radius: 0.25rem;
+  }
 }

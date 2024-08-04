@@ -37,15 +37,12 @@
 
 .searchSelected {
   outline: 2px solid var(--accent-color);
-  border-radius: 0.25rem;
 }
 
 .searchClear {
   position: absolute;
   right: 0.75rem;
   font-size: 1rem;
-  background: none;
-  border: none;
   height: 1rem;
   width: 1rem;
   padding: 0;

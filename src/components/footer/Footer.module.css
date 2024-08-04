@@ -46,8 +46,6 @@
   font-weight: 600;
   font-size: 1rem;
   padding: 0.1rem;
-  background: none;
-  border: none;
   overflow: hidden;
   text-overflow: ellipsis;
   text-align: left;
@@ -57,7 +55,6 @@
 
 .title:hover {
   background-color: var(--button-background-hover);
-  border-radius: 0.25rem;
 }
 
 .artist {

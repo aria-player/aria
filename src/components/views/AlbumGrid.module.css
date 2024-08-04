@@ -68,11 +68,8 @@
 .backButton {
   position: absolute;
   color: var(--player-controls);
-  border: none;
-  background: none;
   width: 2rem;
   height: 2rem;
-  border-radius: 0.25rem;
   margin: 1rem;
   transition: transform 0.1s ease;
   cursor: pointer;

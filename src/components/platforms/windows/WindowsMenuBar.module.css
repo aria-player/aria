@@ -32,15 +32,12 @@
   height: 1.5rem;
   padding: 0.15rem;
   margin-left: 0.15rem;
-  border: none;
-  background-color: transparent;
   color: var(--menubar-button-icon);
   cursor: pointer;
 }
 
 .arrow:hover {
   background-color: var(--menubar-button-background-hover);
-  border-radius: 0.25rem;
 }
 
 .arrowDisabled {

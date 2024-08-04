@@ -15,15 +15,12 @@
 }
 
 .durationButton {
-  border: none;
   font-weight: inherit;
   color: var(--player-controls);
-  background: none;
 }
 
 .durationButton:hover {
   background-color: var(--button-background-hover);
-  border-radius: 0.25rem;
 }
 
 .controls {
@@ -35,11 +32,8 @@
 
 .button {
   color: var(--player-controls);
-  border: none;
   padding: 0.3rem;
   display: flex;
-  background: none;
-  border-radius: 0.25rem;
   transition: transform 0.1s ease;
   margin: 0 0.6em;
 }
