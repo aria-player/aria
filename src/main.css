@@ -23,7 +23,7 @@ body {
   --slider-color: var(--accent-color);
   --slider-track-color: var(--player-slider-background);
   --slider-focus-outline-color: var(--focus-outline);
-  --tree-item-text: var(--button-text);
+  --tree-item-text: var(--primary-text);
   --tree-item-text-selected: var(--button-text-selected);
   --tree-item-background-hover: var(--button-background-hover);
   --tree-item-background-active: var(--button-background-active);
@@ -46,13 +46,13 @@ body {
   --contexify-menu-minWidth: 12.5rem;
   --contexify-itemContent-padding: 0.25rem 1.5rem;
   --contexify-menu-bgColor: var(--context-menu-background);
-  --contexify-item-color: var(--button-text);
-  --contexify-rightSlot-color: var(--button-text);
-  --contexify-arrow-color: var(--button-text);
+  --contexify-item-color: var(--primary-text);
+  --contexify-rightSlot-color: var(--primary-text);
+  --contexify-arrow-color: var(--primary-text);
   --contexify-activeItem-bgColor: var(--button-background-hover);
-  --contexify-activeItem-color: var(--button-text);
-  --contexify-activeRightSlot-color: var(--button-text);
-  --contexify-activeArrow-color: var(--button-text);
+  --contexify-activeItem-color: var(--primary-text);
+  --contexify-activeRightSlot-color: var(--primary-text);
+  --contexify-activeArrow-color: var(--primary-text);
 
   .contexify {
     font-size: 0.8rem;
@@ -86,7 +86,7 @@ body {
 
   .ag-cell-label-container.ag-header-cell-sorted-asc,
   .ag-cell-label-container.ag-header-cell-sorted-desc {
-    color: var(--button-text);
+    color: var(--primary-text);
   }
 
   .ag-body-viewport {

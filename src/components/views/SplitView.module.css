@@ -16,7 +16,7 @@
 
 .listItem button {
   width: 100%;
-  color: var(--button-text);
+  color: var(--primary-text);
   padding: 0.75rem;
   font-size: 0.9rem;
   background: none;

@@ -18,7 +18,7 @@
 }
 
 .searchInput {
-  color: var(--button-text);
+  color: var(--primary-text);
   height: 2rem;
   line-height: 2rem;
   border-radius: 0.25rem;
@@ -47,7 +47,7 @@
   font-size: 1rem;
   background: none;
   border: none;
-  color: var(--button-text);
+  color: var(--primary-text);
   height: 1rem;
   width: 1rem;
   padding: 0;

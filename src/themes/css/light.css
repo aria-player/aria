@@ -1,7 +1,6 @@
 [data-theme="light"] {
   /* Text */
   --primary-text: #1f1f1f;
-  --button-text: #1f1f1f;
   --button-text-selected: #fff;
   --column-text: rgb(0 0 0 / 54%);
   --menubar-button-text: #1f1f1f;
