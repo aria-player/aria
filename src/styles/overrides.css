@@ -1,20 +1,4 @@
 body {
-  font-family:
-    "Segoe UI",
-    -apple-system,
-    BlinkMacSystemFont,
-    Oxygen-Sans,
-    Ubuntu,
-    Cantarell,
-    "Helvetica Neue",
-    sans-serif;
-  color: var(--primary-text);
-  background-color: var(--primary-background);
-  margin: 0;
-  overscroll-behavior: none;
-  user-select: none;
-  overflow: hidden;
-
   /* Soprano overrides */
   --slider-thumb-size: 8px;
   --slider-thumb-border-size: 3px;
@@ -209,19 +193,5 @@ body {
     .ag-full-width-row:not([aria-selected]) {
       pointer-events: none !important;
     }
-  }
-
-  /* Elements */
-  button,
-  select,
-  input {
-    font-family: inherit;
-    color: var(--primary-text);
-  }
-
-  button {
-    background: none;
-    border: none;
-    border-radius: 0.25rem;
   }
 }
