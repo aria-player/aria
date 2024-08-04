@@ -26,7 +26,7 @@
   width: 100%;
   padding: 0.5rem 1rem;
   border-radius: 0.25rem;
-  background-color: var(--input-background);
+  background-color: var(--select-background);
   color: var(--text-color);
   font-size: 0.9rem;
 }
