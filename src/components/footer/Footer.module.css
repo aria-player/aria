@@ -22,8 +22,6 @@
 .art {
   width: 4.75rem;
   height: 100%;
-  background-color: #bdc3c7;
-  color: #0e0e0e;
   flex-shrink: 0;
 }
 

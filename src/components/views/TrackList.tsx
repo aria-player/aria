@@ -12,7 +12,6 @@ import {
   RowDragEndEvent,
   SortChangedEvent
 } from "@ag-grid-community/core";
-import styles from "./TrackList.module.css";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   setLibraryColumnState,
@@ -370,7 +369,10 @@ export const TrackList = () => {
   };
 
   return (
-    <div className={`${styles.tracklist} ag-theme-balham`}>
+    <div
+      className={"ag-theme-balham"}
+      style={{ width: "100%", height: "100%" }}
+    >
       <div style={{ display: isGridReady ? "block" : "none", height: "100%" }}>
         <AgGridReact
           {...gridProps}

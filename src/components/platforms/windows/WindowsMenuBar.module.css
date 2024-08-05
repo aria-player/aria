@@ -35,17 +35,13 @@
   cursor: pointer;
 }
 
-.arrow:hover {
+.arrow:hover:not(.arrowDisabled) {
   background-color: var(--menubar-button-background-hover);
 }
 
 .arrowDisabled {
   color: var(--menubar-button-icon-disabled);
   cursor: default;
-}
-
-.arrowDisabled:hover {
-  background-color: transparent;
 }
 
 .dragRegion {
