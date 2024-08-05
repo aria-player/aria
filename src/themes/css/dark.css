@@ -7,6 +7,7 @@
   --empty-list-text: #b6b6b6;
   --button-background-hover: rgb(76 76 76);
   --button-background-active: rgb(86 86 86);
+  --inset-background: rgb(36 36 36);
 
   /* Menu bar */
   --menubar-background: rgb(36 36 36);
@@ -32,7 +33,6 @@
   /* Settings */
   --settings-button-border: #ebebeb;
   --settings-selected-accent-outline: #f6f6f6;
-  --inset-background: rgb(36 36 36);
   --select-background: rgb(40 40 40);
 
   /* Icons */

@@ -7,6 +7,7 @@
   --empty-list-text: #a3a3a3;
   --button-background-hover: #f0f2f5;
   --button-background-active: #e4e6eb;
+  --inset-background: #f0f0f0;
 
   /* Menu bar */
   --menubar-background: #fff;
@@ -32,7 +33,6 @@
   /* Settings */
   --settings-button-border: #4c4c4c;
   --settings-selected-accent-outline: #313131;
-  --inset-background: #f0f0f0;
   --select-background: #fff;
 
   /* Icons */
