@@ -13,7 +13,7 @@
 }
 
 .quickStart button:not(.link) {
-  border: 1px solid var(--player-controls);
+  border: 1px solid var(--settings-button-border);
   padding: 0.5rem 1rem;
   font-size: 0.9rem;
   font-weight: 500;
