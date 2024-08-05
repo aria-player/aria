@@ -16,7 +16,7 @@
 
 .durationButton {
   font-weight: inherit;
-  color: var(--player-controls);
+  color: var(--footer-controls);
 }
 
 .durationButton:hover {
@@ -31,7 +31,7 @@
 }
 
 .button {
-  color: var(--player-controls);
+  color: var(--footer-controls);
   padding: 0.3rem;
   display: flex;
   transition: transform 0.1s ease;

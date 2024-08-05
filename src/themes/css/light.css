@@ -23,17 +23,17 @@
   --search-background-active: #ebebeb;
 
   /* Tracks */
-  --odd-row-background: #f5f5f5;
+  --tracklist-odd-row-background: #f5f5f5;
 
   /* Footer */
   --footer-background: #fff;
-  --player-controls: #4c4c4c;
-  --player-slider-background: #eee;
+  --footer-controls: #4c4c4c;
+  --footer-slider-background: #eee;
 
   /* Settings */
   --settings-button-border: #4c4c4c;
   --settings-selected-accent-outline: #313131;
-  --select-background: #fff;
+  --settings-select-background: #fff;
 
   /* Icons */
   --missing-artwork-foreground: #cecfd4;

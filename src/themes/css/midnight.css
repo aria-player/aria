@@ -23,17 +23,17 @@
   --search-background-active: #242424;
 
   /* Tracks */
-  --odd-row-background: rgb(17 17 17);
+  --tracklist-odd-row-background: rgb(17 17 17);
 
   /* Footer */
   --footer-background: #000;
-  --player-controls: #ececec;
-  --player-slider-background: #1f1f1f;
+  --footer-controls: #ececec;
+  --footer-slider-background: #1f1f1f;
 
   /* Settings */
   --settings-button-border: #ececec;
   --settings-selected-accent-outline: #e7e7e7;
-  --select-background: rgb(17 17 17);
+  --settings-select-background: rgb(17 17 17);
 
   /* Icons */
   --missing-artwork-foreground: rgb(53 53 53);
