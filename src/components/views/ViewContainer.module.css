@@ -9,3 +9,7 @@
   font-size: 1.5rem;
   font-weight: 500;
 }
+
+.border {
+  border-bottom: 1px solid var(--primary-border);
+}
