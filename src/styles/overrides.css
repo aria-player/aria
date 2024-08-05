@@ -14,7 +14,7 @@ body {
   --tree-item-background-selected: var(--accent-color);
   --tree-empty-text: var(--empty-list-text);
   --tree-item-editing-text: var(--primary-text);
-  --tree-item-editing-background: var(--primary-background);
+  --tree-item-editing-background: transparent;
   --tree-item-margin: 0.125rem 0.25rem;
   --tree-drop-cursor-border: 2px solid var(--accent-color);
   --tree-item-transition: none;
@@ -49,10 +49,10 @@ body {
 
   /* AG-Grid overrides */
   .ag-theme-balham {
-    --ag-header-background-color: var(--primary-background);
+    --ag-header-background-color: transparent;
     --ag-header-foreground-color: var(--secondary-text);
     --ag-foreground-color: var(--primary-text);
-    --ag-background-color: var(--primary-background);
+    --ag-background-color: transparent;
     --ag-modal-overlay-background-color: transparent;
     --ag-row-height: 33px;
     --ag-range-selection-border-color: var(--accent-color);
@@ -98,7 +98,8 @@ body {
   .ag-row-selected {
     background-color: var(--accent-color) !important;
     color: var(--button-text-selected) !important;
-    border-bottom: 1px solid var(--primary-background);
+    background-clip: padding-box;
+    border-bottom: 1px solid transparent;
 
     --ag-selected-row-background-color: transparent;
   }
