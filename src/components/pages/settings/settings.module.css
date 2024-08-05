@@ -68,7 +68,7 @@
 }
 
 .accentButton.selected {
-  border: 2px solid var(--focus-outline);
+  border: 2px solid var(--settings-selected-accent-outline);
 }
 
 .alert {

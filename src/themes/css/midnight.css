@@ -15,6 +15,7 @@
   /* Borders */
   --primary-border: rgb(17 17 17);
   --settings-button-border: #ececec;
+  --settings-selected-accent-outline: #e7e7e7;
   --focus-outline: #e7e7e7;
 
   /* Backgrounds */
