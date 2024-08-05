@@ -1,37 +1,47 @@
 [data-theme="dark"] {
-  /* Text */
+  /* General */
   --primary-text: #f6f6f6;
-  --secondary-text: rgb(236 236 236);
-  --button-text-selected: #fff;
-  --menubar-button-text: #f6f6f6;
-  --empty-list-text: #b6b6b6;
-
-  /* Icons */
-  --menubar-button-icon: #f6f6f6;
-  --menubar-button-icon-disabled: rgb(77 77 77);
-  --player-controls: #ebebeb;
-  --missing-artwork-foreground: rgb(97 97 97);
-
-  /* Borders */
-  --primary-border: rgb(36 36 36);
-  --settings-button-border: #ebebeb;
-  --settings-selected-accent-outline: #f6f6f6;
-
-  /* Backgrounds */
   --primary-background: #2f2f2f;
-  --menubar-background: rgb(36 36 36);
-  --menubar-button-background-hover: rgb(68 68 68);
-  --windows-control-background-hover: rgb(255 255 255 / 6%);
-  --windows-control-background-active: rgb(255 255 255 / 4%);
+  --primary-border: rgb(36 36 36);
+  --secondary-text: rgb(236 236 236);
+  --empty-list-text: #b6b6b6;
+  --button-text-selected: #fff;
   --button-background-hover: rgb(76 76 76);
   --button-background-active: rgb(86 86 86);
-  --context-menu-background: rgb(66 66 66);
-  --inset-background: rgb(36 36 36);
+
+  /* Menu bar */
+  --menubar-background: rgb(36 36 36);
+  --menubar-button-text: #f6f6f6;
+  --menubar-button-icon: #f6f6f6;
+  --menubar-button-icon-disabled: rgb(77 77 77);
+  --menubar-button-background-hover: rgb(68 68 68);
+
+  /* Windows controls */
+  --windows-control-background-hover: rgb(255 255 255 / 6%);
+  --windows-control-background-active: rgb(255 255 255 / 4%);
+
+  /* Sidebar */
   --search-background: rgb(36 36 36);
   --search-background-active: #1a1a1a;
-  --select-background: rgb(40 40 40);
-  --footer-background: rgb(36 36 36);
-  --player-slider-background: #414141;
+
+  /* Tracks */
   --odd-row-background: rgb(40 40 40);
+
+  /* Footer */
+  --footer-background: rgb(36 36 36);
+  --player-controls: #ebebeb;
+  --player-slider-background: #414141;
+
+  /* Settings */
+  --settings-button-border: #ebebeb;
+  --settings-selected-accent-outline: #f6f6f6;
+  --inset-background: rgb(36 36 36);
+  --select-background: rgb(40 40 40);
+
+  /* Icons */
+  --missing-artwork-foreground: rgb(97 97 97);
   --missing-artwork-background: rgb(76 76 76);
+
+  /* Context menus */
+  --context-menu-background: rgb(66 66 66);
 }

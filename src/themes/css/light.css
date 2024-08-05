@@ -1,37 +1,47 @@
 [data-theme="light"] {
-  /* Text */
+  /* General */
   --primary-text: #1f1f1f;
-  --secondary-text: rgb(0 0 0 / 54%);
-  --button-text-selected: #fff;
-  --menubar-button-text: #1f1f1f;
-  --empty-list-text: #a3a3a3;
-
-  /* Icons */
-  --menubar-button-icon: #1f1f1f;
-  --menubar-button-icon-disabled: rgb(175 175 175);
-  --player-controls: #4c4c4c;
-  --missing-artwork-foreground: #cecfd4;
-
-  /* Borders */
-  --primary-border: #d2d7da;
-  --settings-button-border: #4c4c4c;
-  --settings-selected-accent-outline: #313131;
-
-  /* Backgrounds */
   --primary-background: #fff;
-  --menubar-background: #fff;
-  --menubar-button-background-hover: #f0f2f5;
-  --windows-control-background-hover: rgb(0 0 0 / 5%);
-  --windows-control-background-active: rgb(0 0 0 / 3%);
+  --primary-border: #d2d7da;
+  --secondary-text: rgb(0 0 0 / 54%);
+  --empty-list-text: #a3a3a3;
+  --button-text-selected: #fff;
   --button-background-hover: #f0f2f5;
   --button-background-active: #e4e6eb;
-  --context-menu-background: rgb(252 252 252);
-  --inset-background: #f0f0f0;
+
+  /* Menu bar */
+  --menubar-background: #fff;
+  --menubar-button-text: #1f1f1f;
+  --menubar-button-icon: #1f1f1f;
+  --menubar-button-icon-disabled: rgb(175 175 175);
+  --menubar-button-background-hover: #f0f2f5;
+
+  /* Windows controls */
+  --windows-control-background-hover: rgb(0 0 0 / 5%);
+  --windows-control-background-active: rgb(0 0 0 / 3%);
+
+  /* Sidebar */
   --search-background: #f0f0f0;
   --search-background-active: #ebebeb;
-  --select-background: #fff;
-  --footer-background: #fff;
-  --player-slider-background: #eee;
+
+  /* Tracks */
   --odd-row-background: #f5f5f5;
+
+  /* Footer */
+  --footer-background: #fff;
+  --player-controls: #4c4c4c;
+  --player-slider-background: #eee;
+
+  /* Settings */
+  --settings-button-border: #4c4c4c;
+  --settings-selected-accent-outline: #313131;
+  --inset-background: #f0f0f0;
+  --select-background: #fff;
+
+  /* Icons */
+  --missing-artwork-foreground: #cecfd4;
   --missing-artwork-background: #f0f2f5;
+
+  /* Context menus */
+  --context-menu-background: rgb(252 252 252);
 }
