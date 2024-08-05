@@ -6,7 +6,7 @@ body {
   --slider-active-transform: scale(1.15);
   --slider-color: var(--accent-color);
   --slider-track-color: var(--player-slider-background);
-  --slider-focus-outline-color: var(--focus-outline);
+  --slider-focus-outline-color: var(--primary-text);
   --tree-item-text: var(--primary-text);
   --tree-item-text-selected: var(--button-text-selected);
   --tree-item-background-hover: var(--button-background-hover);
