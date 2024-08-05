@@ -97,7 +97,7 @@ body {
 
   .ag-row-selected {
     background-color: var(--accent-color) !important;
-    color: #fafafa !important;
+    color: var(--button-text-selected) !important;
     border-bottom: 1px solid var(--primary-background);
 
     --ag-selected-row-background-color: transparent;
