@@ -51,6 +51,7 @@ body {
   .ag-theme-balham {
     --ag-header-background-color: transparent;
     --ag-header-foreground-color: var(--secondary-text);
+    --ag-header-column-separator-color: var(--primary-text);
     --ag-foreground-color: var(--primary-text);
     --ag-background-color: transparent;
     --ag-modal-overlay-background-color: transparent;
@@ -66,6 +67,15 @@ body {
 
   .ag-header .ag-header-cell:hover {
     font-weight: 700;
+  }
+
+  .ag-header-cell::before {
+    opacity: 0.2;
+  }
+
+  .ag-header-cell:focus-visible::after {
+    border: 2px solid var(--primary-text);
+    border-radius: 0.25rem;
   }
 
   .ag-cell-label-container.ag-header-cell-sorted-asc,
