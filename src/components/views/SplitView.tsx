@@ -22,7 +22,7 @@ import { store } from "../../app/store";
 
 export function SplitView() {
   const location = useLocation();
-  const itemRefs = useRef<Record<string, HTMLLIElement | null>>({});
+  const itemRefs = useRef<Record<string, HTMLButtonElement | null>>({});
   const visibleItems = useAppSelector(selectVisibleTrackGroups).sort((a, b) =>
     compareMetadata(a, b)
   );
@@ -80,20 +80,16 @@ export function SplitView() {
   );
 
   const buttons = visibleItems.map((itemName, index) => (
-    <li
+    <button
       key={itemName ?? index}
       ref={(el) => (itemRefs.current[itemName ?? index] = el)}
       className={`${styles.listItem} ${selectedItem == itemName ? styles.selected : ""}`}
+      onClick={() => {
+        setSelectedItem(itemName ?? null);
+      }}
     >
-      <button
-        key={index}
-        onClick={() => {
-          setSelectedItem(itemName ?? null);
-        }}
-      >
-        {itemName}
-      </button>
-    </li>
+      {itemName}
+    </button>
   ));
 
   useEffect(() => {
@@ -125,7 +121,7 @@ export function SplitView() {
         }
       >
         <Allotment.Pane minSize={60}>
-          <ul className={styles.trackGroupsList}>{buttons}</ul>
+          <div className={styles.trackGroupsList}>{buttons}</div>
         </Allotment.Pane>
         <Allotment.Pane minSize={600}>
           <div className={styles.albumTrackList}>
