@@ -6,7 +6,6 @@
 .windowsControl {
   width: 46px;
   border-radius: 0;
-  color: var(--menubar-button-icon);
 }
 
 .windowsControl:hover {
