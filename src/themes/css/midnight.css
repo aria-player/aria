@@ -19,6 +19,7 @@
   --windows-control-background-active: rgb(255 255 255 / 4%);
 
   /* Sidebar */
+  --search-placeholder-text: #727272;
   --search-background: #0c0c0c;
   --search-background-active: #242424;
 

@@ -35,6 +35,10 @@
   background-color: var(--search-background-active);
 }
 
+.searchInput::placeholder {
+  color: var(--search-placeholder-text);
+}
+
 .searchSelected {
   outline: 2px solid var(--accent-color);
 }
