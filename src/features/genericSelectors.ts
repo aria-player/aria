@@ -99,3 +99,8 @@ export const selectGroupFilteredTracks = (
     .sort((a, b) => compareMetadata(a.album, b.album))
     .sort((a, b) => compareMetadata(a.albumId, b.albumId));
 };
+
+export const selectAlbumTitle = (state: RootState, albumId: string | null) => {
+  return selectAllTracks(state).find((track) => track.albumId === albumId)
+    ?.album;
+};

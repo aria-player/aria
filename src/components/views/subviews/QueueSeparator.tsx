@@ -1,22 +1,31 @@
 import { ICellRendererParams } from "@ag-grid-community/core";
 import { useAppSelector } from "../../../app/hooks";
-import { selectQueueSource } from "../../../features/player/playerSlice";
+import {
+  selectQueueGrouping,
+  selectQueueSelectedGroup,
+  selectQueueSource
+} from "../../../features/player/playerSlice";
 import styles from "./QueueSeparator.module.css";
 import { selectCurrentPlaylist } from "../../../features/currentSelectors";
 import { selectPlaylistsLayoutItemById } from "../../../features/playlists/playlistsSlice";
 import { useTranslation } from "react-i18next";
-import { isLibraryView } from "../../../app/view";
+import { isLibraryView, TrackGrouping } from "../../../app/view";
+import { selectAlbumTitle } from "../../../features/genericSelectors";
 
 export default function QueueSeparator(props: ICellRendererParams) {
   const { t } = useTranslation();
   const queueSource = useAppSelector(selectQueueSource);
+  const queueGrouping = useAppSelector(selectQueueGrouping);
+  const queueSelectedGroup = useAppSelector(selectQueueSelectedGroup);
   const currentPlaylistId = useAppSelector(selectCurrentPlaylist)?.id;
   const playlistName = useAppSelector((state) =>
     selectPlaylistsLayoutItemById(state, currentPlaylistId ?? "")
   )?.name;
-  const currentGroup = useAppSelector(
-    (state) => state.player.queueSelectedGroup
+  const albumTitle = useAppSelector((state) =>
+    selectAlbumTitle(state, queueSelectedGroup)
   );
+  const formattedGroup =
+    queueGrouping == TrackGrouping.AlbumId ? albumTitle : queueSelectedGroup;
 
   return (
     <div className={styles.separator}>
@@ -29,7 +38,7 @@ export default function QueueSeparator(props: ICellRendererParams) {
           {t("queue.playingFrom")}
           <span className={styles.source}>
             {playlistName ||
-              currentGroup ||
+              formattedGroup ||
               (queueSource && isLibraryView(queueSource)
                 ? t(`views.${queueSource}`)
                 : queueSource && queueSource.startsWith("search")
@@ -37,7 +46,7 @@ export default function QueueSeparator(props: ICellRendererParams) {
                       search: queueSource.split("/")[1]
                     })
                   : t("queue.deletedPlaylist"))}
-            {playlistName && currentGroup && ` / ${currentGroup}`}
+            {playlistName && formattedGroup && ` / ${formattedGroup}`}
           </span>
         </>
       )}
