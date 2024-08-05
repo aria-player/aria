@@ -5,7 +5,8 @@ import {
   isLibraryView,
   View,
   DisplayMode,
-  TrackGrouping
+  TrackGrouping,
+  SettingsSection
 } from "../app/view";
 import { selectLibrarySplitViewStates } from "./library/librarySlice";
 import {
@@ -32,6 +33,21 @@ export const selectVisibleViewType = (state: RootState) => {
     return firstPath as View;
   }
   return View.Error;
+};
+
+export const selectVisibleSettingsSection = (state: RootState) => {
+  if (selectVisibleViewType(state) == View.Settings) {
+    const secondPath = state.router.location?.pathname
+      .substring(BASEPATH.length)
+      .split("/")[1];
+    if (!secondPath) {
+      return SettingsSection.General;
+    } else if (
+      Object.values(SettingsSection).includes(secondPath as SettingsSection)
+    ) {
+      return secondPath as SettingsSection;
+    }
+  }
 };
 
 export const selectVisiblePlaylist = (state: RootState) => {

@@ -33,6 +33,14 @@ export enum TrackGrouping {
   FileFolder = "fileFolder"
 }
 
+export enum SettingsSection {
+  General = "general",
+  Appearance = "appearance",
+  Library = "library",
+  Plugins = "plugins",
+  About = "about"
+}
+
 export type SplitViewState = {
   paneSizes?: number[] | null;
   trackGrouping: TrackGrouping | null;
