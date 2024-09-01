@@ -30,9 +30,8 @@ export function WindowsMenuBar() {
         <MenuButton />
         <button
           title={t("labels.back")}
-          className={`${styles.arrow} ${
-            backEnabled ? "" : `${styles.arrowDisabled}`
-          }`}
+          className={styles.arrow}
+          disabled={!backEnabled}
           onClick={() => {
             if (backEnabled) dispatch(goBack());
           }}
@@ -41,9 +40,8 @@ export function WindowsMenuBar() {
         </button>
         <button
           title={t("labels.forward")}
-          className={`${styles.arrow} ${
-            forwardEnabled ? "" : `${styles.arrowDisabled}`
-          }`}
+          className={styles.arrow}
+          disabled={!forwardEnabled}
           onClick={() => {
             if (forwardEnabled) dispatch(goForward());
           }}
