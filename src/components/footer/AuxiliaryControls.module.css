@@ -14,7 +14,7 @@
   flex-shrink: 0;
   transition: transform 0.1s ease;
 
-  &:hover:not(.active) {
+  &:hover:not(.selected) {
     background-color: var(--button-background-hover);
   }
 
@@ -30,7 +30,7 @@
   cursor: pointer;
 }
 
-.active {
+.selected {
   color: var(--button-text-selected);
   background-color: var(--accent-color);
 }
