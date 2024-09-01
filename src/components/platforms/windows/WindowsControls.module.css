@@ -6,22 +6,24 @@
 .windowsControl {
   width: 46px;
   border-radius: 0;
+
+  &:hover {
+    background-color: var(--windows-control-background-hover);
+  }
+
+  &:active {
+    background-color: var(--windows-control-background-active);
+  }
 }
 
-.windowsControl:hover {
-  background-color: var(--windows-control-background-hover);
-}
+.windowsClose {
+  &:hover {
+    background-color: #c42a1c;
+    color: white;
+  }
 
-.windowsControl:active {
-  background-color: var(--windows-control-background-active);
-}
-
-.windowsClose:hover {
-  background-color: #c42a1c;
-  color: white;
-}
-
-.windowsClose:active {
-  background-color: #c42a1cea;
-  color: white;
+  &:active {
+    background-color: #c42a1cea;
+    color: white;
+  }
 }

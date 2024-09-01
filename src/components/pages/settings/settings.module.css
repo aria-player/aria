@@ -1,44 +1,48 @@
-.page h3 {
-  margin: 0;
-  margin-top: 0.5rem;
-  font-size: 1.4rem;
-  font-weight: 500;
-}
+.page {
+  h3 {
+    margin: 0;
+    margin-top: 0.5rem;
+    font-size: 1.4rem;
+    font-weight: 500;
+  }
 
-.page h4 {
-  margin: 1rem;
-  margin-left: 0;
-  font-size: 1rem;
-  line-height: normal;
-  font-weight: 500;
-}
+  h4 {
+    margin: 1rem;
+    margin-left: 0;
+    font-size: 1rem;
+    line-height: normal;
+    font-weight: 500;
+  }
 
-.page hr {
-  border: none;
-  border-top: 1px solid var(--primary-border);
-}
+  hr {
+    border: none;
+    border-top: 1px solid var(--primary-border);
+  }
 
-.page section {
-  margin-bottom: 2rem;
-}
+  section {
+    margin-bottom: 2rem;
+  }
 
-.page select {
-  width: 100%;
-  padding: 0.5rem 1rem;
-  border-radius: 0.25rem;
-  background-color: var(--settings-select-background);
-  font-size: 0.9rem;
-}
+  select {
+    width: 100%;
+    padding: 0.5rem 1rem;
+    border-radius: 0.25rem;
+    background-color: var(--settings-select-background);
+    font-size: 0.9rem;
+  }
 
-.page button:not(.accentButton) {
-  border: 1px solid var(--settings-button-border);
-  padding: 0.5rem 1rem;
-  font-size: 0.9rem;
-  font-weight: 500;
-}
+  button {
+    &:not(.accentButton) {
+      border: 1px solid var(--settings-button-border);
+      padding: 0.5rem 1rem;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
 
-.page button:hover:not(.accentButton) {
-  background-color: var(--button-background-hover);
+    &:hover:not(.accentButton) {
+      background-color: var(--button-background-hover);
+    }
+  }
 }
 
 .checkbox {
@@ -59,6 +63,10 @@
   width: 2rem;
   height: 2rem;
   margin: 0.3rem;
+
+  &.selected {
+    border: 2px solid var(--settings-selected-accent-outline);
+  }
 }
 
 .disabledSection,
@@ -66,17 +74,13 @@
   opacity: 0.5;
 }
 
-.accentButton.selected {
-  border: 2px solid var(--settings-selected-accent-outline);
-}
-
 .alert {
   margin: 1rem 0;
   background-color: var(--inset-background);
   padding: 1rem;
   border-radius: 0.25rem;
-}
 
-.alert h4 {
-  margin: 0.5rem 0;
+  h4 {
+    margin: 0.5rem 0;
+  }
 }

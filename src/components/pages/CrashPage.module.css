@@ -11,23 +11,23 @@
   text-align: center;
   height: 100%;
   overflow: auto;
-}
 
-.error h1 {
-  font-weight: 500;
-  margin: 0;
-  display: inline;
-}
-
-.error p {
-  margin: 1rem;
-}
-
-.error button {
-  border: 1px solid var(--settings-button-border);
-  padding: 0.5rem 1rem;
-  font-size: 0.9rem;
-  font-weight: 500;
+  h1 {
+    font-weight: 500;
+    margin: 0;
+    display: inline;
+  }
+  
+  p {
+    margin: 1rem;
+  }
+  
+  button {
+    border: 1px solid var(--settings-button-border);
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
 }
 
 .details {

@@ -33,10 +33,10 @@
   padding: 0.15rem;
   margin-left: 0.15rem;
   cursor: pointer;
-}
 
-.arrow:hover:not(.arrowDisabled) {
-  background-color: var(--menubar-button-background-hover);
+  &:hover:not(.arrowDisabled) {
+    background-color: var(--menubar-button-background-hover);
+  }
 }
 
 .arrowDisabled {

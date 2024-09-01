@@ -17,10 +17,10 @@
 .durationButton {
   font-weight: inherit;
   color: var(--footer-controls);
-}
 
-.durationButton:hover {
-  background-color: var(--button-background-hover);
+  &:hover {
+    background-color: var(--button-background-hover);
+  }
 }
 
 .controls {
@@ -36,39 +36,39 @@
   display: flex;
   transition: transform 0.1s ease;
   margin: 0 0.6em;
-}
 
-.button:first-child,
-.button:last-child {
-  width: 1.3rem;
-  padding: 0.2rem;
-  margin: 0 0.4rem;
-}
+  &:first-child,
+  &:last-child {
+    width: 1.3rem;
+    padding: 0.2rem;
+    margin: 0 0.4rem;
+  }
 
-.button:nth-child(2),
-.button:nth-child(4) {
-  width: 1.9rem;
-  height: 1.9rem;
-  padding: 0.2rem;
-}
+  &:nth-child(2),
+  &:nth-child(4) {
+    width: 1.9rem;
+    height: 1.9rem;
+    padding: 0.2rem;
+  }
 
-.button:nth-child(3) {
-  width: 2.1rem;
-  height: 2.1rem;
-  margin: 0;
-}
+  &:nth-child(3) {
+    width: 2.1rem;
+    height: 2.1rem;
+    margin: 0;
+  }
 
-.button:hover:not(.selected) {
-  background-color: var(--button-background-hover);
-}
+  &:hover:not(.selected) {
+    background-color: var(--button-background-hover);
+  }
 
-.button:active svg {
-  transform: scale(0.95);
-}
+  &:active svg {
+    transform: scale(0.95);
+  }
 
-.button:first-child:active svg,
-.button:last-child:active svg {
-  transform: scale(0.9);
+  &:first-child:active svg,
+  &:last-child:active svg {
+    transform: scale(0.9);
+  }
 }
 
 .selected {

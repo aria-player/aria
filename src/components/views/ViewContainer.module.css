@@ -2,12 +2,12 @@
   display: flex;
   padding: 0;
   overflow: none;
-}
 
-.header h1 {
-  margin: 0.5rem 0.75rem;
-  font-size: 1.5rem;
-  font-weight: 500;
+  h1 {
+    margin: 0.5rem 0.75rem;
+    font-size: 1.5rem;
+    font-weight: 500;
+  }
 }
 
 .border {

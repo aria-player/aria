@@ -3,8 +3,8 @@
   height: 1.5rem;
   padding: 0.15rem;
   cursor: pointer;
-}
 
-.menuButton:hover {
-  background-color: var(--menubar-button-background-hover);
+  &:hover {
+    background-color: var(--menubar-button-background-hover);
+  }  
 }

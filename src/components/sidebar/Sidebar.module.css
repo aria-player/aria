@@ -28,15 +28,15 @@
   outline: none;
   border: none;
   width: 100%;
-}
 
-.searchInput:focus,
-.search:hover .searchInput {
-  background-color: var(--search-background-active);
-}
+  &:focus,
+  &:hover {
+    background-color: var(--search-background-active);
+  }
 
-.searchInput::placeholder {
-  color: var(--search-placeholder-text);
+  &::placeholder {
+    color: var(--search-placeholder-text);
+  }
 }
 
 .searchSelected {

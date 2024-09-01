@@ -26,14 +26,14 @@
   margin: 0.25rem;
   font-size: 1rem;
   cursor: pointer;
-}
 
-.link:hover:not(.selected) {
-  background-color: var(--button-background-hover);
-}
+  &:hover:not(.selected) {
+    background-color: var(--button-background-hover);
+  }
 
-.link:active:not(.selected) {
-  background-color: var(--button-background-active);
+  &:active:not(.selected) {
+    background-color: var(--button-background-active);
+  }
 }
 
 .selected {

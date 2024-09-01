@@ -20,14 +20,14 @@
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-}
 
-.listItem:hover:not(.selected) {
-  background-color: var(--button-background-hover);
-}
+  &:hover:not(.selected) {
+    background-color: var(--button-background-hover);
+  }
 
-.listItem:active:not(.selected) {
-  background-color: var(--button-background-active);
+  &:active:not(.selected) {
+    background-color: var(--button-background-active);
+  }
 }
 
 .selected {

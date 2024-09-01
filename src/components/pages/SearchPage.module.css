@@ -25,19 +25,19 @@
   margin-right: 0.5rem;
   overflow: hidden;
   text-overflow: ellipsis;
-}
 
-.searchLink:hover {
-  text-decoration: underline;
-  cursor: pointer;
+  &:hover {
+    text-decoration: underline;
+    cursor: pointer;
+  }
 }
 
 .removeButton {
   height: 1.4rem;
   width: 1.4rem;
   padding: 0.1rem;
-}
 
-.removeButton:hover {
-  background-color: var(--button-background-hover);
+  &:hover {
+    background-color: var(--button-background-hover);
+  }
 }

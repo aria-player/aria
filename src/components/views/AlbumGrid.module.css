@@ -23,10 +23,10 @@
   border-width: 1px;
   border-color: var(--inset-background);
   border-style: solid;
-}
 
-.gridItem:hover {
-  cursor: pointer;
+  &:hover {
+    cursor: pointer;
+  }
 }
 
 .albumTitle {
@@ -72,14 +72,14 @@
   margin: 1rem;
   transition: transform 0.1s ease;
   cursor: pointer;
-}
 
-.backButton:hover {
-  background-color: var(--button-background-hover);
-}
+  &:hover {
+    background-color: var(--button-background-hover);
+  }
 
-.backButton:active svg {
-  transform: scale(0.9);
+  &:active svg {
+    transform: scale(0.9);
+  }
 }
 
 .albumTrackList {

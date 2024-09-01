@@ -49,10 +49,10 @@
   text-align: left;
   white-space: nowrap;
   cursor: pointer;
-}
 
-.title:hover {
-  background-color: var(--button-background-hover);
+  &:hover {
+    background-color: var(--button-background-hover);
+  }
 }
 
 .artist {

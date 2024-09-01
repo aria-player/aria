@@ -13,14 +13,14 @@
   display: flex;
   flex-shrink: 0;
   transition: transform 0.1s ease;
-}
 
-.button:hover:not(.active) {
-  background-color: var(--button-background-hover);
-}
+  &:hover:not(.active) {
+    background-color: var(--button-background-hover);
+  }
 
-.button:active svg {
-  transform: scale(0.95);
+  &:active svg {
+    transform: scale(0.95);
+  }
 }
 
 .queue {
