@@ -72,76 +72,74 @@ export default function AlbumGrid() {
   }, [location]);
 
   return (
-    <>
+    <div className={styles.albumGrid}>
       <div
-        className={styles.albumGrid}
-        style={{ display: visibleAlbums.length == 0 ? "none" : "block" }}
+        ref={scrollDivRef}
+        className={styles.grid}
+        style={{ display: visibleAlbums.length == 0 ? "none" : "grid" }}
       >
-        <div ref={scrollDivRef} className={styles.grid}>
-          {allAlbums.map((track, index) => {
-            if (track)
-              return (
-                <div
-                  key={track.albumId ?? index}
-                  ref={(el) => {
-                    albumRefs.current[track.albumId ?? index] = el;
-                  }}
-                  style={{
-                    display: visibleAlbums.includes(track.albumId)
-                      ? "block"
-                      : "none"
-                  }}
-                >
-                  <button
-                    className={styles.gridItem}
-                    onClick={() => setSelectedItem(track.albumId)}
-                    disabled={
-                      selectedItem ||
-                      visibleDisplayMode != DisplayMode.AlbumGrid
-                        ? true
-                        : false
-                    }
-                  >
-                    <AlbumArt track={track as Track} />
-                  </button>
-                  <div className={`${styles.albumText} ${styles.albumTitle}`}>
-                    {track.album}
-                  </div>
-                  <div className={`${styles.albumText} ${styles.albumArtist}`}>
-                    {track.albumArtist ?? track.artist}
-                  </div>
-                </div>
-              );
-          })}
-          {selectedItem && visibleDisplayMode == DisplayMode.AlbumGrid && (
-            <div
-              className={styles.detailOuter}
-              onClick={(e) => {
-                if (e.currentTarget === e.target) {
-                  setSelectedItem();
-                }
-              }}
-            >
-              <div className={styles.detailInner}>
+        {allAlbums.map((track, index) => {
+          if (track)
+            return (
+              <div
+                key={track.albumId ?? index}
+                ref={(el) => {
+                  albumRefs.current[track.albumId ?? index] = el;
+                }}
+                style={{
+                  display: visibleAlbums.includes(track.albumId)
+                    ? "block"
+                    : "none"
+                }}
+              >
                 <button
-                  className={styles.backButton}
-                  onClick={() => {
-                    setSelectedItem();
-                  }}
+                  className={styles.gridItem}
+                  onClick={() => setSelectedItem(track.albumId)}
+                  disabled={
+                    selectedItem || visibleDisplayMode != DisplayMode.AlbumGrid
+                      ? true
+                      : false
+                  }
                 >
-                  <LeftArrow />
+                  <AlbumArt track={track as Track} />
                 </button>
-                <div className={styles.albumTrackList}>
-                  <AlbumTrackList />
+                <div className={`${styles.albumText} ${styles.albumTitle}`}>
+                  {track.album}
+                </div>
+                <div className={`${styles.albumText} ${styles.albumArtist}`}>
+                  {track.albumArtist ?? track.artist}
                 </div>
               </div>
+            );
+        })}
+        {selectedItem && visibleDisplayMode == DisplayMode.AlbumGrid && (
+          <div
+            className={styles.detailOuter}
+            onClick={(e) => {
+              if (e.currentTarget === e.target) {
+                setSelectedItem();
+              }
+            }}
+          >
+            <div className={styles.detailInner}>
+              <button
+                className={styles.backButton}
+                onClick={() => {
+                  setSelectedItem();
+                }}
+              >
+                <LeftArrow />
+              </button>
+              <div className={styles.albumTrackList}>
+                <AlbumTrackList />
+              </div>
             </div>
-          )}
-        </div>
+          </div>
+        )}
       </div>
       {visibleAlbums.length == 0 && (
         <div className={styles.empty}>{t("albumGrid.empty")}</div>
       )}
-    </>
+    </div>
   );
 }
