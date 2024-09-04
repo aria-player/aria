@@ -12,7 +12,7 @@ export const stylesheets: Record<string, { default: string }> =
   });
 
 export const themes: Record<string, Theme> = {
-  system: { label: "System", supportsAccent: true }
+  system: { label: "System" }
 };
 
 const themeManifests = import.meta.glob("./*/theme.json", { eager: true });

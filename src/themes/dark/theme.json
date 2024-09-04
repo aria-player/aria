@@ -1,6 +1,5 @@
 {
   "label": "Dark",
   "base": "dark",
-  "supportsAccent": true,
   "stylesheet": "dark.css"
 }

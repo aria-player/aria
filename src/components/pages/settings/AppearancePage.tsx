@@ -34,7 +34,7 @@ export function AppearancePage() {
     setDecorations(event.target.checked);
   };
 
-  const accentsEnabled = themes[currentTheme].supportsAccent;
+  const accentsEnabled = themes[currentTheme]?.supportsAccent ?? true;
 
   return (
     <div className={styles.page}>

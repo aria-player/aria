@@ -8,7 +8,7 @@ export const useTheme = () => {
   const accentColor = useAppSelector(selectAccentColor);
 
   useEffect(() => {
-    if (!themes[theme]?.supportsAccent) return;
+    if (themes[theme]?.supportsAccent === false) return;
     document.documentElement.style.setProperty(
       "--accent-color",
       AccentColors[accentColor] || AccentColors["blue"]

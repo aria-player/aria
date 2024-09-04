@@ -1,6 +1,5 @@
 {
   "label": "Light",
   "base": "light",
-  "supportsAccent": true,
   "stylesheet": "light.css"
 }
