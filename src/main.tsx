@@ -26,7 +26,6 @@ import "@ag-grid-community/styles/ag-theme-balham.css";
 
 import "./styles/base.css";
 import "./styles/overrides.css";
-import "./themes/importThemes";
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 

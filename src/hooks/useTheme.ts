@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useAppSelector } from "../app/hooks";
 import { selectAccentColor, selectTheme } from "../features/config/configSlice";
-import { AccentColors, Themes } from "../themes/themes";
+import { AccentColors, stylesheets, Themes } from "../themes/themes";
 
 export const useTheme = () => {
   const theme = useAppSelector(selectTheme);
@@ -15,24 +15,31 @@ export const useTheme = () => {
     );
   }, [theme, accentColor]);
 
-  useEffect(() => {
+  const loadTheme = (selectedTheme: string) => {
     const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
     const systemColorScheme = prefersDark.matches ? "dark" : "light";
-    const computedTheme = theme === "system" ? systemColorScheme : theme;
+    const computedTheme =
+      selectedTheme === "system" ? systemColorScheme : selectedTheme;
+    const stylesheet = stylesheets[`./css/${computedTheme}.css`];
+    if (stylesheet) {
+      const style =
+        document.getElementById("theme") || document.createElement("style");
+      style.id = "theme";
+      style.textContent = stylesheet.default;
+      document.head.appendChild(style);
+    }
     const themeColorScheme = Themes[computedTheme]?.base;
 
     document.body.setAttribute("data-theme", computedTheme);
     document.documentElement.style.colorScheme =
       themeColorScheme || systemColorScheme;
-  }, [theme]);
+  };
 
   useEffect(() => {
+    loadTheme(theme);
     if (theme !== "system" && Themes[theme]?.base) return;
-    const handleSystemChange = (e: MediaQueryListEvent) => {
-      const systemColorScheme = e.matches ? "dark" : "light";
-      const computedTheme = theme === "system" ? systemColorScheme : theme;
-      document.body.setAttribute("data-theme", computedTheme);
-      document.documentElement.style.colorScheme = systemColorScheme;
+    const handleSystemChange = () => {
+      loadTheme(theme);
     };
 
     const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");

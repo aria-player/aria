@@ -4,6 +4,12 @@ export interface Theme {
   supportsAccent?: boolean;
 }
 
+export const stylesheets: Record<string, { default: string }> =
+  import.meta.glob("./css/*.css", {
+    query: "?inline",
+    eager: true
+  });
+
 export const Themes: Record<string, Theme> = {
   system: { label: "System", supportsAccent: true },
   light: { label: "Light", base: "light", supportsAccent: true },
