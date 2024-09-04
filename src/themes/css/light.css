@@ -1,4 +1,4 @@
-[data-theme="light"] {
+:root {
   /* General */
   --primary-text: #1f1f1f;
   --primary-background: #fff;

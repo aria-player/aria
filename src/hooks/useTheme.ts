@@ -29,8 +29,6 @@ export const useTheme = () => {
       document.head.appendChild(style);
     }
     const themeColorScheme = Themes[computedTheme]?.base;
-
-    document.body.setAttribute("data-theme", computedTheme);
     document.documentElement.style.colorScheme =
       themeColorScheme || systemColorScheme;
   };
