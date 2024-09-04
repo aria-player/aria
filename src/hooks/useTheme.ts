@@ -20,7 +20,8 @@ export const useTheme = () => {
     const systemColorScheme = prefersDark.matches ? "dark" : "light";
     const computedTheme =
       selectedTheme === "system" ? systemColorScheme : selectedTheme;
-    const stylesheet = stylesheets[`./css/${computedTheme}.css`];
+    const stylesheet =
+      stylesheets[`./css/${Themes[computedTheme]?.stylesheet}`];
     if (stylesheet) {
       const style =
         document.getElementById("theme") || document.createElement("style");

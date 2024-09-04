@@ -2,6 +2,7 @@ export interface Theme {
   label: string;
   base?: "light" | "dark";
   supportsAccent?: boolean;
+  stylesheet?: string;
 }
 
 export const stylesheets: Record<string, { default: string }> =
@@ -12,9 +13,24 @@ export const stylesheets: Record<string, { default: string }> =
 
 export const Themes: Record<string, Theme> = {
   system: { label: "System", supportsAccent: true },
-  light: { label: "Light", base: "light", supportsAccent: true },
-  dark: { label: "Dark", base: "dark", supportsAccent: true },
-  midnight: { label: "Midnight", base: "dark", supportsAccent: true }
+  light: {
+    label: "Light",
+    base: "light",
+    supportsAccent: true,
+    stylesheet: "light.css"
+  },
+  dark: {
+    label: "Dark",
+    base: "dark",
+    supportsAccent: true,
+    stylesheet: "dark.css"
+  },
+  midnight: {
+    label: "Midnight",
+    base: "dark",
+    supportsAccent: true,
+    stylesheet: "midnight.css"
+  }
 };
 
 export const AccentColors: Record<string, string> = {
