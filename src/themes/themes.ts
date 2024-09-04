@@ -21,7 +21,7 @@ for (const path in themeManifests) {
   themes[path.split("/")[1]] = themeData.default;
 }
 
-export const AccentColors: Record<string, string> = {
+export const accentColors: Record<string, string> = {
   blue: "#338fe1",
   teal: "#099268",
   green: "#2f9e44",

@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useAppSelector } from "../app/hooks";
 import { selectAccentColor, selectTheme } from "../features/config/configSlice";
-import { AccentColors, stylesheets, themes } from "../themes/themes";
+import { accentColors, stylesheets, themes } from "../themes/themes";
 
 export const useTheme = () => {
   const theme = useAppSelector(selectTheme);
@@ -13,7 +13,7 @@ export const useTheme = () => {
     } else {
       document.documentElement.style.setProperty(
         "--accent-color",
-        AccentColors[accentColor] || AccentColors["blue"]
+        accentColors[accentColor] || accentColors["blue"]
       );
     }
   }, [theme, accentColor]);

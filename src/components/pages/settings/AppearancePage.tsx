@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { AccentColors, themes } from "../../../themes/themes";
+import { accentColors, themes } from "../../../themes/themes";
 import { getStringIfFirst, isTauri } from "../../../app/utils";
 import {
   selectAccentColor,
@@ -71,14 +71,14 @@ export function AppearancePage() {
           {t("settings.appearance.accent")}
         </h4>
         <div className={styles.accentContainer}>
-          {Object.keys(AccentColors).map((color, index) => (
+          {Object.keys(accentColors).map((color, index) => (
             <button
               key={color}
               title={
                 t(`accentColors.${color}`) +
                 getStringIfFirst(" " + t("settings.default"), index)
               }
-              style={{ backgroundColor: AccentColors[color] }}
+              style={{ backgroundColor: accentColors[color] }}
               className={`${styles.accentButton} ${currentAccentColor === color ? styles.selected : ""}`}
               onClick={() =>
                 accentsEnabled ? handleAccentChange(color) : null
