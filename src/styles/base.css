@@ -10,6 +10,7 @@ body {
     sans-serif;
   color: var(--primary-text);
   background-color: var(--primary-background);
+  accent-color: var(--accent-color);
   margin: 0;
   overscroll-behavior: none;
   user-select: none;
