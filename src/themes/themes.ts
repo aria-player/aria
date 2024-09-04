@@ -1,8 +1,8 @@
 export interface Theme {
   label: string;
   base?: "light" | "dark";
-  supportsAccent?: boolean;
   stylesheet?: string;
+  disableAccentPicker?: boolean;
 }
 
 export const stylesheets: Record<string, { default: string }> =

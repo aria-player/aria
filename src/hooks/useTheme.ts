@@ -8,11 +8,14 @@ export const useTheme = () => {
   const accentColor = useAppSelector(selectAccentColor);
 
   useEffect(() => {
-    if (themes[theme]?.supportsAccent === false) return;
-    document.documentElement.style.setProperty(
-      "--accent-color",
-      AccentColors[accentColor] || AccentColors["blue"]
-    );
+    if (themes[theme]?.disableAccentPicker) {
+      document.documentElement.style.removeProperty("--accent-color");
+    } else {
+      document.documentElement.style.setProperty(
+        "--accent-color",
+        AccentColors[accentColor] || AccentColors["blue"]
+      );
+    }
   }, [theme, accentColor]);
 
   const loadTheme = (selectedTheme: string) => {
