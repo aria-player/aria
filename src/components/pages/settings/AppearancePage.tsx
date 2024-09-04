@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { AccentColors, Themes } from "../../../themes/themes";
+import { AccentColors, themes } from "../../../themes/themes";
 import { getStringIfFirst, isTauri } from "../../../app/utils";
 import {
   selectAccentColor,
@@ -34,7 +34,7 @@ export function AppearancePage() {
     setDecorations(event.target.checked);
   };
 
-  const accentsEnabled = Themes[currentTheme].supportsAccent;
+  const accentsEnabled = themes[currentTheme].supportsAccent;
 
   return (
     <div className={styles.page}>
@@ -44,9 +44,9 @@ export function AppearancePage() {
       <section>
         <h4>{t("settings.appearance.theme")}</h4>
         <select value={currentTheme} onChange={handleThemeChange}>
-          {Object.keys(Themes).map((theme, index) => (
+          {Object.keys(themes).map((theme, index) => (
             <option key={theme} value={theme}>
-              {Themes[theme as keyof typeof Themes].label +
+              {themes[theme as keyof typeof themes].label +
                 getStringIfFirst(" " + t("settings.default"), index)}
             </option>
           ))}

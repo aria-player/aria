@@ -6,32 +6,20 @@ export interface Theme {
 }
 
 export const stylesheets: Record<string, { default: string }> =
-  import.meta.glob("./css/*.css", {
+  import.meta.glob("./*/*.css", {
     query: "?inline",
     eager: true
   });
 
-export const Themes: Record<string, Theme> = {
-  system: { label: "System", supportsAccent: true },
-  light: {
-    label: "Light",
-    base: "light",
-    supportsAccent: true,
-    stylesheet: "light.css"
-  },
-  dark: {
-    label: "Dark",
-    base: "dark",
-    supportsAccent: true,
-    stylesheet: "dark.css"
-  },
-  midnight: {
-    label: "Midnight",
-    base: "dark",
-    supportsAccent: true,
-    stylesheet: "midnight.css"
-  }
+export const themes: Record<string, Theme> = {
+  system: { label: "System", supportsAccent: true }
 };
+
+const themeManifests = import.meta.glob("./*/theme.json", { eager: true });
+for (const path in themeManifests) {
+  const themeData = themeManifests[path] as { default: Theme };
+  themes[path.split("/")[1]] = themeData.default;
+}
 
 export const AccentColors: Record<string, string> = {
   blue: "#338fe1",

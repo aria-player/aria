@@ -1,14 +1,14 @@
 import { useEffect } from "react";
 import { useAppSelector } from "../app/hooks";
 import { selectAccentColor, selectTheme } from "../features/config/configSlice";
-import { AccentColors, stylesheets, Themes } from "../themes/themes";
+import { AccentColors, stylesheets, themes } from "../themes/themes";
 
 export const useTheme = () => {
   const theme = useAppSelector(selectTheme);
   const accentColor = useAppSelector(selectAccentColor);
 
   useEffect(() => {
-    if (!Themes[theme]?.supportsAccent) return;
+    if (!themes[theme]?.supportsAccent) return;
     document.documentElement.style.setProperty(
       "--accent-color",
       AccentColors[accentColor] || AccentColors["blue"]
@@ -21,7 +21,7 @@ export const useTheme = () => {
     const computedTheme =
       selectedTheme === "system" ? systemColorScheme : selectedTheme;
     const stylesheet =
-      stylesheets[`./css/${Themes[computedTheme]?.stylesheet}`];
+      stylesheets[`./${computedTheme}/${themes[computedTheme]?.stylesheet}`];
     if (stylesheet) {
       const style =
         document.getElementById("theme") || document.createElement("style");
@@ -29,14 +29,14 @@ export const useTheme = () => {
       style.textContent = stylesheet.default;
       document.head.appendChild(style);
     }
-    const themeColorScheme = Themes[computedTheme]?.base;
+    const themeColorScheme = themes[computedTheme]?.base;
     document.documentElement.style.colorScheme =
       themeColorScheme || systemColorScheme;
   };
 
   useEffect(() => {
     loadTheme(theme);
-    if (theme !== "system" && Themes[theme]?.base) return;
+    if (theme !== "system" && themes[theme]?.base) return;
     const handleSystemChange = () => {
       loadTheme(theme);
     };

@@ -1,0 +1,6 @@
+{
+  "label": "Midnight",
+  "base": "dark",
+  "supportsAccent": true,
+  "stylesheet": "midnight.css"
+}
