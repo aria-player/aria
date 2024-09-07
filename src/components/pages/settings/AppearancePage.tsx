@@ -1,9 +1,11 @@
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { accentColors, themes } from "../../../themes/themes";
+import { accentColors } from "../../../themes/themes";
 import { getStringIfFirst, isTauri } from "../../../app/utils";
 import {
+  installThemesFromFiles,
   selectAccentColor,
   selectTheme,
+  selectThemes,
   setAccentColor,
   setTheme
 } from "../../../features/config/configSlice";
@@ -18,7 +20,26 @@ export function AppearancePage() {
   const dispatch = useAppDispatch();
   const currentTheme = useAppSelector(selectTheme);
   const currentAccentColor = useAppSelector(selectAccentColor);
+  const themes = useAppSelector(selectThemes);
   const { platform, decorations, setDecorations } = useContext(PlatformContext);
+
+  const showThemeFilePicker = async () => {
+    try {
+      const fileHandles = await window.showOpenFilePicker({
+        types: [
+          {
+            accept: {
+              "application/zip": [".zip"]
+            }
+          }
+        ],
+        multiple: true
+      });
+      dispatch(installThemesFromFiles(fileHandles));
+    } catch (error) {
+      console.error("Error installing theme:", error);
+    }
+  };
 
   const handleThemeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     dispatch(setTheme(event.target.value));
@@ -46,11 +67,16 @@ export function AppearancePage() {
         <select value={currentTheme} onChange={handleThemeChange}>
           {Object.keys(themes).map((theme, index) => (
             <option key={theme} value={theme}>
-              {themes[theme as keyof typeof themes].label +
+              {themes[theme].label +
                 getStringIfFirst(" " + t("settings.default"), index)}
             </option>
           ))}
         </select>
+        <p>
+          <button onClick={showThemeFilePicker}>
+            {t("settings.appearance.installFromFile")}
+          </button>
+        </p>
       </section>
       {isTauri() && platform == Platform.Windows && (
         <section>

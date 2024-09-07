@@ -97,6 +97,7 @@
     "appearance": {
       "subtitle": "Adjust the theme and layout of the application.",
       "theme": "Theme",
+      "installFromFile": "Install from file...",
       "window": "Window",
       "windowsControls": "Use system window controls",
       "accent": "Accent color"

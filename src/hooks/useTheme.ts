@@ -1,10 +1,17 @@
 import { useEffect } from "react";
 import { useAppSelector } from "../app/hooks";
-import { selectAccentColor, selectTheme } from "../features/config/configSlice";
-import { accentColors, stylesheets, themes } from "../themes/themes";
+import {
+  selectAccentColor,
+  selectStylesheets,
+  selectTheme,
+  selectThemes
+} from "../features/config/configSlice";
+import { accentColors } from "../themes/themes";
 
 export const useTheme = () => {
   const theme = useAppSelector(selectTheme);
+  const themes = useAppSelector(selectThemes);
+  const stylesheets = useAppSelector(selectStylesheets);
   const accentColor = useAppSelector(selectAccentColor);
 
   useEffect(() => {
@@ -16,28 +23,28 @@ export const useTheme = () => {
         accentColors[accentColor] || accentColors["blue"]
       );
     }
-  }, [theme, accentColor]);
-
-  const loadTheme = (selectedTheme: string) => {
-    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
-    const systemColorScheme = prefersDark.matches ? "dark" : "light";
-    const computedTheme =
-      selectedTheme === "system" ? systemColorScheme : selectedTheme;
-    const stylesheet =
-      stylesheets[`./${computedTheme}/${themes[computedTheme]?.stylesheet}`];
-    if (stylesheet) {
-      const style =
-        document.getElementById("theme") || document.createElement("style");
-      style.id = "theme";
-      style.textContent = stylesheet.default;
-      document.head.appendChild(style);
-    }
-    const themeColorScheme = themes[computedTheme]?.base;
-    document.documentElement.style.colorScheme =
-      themeColorScheme || systemColorScheme;
-  };
+  }, [themes, theme, accentColor]);
 
   useEffect(() => {
+    const loadTheme = (selectedTheme: string) => {
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)");
+      const systemColorScheme = prefersDark.matches ? "dark" : "light";
+      const computedTheme =
+        selectedTheme === "system" ? systemColorScheme : selectedTheme;
+      const stylesheet =
+        stylesheets[`./${computedTheme}/${themes[computedTheme]?.stylesheet}`];
+      if (stylesheet) {
+        const style =
+          document.getElementById("theme") || document.createElement("style");
+        style.id = "theme";
+        style.textContent = stylesheet;
+        document.head.appendChild(style);
+      }
+      const themeColorScheme = themes[computedTheme]?.base;
+      document.documentElement.style.colorScheme =
+        themeColorScheme || systemColorScheme;
+    };
+
     loadTheme(theme);
     if (theme !== "system" && themes[theme]?.base) return;
     const handleSystemChange = () => {
@@ -49,5 +56,5 @@ export const useTheme = () => {
     return () => {
       prefersDark.removeEventListener("change", handleSystemChange);
     };
-  }, [theme]);
+  }, [stylesheets, theme, themes]);
 };

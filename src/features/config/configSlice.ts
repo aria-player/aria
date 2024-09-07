@@ -1,9 +1,18 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import {
+  createAsyncThunk,
+  createSelector,
+  createSlice,
+  PayloadAction
+} from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 import { LibraryView } from "../../app/view";
+import JSZip from "jszip";
+import { stylesheets, Theme, themes } from "../../themes/themes";
 
 export interface ConfigState {
   theme: string;
+  installedThemes: Record<string, Theme>;
+  installedStylesheets: Record<string, string>;
   accentColor: string;
   language: string | null;
   displayRemainingTime: boolean;
@@ -15,6 +24,8 @@ export interface ConfigState {
 
 const initialState: ConfigState = {
   theme: "system",
+  installedThemes: {},
+  installedStylesheets: {},
   accentColor: "blue",
   language: null,
   displayRemainingTime: false,
@@ -24,12 +35,54 @@ const initialState: ConfigState = {
   lastView: "/"
 };
 
+export const installThemesFromFiles = createAsyncThunk(
+  "config/installThemesFromFiles",
+  async (fileHandles: FileSystemFileHandle[], { dispatch }) => {
+    for (const fileHandle of fileHandles) {
+      const file = await fileHandle.getFile();
+      const fileName = fileHandle.name.toLowerCase();
+      if (fileName.endsWith(".zip")) {
+        const themeId = fileName.replace(".zip", "");
+        const extractedFiles = (await JSZip.loadAsync(file)).files;
+        for (const extractedFileName in extractedFiles) {
+          if (extractedFileName === "theme.json") {
+            const fileData =
+              await extractedFiles[extractedFileName].async("string");
+            const themeData = JSON.parse(fileData) as Theme;
+            const stylesheetFileName = themeData.stylesheet;
+            if (stylesheetFileName) {
+              const stylesheet =
+                await extractedFiles[stylesheetFileName].async("string");
+              dispatch(addTheme({ themeId, themeData, stylesheet }));
+            }
+          }
+        }
+      }
+    }
+  }
+);
+
 export const configSlice = createSlice({
   name: "config",
   initialState,
   reducers: {
     setTheme: (state, action: PayloadAction<string>) => {
       state.theme = action.payload;
+    },
+    addTheme: (
+      state,
+      action: PayloadAction<{
+        themeId: string;
+        themeData: Theme;
+        stylesheet: string;
+      }>
+    ) => {
+      if (Object.keys(themes).includes(action.payload.themeId)) return;
+      state.installedThemes[action.payload.themeId] = action.payload.themeData;
+      state.installedStylesheets[
+        `./${action.payload.themeId}/${action.payload.themeData.stylesheet}`
+      ] = action.payload.stylesheet;
+      state.theme = action.payload.themeId;
     },
     setAccentColor: (state, action: PayloadAction<string>) => {
       state.accentColor = action.payload;
@@ -63,6 +116,7 @@ export const configSlice = createSlice({
 
 export const {
   setTheme,
+  addTheme,
   setAccentColor,
   setLanguage,
   setDisplayRemainingTime,
@@ -82,5 +136,22 @@ export const selectSidebarCollapsed = (state: RootState) =>
   state.config.sidebarCollapsed;
 export const selectInitialView = (state: RootState) => state.config.initialView;
 export const selectLastView = (state: RootState) => state.config.lastView;
+
+export const selectThemes = createSelector(
+  (state: RootState) => state.config.installedThemes,
+  (installedThemes) => ({
+    ...themes,
+    ...installedThemes
+  })
+);
+export const selectStylesheets = createSelector(
+  (state: RootState) => state.config.installedStylesheets,
+  (installedStylesheets) => ({
+    ...Object.fromEntries(
+      Object.entries(stylesheets).map(([key, value]) => [key, value.default])
+    ),
+    ...installedStylesheets
+  })
+);
 
 export default configSlice.reducer;
