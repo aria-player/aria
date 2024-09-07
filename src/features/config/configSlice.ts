@@ -7,7 +7,7 @@ import {
 import { RootState } from "../../app/store";
 import { LibraryView } from "../../app/view";
 import JSZip from "jszip";
-import { stylesheets, Theme, themes } from "../../themes/themes";
+import { defaultStylesheets, Theme, defaultThemes } from "../../themes/themes";
 
 export interface ConfigState {
   theme: string;
@@ -77,7 +77,7 @@ export const configSlice = createSlice({
         stylesheet: string;
       }>
     ) => {
-      if (Object.keys(themes).includes(action.payload.themeId)) return;
+      if (Object.keys(defaultThemes).includes(action.payload.themeId)) return;
       state.installedThemes[action.payload.themeId] = action.payload.themeData;
       state.installedStylesheets[
         `./${action.payload.themeId}/${action.payload.themeData.stylesheet}`
@@ -140,7 +140,7 @@ export const selectLastView = (state: RootState) => state.config.lastView;
 export const selectThemes = createSelector(
   (state: RootState) => state.config.installedThemes,
   (installedThemes) => ({
-    ...themes,
+    ...defaultThemes,
     ...installedThemes
   })
 );
@@ -148,7 +148,10 @@ export const selectStylesheets = createSelector(
   (state: RootState) => state.config.installedStylesheets,
   (installedStylesheets) => ({
     ...Object.fromEntries(
-      Object.entries(stylesheets).map(([key, value]) => [key, value.default])
+      Object.entries(defaultStylesheets).map(([key, value]) => [
+        key,
+        value.default
+      ])
     ),
     ...installedStylesheets
   })

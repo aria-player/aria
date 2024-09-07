@@ -5,13 +5,13 @@ export interface Theme {
   disableAccentPicker?: boolean;
 }
 
-export const stylesheets: Record<string, { default: string }> =
+export const defaultStylesheets: Record<string, { default: string }> =
   import.meta.glob("./*/*.css", {
     query: "?inline",
     eager: true
   });
 
-export const themes: Record<string, Theme> = {
+export const defaultThemes: Record<string, Theme> = {
   system: { label: "System" }
 };
 
@@ -23,7 +23,7 @@ for (const path of Object.keys(themeManifests).sort((a, b) => {
   return indexA === -1 ? 1 : indexB === -1 ? -1 : indexA - indexB;
 })) {
   const themeData = themeManifests[path] as { default: Theme };
-  themes[path.split("/")[1]] = themeData.default;
+  defaultThemes[path.split("/")[1]] = themeData.default;
 }
 
 export const accentColors: Record<string, string> = {
