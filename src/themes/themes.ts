@@ -16,7 +16,12 @@ export const themes: Record<string, Theme> = {
 };
 
 const themeManifests = import.meta.glob("./*/theme.json", { eager: true });
-for (const path in themeManifests) {
+const orderedThemes = ["light", "dark", "midnight"];
+for (const path of Object.keys(themeManifests).sort((a, b) => {
+  const indexA = orderedThemes.indexOf(a.split("/")[1]);
+  const indexB = orderedThemes.indexOf(b.split("/")[1]);
+  return indexA === -1 ? 1 : indexB === -1 ? -1 : indexA - indexB;
+})) {
   const themeData = themeManifests[path] as { default: Theme };
   themes[path.split("/")[1]] = themeData.default;
 }
