@@ -5,25 +5,29 @@ export interface Theme {
   disableAccentPicker?: boolean;
 }
 
-export const defaultStylesheets: Record<string, { default: string }> =
-  import.meta.glob("./*/*.css", {
-    query: "?inline",
-    eager: true
-  });
-
+export const defaultStylesheets: Record<string, string> = {};
 export const defaultThemes: Record<string, Theme> = {
   system: { label: "System" }
 };
 
 const themeManifests = import.meta.glob("./*/theme.json", { eager: true });
+const stylesheets = import.meta.glob("./*/*.css", {
+  query: "?inline",
+  eager: true
+});
 const orderedThemes = ["light", "dark", "midnight"];
 for (const path of Object.keys(themeManifests).sort((a, b) => {
   const indexA = orderedThemes.indexOf(a.split("/")[1]);
   const indexB = orderedThemes.indexOf(b.split("/")[1]);
   return indexA === -1 ? 1 : indexB === -1 ? -1 : indexA - indexB;
 })) {
+  const themeId = path.split("/")[1];
   const themeData = themeManifests[path] as { default: Theme };
-  defaultThemes[path.split("/")[1]] = themeData.default;
+  const stylesheet = stylesheets[
+    `./${themeId}/${themeData.default?.stylesheet}`
+  ] as { default: string };
+  defaultThemes[themeId] = themeData.default;
+  defaultStylesheets[themeId] = stylesheet.default;
 }
 
 export const accentColors: Record<string, string> = {

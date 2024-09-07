@@ -31,8 +31,7 @@ export const useTheme = () => {
       const systemColorScheme = prefersDark.matches ? "dark" : "light";
       const computedTheme =
         selectedTheme === "system" ? systemColorScheme : selectedTheme;
-      const stylesheet =
-        stylesheets[`./${computedTheme}/${themes[computedTheme]?.stylesheet}`];
+      const stylesheet = stylesheets[computedTheme];
       if (stylesheet) {
         const style =
           document.getElementById("theme") || document.createElement("style");

@@ -79,9 +79,8 @@ export const configSlice = createSlice({
     ) => {
       if (Object.keys(defaultThemes).includes(action.payload.themeId)) return;
       state.installedThemes[action.payload.themeId] = action.payload.themeData;
-      state.installedStylesheets[
-        `./${action.payload.themeId}/${action.payload.themeData.stylesheet}`
-      ] = action.payload.stylesheet;
+      state.installedStylesheets[action.payload.themeId] =
+        action.payload.stylesheet;
       state.theme = action.payload.themeId;
     },
     setAccentColor: (state, action: PayloadAction<string>) => {
@@ -147,12 +146,7 @@ export const selectThemes = createSelector(
 export const selectStylesheets = createSelector(
   (state: RootState) => state.config.installedStylesheets,
   (installedStylesheets) => ({
-    ...Object.fromEntries(
-      Object.entries(defaultStylesheets).map(([key, value]) => [
-        key,
-        value.default
-      ])
-    ),
+    ...defaultStylesheets,
     ...installedStylesheets
   })
 );
