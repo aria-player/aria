@@ -4,6 +4,7 @@ import { getStringIfFirst, isTauri } from "../../../app/utils";
 import {
   installThemesFromFiles,
   selectAccentColor,
+  selectStylesheets,
   selectTheme,
   selectThemes,
   setAccentColor,
@@ -13,6 +14,7 @@ import styles from "./settings.module.css";
 import { useContext } from "react";
 import { Platform, PlatformContext } from "../../../contexts/PlatformContext";
 import { useTranslation } from "react-i18next";
+import ThemePreview from "./ThemePreview";
 
 export function AppearancePage() {
   const { t } = useTranslation();
@@ -21,6 +23,7 @@ export function AppearancePage() {
   const currentTheme = useAppSelector(selectTheme);
   const currentAccentColor = useAppSelector(selectAccentColor);
   const themes = useAppSelector(selectThemes);
+  const stylesheets = useAppSelector(selectStylesheets);
   const { platform, decorations, setDecorations } = useContext(PlatformContext);
 
   const showThemeFilePicker = async () => {
@@ -41,8 +44,8 @@ export function AppearancePage() {
     }
   };
 
-  const handleThemeChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    dispatch(setTheme(event.target.value));
+  const handleThemeChange = (theme: string) => {
+    dispatch(setTheme(theme));
   };
 
   const handleAccentChange = (color: string) => {
@@ -64,14 +67,25 @@ export function AppearancePage() {
       <hr />
       <section>
         <h4>{t("settings.appearance.theme")}</h4>
-        <select value={currentTheme} onChange={handleThemeChange}>
-          {Object.keys(themes).map((theme, index) => (
-            <option key={theme} value={theme}>
-              {themes[theme].label +
-                getStringIfFirst(" " + t("settings.default"), index)}
-            </option>
+        <div className={styles.themeContainer}>
+          {Object.keys(themes).map((theme) => (
+            <button
+              key={theme}
+              className={`${styles.themeButton} ${theme == currentTheme ? styles.selected : ""}`}
+              onClick={() => handleThemeChange(theme)}
+            >
+              {theme == "system" ? (
+                <div className={styles.splitTheme}>
+                  <ThemePreview stylesheet={stylesheets["light"]} />
+                  <ThemePreview stylesheet={stylesheets["dark"]} />
+                </div>
+              ) : (
+                <ThemePreview stylesheet={stylesheets[theme]} />
+              )}
+              <p>{themes[theme].label}</p>
+            </button>
           ))}
-        </select>
+        </div>
         <p>
           <button onClick={showThemeFilePicker}>
             {t("settings.appearance.installFromFile")}

@@ -32,14 +32,14 @@
   }
 
   button {
-    &:not(.accentButton) {
+    &:not(.accentButton, .themeButton) {
       border: 1px solid var(--settings-button-border);
       padding: 0.5rem 1rem;
       font-size: 0.9rem;
       font-weight: 500;
     }
 
-    &:hover:not(.accentButton) {
+    &:hover:not(.accentButton, .themeButton) {
       background-color: var(--button-background-hover);
     }
   }
@@ -50,6 +50,60 @@
   height: 1.25rem;
   margin-right: 0.5rem;
   cursor: pointer;
+}
+
+.themeContainer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 1rem;
+  margin: 1rem;
+}
+
+.themeButton {
+  padding: 0.5rem;
+  text-align: left;
+  border-radius: 0.5rem;
+  color: var(--primary-text);
+
+  &:hover {
+    background-color: var(--button-background-hover);
+  }
+
+  &:active {
+    background-color: var(--button-background-active);
+  }
+
+  &.selected {
+    background-color: var(--accent-color);
+    color: var(--button-text-selected);
+  }
+
+  .splitTheme {
+    display: grid;
+
+    > div {
+      grid-column: 1;
+      grid-row: 1;
+
+      &:nth-child(1) {
+        clip-path: polygon(0 0, 50% 0, 50% 100%, 0 100%);
+      }
+
+      &:nth-child(2) {
+        clip-path: polygon(50% 0, 100% 0, 100% 100%, 50% 100%);
+      }
+    }
+  }
+
+  p {
+    word-wrap: break-word;
+    margin: 0;
+    margin-top: 0.2rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+    width: 7.5rem;
+  }
 }
 
 .accentContainer {

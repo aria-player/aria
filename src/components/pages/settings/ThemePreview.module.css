@@ -1,0 +1,92 @@
+.themePreview {
+  border-radius: 0.5rem;
+  overflow: hidden;
+  width: 7.5rem;
+}
+
+.main {
+  display: flex;
+}
+
+.sidebar {
+  width: 20%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 0.25rem;
+}
+
+.search {
+  height: 0.25rem;
+  border-radius: 0.5rem;
+}
+
+.sidebarItem {
+  &:nth-child(2) {
+    width: 80%;
+  }
+
+  &:nth-child(3) {
+    width: 60%;
+  }
+
+  &:nth-child(4) {
+    width: 70%;
+  }
+
+  &:nth-child(5) {
+    width: 50%;
+  }
+
+  height: 0.25rem;
+  border-radius: 0.5rem;
+  opacity: 0.25;
+}
+
+.tracks {
+  width: 80%;
+  gap: 0.25rem;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.25rem;
+}
+
+.tracksHeader {
+  display: flex;
+  gap: 0.25rem;
+  padding: 0.25rem;
+}
+
+.tracksHeaderColumn {
+  flex: 1;
+  height: 0.25rem;
+  border-radius: 0.5rem;
+  opacity: 0.25;
+}
+
+.tracksRow {
+  margin: 0 0.25rem;
+  height: 0.25rem;
+  border-radius: 0.5rem;
+}
+
+.footer {
+  height: 1rem;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.footerItem {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 0.2rem;
+  opacity: 0.25;
+
+  &:nth-child(1),
+  &:nth-child(5) {
+    width: 0.4rem;
+    height: 0.4rem;
+  }
+}
