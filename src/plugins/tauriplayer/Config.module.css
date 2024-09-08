@@ -42,12 +42,12 @@
 
 .removeButton {
   display: flex;
-  color: #e03131;
+  color: var(--button-destructive);
   width: 1rem;
   height: 1rem;
 
   &:hover {
-    color: #fa5252;
+    color: var(--button-destructive-hover);
   }
 }
 

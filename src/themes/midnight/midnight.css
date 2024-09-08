@@ -5,9 +5,13 @@
   --primary-border: rgb(17 17 17);
   --secondary-text: rgb(187 187 187);
   --empty-list-text: #a2a2a2;
+  --inset-background: #0c0c0c;
+
+  /* Buttons */
   --button-background-hover: rgb(36 36 36);
   --button-background-active: rgb(53 53 53);
-  --inset-background: #0c0c0c;
+  --button-destructive: #e03131;
+  --button-destructive-hover: #fa5252;
 
   /* Menu bar */
   --menubar-background: #000;

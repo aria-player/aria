@@ -5,9 +5,13 @@
   --primary-border: #d2d7da;
   --secondary-text: #919191;
   --empty-list-text: #a3a3a3;
+  --inset-background: #f0f0f0;
+
+  /* Buttons */
   --button-background-hover: #f0f2f5;
   --button-background-active: #e4e6eb;
-  --inset-background: #f0f0f0;
+  --button-destructive: #e03131;
+  --button-destructive-hover: #fa5252;
 
   /* Menu bar */
   --menubar-background: #fff;
