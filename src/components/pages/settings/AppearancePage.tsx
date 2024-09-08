@@ -88,7 +88,13 @@ export function AppearancePage() {
               </button>
               {!Object.keys(defaultThemes).includes(theme) && (
                 <button
-                  onClick={() => {
+                  onClick={async () => {
+                    const confirmed = await confirm(
+                      t("settings.appearance.confirmDelete", {
+                        theme: themes[theme].label
+                      })
+                    );
+                    if (!confirmed) return;
                     dispatch(removeTheme(theme));
                   }}
                   className={`${styles.removeButton} ${theme == currentTheme ? styles.selected : ""}`}

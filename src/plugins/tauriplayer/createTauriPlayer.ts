@@ -147,7 +147,13 @@ export function createTauriPlayer(host: SourceCallbacks): SourceHandle {
     });
   };
 
-  function removeFolder(folderPath: string) {
+  async function removeFolder(folderPath: string) {
+    const confirmed = await confirm(
+      t("tauriplayer:config.confirmRemove", {
+        folder: folderPath
+      })
+    );
+    if (!confirmed) return;
     host.removeTracks(folders[folderPath]);
     delete (folders = { ...folders })[folderPath];
     host.updateData({ folders: folders });

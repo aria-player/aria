@@ -5,6 +5,7 @@
     "folders": "Music folders",
     "addFolder": "Add folder",
     "removeFolder": "Remove folder",
+    "confirmRemove": "Are you sure you want to remove '{{folder}}'?",
     "path": "Path",
     "tracks": "Tracks",
     "actions": "Actions",
