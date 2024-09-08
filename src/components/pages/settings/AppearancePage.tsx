@@ -1,8 +1,9 @@
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { accentColors } from "../../../themes/themes";
+import { accentColors, defaultThemes } from "../../../themes/themes";
 import { getStringIfFirst, isTauri } from "../../../app/utils";
 import {
   installThemesFromFiles,
+  removeTheme,
   selectAccentColor,
   selectStylesheets,
   selectTheme,
@@ -15,6 +16,7 @@ import { useContext } from "react";
 import { Platform, PlatformContext } from "../../../contexts/PlatformContext";
 import { useTranslation } from "react-i18next";
 import ThemePreview from "./ThemePreview";
+import RemoveIcon from "../../../assets/trash-can-solid.svg?react";
 
 export function AppearancePage() {
   const { t } = useTranslation();
@@ -69,21 +71,32 @@ export function AppearancePage() {
         <h4>{t("settings.appearance.theme")}</h4>
         <div className={styles.themeContainer}>
           {Object.keys(themes).map((theme) => (
-            <button
-              key={theme}
-              className={`${styles.themeButton} ${theme == currentTheme ? styles.selected : ""}`}
-              onClick={() => handleThemeChange(theme)}
-            >
-              {theme == "system" ? (
-                <div className={styles.splitTheme}>
-                  <ThemePreview stylesheet={stylesheets["light"]} />
-                  <ThemePreview stylesheet={stylesheets["dark"]} />
-                </div>
-              ) : (
-                <ThemePreview stylesheet={stylesheets[theme]} />
+            <div key={theme} className={styles.themeItem}>
+              <button
+                className={`${styles.themeButton} ${theme == currentTheme ? styles.selected : ""}`}
+                onClick={() => handleThemeChange(theme)}
+              >
+                {theme == "system" ? (
+                  <div className={styles.splitTheme}>
+                    <ThemePreview stylesheet={stylesheets["light"]} />
+                    <ThemePreview stylesheet={stylesheets["dark"]} />
+                  </div>
+                ) : (
+                  <ThemePreview stylesheet={stylesheets[theme]} />
+                )}
+                <p>{themes[theme].label}</p>
+              </button>
+              {!Object.keys(defaultThemes).includes(theme) && (
+                <button
+                  onClick={() => {
+                    dispatch(removeTheme(theme));
+                  }}
+                  className={`${styles.removeButton} ${theme == currentTheme ? styles.selected : ""}`}
+                >
+                  <RemoveIcon />
+                </button>
               )}
-              <p>{themes[theme].label}</p>
-            </button>
+            </div>
           ))}
         </div>
         <p>

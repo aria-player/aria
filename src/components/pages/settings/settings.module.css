@@ -32,14 +32,14 @@
   }
 
   button {
-    &:not(.accentButton, .themeButton) {
+    &:not(.accentButton, .themeButton, .removeButton) {
       border: 1px solid var(--settings-button-border);
       padding: 0.5rem 1rem;
       font-size: 0.9rem;
       font-weight: 500;
     }
 
-    &:hover:not(.accentButton, .themeButton) {
+    &:hover:not(.accentButton, .themeButton, .removeButton) {
       background-color: var(--button-background-hover);
     }
   }
@@ -58,6 +58,10 @@
   align-items: flex-start;
   gap: 1rem;
   margin: 1rem;
+}
+
+.themeItem {
+  position: relative;
 }
 
 .themeButton {
@@ -103,6 +107,22 @@
     font-size: 0.9rem;
     font-weight: 500;
     width: 7.5rem;
+  }
+}
+
+.removeButton {
+  position: absolute;
+  bottom: 0.5rem;
+  right: 0.5rem;
+  color: #e03131;
+  height: 1rem;
+
+  &.selected {
+    color: var(--button-text-selected);
+  }
+
+  &:hover {
+    color: #fa5252;
   }
 }
 

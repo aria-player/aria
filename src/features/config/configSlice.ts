@@ -83,6 +83,13 @@ export const configSlice = createSlice({
         action.payload.stylesheet;
       state.theme = action.payload.themeId;
     },
+    removeTheme: (state, action: PayloadAction<string>) => {
+      if (state.theme == action.payload) {
+        state.theme = "system";
+      }
+      delete state.installedThemes[action.payload];
+      delete state.installedStylesheets[action.payload];
+    },
     setAccentColor: (state, action: PayloadAction<string>) => {
       state.accentColor = action.payload;
     },
@@ -116,6 +123,7 @@ export const configSlice = createSlice({
 export const {
   setTheme,
   addTheme,
+  removeTheme,
   setAccentColor,
   setLanguage,
   setDisplayRemainingTime,

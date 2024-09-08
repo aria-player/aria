@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import styles from "./Config.module.css";
-import RemoveIcon from "./assets/trash-can-solid.svg?react";
+import RemoveIcon from "../../assets/trash-can-solid.svg?react";
 
 export function Config(props: {
   folders: Record<string, string[]>;
