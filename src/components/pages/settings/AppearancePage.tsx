@@ -1,6 +1,6 @@
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { accentColors, defaultThemes } from "../../../themes/themes";
-import { getStringIfFirst, isTauri } from "../../../app/utils";
+import { colorIsDark, getStringIfFirst, isTauri } from "../../../app/utils";
 import {
   installThemesFromFiles,
   removeTheme,
@@ -12,11 +12,13 @@ import {
   setTheme
 } from "../../../features/config/configSlice";
 import styles from "./settings.module.css";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { Platform, PlatformContext } from "../../../contexts/PlatformContext";
 import { useTranslation } from "react-i18next";
 import ThemePreview from "./ThemePreview";
 import RemoveIcon from "../../../assets/trash-can-solid.svg?react";
+import { ColorPicker, IColor, useColor } from "react-color-palette";
+import GearIcon from "../../../assets/gear-solid.svg?react";
 
 export function AppearancePage() {
   const { t } = useTranslation();
@@ -27,6 +29,12 @@ export function AppearancePage() {
   const themes = useAppSelector(selectThemes);
   const stylesheets = useAppSelector(selectStylesheets);
   const { platform, decorations, setDecorations } = useContext(PlatformContext);
+  const [showAccentPicker, setShowAccentPicker] = useState(false);
+  const [customAccentColor, setCustomAccentColor] = useColor(
+    Object.keys(accentColors).includes(currentAccentColor)
+      ? accentColors[currentAccentColor]
+      : currentAccentColor
+  );
 
   const showThemeFilePicker = async () => {
     try {
@@ -52,6 +60,21 @@ export function AppearancePage() {
 
   const handleAccentChange = (color: string) => {
     dispatch(setAccentColor(color));
+  };
+
+  const handleCustomAccentChange = (color: IColor) => {
+    if (!themes[currentTheme]?.disableAccentPicker) {
+      setCustomAccentColor(color);
+      document.documentElement.style.setProperty("--accent-color", color.hex);
+      document.documentElement.style.setProperty(
+        "--button-text-selected",
+        colorIsDark(color.hex) ? "#fff" : "#000"
+      );
+    }
+  };
+
+  const handleCustomAccentChangeComplete = (color: IColor) => {
+    dispatch(setAccentColor(color.hex));
   };
 
   const handleCheckboxChange = async (
@@ -139,13 +162,30 @@ export function AppearancePage() {
               }
               style={{ backgroundColor: accentColors[color] }}
               className={`${styles.accentButton} ${currentAccentColor === color ? styles.selected : ""}`}
-              onClick={() =>
-                accentsEnabled ? handleAccentChange(color) : null
-              }
+              onClick={() => {
+                if (color == "gray") {
+                  setShowAccentPicker(!showAccentPicker);
+                } else {
+                  accentsEnabled ? handleAccentChange(color) : null;
+                }
+              }}
               disabled={!accentsEnabled}
-            ></button>
+            >
+              {"gray" === color && <GearIcon />}
+            </button>
           ))}
         </div>
+        {showAccentPicker && (
+          <div className={styles.accentPicker}>
+            <ColorPicker
+              height={160}
+              color={customAccentColor}
+              onChange={handleCustomAccentChange}
+              onChangeComplete={handleCustomAccentChangeComplete}
+              hideAlpha
+            />
+          </div>
+        )}
       </section>
     </div>
   );

@@ -16,8 +16,6 @@ body {
   user-select: none;
   overflow: hidden;
 
-  --button-text-selected: #fff;
-
   button,
   select,
   input {

@@ -23,6 +23,7 @@ import "allotment/dist/style.css";
 import "react-contexify/dist/ReactContexify.css";
 import "@ag-grid-community/styles/ag-grid.css";
 import "@ag-grid-community/styles/ag-theme-balham.css";
+import "react-color-palette/css";
 
 import "./styles/base.css";
 import "./styles/overrides.css";

@@ -137,10 +137,17 @@
   width: 2rem;
   height: 2rem;
   margin: 0.3rem;
+  padding: 0;
 
   &.selected {
     border: 2px solid var(--settings-selected-accent-outline);
   }
+}
+
+.accentPicker {
+  height: 10rem;
+  transform: translateX(16rem) translateY(-12.65rem);
+  width: 17.5rem;
 }
 
 .disabledSection,

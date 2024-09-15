@@ -47,6 +47,43 @@ body {
     justify-content: right;
   }
 
+  /* react-color-palette overrides */
+  .rcp-root {
+    --rcp-background-color: var(--primary-background);
+    --rcp-field-input-color: var(--primary-text);
+    --rcp-field-input-border-color: var(--primary-border);
+    --rcp-field-label-color: var(--secondary-text);
+
+    border: 1px solid var(--primary-border);
+    box-shadow: 1px 4px 16px -4px rgb(0 0 0 / 60%);
+  }
+
+  .rcp-hue,
+  .rcp-saturation {
+    cursor: default;
+  }
+
+  .rcp-saturation-cursor,
+  .rcp-hue-cursor {
+    border: 2px solid var(--primary-text);
+  }
+
+  .rcp-hue-cursor {
+    transform: translate(-10px, -6px);
+  }
+
+  .rcp-field-input {
+    border: 1px solid var(--rcp-field-input-border-color);
+  }
+
+  .rcp-section {
+    margin: 0;
+  }
+
+  .rcp-fields-floor {
+    display: flex;
+  }
+
   /* AG-Grid overrides */
   .ag-theme-balham {
     --ag-header-background-color: transparent;

@@ -7,6 +7,7 @@ import {
   selectThemes
 } from "../features/config/configSlice";
 import { accentColors } from "../themes/themes";
+import { colorIsDark } from "../app/utils";
 
 export const useTheme = () => {
   const theme = useAppSelector(selectTheme);
@@ -17,10 +18,19 @@ export const useTheme = () => {
   useEffect(() => {
     if (themes[theme]?.disableAccentPicker) {
       document.documentElement.style.removeProperty("--accent-color");
+      document.documentElement.style.removeProperty("--button-text-selected");
     } else {
       document.documentElement.style.setProperty(
         "--accent-color",
-        accentColors[accentColor] || accentColors["blue"]
+        accentColors[accentColor] || accentColor || accentColors["blue"]
+      );
+      document.documentElement.style.setProperty(
+        "--button-text-selected",
+        colorIsDark(
+          accentColors[accentColor] || accentColor || accentColors["blue"]
+        )
+          ? "#fff"
+          : "#000"
       );
     }
   }, [themes, theme, accentColor]);

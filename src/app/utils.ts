@@ -19,7 +19,7 @@ export function formatDuration(duration: number) {
 }
 
 export function formatStringArray(value: string | string[] | undefined) {
-  return Array.isArray(value) ? value.join("/") : value ?? "";
+  return Array.isArray(value) ? value.join("/") : (value ?? "");
 }
 
 export function formatBytes(bytes: number) {
@@ -83,4 +83,23 @@ export function resetColumnStateExceptSort(columnState: ColumnState[] | null) {
       sortIndex: colDef.hide ? null : overrideCol?.sortIndex
     } as ColumnState;
   });
+}
+
+// See https://stackoverflow.com/questions/3942878/how-to-decide-font-color-in-white-or-black-depending-on-background-color
+export function colorIsDark(accentColor: string, contrastThreshold = 2) {
+  function getLuminance(r: number, g: number, b: number) {
+    const a = [r, g, b].map((v) => {
+      v /= 255;
+      return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+    });
+    return a[0] * 0.2126 + a[1] * 0.7152 + a[2] * 0.0722;
+  }
+
+  const color =
+    accentColor.charAt(0) === "#" ? accentColor.substring(1, 7) : accentColor;
+  const r = parseInt(color.substring(0, 2), 16);
+  const g = parseInt(color.substring(2, 4), 16);
+  const b = parseInt(color.substring(4, 6), 16);
+  const contrastRatio = 1.05 / (getLuminance(r, g, b) + 0.05);
+  return contrastRatio >= contrastThreshold;
 }
