@@ -182,7 +182,14 @@ export function AppearancePage() {
           </button>
         </div>
         {showAccentPicker && (
-          <div className={styles.accentPicker}>
+          <div
+            className={styles.accentPicker}
+            onMouseDown={() => {
+              if (accentColor != "custom") {
+                dispatch(setAccentColor("custom"));
+              }
+            }}
+          >
             <ColorPicker
               height={160}
               color={localCustomAccentColor}
