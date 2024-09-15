@@ -171,7 +171,10 @@ export function AppearancePage() {
           <button
             key="custom"
             title={t("settings.appearance.customAccent")}
-            style={{ backgroundColor: localCustomAccentColor.hex }}
+            style={{
+              backgroundColor: localCustomAccentColor.hex,
+              color: colorIsDark(localCustomAccentColor.hex) ? "#fff" : "#000"
+            }}
             className={`${styles.accentButton} ${accentColor === "custom" ? styles.selected : ""}`}
             onClick={() => {
               setShowAccentPicker(!showAccentPicker);
