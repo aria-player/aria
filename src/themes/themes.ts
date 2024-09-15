@@ -41,6 +41,5 @@ export const accentColors: Record<string, string> = {
   pink: "#c2255c",
   grape: "#9c36b5",
   violet: "#6741d9",
-  indigo: "#3b5bdb",
-  gray: "#495057"
+  indigo: "#3b5bdb"
 };

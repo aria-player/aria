@@ -5,10 +5,12 @@ import {
   installThemesFromFiles,
   removeTheme,
   selectAccentColor,
+  selectCustomAccentColor,
   selectStylesheets,
   selectTheme,
   selectThemes,
   setAccentColor,
+  setCustomAccentColor,
   setTheme
 } from "../../../features/config/configSlice";
 import styles from "./settings.module.css";
@@ -25,16 +27,14 @@ export function AppearancePage() {
 
   const dispatch = useAppDispatch();
   const currentTheme = useAppSelector(selectTheme);
-  const currentAccentColor = useAppSelector(selectAccentColor);
+  const accentColor = useAppSelector(selectAccentColor);
+  const customAccentColor = useAppSelector(selectCustomAccentColor);
   const themes = useAppSelector(selectThemes);
   const stylesheets = useAppSelector(selectStylesheets);
   const { platform, decorations, setDecorations } = useContext(PlatformContext);
   const [showAccentPicker, setShowAccentPicker] = useState(false);
-  const [customAccentColor, setCustomAccentColor] = useColor(
-    Object.keys(accentColors).includes(currentAccentColor)
-      ? accentColors[currentAccentColor]
-      : currentAccentColor
-  );
+  const [localCustomAccentColor, setLocalCustomAccentColor] =
+    useColor(customAccentColor);
 
   const showThemeFilePicker = async () => {
     try {
@@ -64,7 +64,7 @@ export function AppearancePage() {
 
   const handleCustomAccentChange = (color: IColor) => {
     if (!themes[currentTheme]?.disableAccentPicker) {
-      setCustomAccentColor(color);
+      setLocalCustomAccentColor(color);
       document.documentElement.style.setProperty("--accent-color", color.hex);
       document.documentElement.style.setProperty(
         "--button-text-selected",
@@ -74,7 +74,7 @@ export function AppearancePage() {
   };
 
   const handleCustomAccentChangeComplete = (color: IColor) => {
-    dispatch(setAccentColor(color.hex));
+    dispatch(setCustomAccentColor(color.hex));
   };
 
   const handleCheckboxChange = async (
@@ -161,25 +161,31 @@ export function AppearancePage() {
                 getStringIfFirst(" " + t("settings.default"), index)
               }
               style={{ backgroundColor: accentColors[color] }}
-              className={`${styles.accentButton} ${currentAccentColor === color ? styles.selected : ""}`}
+              className={`${styles.accentButton} ${accentColor === color ? styles.selected : ""}`}
               onClick={() => {
-                if (color == "gray") {
-                  setShowAccentPicker(!showAccentPicker);
-                } else {
-                  accentsEnabled ? handleAccentChange(color) : null;
-                }
+                accentsEnabled ? handleAccentChange(color) : null;
               }}
               disabled={!accentsEnabled}
-            >
-              {"gray" === color && <GearIcon />}
-            </button>
+            ></button>
           ))}
+          <button
+            key="custom"
+            title={t("settings.appearance.customAccent")}
+            style={{ backgroundColor: localCustomAccentColor.hex }}
+            className={`${styles.accentButton} ${accentColor === "custom" ? styles.selected : ""}`}
+            onClick={() => {
+              setShowAccentPicker(!showAccentPicker);
+            }}
+            disabled={!accentsEnabled}
+          >
+            <GearIcon />
+          </button>
         </div>
         {showAccentPicker && (
           <div className={styles.accentPicker}>
             <ColorPicker
               height={160}
-              color={customAccentColor}
+              color={localCustomAccentColor}
               onChange={handleCustomAccentChange}
               onChangeComplete={handleCustomAccentChangeComplete}
               hideAlpha

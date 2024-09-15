@@ -14,6 +14,7 @@ export interface ConfigState {
   installedThemes: Record<string, Theme>;
   installedStylesheets: Record<string, string>;
   accentColor: string;
+  customAccentColor: string;
   language: string | null;
   displayRemainingTime: boolean;
   sidebarWidth: number;
@@ -27,6 +28,7 @@ const initialState: ConfigState = {
   installedThemes: {},
   installedStylesheets: {},
   accentColor: "blue",
+  customAccentColor: "#495057",
   language: null,
   displayRemainingTime: false,
   sidebarWidth: 220,
@@ -93,6 +95,10 @@ export const configSlice = createSlice({
     setAccentColor: (state, action: PayloadAction<string>) => {
       state.accentColor = action.payload;
     },
+    setCustomAccentColor: (state, action: PayloadAction<string>) => {
+      state.accentColor = "custom";
+      state.customAccentColor = action.payload;
+    },
     setLanguage: (state, action: PayloadAction<string | null>) => {
       state.language = action.payload;
     },
@@ -125,6 +131,7 @@ export const {
   addTheme,
   removeTheme,
   setAccentColor,
+  setCustomAccentColor,
   setLanguage,
   setDisplayRemainingTime,
   setSidebarConfig,
@@ -134,6 +141,8 @@ export const {
 
 export const selectTheme = (state: RootState) => state.config.theme;
 export const selectAccentColor = (state: RootState) => state.config.accentColor;
+export const selectCustomAccentColor = (state: RootState) =>
+  state.config.customAccentColor;
 export const selectLanguage = (state: RootState) => state.config.language;
 export const selectDisplayRemainingTime = (state: RootState) =>
   state.config.displayRemainingTime;

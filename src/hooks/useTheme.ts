@@ -2,18 +2,24 @@ import { useEffect } from "react";
 import { useAppSelector } from "../app/hooks";
 import {
   selectAccentColor,
+  selectCustomAccentColor,
   selectStylesheets,
   selectTheme,
   selectThemes
 } from "../features/config/configSlice";
-import { accentColors } from "../themes/themes";
 import { colorIsDark } from "../app/utils";
+import { accentColors } from "../themes/themes";
 
 export const useTheme = () => {
   const theme = useAppSelector(selectTheme);
   const themes = useAppSelector(selectThemes);
   const stylesheets = useAppSelector(selectStylesheets);
   const accentColor = useAppSelector(selectAccentColor);
+  const customAccentColor = useAppSelector(selectCustomAccentColor);
+  const accentColorHex =
+    accentColor == "custom"
+      ? customAccentColor
+      : accentColors[accentColor] || accentColors["blue"];
 
   useEffect(() => {
     if (themes[theme]?.disableAccentPicker) {
@@ -22,18 +28,14 @@ export const useTheme = () => {
     } else {
       document.documentElement.style.setProperty(
         "--accent-color",
-        accentColors[accentColor] || accentColor || accentColors["blue"]
+        accentColorHex
       );
       document.documentElement.style.setProperty(
         "--button-text-selected",
-        colorIsDark(
-          accentColors[accentColor] || accentColor || accentColors["blue"]
-        )
-          ? "#fff"
-          : "#000"
+        colorIsDark(accentColorHex) ? "#fff" : "#000"
       );
     }
-  }, [themes, theme, accentColor]);
+  }, [themes, theme, accentColorHex]);
 
   useEffect(() => {
     const loadTheme = (selectedTheme: string) => {

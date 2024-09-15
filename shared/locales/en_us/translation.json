@@ -101,7 +101,8 @@
       "confirmDelete": "Are you sure you want to delete '{{theme}}'?",
       "window": "Window",
       "windowsControls": "Use system window controls",
-      "accent": "Accent color"
+      "accent": "Accent color",
+      "customAccent": "Pick custom accent color"
     },
     "plugins": {
       "subtitle": "Manage plugins to provide additional functionality.",
@@ -243,7 +244,6 @@
     "pink": "Pink",
     "grape": "Grape",
     "violet": "Violet",
-    "indigo": "Indigo",
-    "gray": "Gray"
+    "indigo": "Indigo"
   }
 }

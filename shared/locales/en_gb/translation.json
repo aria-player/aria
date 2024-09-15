@@ -9,10 +9,8 @@
       "subtitle": "Configure your music sources and organise your library."
     },
     "appearance": {
-      "accent": "Accent colour"
+      "accent": "Accent colour",
+      "customAccent": "Pick custom accent color"
     }
-  },
-  "accentColors": {
-    "gray": "Grey"
   }
 }
