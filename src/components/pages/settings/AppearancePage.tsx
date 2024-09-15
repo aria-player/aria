@@ -14,7 +14,7 @@ import {
   setTheme
 } from "../../../features/config/configSlice";
 import styles from "./settings.module.css";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Platform, PlatformContext } from "../../../contexts/PlatformContext";
 import { useTranslation } from "react-i18next";
 import ThemePreview from "./ThemePreview";
@@ -35,6 +35,28 @@ export function AppearancePage() {
   const [showAccentPicker, setShowAccentPicker] = useState(false);
   const [localCustomAccentColor, setLocalCustomAccentColor] =
     useColor(customAccentColor);
+  const accentPickerRef = useRef<HTMLDivElement>(null);
+  const showAccentPickerButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    const handleMouseDown = (event: MouseEvent) => {
+      const target = event.target as Node;
+      if (
+        accentPickerRef.current &&
+        !accentPickerRef.current.contains(target) &&
+        showAccentPickerButtonRef.current &&
+        !showAccentPickerButtonRef.current.contains(target)
+      ) {
+        setShowAccentPicker(false);
+      }
+    };
+    if (showAccentPicker) {
+      document.addEventListener("mousedown", handleMouseDown);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleMouseDown);
+    };
+  }, [showAccentPicker]);
 
   const showThemeFilePicker = async () => {
     try {
@@ -169,6 +191,7 @@ export function AppearancePage() {
             ></button>
           ))}
           <button
+            ref={showAccentPickerButtonRef}
             key="custom"
             title={t("settings.appearance.customAccent")}
             style={{
@@ -186,6 +209,7 @@ export function AppearancePage() {
         </div>
         {showAccentPicker && (
           <div
+            ref={accentPickerRef}
             className={styles.accentPicker}
             onMouseDown={() => {
               if (accentColor != "custom") {
