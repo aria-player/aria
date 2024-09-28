@@ -1,32 +1,10 @@
-import { PluginId, PluginInfo } from "../features/plugins/pluginsTypes";
+import { PluginInfo } from "../features/plugins/pluginsTypes";
 
-export const plugins: Record<PluginId, PluginInfo> = {
-  tauriplayer: {
-    id: "tauriplayer",
-    type: "source",
-    name: "Local Files",
-    needsTauri: true,
-    main: "createTauriPlayer.ts"
-  },
-  webplayer: {
-    id: "webplayer",
-    type: "source",
-    name: "Web Music Library",
-    needsTauri: false,
-    main: "createWebPlayer.ts"
-  },
-  mediasession: {
-    id: "mediasession",
-    type: "integration",
-    name: "Media Session",
-    needsTauri: false,
-    main: "createMediaSession.ts"
-  },
-  sampleplugin: {
-    id: "sampleplugin",
-    type: "base",
-    name: "Sample Plugin",
-    needsTauri: false,
-    main: "createSamplePlugin.tsx"
-  }
-};
+export const plugins: Record<string, PluginInfo> = {};
+
+const pluginManifests = import.meta.glob("./*/plugin.json", { eager: true });
+for (const path of Object.keys(pluginManifests)) {
+  const pluginInfo = pluginManifests[path] as { default: PluginInfo };
+  const pluginId = pluginInfo.default.id;
+  plugins[pluginId] = pluginInfo.default;
+}

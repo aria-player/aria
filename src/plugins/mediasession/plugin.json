@@ -1,0 +1,7 @@
+{
+  "id": "mediasession",
+  "type": "integration",
+  "name": "Media Session",
+  "needsTauri": false,
+  "main": "createMediaSession.ts"
+}
