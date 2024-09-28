@@ -55,7 +55,14 @@ const reducer = combineReducers({
     },
     playerReducer
   ),
-  plugins: persistReducer({ key: "plugins", storage }, pluginsReducer),
+  plugins: persistReducer(
+    {
+      key: "plugins",
+      storage,
+      blacklist: ["activePlugins"]
+    },
+    pluginsReducer
+  ),
   tracks: persistReducer(
     {
       key: "tracks",

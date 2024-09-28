@@ -8,14 +8,16 @@ import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import {
   pluginHandles,
   selectActivePlugins,
+  selectEnabledPlugins,
   selectPluginData,
-  setPluginActive
+  setPluginEnabled
 } from "../../../features/plugins/pluginsSlice";
 
 export function PluginsPage() {
   const { t } = useTranslation();
 
   const dispatch = useAppDispatch();
+  const enabledPlugins = useAppSelector(selectEnabledPlugins);
   const activePlugins = useAppSelector(selectActivePlugins);
   const pluginData = useAppSelector(selectPluginData);
 
@@ -42,9 +44,9 @@ export function PluginsPage() {
                 <input
                   type="checkbox"
                   readOnly
-                  checked={activePlugins.includes(plugin)}
+                  checked={enabledPlugins.includes(plugin)}
                   onClick={async () => {
-                    if (activePlugins.includes(plugin)) {
+                    if (enabledPlugins.includes(plugin)) {
                       const confirmed = await confirm(
                         t("settings.plugins.confirmDisable", {
                           plugin: plugins[plugin].name
@@ -55,9 +57,9 @@ export function PluginsPage() {
                       }
                     }
                     dispatch(
-                      setPluginActive({
+                      setPluginEnabled({
                         plugin: plugin,
-                        active: !activePlugins.includes(plugin)
+                        enabled: !enabledPlugins.includes(plugin)
                       })
                     );
                   }}

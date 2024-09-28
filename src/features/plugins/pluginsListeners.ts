@@ -1,5 +1,5 @@
 import { PluginId } from "./pluginsTypes";
-import { pluginHandles } from "./pluginsSlice";
+import { pluginHandles, setPluginActive } from "./pluginsSlice";
 import { plugins } from "../../plugins/plugins";
 import {
   getBaseCallbacks,
@@ -8,6 +8,7 @@ import {
 } from "./pluginsCallbacks";
 import { listenForChange } from "../../app/listener";
 import { removeTracks } from "../tracks/tracksSlice";
+import { store } from "../../app/store";
 
 const createPluginInstance = async (pluginId: PluginId) => {
   if (!pluginHandles[pluginId]) {
@@ -37,6 +38,7 @@ const createPluginInstance = async (pluginId: PluginId) => {
           break;
         }
       }
+      store.dispatch(setPluginActive({ plugin: pluginId, active: true }));
     } catch (error) {
       console.error(
         `Failed to create plugin "${pluginId}" with error: ${error}`
@@ -45,23 +47,24 @@ const createPluginInstance = async (pluginId: PluginId) => {
   }
 };
 
-const disposePluginInstance = (plugin: PluginId) => {
-  pluginHandles[plugin]?.dispose();
-  delete pluginHandles[plugin];
+const disposePluginInstance = (pluginId: PluginId) => {
+  pluginHandles[pluginId]?.dispose();
+  delete pluginHandles[pluginId];
+  store.dispatch(setPluginActive({ plugin: pluginId, active: false }));
 };
 
 export function setupPluginListeners() {
   listenForChange(
-    (state) => state.plugins.activePlugins,
+    (state) => state.plugins.enabledPlugins,
     (state, _action, dispatch) => {
       if (!state.tracks._persist?.rehydrated) return;
       Object.keys(pluginHandles).forEach((plugin) => {
-        if (!state.plugins.activePlugins.includes(plugin)) {
+        if (!state.plugins.enabledPlugins.includes(plugin)) {
           disposePluginInstance(plugin);
           dispatch(removeTracks({ source: plugin }));
         }
       });
-      state.plugins.activePlugins.forEach(createPluginInstance);
+      state.plugins.enabledPlugins.forEach(createPluginInstance);
     }
   );
 
@@ -69,7 +72,7 @@ export function setupPluginListeners() {
     (state) => state.tracks._persist?.rehydrated,
     (state) => {
       if (state.tracks._persist?.rehydrated) {
-        state.plugins.activePlugins.forEach(createPluginInstance);
+        state.plugins.enabledPlugins.forEach(createPluginInstance);
       }
     }
   );
