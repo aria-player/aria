@@ -4,7 +4,7 @@ import {
 } from "../../features/plugins/pluginsTypes";
 import { Track } from "../../features/tracks/tracksTypes";
 
-export function createMediaSession(
+export default function createMediaSession(
   host: IntegrationCallbacks
 ): IntegrationHandle | null {
   if (!("mediaSession" in navigator)) {

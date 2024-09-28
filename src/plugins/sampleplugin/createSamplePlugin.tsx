@@ -7,7 +7,7 @@ type SamplePluginData = {
   pings: number;
 };
 
-export function createSamplePlugin(host: BaseCallbacks): BaseHandle {
+export default function createSamplePlugin(host: BaseCallbacks): BaseHandle {
   i18n.addResourceBundle("en-US", "sampleplugin", en_us);
   console.log("Created sampleplugin with initial config: ", host.getData());
 

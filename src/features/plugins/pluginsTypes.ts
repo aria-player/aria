@@ -2,12 +2,12 @@ import { Track, TrackMetadata, TrackUri } from "../tracks/tracksTypes";
 
 export type PluginId = string;
 
-export type PluginInfo<H, C> = {
+export type PluginInfo = {
   id: PluginId;
   type: "base" | "integration" | "source";
   name: string;
   needsTauri: boolean;
-  create: (callbacks: C) => H | null;
+  main: string;
 };
 
 export interface BaseHandle {
@@ -58,17 +58,8 @@ export interface SourceCallbacks extends IntegrationCallbacks {
   getMuted: () => boolean;
 }
 
-export type BasePlugin = PluginInfo<BaseHandle, BaseCallbacks>;
-export type IntegrationPlugin = PluginInfo<
-  IntegrationHandle,
-  IntegrationCallbacks
->;
-export type SourcePlugin = PluginInfo<SourceHandle, SourceCallbacks>;
-
 export type PluginHandle = BaseHandle | IntegrationHandle | SourceHandle;
 export type PluginCallbacks =
   | BaseCallbacks
   | IntegrationHandle
   | SourceCallbacks;
-
-export type Plugin = BasePlugin | IntegrationPlugin | SourcePlugin;

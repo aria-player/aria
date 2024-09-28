@@ -16,7 +16,7 @@ export type TauriPlayerData = {
   folders: Record<string, string[]>;
 };
 
-export function createTauriPlayer(host: SourceCallbacks): SourceHandle {
+export default function createTauriPlayer(host: SourceCallbacks): SourceHandle {
   i18n.addResourceBundle("en-US", "tauriplayer", en_us);
   const initialConfig = host.getData() as TauriPlayerData;
   let folders = { ...initialConfig.folders };

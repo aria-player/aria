@@ -18,7 +18,7 @@ export type WebPlayerData = {
   folder: string;
 };
 
-export function createWebPlayer(host: SourceCallbacks): SourceHandle {
+export default function createWebPlayer(host: SourceCallbacks): SourceHandle {
   i18n.addResourceBundle("en-US", "webplayer", en_us);
   const initialConfig = host.getData() as WebPlayerData | null;
 

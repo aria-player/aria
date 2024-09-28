@@ -1,9 +1,4 @@
-import {
-  BasePlugin,
-  IntegrationPlugin,
-  PluginId,
-  SourcePlugin
-} from "./pluginsTypes";
+import { PluginId } from "./pluginsTypes";
 import { pluginHandles } from "./pluginsSlice";
 import { plugins } from "../../plugins/plugins";
 import {
@@ -14,32 +9,30 @@ import {
 import { listenForChange } from "../../app/listener";
 import { removeTracks } from "../tracks/tracksSlice";
 
-const createPluginInstance = (pluginId: PluginId) => {
+const createPluginInstance = async (pluginId: PluginId) => {
   if (!pluginHandles[pluginId]) {
     const plugin = plugins[pluginId];
     if (!plugin) {
       throw new Error(`Plugin "${pluginId}" not found`);
     }
     try {
+      const isTsx = plugin.main.endsWith("tsx");
+      const { default: create } = await import(
+        `../../plugins/${plugin.id}/${plugin.main.split(".")[0]}.${isTsx ? "tsx" : "ts"}`
+      );
       switch (plugin.type) {
         case "base": {
-          const handle = (plugin as BasePlugin).create(
-            getBaseCallbacks(pluginId)
-          );
+          const handle = create(getBaseCallbacks(pluginId));
           if (handle) pluginHandles[pluginId] = handle;
           break;
         }
         case "integration": {
-          const handle = (plugin as IntegrationPlugin).create(
-            getIntegrationCallbacks(pluginId)
-          );
+          const handle = create(getIntegrationCallbacks(pluginId));
           if (handle) pluginHandles[pluginId] = handle;
           break;
         }
         case "source": {
-          const handle = (plugin as SourcePlugin).create(
-            getSourceCallbacks(pluginId)
-          );
+          const handle = create(getSourceCallbacks(pluginId));
           if (handle) pluginHandles[pluginId] = handle;
           break;
         }
