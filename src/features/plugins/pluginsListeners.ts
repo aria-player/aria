@@ -17,10 +17,17 @@ const createPluginInstance = async (pluginId: PluginId) => {
       throw new Error(`Plugin "${pluginId}" not found`);
     }
     try {
-      const isTsx = plugin.main.endsWith("tsx");
-      const { default: create } = await import(
-        `../../plugins/${plugin.id}/${plugin.main.split(".")[0]}.${isTsx ? "tsx" : "ts"}`
-      );
+      let module;
+      if (plugin.main.endsWith("tsx")) {
+        module = await import(
+          `../../plugins/${plugin.id}/${plugin.main.split(".")[0]}.tsx`
+        );
+      } else {
+        module = await import(
+          `../../plugins/${plugin.id}/${plugin.main.split(".")[0]}.ts`
+        );
+      }
+      const create = module.default;
       switch (plugin.type) {
         case "base": {
           const handle = create(getBaseCallbacks(pluginId));
