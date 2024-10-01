@@ -1,6 +1,9 @@
 import { PluginId } from "./pluginsTypes";
-import { pluginHandles, setPluginActive } from "./pluginsSlice";
-import { plugins } from "../../plugins/plugins";
+import {
+  pluginHandles,
+  selectPluginInfo,
+  setPluginActive
+} from "./pluginsSlice";
 import {
   getBaseCallbacks,
   getIntegrationCallbacks,
@@ -9,23 +12,38 @@ import {
 import { listenForChange } from "../../app/listener";
 import { removeTracks } from "../tracks/tracksSlice";
 import { store } from "../../app/store";
+import { defaultPluginInfo } from "../../plugins/plugins";
 import i18n from "../../i18n";
+
+async function convertModuleStringToFunction(moduleString: string) {
+  const blob = new Blob([moduleString], { type: "application/javascript" });
+  const moduleUrl = URL.createObjectURL(blob);
+  const module = await import(/* @vite-ignore */ moduleUrl);
+  URL.revokeObjectURL(moduleUrl);
+  return module;
+}
 
 const createPluginInstance = async (pluginId: PluginId) => {
   if (!pluginHandles[pluginId]) {
-    const plugin = plugins[pluginId];
+    const plugin = selectPluginInfo(store.getState())[pluginId];
     if (!plugin) {
       throw new Error(`Plugin "${pluginId}" not found`);
     }
     try {
       let module;
-      if (plugin.main.endsWith("tsx")) {
-        module = await import(
-          `../../plugins/${plugin.id}/${plugin.main.split(".")[0]}.tsx`
-        );
+      if (Object.keys(defaultPluginInfo).includes(pluginId)) {
+        if (plugin.main.endsWith("tsx")) {
+          module = await import(
+            `../../plugins/${plugin.id}/${plugin.main.split(".")[0]}.tsx`
+          );
+        } else {
+          module = await import(
+            `../../plugins/${plugin.id}/${plugin.main.split(".")[0]}.ts`
+          );
+        }
       } else {
-        module = await import(
-          `../../plugins/${plugin.id}/${plugin.main.split(".")[0]}.ts`
+        module = await convertModuleStringToFunction(
+          store.getState().plugins.installedPluginScripts[pluginId]
         );
       }
       const create = module.default;

@@ -6,9 +6,10 @@ import {
   formatDuration,
   formatDate
 } from "../../app/utils";
-import { plugins } from "../../plugins/plugins";
 import { AlbumArt } from "../../components/views/subviews/AlbumArt";
 import { createElement } from "react";
+import { selectPluginInfo } from "../plugins/pluginsSlice";
+import { store } from "../../app/store";
 
 export const defaultColumnDefinitions: ColDef[] = [
   { field: "trackId", hide: true, filter: false },
@@ -139,7 +140,7 @@ export const defaultColumnDefinitions: ColDef[] = [
     field: "source",
     hide: true,
     valueFormatter: (params: { value: string }) => {
-      return plugins[params.value].name;
+      return selectPluginInfo(store.getState())[params.value].name;
     }
   }
 ];

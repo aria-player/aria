@@ -108,6 +108,7 @@
       "subtitle": "Manage plugins to provide additional functionality.",
       "availablePlugins": "Available plugins",
       "configureSources": "Configure enabled music sources from the 'Library' tab.",
+      "installFromFile": "Install from file...",
       "confirmDisable": "Are you sure you want to disable '{{plugin}}'?",
       "pluginConfig": "Plugin configuration"
     },

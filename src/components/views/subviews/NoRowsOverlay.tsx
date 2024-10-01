@@ -7,9 +7,9 @@ import {
 } from "../../../features/visibleSelectors";
 import {
   pluginHandles,
-  selectActivePlugins
+  selectActivePlugins,
+  selectPluginInfo
 } from "../../../features/plugins/pluginsSlice";
-import { plugins } from "../../../plugins/plugins";
 import { SourceHandle } from "../../../features/plugins/pluginsTypes";
 import styles from "./NoRowsOverlay.module.css";
 import { BASEPATH } from "../../../app/constants";
@@ -18,6 +18,7 @@ import { push } from "redux-first-history";
 export default function NoRowsOverlay() {
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
+  const plugins = useAppSelector(selectPluginInfo);
   const visibleViewType = useAppSelector(selectVisibleViewType);
   const visibleDisplayMode = useAppSelector(selectVisibleDisplayMode);
   const activePlugins = useAppSelector(selectActivePlugins);

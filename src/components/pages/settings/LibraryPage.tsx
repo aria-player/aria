@@ -1,12 +1,12 @@
 import { useTranslation } from "react-i18next";
 import styles from "./settings.module.css";
-import { plugins } from "../../../plugins/plugins";
 import { PluginId } from "../../../features/plugins/pluginsTypes";
 import { useAppSelector } from "../../../app/hooks";
 import {
   pluginHandles,
   selectActivePlugins,
-  selectPluginData
+  selectPluginData,
+  selectPluginInfo
 } from "../../../features/plugins/pluginsSlice";
 import { selectAllTracks } from "../../../features/tracks/tracksSlice";
 
@@ -19,6 +19,7 @@ export function LibraryPage() {
     (track) => track.metadataLoaded
   ).length;
   const totalTracks = allTracks.length;
+  const plugins = useAppSelector(selectPluginInfo);
   const activeSourcePlugins = activePlugins.filter(
     (plugin: PluginId) => plugins[plugin].type === "source"
   );

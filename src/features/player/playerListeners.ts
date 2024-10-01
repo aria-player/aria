@@ -1,13 +1,16 @@
 import { listenForAction, listenForChange } from "../../app/listener";
 import { RootState } from "../../app/store";
-import { pluginHandles, selectActivePlugins } from "../plugins/pluginsSlice";
+import {
+  pluginHandles,
+  selectActivePlugins,
+  selectPluginInfo
+} from "../plugins/pluginsSlice";
 import { IntegrationHandle, SourceHandle } from "../plugins/pluginsTypes";
 
 import { loadAndPlayTrack, selectStatus } from "./playerSlice";
 import { Status } from "./playerTypes";
 import { resetTimer, startTimer, stopTimer } from "./playerTime";
 import { isAnyOf } from "@reduxjs/toolkit";
-import { plugins } from "../../plugins/plugins";
 import {
   selectCurrentTrack,
   selectCurrentTrackItemId
@@ -29,6 +32,7 @@ export function setupPlayerListeners() {
     async (state, _action, dispatch) => {
       stopTimer();
       resetTimer();
+      const plugins = selectPluginInfo(state);
       const activePlugins = selectActivePlugins(state);
       Object.keys(pluginHandles).forEach((plugin) => {
         if (
@@ -63,6 +67,7 @@ export function setupPlayerListeners() {
     (state) => {
       const currentSource = getCurrentSource(state);
       const status = selectStatus(state);
+      const plugins = selectPluginInfo(state);
       const activePlugins = selectActivePlugins(state);
       if (status === Status.Playing) {
         currentSource?.resume();

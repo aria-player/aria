@@ -1,5 +1,6 @@
 import React from "react";
-import ReactDOM from "react-dom/client";
+import ReactDOM from "react-dom";
+import { createRoot } from "react-dom/client";
 import { Provider } from "react-redux";
 import { persistor, history, store } from "./app/store";
 import { PersistGate } from "redux-persist/integration/react";
@@ -30,7 +31,7 @@ import "./styles/overrides.css";
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
-ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
+createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
     <ErrorBoundary FallbackComponent={CrashPage}>
       <Provider store={store}>
@@ -57,3 +58,7 @@ ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
     </ErrorBoundary>
   </React.StrictMode>
 );
+
+// Make React available to plugins
+window.React = React;
+window.ReactDOM = ReactDOM;

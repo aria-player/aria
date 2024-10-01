@@ -1,15 +1,16 @@
 import { useTranslation } from "react-i18next";
 import styles from "./settings.module.css";
-import { plugins } from "../../../plugins/plugins";
 import { isTauri } from "../../../app/utils";
 import { PluginId } from "../../../features/plugins/pluginsTypes";
 import React from "react";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import {
+  installPluginsFromFiles,
   pluginHandles,
   selectActivePlugins,
   selectEnabledPlugins,
   selectPluginData,
+  selectPluginInfo,
   setPluginEnabled
 } from "../../../features/plugins/pluginsSlice";
 
@@ -19,11 +20,30 @@ export function PluginsPage() {
   const dispatch = useAppDispatch();
   const enabledPlugins = useAppSelector(selectEnabledPlugins);
   const activePlugins = useAppSelector(selectActivePlugins);
+  const plugins = useAppSelector(selectPluginInfo);
   const pluginData = useAppSelector(selectPluginData);
 
   function shouldShowPlugin(plugin: PluginId) {
     return !(plugins[plugin].needsTauri && !isTauri());
   }
+
+  const showPluginFilePicker = async () => {
+    try {
+      const fileHandles = await window.showOpenFilePicker({
+        types: [
+          {
+            accept: {
+              "application/zip": [".zip"]
+            }
+          }
+        ],
+        multiple: true
+      });
+      dispatch(installPluginsFromFiles(fileHandles));
+    } catch (error) {
+      console.error("Error installing plugin:", error);
+    }
+  };
 
   const configurablePlugins = activePlugins.filter(
     (plugin: PluginId) =>
@@ -71,6 +91,11 @@ export function PluginsPage() {
         )}
         <p>
           <i>{t("settings.plugins.configureSources")}</i>
+        </p>
+        <p>
+          <button onClick={showPluginFilePicker}>
+            {t("settings.plugins.installFromFile")}
+          </button>
         </p>
       </section>
       <section>
