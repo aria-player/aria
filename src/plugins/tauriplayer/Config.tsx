@@ -46,11 +46,13 @@ export function Config(props: {
             </tr>
           ))}
           {Object.keys(props.folders).length === 0 ? (
-            <td colSpan={3}>
-              <div className={styles.noFolders}>
-                <i>{t("config.noFolders")}</i>
-              </div>
-            </td>
+            <tr>
+              <td colSpan={3}>
+                <div className={styles.noFolders}>
+                  <i>{t("config.noFolders")}</i>
+                </div>
+              </td>
+            </tr>
           ) : null}
         </tbody>
       </table>
