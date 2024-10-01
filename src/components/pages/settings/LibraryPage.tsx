@@ -9,6 +9,7 @@ import {
   selectPluginInfo
 } from "../../../features/plugins/pluginsSlice";
 import { selectAllTracks } from "../../../features/tracks/tracksSlice";
+import { sortDefaultPluginsFirst } from "../../../app/utils";
 
 export function LibraryPage() {
   const { t } = useTranslation();
@@ -20,9 +21,9 @@ export function LibraryPage() {
   ).length;
   const totalTracks = allTracks.length;
   const plugins = useAppSelector(selectPluginInfo);
-  const activeSourcePlugins = activePlugins.filter(
-    (plugin: PluginId) => plugins[plugin].type === "source"
-  );
+  const activeSourcePlugins = activePlugins
+    .filter((plugin: PluginId) => plugins[plugin].type === "source")
+    .sort(sortDefaultPluginsFirst);
 
   return (
     <div className={styles.page}>
@@ -34,10 +35,8 @@ export function LibraryPage() {
           <i>{t("settings.library.noSources")}</i>
         </div>
       )}
-      {activePlugins?.map((plugin: PluginId) => {
+      {activeSourcePlugins?.map((plugin: PluginId) => {
         const pluginHandle = pluginHandles[plugin];
-        if (plugins[plugin].type != "source") return null;
-
         return (
           <section key={plugin}>
             {pluginHandle?.Config && (

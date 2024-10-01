@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import styles from "./settings.module.css";
-import { isTauri } from "../../../app/utils";
+import { isTauri, sortDefaultPluginsFirst } from "../../../app/utils";
 import { PluginId } from "../../../features/plugins/pluginsTypes";
 import React from "react";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
@@ -48,10 +48,12 @@ export function PluginsPage() {
     }
   };
 
-  const configurablePlugins = activePlugins.filter(
-    (plugin: PluginId) =>
-      plugins[plugin].type != "source" && pluginHandles[plugin]?.Config
-  );
+  const configurablePlugins = activePlugins
+    .filter(
+      (plugin: PluginId) =>
+        plugins[plugin].type != "source" && pluginHandles[plugin]?.Config
+    )
+    .sort(sortDefaultPluginsFirst);
 
   return (
     <div className={styles.page}>

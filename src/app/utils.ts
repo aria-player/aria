@@ -3,6 +3,7 @@ import { PluginId } from "../features/plugins/pluginsTypes";
 import { ColumnState } from "@ag-grid-community/core";
 import { defaultColumnDefinitions } from "../features/library/libraryColumns";
 import i18n from "../i18n";
+import { defaultPluginInfo } from "../plugins/plugins";
 
 interface Window {
   __TAURI__?: unknown;
@@ -102,4 +103,11 @@ export function colorIsDark(accentColor: string, contrastThreshold = 2) {
   const b = parseInt(color.substring(4, 6), 16);
   const contrastRatio = 1.05 / (getLuminance(r, g, b) + 0.05);
   return contrastRatio >= contrastThreshold;
+}
+
+export function sortDefaultPluginsFirst(a: PluginId, b: PluginId) {
+  const defaultPlugins = Object.keys(defaultPluginInfo);
+  const inDefaultA = defaultPlugins.includes(a) ? -1 : 1;
+  const inDefaultB = defaultPlugins.includes(b) ? -1 : 1;
+  return inDefaultA - inDefaultB;
 }
