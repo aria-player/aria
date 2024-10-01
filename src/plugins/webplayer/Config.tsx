@@ -1,3 +1,4 @@
+import { i18n } from "i18next";
 import { SourceCallbacks } from "../../features/plugins/pluginsTypes";
 import { WebPlayerData } from "./createWebPlayer";
 import { useTranslation } from "react-i18next";
@@ -7,9 +8,10 @@ export function Config(props: {
   host: SourceCallbacks;
   loaded: boolean;
   pickDirectory: () => void;
+  i18n: i18n;
 }) {
   const webPlayerData = props.data as WebPlayerData;
-  const { t } = useTranslation();
+  const { t } = useTranslation("webplayer", { i18n: props.i18n });
 
   function removeFolder() {
     props.host.updateData({
@@ -20,23 +22,23 @@ export function Config(props: {
 
   return (
     <>
-      <h4>{t("webplayer:config.folder")}</h4>
+      <h4>{t("config.folder")}</h4>
       <button onClick={() => props.pickDirectory()}>
-        {t("webplayer:config.chooseFolder")}
+        {t("config.chooseFolder")}
       </button>
       <p>
-        {t("webplayer:config.currentFolder", {
-          folder: webPlayerData.folder || t("webplayer:config.noFolder")
+        {t("config.currentFolder", {
+          folder: webPlayerData.folder || t("config.noFolder")
         })}
         {webPlayerData?.folder && (
           <button style={{ margin: "0 1rem" }} onClick={removeFolder}>
-            {t("webplayer:config.remove")}
+            {t("config.remove")}
           </button>
         )}
       </p>
       {!props.loaded && webPlayerData?.folder && (
         <p>
-          {t("webplayer:config.folderNotLoaded", {
+          {t("config.folderNotLoaded", {
             folder: webPlayerData.folder
           })}
         </p>

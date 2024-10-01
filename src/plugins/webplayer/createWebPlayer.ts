@@ -9,8 +9,7 @@ import {
 } from "../../features/plugins/pluginsTypes";
 import { Config } from "./Config";
 import { wrap } from "comlink";
-import { t } from "i18next";
-import i18n from "i18next";
+import { i18n } from "i18next";
 import en_us from "./locales/en_us/translation.json";
 import QuickStart from "./QuickStart";
 
@@ -18,8 +17,12 @@ export type WebPlayerData = {
   folder: string;
 };
 
-export default function createWebPlayer(host: SourceCallbacks): SourceHandle {
+export default function createWebPlayer(
+  host: SourceCallbacks,
+  i18n: i18n
+): SourceHandle {
   i18n.addResourceBundle("en-US", "webplayer", en_us);
+  const { t } = i18n;
   const initialConfig = host.getData() as WebPlayerData | null;
 
   const metadataWorker = new Worker(
@@ -109,9 +112,9 @@ export default function createWebPlayer(host: SourceCallbacks): SourceHandle {
   }
 
   return {
-    Config: (props) => Config({ ...props, host, loaded, pickDirectory }),
+    Config: (props) => Config({ ...props, host, loaded, pickDirectory, i18n }),
 
-    QuickStart: (props) => QuickStart({ ...props, pickDirectory }),
+    QuickStart: (props) => QuickStart({ ...props, pickDirectory, i18n }),
 
     async loadAndPlayTrack(track: Track): Promise<void> {
       let file = fileHandles[track.uri];

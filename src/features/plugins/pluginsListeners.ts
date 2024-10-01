@@ -9,6 +9,7 @@ import {
 import { listenForChange } from "../../app/listener";
 import { removeTracks } from "../tracks/tracksSlice";
 import { store } from "../../app/store";
+import i18n from "../../i18n";
 
 const createPluginInstance = async (pluginId: PluginId) => {
   if (!pluginHandles[pluginId]) {
@@ -30,17 +31,17 @@ const createPluginInstance = async (pluginId: PluginId) => {
       const create = module.default;
       switch (plugin.type) {
         case "base": {
-          const handle = create(getBaseCallbacks(pluginId));
+          const handle = create(getBaseCallbacks(pluginId), i18n);
           if (handle) pluginHandles[pluginId] = handle;
           break;
         }
         case "integration": {
-          const handle = create(getIntegrationCallbacks(pluginId));
+          const handle = create(getIntegrationCallbacks(pluginId), i18n);
           if (handle) pluginHandles[pluginId] = handle;
           break;
         }
         case "source": {
-          const handle = create(getSourceCallbacks(pluginId));
+          const handle = create(getSourceCallbacks(pluginId), i18n);
           if (handle) pluginHandles[pluginId] = handle;
           break;
         }

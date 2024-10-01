@@ -6,8 +6,7 @@ import {
 import { open } from "@tauri-apps/api/dialog";
 import { Track, TrackMetadata } from "../../features/tracks/tracksTypes";
 import { appDataDir } from "@tauri-apps/api/path";
-import { t } from "i18next";
-import i18n from "i18next";
+import { i18n } from "i18next";
 import en_us from "./locales/en_us/translation.json";
 import QuickStart from "./QuickStart";
 import { Config } from "./Config";
@@ -16,8 +15,12 @@ export type TauriPlayerData = {
   folders: Record<string, string[]>;
 };
 
-export default function createTauriPlayer(host: SourceCallbacks): SourceHandle {
+export default function createTauriPlayer(
+  host: SourceCallbacks,
+  i18n: i18n
+): SourceHandle {
   i18n.addResourceBundle("en-US", "tauriplayer", en_us);
+  const { t } = i18n;
   const initialConfig = host.getData() as TauriPlayerData;
   let folders = { ...initialConfig.folders };
   let audio: HTMLAudioElement | null;
@@ -160,9 +163,10 @@ export default function createTauriPlayer(host: SourceCallbacks): SourceHandle {
   }
 
   return {
-    Config: (props) => Config({ ...props, folders, addFolder, removeFolder }),
+    Config: (props) =>
+      Config({ ...props, folders, addFolder, removeFolder, i18n }),
 
-    QuickStart: (props) => QuickStart({ ...props, addFolder }),
+    QuickStart: (props) => QuickStart({ ...props, addFolder, i18n }),
 
     async loadAndPlayTrack(track: Track): Promise<void> {
       const file = await convertFileSrc(track.uri);
