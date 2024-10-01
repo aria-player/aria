@@ -2,18 +2,20 @@ import { PluginId } from "./pluginsTypes";
 import {
   pluginHandles,
   selectPluginInfo,
-  setPluginActive
+  setPluginActive,
+  uninstallPlugin
 } from "./pluginsSlice";
 import {
   getBaseCallbacks,
   getIntegrationCallbacks,
   getSourceCallbacks
 } from "./pluginsCallbacks";
-import { listenForChange } from "../../app/listener";
+import { listenForAction, listenForChange } from "../../app/listener";
 import { removeTracks } from "../tracks/tracksSlice";
 import { store } from "../../app/store";
 import { defaultPluginInfo } from "../../plugins/plugins";
 import i18n from "../../i18n";
+import { isAnyOf } from "@reduxjs/toolkit";
 
 async function convertModuleStringToFunction(moduleString: string) {
   const blob = new Blob([moduleString], { type: "application/javascript" });
@@ -102,4 +104,9 @@ export function setupPluginListeners() {
       }
     }
   );
+
+  listenForAction(isAnyOf(uninstallPlugin), (_, action) => {
+    const pluginId = action.payload as PluginId;
+    disposePluginInstance(pluginId);
+  });
 }

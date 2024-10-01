@@ -52,12 +52,31 @@
   cursor: pointer;
 }
 
+.removeButton {
+  color: var(--button-destructive);
+  height: 1rem;
+
+  &.selected {
+    color: var(--button-text-selected);
+  }
+
+  &:hover {
+    color: var(--button-destructive-hover);
+  }
+}
+
 .themeContainer {
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
   gap: 1rem;
   margin: 1rem;
+
+  .removeButton {
+    position: absolute;
+    bottom: 0.5rem;
+    right: 0.5rem;
+  }
 }
 
 .themeItem {
@@ -110,22 +129,6 @@
   }
 }
 
-.removeButton {
-  position: absolute;
-  bottom: 0.5rem;
-  right: 0.5rem;
-  color: var(--button-destructive);
-  height: 1rem;
-
-  &.selected {
-    color: var(--button-text-selected);
-  }
-
-  &:hover {
-    color: var(--button-destructive-hover);
-  }
-}
-
 .accentContainer {
   display: flex;
   flex-wrap: wrap;
@@ -154,6 +157,13 @@
 .disabledSection,
 .accentButton:disabled {
   opacity: 0.5;
+}
+
+.plugin {
+  display: flex;
+  align-items: center;
+  column-gap: 0.2rem;
+  padding-bottom: 0.5rem;
 }
 
 .alert {

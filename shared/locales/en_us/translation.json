@@ -109,6 +109,8 @@
       "availablePlugins": "Available plugins",
       "configureSources": "Configure enabled music sources from the 'Library' tab.",
       "installFromFile": "Install from file...",
+      "uninstall": "Uninstall",
+      "confirmUninstall": "Are you sure you want to uninstall '{{plugin}}'?",
       "confirmDisable": "Are you sure you want to disable '{{plugin}}'?",
       "pluginConfig": "Plugin configuration"
     },

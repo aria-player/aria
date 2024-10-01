@@ -69,6 +69,14 @@ export const pluginsSlice = createSlice({
         state.enabledPlugins.push(info.id);
       }
     },
+    uninstallPlugin: (state, action: PayloadAction<PluginId>) => {
+      state.enabledPlugins = state.enabledPlugins.filter(
+        (plugin) => plugin != action.payload
+      );
+      delete state.installedPluginInfo[action.payload];
+      delete state.installedPluginScripts[action.payload];
+      delete state.pluginData[action.payload];
+    },
     setPluginEnabled: (
       state,
       action: PayloadAction<{ plugin: PluginId; enabled: boolean }>
@@ -107,6 +115,7 @@ export const pluginsSlice = createSlice({
 
 export const {
   installPlugin,
+  uninstallPlugin,
   setPluginEnabled,
   setPluginActive,
   setPluginData
