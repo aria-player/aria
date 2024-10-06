@@ -76,7 +76,7 @@ const createPluginInstance = async (pluginId: PluginId) => {
 };
 
 const disposePluginInstance = (pluginId: PluginId) => {
-  pluginHandles[pluginId]?.dispose();
+  pluginHandles[pluginId]?.dispose?.();
   delete pluginHandles[pluginId];
   store.dispatch(setPluginActive({ plugin: pluginId, active: false }));
 };

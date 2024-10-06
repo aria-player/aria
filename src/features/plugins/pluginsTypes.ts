@@ -13,7 +13,7 @@ export type PluginInfo = {
 export interface BaseHandle {
   Config?: React.FC<{ data: object }>;
   onDataUpdate?: (data: object) => void;
-  dispose: () => void;
+  dispose?: () => void;
 }
 
 export interface BaseCallbacks {
