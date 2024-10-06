@@ -41,8 +41,8 @@ export function LibraryPage() {
         const pluginHandle = pluginHandles[plugin];
         return (
           <section key={plugin}>
-            {pluginHandle?.Config && (
-              <pluginHandle.Config data={pluginData[plugin] ?? {}} />
+            {pluginHandle?.LibraryConfig && (
+              <pluginHandle.LibraryConfig data={pluginData[plugin] ?? {}} />
             )}
           </section>
         );

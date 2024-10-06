@@ -1,9 +1,9 @@
-import styles from "./Config.module.css";
+import styles from "./LibraryConfig.module.css";
 import RemoveIcon from "../../assets/trash-can-solid.svg?react";
 import { i18n } from "i18next";
 import { useTranslation } from "react-i18next";
 
-export function Config(props: {
+export function LibraryConfig(props: {
   folders: Record<string, string[]>;
   addFolder: () => void;
   removeFolder: (folder: string) => void;

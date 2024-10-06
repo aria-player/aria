@@ -9,7 +9,7 @@ import { appDataDir } from "@tauri-apps/api/path";
 import { i18n } from "i18next";
 import en_us from "./locales/en_us/translation.json";
 import QuickStart from "./QuickStart";
-import { Config } from "./Config";
+import { LibraryConfig } from "./LibraryConfig";
 
 export type TauriPlayerData = {
   folders: Record<string, string[]>;
@@ -163,8 +163,8 @@ export default function createTauriPlayer(
   }
 
   return {
-    Config: (props) =>
-      Config({ ...props, folders, addFolder, removeFolder, i18n }),
+    LibraryConfig: (props) =>
+      LibraryConfig({ ...props, folders, addFolder, removeFolder, i18n }),
 
     QuickStart: (props) => QuickStart({ ...props, addFolder, i18n }),
 

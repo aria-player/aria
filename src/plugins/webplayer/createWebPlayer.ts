@@ -7,7 +7,7 @@ import {
   SourceCallbacks,
   SourceHandle
 } from "../../features/plugins/pluginsTypes";
-import { Config } from "./Config";
+import { LibraryConfig } from "./LibraryConfig";
 import { wrap } from "comlink";
 import { i18n } from "i18next";
 import en_us from "./locales/en_us/translation.json";
@@ -112,7 +112,8 @@ export default function createWebPlayer(
   }
 
   return {
-    Config: (props) => Config({ ...props, host, loaded, pickDirectory, i18n }),
+    LibraryConfig: (props) =>
+      LibraryConfig({ ...props, host, loaded, pickDirectory, i18n }),
 
     QuickStart: (props) => QuickStart({ ...props, pickDirectory, i18n }),
 

@@ -49,11 +49,7 @@ export function PluginsPage() {
   };
 
   const configurablePlugins = activePlugins
-    .filter(
-      (plugin: PluginId) =>
-        !plugins[plugin].capabilities?.includes("source") &&
-        pluginHandles[plugin]?.Config
-    )
+    .filter((plugin: PluginId) => pluginHandles[plugin]?.Config)
     .sort(sortDefaultPluginsFirst);
 
   return (

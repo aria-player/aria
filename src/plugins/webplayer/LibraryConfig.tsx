@@ -3,7 +3,7 @@ import { SourceCallbacks } from "../../features/plugins/pluginsTypes";
 import { WebPlayerData } from "./createWebPlayer";
 import { useTranslation } from "react-i18next";
 
-export function Config(props: {
+export function LibraryConfig(props: {
   data: object;
   host: SourceCallbacks;
   loaded: boolean;
