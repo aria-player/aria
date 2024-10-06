@@ -25,6 +25,17 @@ async function convertModuleStringToFunction(moduleString: string) {
   return module;
 }
 
+function getPluginCallbacks(pluginId: PluginId, capabilities?: string[]) {
+  let callbacks = getBaseCallbacks(pluginId);
+  if (capabilities?.includes("integration")) {
+    callbacks = { ...callbacks, ...getIntegrationCallbacks(pluginId) };
+  }
+  if (capabilities?.includes("source")) {
+    callbacks = { ...callbacks, ...getSourceCallbacks(pluginId) };
+  }
+  return callbacks;
+}
+
 const createPluginInstance = async (pluginId: PluginId) => {
   if (!pluginHandles[pluginId]) {
     const plugin = selectPluginInfo(store.getState())[pluginId];
@@ -49,22 +60,12 @@ const createPluginInstance = async (pluginId: PluginId) => {
         );
       }
       const create = module.default;
-      switch (plugin.type) {
-        case "base": {
-          const handle = create(getBaseCallbacks(pluginId), i18n);
-          if (handle) pluginHandles[pluginId] = handle;
-          break;
-        }
-        case "integration": {
-          const handle = create(getIntegrationCallbacks(pluginId), i18n);
-          if (handle) pluginHandles[pluginId] = handle;
-          break;
-        }
-        case "source": {
-          const handle = create(getSourceCallbacks(pluginId), i18n);
-          if (handle) pluginHandles[pluginId] = handle;
-          break;
-        }
+      const handle = create(
+        getPluginCallbacks(pluginId, plugin.capabilities),
+        i18n
+      );
+      if (handle) {
+        pluginHandles[pluginId] = handle;
       }
       store.dispatch(setPluginActive({ plugin: pluginId, active: true }));
     } catch (error) {

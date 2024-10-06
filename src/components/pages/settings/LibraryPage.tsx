@@ -22,7 +22,9 @@ export function LibraryPage() {
   const totalTracks = allTracks.length;
   const plugins = useAppSelector(selectPluginInfo);
   const activeSourcePlugins = activePlugins
-    .filter((plugin: PluginId) => plugins[plugin].type === "source")
+    .filter((plugin: PluginId) =>
+      plugins[plugin].capabilities?.includes("source")
+    )
     .sort(sortDefaultPluginsFirst);
 
   return (

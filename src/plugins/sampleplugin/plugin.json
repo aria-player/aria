@@ -1,6 +1,5 @@
 {
   "id": "sampleplugin",
-  "type": "base",
   "name": "Sample Plugin",
   "needsTauri": false,
   "main": "createSamplePlugin.tsx"

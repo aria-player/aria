@@ -4,10 +4,10 @@ export type PluginId = string;
 
 export type PluginInfo = {
   id: PluginId;
-  type: "base" | "integration" | "source";
   name: string;
   needsTauri: boolean;
   main: string;
+  capabilities?: ("integration" | "source")[];
 };
 
 export interface BaseHandle {
@@ -36,7 +36,7 @@ export interface IntegrationCallbacks extends BaseCallbacks {
   previous: () => void;
 }
 
-export interface SourceHandle extends IntegrationHandle {
+export interface SourceHandle extends BaseHandle {
   QuickStart?: React.FC;
   loadAndPlayTrack: (track: Track) => void;
   getTrackArtwork?: (track: Track) => Promise<string | undefined>;
@@ -48,7 +48,7 @@ export interface SourceHandle extends IntegrationHandle {
   setTime: (position: number) => void;
 }
 
-export interface SourceCallbacks extends IntegrationCallbacks {
+export interface SourceCallbacks extends BaseCallbacks {
   addTracks: (metadata: TrackMetadata[]) => void;
   removeTracks: (uris?: TrackUri[]) => void;
   updateMetadata: (metadata: TrackMetadata[]) => void;
@@ -58,8 +58,4 @@ export interface SourceCallbacks extends IntegrationCallbacks {
   getMuted: () => boolean;
 }
 
-export type PluginHandle = BaseHandle | IntegrationHandle | SourceHandle;
-export type PluginCallbacks =
-  | BaseCallbacks
-  | IntegrationHandle
-  | SourceCallbacks;
+export type AnyPluginHandle = BaseHandle & IntegrationHandle & SourceHandle;

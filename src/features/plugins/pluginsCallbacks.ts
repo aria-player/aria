@@ -94,7 +94,7 @@ export const getIntegrationCallbacks = (
 
 export const getSourceCallbacks = (pluginId: PluginId): SourceCallbacks => {
   return {
-    ...getIntegrationCallbacks(pluginId),
+    ...getBaseCallbacks(pluginId),
     addTracks: (metadata: TrackMetadata[]) =>
       handleAddTracks(pluginId, metadata),
     removeTracks: (uris?: TrackUri[]) => handleRemoveTracks(pluginId, uris),

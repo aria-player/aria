@@ -4,7 +4,7 @@ import {
   createSlice,
   PayloadAction
 } from "@reduxjs/toolkit";
-import { PluginHandle, PluginId, PluginInfo } from "./pluginsTypes";
+import { AnyPluginHandle, PluginId, PluginInfo } from "./pluginsTypes";
 import { setupPluginListeners } from "./pluginsListeners";
 import { RootState } from "../../app/store";
 import { isTauri } from "../../app/utils";
@@ -19,7 +19,7 @@ type PluginsState = {
   pluginData: Partial<Record<PluginId, object>>;
 };
 
-export const pluginHandles: Partial<Record<PluginId, PluginHandle>> = {};
+export const pluginHandles: Partial<Record<PluginId, AnyPluginHandle>> = {};
 
 const initialState: PluginsState = {
   installedPluginInfo: {},

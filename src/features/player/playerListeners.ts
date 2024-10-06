@@ -38,7 +38,7 @@ export function setupPlayerListeners() {
         if (
           activePlugins.includes(plugin) &&
           plugin != selectCurrentTrack(state)?.source &&
-          plugins[plugin].type == "source"
+          plugins[plugin].capabilities?.includes("source")
         ) {
           (pluginHandles[plugin] as SourceHandle)?.pause();
         }
@@ -52,7 +52,7 @@ export function setupPlayerListeners() {
         pluginHandles[currentTrack?.source] as SourceHandle
       )?.getTrackArtwork?.(currentTrack);
       for (const plugin of activePlugins) {
-        if (["integration", "source"].includes(plugins[plugin].type)) {
+        if (plugins[plugin].capabilities?.includes("integration")) {
           (pluginHandles[plugin] as IntegrationHandle)?.onPlay?.(
             currentTrack,
             artwork
@@ -73,7 +73,7 @@ export function setupPlayerListeners() {
         currentSource?.resume();
         startTimer();
         for (const plugin of activePlugins) {
-          if (["integration", "source"].includes(plugins[plugin].type)) {
+          if (plugins[plugin].capabilities?.includes("integration")) {
             (pluginHandles[plugin] as IntegrationHandle)?.onResume?.();
           }
         }
@@ -81,7 +81,7 @@ export function setupPlayerListeners() {
         currentSource?.pause();
         stopTimer();
         for (const plugin of activePlugins) {
-          if (["integration", "source"].includes(plugins[plugin].type)) {
+          if (plugins[plugin].capabilities?.includes("integration")) {
             (pluginHandles[plugin] as IntegrationHandle)?.onPause?.();
           }
         }
@@ -89,10 +89,10 @@ export function setupPlayerListeners() {
         stopTimer();
         resetTimer();
         for (const plugin of activePlugins) {
-          if (plugins[plugin].type === "source") {
+          if (plugins[plugin].capabilities?.includes("source")) {
             (pluginHandles[plugin] as SourceHandle)?.pause();
           }
-          if (["integration", "source"].includes(plugins[plugin].type)) {
+          if (plugins[plugin].capabilities?.includes("integration")) {
             (pluginHandles[plugin] as IntegrationHandle)?.onStop?.();
           }
         }

@@ -51,7 +51,8 @@ export function PluginsPage() {
   const configurablePlugins = activePlugins
     .filter(
       (plugin: PluginId) =>
-        plugins[plugin].type != "source" && pluginHandles[plugin]?.Config
+        !plugins[plugin].capabilities?.includes("source") &&
+        pluginHandles[plugin]?.Config
     )
     .sort(sortDefaultPluginsFirst);
 

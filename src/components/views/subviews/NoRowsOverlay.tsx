@@ -41,7 +41,8 @@ export default function NoRowsOverlay() {
           <div className={styles.quickStart}>
             <h2>{t("tracks.quickStart")}</h2>
             {activePlugins?.map((plugin) => {
-              if (plugins[plugin].type != "source") return null;
+              if (!plugins[plugin].capabilities?.includes("source"))
+                return null;
               const pluginHandle = pluginHandles[plugin] as SourceHandle;
               return (
                 pluginHandle?.QuickStart && (
