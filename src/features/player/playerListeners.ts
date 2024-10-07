@@ -6,8 +6,7 @@ import {
   selectActivePlugins,
   selectPluginInfo
 } from "../plugins/pluginsSlice";
-import { IntegrationHandle, SourceHandle } from "../plugins/pluginsTypes";
-
+import { SourceHandle } from "../plugins/pluginsTypes";
 import { loadAndPlayTrack, selectStatus } from "./playerSlice";
 import { Status } from "./playerTypes";
 import { resetTimer, startTimer, stopTimer } from "./playerTime";
@@ -53,10 +52,7 @@ export function setupPlayerListeners() {
         await getCurrentSource(state)?.getTrackArtwork?.(currentTrack);
       for (const plugin of activePlugins) {
         if (plugins[plugin].capabilities?.includes("integration")) {
-          (pluginHandles[plugin] as IntegrationHandle)?.onPlay?.(
-            currentTrack,
-            artwork
-          );
+          pluginHandles[plugin]?.onPlay?.(currentTrack, artwork);
         }
       }
     }
@@ -74,7 +70,7 @@ export function setupPlayerListeners() {
         startTimer();
         for (const plugin of activePlugins) {
           if (plugins[plugin].capabilities?.includes("integration")) {
-            (pluginHandles[plugin] as IntegrationHandle)?.onResume?.();
+            pluginHandles[plugin]?.onResume?.();
           }
         }
       } else if (status === Status.Paused) {
@@ -82,7 +78,7 @@ export function setupPlayerListeners() {
         stopTimer();
         for (const plugin of activePlugins) {
           if (plugins[plugin].capabilities?.includes("integration")) {
-            (pluginHandles[plugin] as IntegrationHandle)?.onPause?.();
+            pluginHandles[plugin]?.onPause?.();
           }
         }
       } else if (status === Status.Stopped) {
@@ -91,7 +87,7 @@ export function setupPlayerListeners() {
         for (const plugin of activePlugins) {
           getSourceHandle(plugin)?.pause();
           if (plugins[plugin].capabilities?.includes("integration")) {
-            (pluginHandles[plugin] as IntegrationHandle)?.onStop?.();
+            pluginHandles[plugin]?.onStop?.();
           }
         }
       }
