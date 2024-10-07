@@ -1,8 +1,7 @@
 import { createContext, useState, ReactNode } from "react";
 import { useAppSelector } from "../app/hooks";
 import { selectAllTracks } from "../features/tracks/tracksSlice";
-import { pluginHandles } from "../features/plugins/pluginsSlice";
-import { SourceHandle } from "../features/plugins/pluginsTypes";
+import { getSourceHandle } from "../features/plugins/pluginsSlice";
 import { Track } from "../features/tracks/tracksTypes";
 import { useDebounce } from "react-use";
 
@@ -36,8 +35,8 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
         const store: Record<string, string> = {};
         for (const track of filterByUniqueArtwork(allTracks)) {
           if (track.artworkUri) {
-            const artwork = await ((
-              pluginHandles[track?.source] as SourceHandle
+            const artwork = await (getSourceHandle(
+              track.source
             )?.getTrackArtwork?.(track) ?? Promise.resolve());
             if (artwork) store[track.artworkUri] = artwork;
           }

@@ -1,6 +1,7 @@
 import { listenForAction, listenForChange } from "../../app/listener";
 import { RootState } from "../../app/store";
 import {
+  getSourceHandle,
   pluginHandles,
   selectActivePlugins,
   selectPluginInfo
@@ -16,10 +17,11 @@ import {
   selectCurrentTrackItemId
 } from "../currentSelectors";
 
-const getCurrentSource = (state: RootState): SourceHandle | null => {
+const getCurrentSource = (state: RootState): SourceHandle | undefined => {
   const currentTrack = selectCurrentTrack(state);
-  if (!currentTrack) return null;
-  return pluginHandles[currentTrack.source] as SourceHandle;
+  if (currentTrack) {
+    return getSourceHandle(currentTrack.source);
+  }
 };
 
 export function setupPlayerListeners() {
@@ -32,15 +34,13 @@ export function setupPlayerListeners() {
     async (state, _action, dispatch) => {
       stopTimer();
       resetTimer();
-      const plugins = selectPluginInfo(state);
       const activePlugins = selectActivePlugins(state);
       Object.keys(pluginHandles).forEach((plugin) => {
         if (
           activePlugins.includes(plugin) &&
-          plugin != selectCurrentTrack(state)?.source &&
-          plugins[plugin].capabilities?.includes("source")
+          plugin != selectCurrentTrack(state)?.source
         ) {
-          (pluginHandles[plugin] as SourceHandle)?.pause();
+          getSourceHandle(plugin)?.pause();
         }
       });
       if (state.player.currentTrack != null) {
@@ -48,9 +48,9 @@ export function setupPlayerListeners() {
       }
       const currentTrack = selectCurrentTrack(state);
       if (!currentTrack) return;
-      const artwork = await (
-        pluginHandles[currentTrack?.source] as SourceHandle
-      )?.getTrackArtwork?.(currentTrack);
+      const plugins = selectPluginInfo(state);
+      const artwork =
+        await getCurrentSource(state)?.getTrackArtwork?.(currentTrack);
       for (const plugin of activePlugins) {
         if (plugins[plugin].capabilities?.includes("integration")) {
           (pluginHandles[plugin] as IntegrationHandle)?.onPlay?.(
@@ -89,9 +89,7 @@ export function setupPlayerListeners() {
         stopTimer();
         resetTimer();
         for (const plugin of activePlugins) {
-          if (plugins[plugin].capabilities?.includes("source")) {
-            (pluginHandles[plugin] as SourceHandle)?.pause();
-          }
+          getSourceHandle(plugin)?.pause();
           if (plugins[plugin].capabilities?.includes("integration")) {
             (pluginHandles[plugin] as IntegrationHandle)?.onStop?.();
           }

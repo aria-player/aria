@@ -6,11 +6,9 @@ import {
   selectVisibleViewType
 } from "../../../features/visibleSelectors";
 import {
-  pluginHandles,
-  selectActivePlugins,
-  selectPluginInfo
+  getSourceHandle,
+  selectActivePlugins
 } from "../../../features/plugins/pluginsSlice";
-import { SourceHandle } from "../../../features/plugins/pluginsTypes";
 import styles from "./NoRowsOverlay.module.css";
 import { BASEPATH } from "../../../app/constants";
 import { push } from "redux-first-history";
@@ -18,7 +16,6 @@ import { push } from "redux-first-history";
 export default function NoRowsOverlay() {
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
-  const plugins = useAppSelector(selectPluginInfo);
   const visibleViewType = useAppSelector(selectVisibleViewType);
   const visibleDisplayMode = useAppSelector(selectVisibleDisplayMode);
   const activePlugins = useAppSelector(selectActivePlugins);
@@ -41,9 +38,7 @@ export default function NoRowsOverlay() {
           <div className={styles.quickStart}>
             <h2>{t("tracks.quickStart")}</h2>
             {activePlugins?.map((plugin) => {
-              if (!plugins[plugin].capabilities?.includes("source"))
-                return null;
-              const pluginHandle = pluginHandles[plugin] as SourceHandle;
+              const pluginHandle = getSourceHandle(plugin);
               return (
                 pluginHandle?.QuickStart && (
                   <section key={plugin}>

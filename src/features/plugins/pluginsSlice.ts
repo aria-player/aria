@@ -4,9 +4,14 @@ import {
   createSlice,
   PayloadAction
 } from "@reduxjs/toolkit";
-import { AnyPluginHandle, PluginId, PluginInfo } from "./pluginsTypes";
+import {
+  AnyPluginHandle,
+  PluginId,
+  PluginInfo,
+  SourceHandle
+} from "./pluginsTypes";
 import { setupPluginListeners } from "./pluginsListeners";
-import { RootState } from "../../app/store";
+import { RootState, store } from "../../app/store";
 import { isTauri } from "../../app/utils";
 import JSZip from "jszip";
 import { defaultPluginInfo } from "../../plugins/plugins";
@@ -28,6 +33,13 @@ const initialState: PluginsState = {
   activePlugins: [],
   pluginData: {}
 };
+
+export function getSourceHandle(pluginId: PluginId): SourceHandle | undefined {
+  const pluginInfo = selectPluginInfo(store.getState());
+  if (pluginInfo[pluginId]?.capabilities?.includes("source")) {
+    return pluginHandles[pluginId];
+  }
+}
 
 export const installPluginsFromFiles = createAsyncThunk(
   "plugins/installPluginsFromFiles",

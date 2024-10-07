@@ -1,7 +1,6 @@
 import { RootState, store } from "../../app/store";
 import { selectCurrentTrack } from "../currentSelectors";
-import { pluginHandles } from "../plugins/pluginsSlice";
-import { SourceHandle } from "../plugins/pluginsTypes";
+import { getSourceHandle } from "../plugins/pluginsSlice";
 import { previousTrack } from "./playerSlice";
 
 let playing = false;
@@ -32,7 +31,8 @@ export function seek(position: number) {
   lastStartTimestamp = Date.now();
   const currentTrack = selectCurrentTrack(store.getState() as RootState);
   if (!currentTrack) return;
-  const plugin = pluginHandles[currentTrack.source] as SourceHandle;
+
+  const plugin = getSourceHandle(currentTrack.source);
   plugin?.setTime(position);
   // In case the player automatically pauses at the end of a track
   if (playing) {

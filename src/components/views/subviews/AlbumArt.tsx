@@ -3,21 +3,16 @@ import MusicIcon from "../../../assets/music.svg?react";
 import { Track } from "../../../features/tracks/tracksTypes";
 import styles from "./AlbumArt.module.css";
 import { ArtworkContext } from "../../../contexts/ArtworkContext";
-import { pluginHandles } from "../../../features/plugins/pluginsSlice";
-import { SourceHandle } from "../../../features/plugins/pluginsTypes";
+import { getSourceHandle } from "../../../features/plugins/pluginsSlice";
 
 export const AlbumArt = ({ track }: { track: Track | null }) => {
   const { artworkCache } = useContext(ArtworkContext);
   const [artwork, setArtwork] = useState<string | null>(null);
   useEffect(() => {
     if (track && track.artworkUri && artworkCache[track.artworkUri]) return;
-    if (
-      track &&
-      (pluginHandles[track.source] as SourceHandle)?.getTrackArtwork !=
-        undefined
-    ) {
-      (pluginHandles[track.source] as SourceHandle)
-        .getTrackArtwork?.(track)
+    if (track && getSourceHandle(track.source)?.getTrackArtwork != undefined) {
+      getSourceHandle(track.source)
+        ?.getTrackArtwork?.(track)
         .then((coverArtData) => {
           setArtwork(coverArtData ?? null);
         });

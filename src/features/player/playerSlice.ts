@@ -2,8 +2,7 @@ import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 import { QueueItem, RepeatMode, Status } from "./playerTypes";
 import { TrackId } from "../tracks/tracksTypes";
-import { pluginHandles } from "../plugins/pluginsSlice";
-import { SourceHandle } from "../plugins/pluginsTypes";
+import { getSourceHandle } from "../plugins/pluginsSlice";
 import { setupPlayerListeners } from "./playerListeners";
 import { selectTrackById } from "../tracks/tracksSlice";
 import { PlaylistId, PlaylistItemId } from "../playlists/playlistsTypes";
@@ -62,7 +61,7 @@ export const loadAndPlayTrack = createAsyncThunk(
     if (!track) {
       throw new Error("Track not found");
     }
-    const plugin = pluginHandles[track?.source] as SourceHandle;
+    const plugin = getSourceHandle(track.source);
     if (!plugin) {
       throw new Error("Plugin not found");
     }
