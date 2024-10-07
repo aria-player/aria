@@ -24,7 +24,7 @@ export default function createMediaSession(
         title: track.title,
         artist: Array.isArray(track.artist)
           ? track.artist.join("/")
-          : track.artist ?? "Unknown Artist",
+          : (track.artist ?? "Unknown Artist"),
         album: track.album ?? "Unknown Album",
         artwork:
           artwork != null && artwork != undefined
