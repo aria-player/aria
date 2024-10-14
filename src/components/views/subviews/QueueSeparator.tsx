@@ -28,7 +28,7 @@ export default function QueueSeparator(props: ICellRendererParams) {
     queueGrouping == TrackGrouping.AlbumId ? albumTitle : queueSelectedGroup;
 
   return (
-    <div className={styles.separator}>
+    <div className={`queue-separator ${styles.separator}`}>
       {props.node.id === "currentTrackSeparator" ? (
         t("queue.currentTrack")
       ) : props.node.id === "upNextSeparator" ? (

@@ -30,6 +30,7 @@ export const defaultColumnDefinitions: ColDef[] = [
       return createElement(
         "div",
         {
+          className: "track-list-item-art",
           style: {
             width: "30px",
             height: "30px",

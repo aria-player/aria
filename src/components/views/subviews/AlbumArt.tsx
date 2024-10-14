@@ -25,8 +25,12 @@ export const AlbumArt = ({ track }: { track: Track | null }) => {
     (track && track?.artworkUri && artworkCache[track.artworkUri]) ?? artwork;
 
   return displayedArtwork ? (
-    <img className={styles.artwork} src={displayedArtwork} alt={track?.album} />
+    <img
+      className={`album-art ${styles.artwork}`}
+      src={displayedArtwork}
+      alt={track?.album}
+    />
   ) : (
-    <MusicIcon className={styles.artwork} title={track?.album} />
+    <MusicIcon className={`album-art ${styles.artwork}`} title={track?.album} />
   );
 };

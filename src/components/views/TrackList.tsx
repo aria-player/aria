@@ -370,7 +370,7 @@ export const TrackList = () => {
 
   return (
     <div
-      className={"ag-theme-balham"}
+      className="track-list ag-theme-balham"
       style={{ width: "100%", height: "100%" }}
     >
       <div style={{ display: isGridReady ? "block" : "none", height: "100%" }}>

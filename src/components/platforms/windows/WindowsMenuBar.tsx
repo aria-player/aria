@@ -22,7 +22,7 @@ export function WindowsMenuBar() {
 
   return (
     <div
-      className={`${styles.menuBar} ${
+      className={`windows-menu-bar ${styles.menuBar} ${
         decorations ? `${styles.menuBarSmall}` : ""
       }`}
     >
@@ -30,7 +30,7 @@ export function WindowsMenuBar() {
         <MenuButton />
         <button
           title={t("labels.back")}
-          className={styles.arrow}
+          className={`windows-menu-bar-arrow ${styles.arrow}`}
           disabled={!backEnabled}
           onClick={() => {
             if (backEnabled) dispatch(goBack());
@@ -40,7 +40,7 @@ export function WindowsMenuBar() {
         </button>
         <button
           title={t("labels.forward")}
-          className={styles.arrow}
+          className={`windows-menu-bar-arrow ${styles.arrow}`}
           disabled={!forwardEnabled}
           onClick={() => {
             if (forwardEnabled) dispatch(goForward());

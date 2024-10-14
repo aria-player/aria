@@ -47,7 +47,7 @@ export function MenuButton() {
       </Menu>
       <button
         title={t("labels.menu")}
-        className={styles.menuButton}
+        className={`app-menu-button ${styles.menuButton}`}
         onClick={displayMenu}
       >
         <MenuIcon />

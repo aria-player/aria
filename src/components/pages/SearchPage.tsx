@@ -18,10 +18,15 @@ export default function SearchPage() {
 
   return (
     <>
-      <h2 className={styles.historyHeader}>{t("search.previousSearches")}</h2>
-      <ul className={styles.historyList}>
+      <h2 className={`search-history-header ${styles.historyHeader}`}>
+        {t("search.previousSearches")}
+      </h2>
+      <ul className={`search-history-list ${styles.historyList}`}>
         {searchHistory.map((item, index) => (
-          <li key={index} className={styles.historyItem}>
+          <li
+            key={index}
+            className={`search-history-item ${styles.historyItem}`}
+          >
             <button
               onClick={() => dispatch(setSearch(item))}
               className={styles.searchLink}

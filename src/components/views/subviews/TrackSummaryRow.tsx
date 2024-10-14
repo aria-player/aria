@@ -113,7 +113,7 @@ export const TrackSummaryRow = (props: ICellRendererParams) => {
 
   return (
     <div
-      className={`${styles.trackSummaryRow} ${
+      className={`track-summary-row ${styles.trackSummaryRow} ${
         props.data.itemId === currentTrack?.itemId &&
         (queueSource == visibleView || visibleView == View.Queue)
           ? styles.highlighted

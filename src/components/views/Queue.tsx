@@ -277,7 +277,7 @@ export const Queue = () => {
     <div
       style={{ height: "100%" }}
       className={
-        "ag-theme-balham ag-overrides-track-summary-rows ag-overrides-queue"
+        "queue ag-theme-balham ag-overrides-track-summary-rows ag-overrides-queue"
       }
     >
       <AgGridReact

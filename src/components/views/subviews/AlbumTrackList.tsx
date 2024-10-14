@@ -119,7 +119,7 @@ export const AlbumTrackList = () => {
     <div
       style={{ height: "100%" }}
       className={
-        "ag-theme-balham ag-overrides-track-summary-rows ag-overrides-album-track-list"
+        "album-track-list ag-theme-balham ag-overrides-track-summary-rows ag-overrides-album-track-list"
       }
     >
       <AgGridReact

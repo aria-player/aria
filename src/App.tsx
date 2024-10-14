@@ -60,7 +60,7 @@ function App() {
           <Sidebar />
         </Allotment.Pane>
         <Allotment.Pane>
-          <div className={styles.outlet}>
+          <div className={`main-view ${styles.outlet}`}>
             <ViewContainer />
             <Routes>
               <Route path="/" Component={() => <></>} />

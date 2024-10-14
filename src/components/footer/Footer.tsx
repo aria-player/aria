@@ -22,16 +22,16 @@ export function Footer() {
   });
 
   return (
-    <footer className={styles.footer}>
+    <footer className={`footer ${styles.footer}`}>
       <section className={styles.left}>
-        <div className={styles.art}>
+        <div className={`footer-art ${styles.art}`}>
           <AlbumArt track={currentTrack} />
         </div>
         <div className={styles.metadata}>
           <div className={styles.metadataRow}>
             {metadata && (
               <button
-                className={styles.title}
+                className={`footer-title ${styles.title}`}
                 onClick={() => {
                   if (!metadata) return;
                   invokeMenuAction("goToCurrent");
@@ -53,7 +53,7 @@ export function Footer() {
             )}
           </div>
           <div className={styles.metadataRow}>
-            <div className={styles.artist}>
+            <div className={`footer-artist ${styles.artist}`}>
               {formatStringArray(metadata?.artist)}
             </div>
           </div>

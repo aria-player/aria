@@ -28,7 +28,7 @@ export default function ViewContainer() {
   return (
     <>
       <header
-        className={`${styles.header} ${visibleDisplayMode != DisplayMode.TrackList ? styles.border : ""}`}
+        className={`header ${styles.header} ${visibleDisplayMode != DisplayMode.TrackList ? styles.border : ""}`}
       >
         <h1>
           {visibleViewType == View.Search

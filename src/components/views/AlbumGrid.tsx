@@ -72,7 +72,7 @@ export default function AlbumGrid() {
   }, [location]);
 
   return (
-    <div className={styles.albumGrid}>
+    <div className={`album-grid ${styles.albumGrid}`}>
       <div
         ref={scrollDivRef}
         className={styles.grid}
@@ -93,7 +93,7 @@ export default function AlbumGrid() {
                 }}
               >
                 <button
-                  className={styles.gridItem}
+                  className={`album-grid-item ${styles.gridItem}`}
                   onClick={() => setSelectedItem(track.albumId)}
                   disabled={
                     selectedItem || visibleDisplayMode != DisplayMode.AlbumGrid
@@ -114,23 +114,27 @@ export default function AlbumGrid() {
         })}
         {selectedItem && visibleDisplayMode == DisplayMode.AlbumGrid && (
           <div
-            className={styles.detailOuter}
+            className={`album-grid-overlay-background ${styles.detailOuter}`}
             onClick={(e) => {
               if (e.currentTarget === e.target) {
                 setSelectedItem();
               }
             }}
           >
-            <div className={styles.detailInner}>
+            <div
+              className={`album-grid-overlay-foreground ${styles.detailInner}`}
+            >
               <button
-                className={styles.backButton}
+                className={`album-grid-overlay-back-button ${styles.backButton}`}
                 onClick={() => {
                   setSelectedItem();
                 }}
               >
                 <LeftArrow />
               </button>
-              <div className={styles.albumTrackList}>
+              <div
+                className={`album-grid-album-track-list ${styles.albumTrackList}`}
+              >
                 <AlbumTrackList />
               </div>
             </div>

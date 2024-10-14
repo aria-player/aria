@@ -72,7 +72,7 @@ export function AuxiliaryControls() {
         />
       </div>
       <button
-        className={styles.button}
+        className={`footer-button ${styles.button}`}
         onClick={() => {
           dispatch(setMuted(!muted));
         }}
@@ -81,7 +81,7 @@ export function AuxiliaryControls() {
         <VolumeIcon />
       </button>
       <button
-        className={`${styles.button} ${styles.queue} ${visibleViewType == View.Queue ? styles.selected : ""}`}
+        className={`footer-button ${styles.button} ${styles.queue} ${visibleViewType == View.Queue ? styles.selected : ""}`}
         onClick={() => {
           if (visibleViewType != View.Queue) {
             dispatch(push(BASEPATH + "queue"));

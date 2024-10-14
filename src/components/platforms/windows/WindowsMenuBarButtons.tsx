@@ -112,7 +112,7 @@ export function WindowsMenuBarButtons() {
               </Menu>
               <button
                 ref={buttonRefs[category.id]}
-                className={styles.menuButton}
+                className={`windows-menu-bar-button ${styles.menuButton}`}
                 onClick={(e) => handleMenuClick(e, category.id)}
                 onMouseOver={(e) => handleMenuHover(e, category.id)}
               >

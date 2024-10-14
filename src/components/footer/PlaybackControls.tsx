@@ -46,11 +46,13 @@ export function PlaybackControls() {
       <ProgressBar progressValueState={[progressValue, setProgressValue]} />
       <div className={styles.playback}>
         {metadata && (
-          <div className={styles.time}>{formatDuration(progressValue)}</div>
+          <div className={`footer-time-display ${styles.time}`}>
+            {formatDuration(progressValue)}
+          </div>
         )}
         <div className={styles.controls}>
           <button
-            className={`${styles.button} ${shuffle ? styles.selected : ""}`}
+            className={`footer-button ${styles.button} ${shuffle ? styles.selected : ""}`}
             onClick={() => {
               dispatch(toggleShuffle());
             }}
@@ -59,7 +61,7 @@ export function PlaybackControls() {
             <ShuffleIcon />
           </button>
           <button
-            className={styles.button}
+            className={`footer-button ${styles.button}`}
             onClick={() => {
               restartOrPreviousTrack();
             }}
@@ -68,7 +70,7 @@ export function PlaybackControls() {
             <BackwardIcon />
           </button>
           <button
-            className={styles.button}
+            className={`footer-button ${styles.button}`}
             onClick={() => {
               if (status == Status.Playing) {
                 dispatch(pause());
@@ -89,7 +91,7 @@ export function PlaybackControls() {
             )}
           </button>
           <button
-            className={styles.button}
+            className={`footer-button ${styles.button}`}
             onClick={() => {
               dispatch(nextTrack());
             }}
@@ -98,7 +100,7 @@ export function PlaybackControls() {
             <ForwardIcon />
           </button>
           <button
-            className={`${styles.button} ${
+            className={`footer-button ${styles.button} ${
               repeatMode != RepeatMode.Off ? styles.selected : ""
             }`}
             onClick={() => {
@@ -111,7 +113,7 @@ export function PlaybackControls() {
         </div>
         {metadata && (
           <button
-            className={`${styles.time} ${styles.durationButton}`}
+            className={`footer-time-display ${styles.time} ${styles.durationButton}`}
             onClick={() => {
               dispatch(setDisplayRemainingTime(!displayRemainingTime));
             }}

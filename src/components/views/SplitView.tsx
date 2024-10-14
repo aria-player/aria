@@ -83,7 +83,7 @@ export function SplitView() {
     <button
       key={itemName ?? index}
       ref={(el) => (itemRefs.current[itemName ?? index] = el)}
-      className={`${styles.listItem} ${selectedItem == itemName ? styles.selected : ""}`}
+      className={`split-view-track-groups-item ${styles.listItem} ${selectedItem == itemName ? styles.selected : ""}`}
       onClick={() => {
         setSelectedItem(itemName ?? null);
       }}
@@ -121,10 +121,14 @@ export function SplitView() {
         }
       >
         <Allotment.Pane minSize={60}>
-          <div className={styles.trackGroupsList}>{buttons}</div>
+          <div className={`split-view-track-groups ${styles.trackGroupsList}`}>
+            {buttons}
+          </div>
         </Allotment.Pane>
         <Allotment.Pane minSize={600}>
-          <div className={styles.albumTrackList}>
+          <div
+            className={`split-view-album-track-list ${styles.albumTrackList}`}
+          >
             <AlbumTrackList />
           </div>
         </Allotment.Pane>

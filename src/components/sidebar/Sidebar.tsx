@@ -111,13 +111,13 @@ export function Sidebar() {
   }
 
   return (
-    <div className={styles.sideBar}>
+    <div className={`sidebar ${styles.sideBar}`}>
       {!isTauri() && (
         <div className={styles.webMenu}>
           <MenuButton />
         </div>
       )}
-      <div className={styles.search}>
+      <div className={`search-bar ${styles.search}`}>
         <input
           className={`${styles.searchInput} ${visibleViewType == View.Search ? styles.searchSelected : ""}`}
           type="text"
