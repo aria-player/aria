@@ -12,14 +12,15 @@
   width: 1.5rem;
   margin-left: 0.75rem;
   text-align: center;
+  flex-shrink: 0;
 }
 
 .trackInfo {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
   width: 100%;
-  margin-left: 1rem;
+  margin-left: 0.75rem;
+  overflow: hidden;
 }
 
 .trackArtist {
@@ -27,6 +28,14 @@
   font-size: 0.75rem;
 }
 
+.trackText {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
 .trackDuration {
+  margin-left: 0.75rem;
   margin-right: 1rem;
+  flex-shrink: 0;
 }

@@ -9,10 +9,14 @@ export default function AlbumTrackListSeparator(props: ICellRendererParams) {
         <div className={`album-track-list-art ${styles.artwork}`}>
           <AlbumArt track={props.node.data} />
         </div>
-        <h2 className={`album-track-list-title ${styles.albumTitle}`}>
+        <h2
+          className={`album-track-list-title ${styles.albumTitle} ${styles.albumText}`}
+        >
           {props.node.data.album}
         </h2>
-        <h3 className={`album-track-list-subtitle ${styles.albumDetails}`}>
+        <h3
+          className={`album-track-list-subtitle ${styles.albumDetails} ${styles.albumText}`}
+        >
           {props.node.data.artist}
           {props.node.data.year && ` - ${props.node.data.year}`}
         </h3>

@@ -128,17 +128,14 @@ export const TrackSummaryRow = (props: ICellRendererParams) => {
     >
       <span className={styles.trackNumber}>{props.node.data.track}</span>
       <div className={styles.trackInfo}>
-        <div>
-          <span>{props.node.data.title}</span>
-          <br />
-          <span className={styles.trackArtist}>
-            {formatStringArray(props.node.data.artist)}
-          </span>
-        </div>
-        <span className={styles.trackDuration}>
-          {formatDuration(props.node.data.duration)}
+        <span className={styles.trackText}>{props.node.data.title}</span>
+        <span className={`${styles.trackText} ${styles.trackArtist}`}>
+          {formatStringArray(props.node.data.artist)}
         </span>
       </div>
+      <span className={styles.trackDuration}>
+        {formatDuration(props.node.data.duration)}
+      </span>
     </div>
   );
 };
