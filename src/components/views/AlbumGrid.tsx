@@ -40,7 +40,6 @@ export default function AlbumGrid() {
         ignorePunctuation: true
       }) ?? 0
   );
-  // TODO: Decide how to handle albums with the same name
   const visibleAlbums = useAppSelector(selectVisibleTrackGroups);
 
   function setSelectedItem(albumId?: string) {
