@@ -1,8 +1,7 @@
 export enum DisplayMode {
   TrackList = "trackList",
   AlbumGrid = "albumGrid",
-  SplitView = "splitView",
-  DebugView = "debugView"
+  SplitView = "splitView"
 }
 
 export enum View {

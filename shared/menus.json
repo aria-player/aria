@@ -120,8 +120,7 @@
         "submenu": [
           { "id": "viewType.trackList" },
           { "id": "viewType.albumGrid" },
-          { "id": "viewType.splitView" },
-          { "id": "viewType.debugView" }
+          { "id": "viewType.splitView" }
         ]
       },
       {

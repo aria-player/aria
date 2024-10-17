@@ -1,4 +1,3 @@
-import DebugView from "./DebugView";
 import { useAppSelector } from "../../app/hooks";
 import { DisplayMode, View } from "../../app/view";
 import AlbumGrid from "./AlbumGrid";
@@ -57,7 +56,6 @@ export default function ViewContainer() {
         <AlbumGrid />
       </div>
       {visibleDisplayMode == DisplayMode.SplitView && <SplitView />}
-      {visibleDisplayMode == DisplayMode.DebugView && <DebugView />}
     </>
   );
 }

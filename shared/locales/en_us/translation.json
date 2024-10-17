@@ -169,7 +169,6 @@
     "switchToTrackList": "Track List",
     "switchToAlbumGrid": "Album Grid",
     "switchToSplitView": "Split View",
-    "switchToDebugView": "Debug View",
     "togglePlaylistLayout": "Use playlist-specific layout",
     "resetColumns": "Reset to default layout",
     "togglePlay": "Play/Pause",
@@ -209,8 +208,7 @@
   "viewType": {
     "trackList": "Track List",
     "albumGrid": "Album Grid",
-    "splitView": "Split View",
-    "debugView": "Debug View"
+    "splitView": "Split View"
   },
   "groupBy": {
     "artist": "Artist",
