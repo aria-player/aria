@@ -17,11 +17,11 @@
     margin: 0;
     display: inline;
   }
-  
+
   p {
     margin: 1rem;
   }
-  
+
   button {
     border: 1px solid var(--settings-button-border);
     padding: 0.5rem 1rem;
