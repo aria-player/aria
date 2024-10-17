@@ -163,6 +163,8 @@ export default function createTauriPlayer(
   }
 
   return {
+    displayName: t("tauriplayer:localFiles"),
+
     LibraryConfig: (props) =>
       LibraryConfig({ ...props, folders, addFolder, removeFolder, i18n }),
 

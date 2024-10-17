@@ -1,6 +1,6 @@
 {
   "id": "tauriplayer",
-  "name": "Local Files",
+  "name": "Tauri Player",
   "needsTauri": true,
   "main": "createTauriPlayer.ts",
   "capabilities": ["source"]

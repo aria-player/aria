@@ -1,6 +1,6 @@
 {
   "id": "webplayer",
-  "name": "Web Music Library",
+  "name": "Web Player",
   "needsTauri": false,
   "main": "createWebPlayer.ts",
   "capabilities": ["source"]

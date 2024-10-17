@@ -8,7 +8,7 @@ import {
 } from "../../app/utils";
 import { AlbumArt } from "../../components/views/subviews/AlbumArt";
 import { createElement } from "react";
-import { selectPluginInfo } from "../plugins/pluginsSlice";
+import { getSourceHandle, selectPluginInfo } from "../plugins/pluginsSlice";
 import { store } from "../../app/store";
 
 export const defaultColumnDefinitions: ColDef[] = [
@@ -141,7 +141,10 @@ export const defaultColumnDefinitions: ColDef[] = [
     field: "source",
     hide: true,
     valueFormatter: (params: { value: string }) => {
-      return selectPluginInfo(store.getState())[params.value].name;
+      return (
+        getSourceHandle(params.value)?.displayName ??
+        selectPluginInfo(store.getState())[params.value].name
+      );
     }
   }
 ];

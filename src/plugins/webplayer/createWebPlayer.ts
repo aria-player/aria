@@ -112,6 +112,8 @@ export default function createWebPlayer(
   }
 
   return {
+    displayName: t("webplayer:localFiles"),
+
     LibraryConfig: (props) =>
       LibraryConfig({ ...props, host, loaded, pickDirectory, i18n }),
 

@@ -37,6 +37,7 @@ export interface IntegrationCallbacks extends BaseCallbacks {
 }
 
 export interface SourceHandle extends BaseHandle {
+  displayName?: string;
   LibraryConfig?: React.FC<{ data: object }>;
   QuickStart?: React.FC;
   loadAndPlayTrack: (track: Track) => void;
