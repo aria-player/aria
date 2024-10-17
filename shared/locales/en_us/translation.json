@@ -112,7 +112,8 @@
       "uninstall": "Uninstall",
       "confirmUninstall": "Are you sure you want to uninstall '{{plugin}}'?",
       "confirmDisable": "Are you sure you want to disable '{{plugin}}'?",
-      "pluginConfig": "Plugin configuration"
+      "pluginConfig": "Plugin configuration",
+      "noPlugins": "No plugins available"
     },
     "about": {
       "subtitle": "View information about the application.",

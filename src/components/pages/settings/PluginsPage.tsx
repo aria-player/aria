@@ -52,6 +52,12 @@ export function PluginsPage() {
     .filter((plugin: PluginId) => pluginHandles[plugin]?.Config)
     .sort(sortDefaultPluginsFirst);
 
+  const availablePlugins = Object.keys(plugins).filter(
+    (plugin) =>
+      !Object.keys(defaultPluginInfo).includes(plugin) ||
+      import.meta.env.VITE_ALLOW_MANAGING_DEFAULT_PLUGINS == "true"
+  );
+
   return (
     <div className={styles.page}>
       <h3>{t("settings.sections.plugins")}</h3>
@@ -59,65 +65,65 @@ export function PluginsPage() {
       <hr />
       <section>
         <h4>{t("settings.plugins.availablePlugins")}</h4>
-        {Object.keys(plugins)
-          .filter(
-            (plugin) =>
-              !Object.keys(defaultPluginInfo).includes(plugin) ||
-              import.meta.env.VITE_ALLOW_MANAGING_DEFAULT_PLUGINS == "true"
-          )
-          .map(
-            (plugin, index) =>
-              shouldShowPlugin(plugin) && (
-                <React.Fragment key={index}>
-                  <div className={styles.plugin}>
-                    <input
-                      type="checkbox"
-                      readOnly
-                      checked={enabledPlugins.includes(plugin)}
-                      onClick={async () => {
-                        if (enabledPlugins.includes(plugin)) {
-                          const confirmed = await confirm(
-                            t("settings.plugins.confirmDisable", {
-                              plugin: plugins[plugin].name
-                            })
-                          );
-                          if (!confirmed) {
-                            return;
-                          }
-                        }
-                        dispatch(
-                          setPluginEnabled({
-                            plugin: plugin,
-                            enabled: !enabledPlugins.includes(plugin)
+        {availablePlugins.map(
+          (plugin, index) =>
+            shouldShowPlugin(plugin) && (
+              <React.Fragment key={index}>
+                <div className={styles.plugin}>
+                  <input
+                    type="checkbox"
+                    readOnly
+                    checked={enabledPlugins.includes(plugin)}
+                    onClick={async () => {
+                      if (enabledPlugins.includes(plugin)) {
+                        const confirmed = await confirm(
+                          t("settings.plugins.confirmDisable", {
+                            plugin: plugins[plugin].name
                           })
                         );
+                        if (!confirmed) {
+                          return;
+                        }
+                      }
+                      dispatch(
+                        setPluginEnabled({
+                          plugin: plugin,
+                          enabled: !enabledPlugins.includes(plugin)
+                        })
+                      );
+                    }}
+                  />
+                  {plugins[plugin].name}
+                  {!Object.keys(defaultPluginInfo).includes(plugin) && (
+                    <button
+                      onClick={async () => {
+                        const confirmed = await confirm(
+                          t("settings.plugins.confirmUninstall", {
+                            plugin: plugins[plugin].name
+                          })
+                        );
+                        if (!confirmed) return;
+                        dispatch(uninstallPlugin(plugin));
                       }}
-                    />
-                    {plugins[plugin].name}
-                    {!Object.keys(defaultPluginInfo).includes(plugin) && (
-                      <button
-                        onClick={async () => {
-                          const confirmed = await confirm(
-                            t("settings.plugins.confirmUninstall", {
-                              plugin: plugins[plugin].name
-                            })
-                          );
-                          if (!confirmed) return;
-                          dispatch(uninstallPlugin(plugin));
-                        }}
-                        className={styles.removeButton}
-                        title={t("settings.plugins.uninstall")}
-                      >
-                        <RemoveIcon />
-                      </button>
-                    )}
-                  </div>
-                </React.Fragment>
-              )
-          )}
-        <p>
-          <i>{t("settings.plugins.configureSources")}</i>
-        </p>
+                      className={styles.removeButton}
+                      title={t("settings.plugins.uninstall")}
+                    >
+                      <RemoveIcon />
+                    </button>
+                  )}
+                </div>
+              </React.Fragment>
+            )
+        )}
+        {availablePlugins.length == 0 ? (
+          <div className={styles.alert}>
+            <i>{t("settings.plugins.noPlugins")}</i>
+          </div>
+        ) : (
+          <p>
+            <i>{t("settings.plugins.configureSources")}</i>
+          </p>
+        )}
         <p>
           <button onClick={showPluginFilePicker}>
             {t("settings.plugins.installFromFile")}
