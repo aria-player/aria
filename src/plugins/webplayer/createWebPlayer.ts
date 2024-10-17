@@ -32,8 +32,6 @@ export default function createWebPlayer(
   const { fetchCoverArt, parseMetadata } =
     wrap<typeof import("./metadataWorker")>(metadataWorker);
 
-  console.log("Created webplayer with initial config: ", initialConfig);
-
   let folder = initialConfig?.folder;
   let fileHandles: { [key: TrackUri]: File } = {};
   let audio: HTMLAudioElement | null;
@@ -174,7 +172,7 @@ export default function createWebPlayer(
     },
 
     dispose() {
-      console.log("Disposed webplayer");
+      i18n.removeResourceBundle("en-US", "webplayer");
     }
   };
 }

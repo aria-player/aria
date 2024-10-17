@@ -10,7 +10,6 @@ export default function createMediaSession(
   if (!("mediaSession" in navigator)) {
     return null;
   }
-  console.log("Created mediasession integration");
   navigator.mediaSession.metadata = null;
   navigator.mediaSession.setActionHandler("play", host.resume);
   navigator.mediaSession.setActionHandler("pause", host.pause);
@@ -50,7 +49,6 @@ export default function createMediaSession(
       navigator.mediaSession.playbackState = "none";
     },
     dispose: () => {
-      console.log("Disposed mediasession integration");
       if ("mediaSession" in navigator) {
         navigator.mediaSession.metadata = null;
         navigator.mediaSession.setActionHandler("play", null);

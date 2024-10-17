@@ -24,7 +24,6 @@ export default function createTauriPlayer(
   const initialConfig = host.getData() as TauriPlayerData;
   let folders = { ...initialConfig.folders };
   let audio: HTMLAudioElement | null;
-  console.log("Created a new tauri player");
   rescanFolders();
   getMetadata(host.getTracks().filter((track) => !track.metadataLoaded));
 
@@ -223,7 +222,7 @@ export default function createTauriPlayer(
     },
 
     dispose() {
-      console.log("disposing tauri player");
+      i18n.removeResourceBundle("en-US", "tauriplayer");
     }
   };
 }
