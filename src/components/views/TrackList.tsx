@@ -7,10 +7,13 @@ import {
   ColumnMovedEvent,
   ColumnResizedEvent,
   ColumnVisibleEvent,
+  FocusGridInnerElementParams,
   GridApi,
+  NavigateToNextHeaderParams,
   RowClassParams,
   RowDragEndEvent,
-  SortChangedEvent
+  SortChangedEvent,
+  TabToNextHeaderParams
 } from "@ag-grid-community/core";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
@@ -368,6 +371,46 @@ export const TrackList = () => {
     );
   };
 
+  const handleFocusGridInnerElement = (params: FocusGridInnerElementParams) => {
+    if (!params.fromBottom) {
+      const firstFocusableColumn = gridRef?.current?.api
+        .getAllDisplayedColumns()
+        .find((col) => col.getColId() !== "art")
+        ?.getColId();
+      if (firstFocusableColumn) {
+        params.api.setFocusedHeader(firstFocusableColumn);
+      }
+    }
+    return !params.fromBottom;
+  };
+
+  const handleTabToNextHeader = (params: TabToNextHeaderParams) => {
+    if (
+      params.backwards &&
+      (params.nextHeaderPosition?.column.getUniqueId() == "art" ||
+        !params.nextHeaderPosition)
+    ) {
+      const treeElement = document.querySelector(
+        '[role="tree"]'
+      ) as HTMLElement;
+      if (treeElement) {
+        treeElement.focus();
+      }
+      return false;
+    }
+    return params.nextHeaderPosition || false;
+  };
+
+  const handleNavigateToNextHeader = (params: NavigateToNextHeaderParams) => {
+    if (
+      params.key == "ArrowLeft" &&
+      params.nextHeaderPosition?.column.getUniqueId() == "art"
+    ) {
+      return null;
+    }
+    return params.nextHeaderPosition || null;
+  };
+
   return (
     <div
       className="track-list ag-theme-balham"
@@ -387,6 +430,9 @@ export const TrackList = () => {
           onColumnVisible={handleColumnVisible}
           onCellContextMenu={handleCellContextMenu}
           onRowDragEnd={handleRowDragEnd}
+          focusGridInnerElement={handleFocusGridInnerElement}
+          tabToNextHeader={handleTabToNextHeader}
+          navigateToNextHeader={handleNavigateToNextHeader}
           rowHeight={33}
           headerHeight={37}
           rowDragManaged={visibleViewType == View.Playlist}
