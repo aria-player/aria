@@ -1,9 +1,13 @@
-import { createContext, useState, ReactNode } from "react";
+import { createContext, useState, ReactNode, useEffect } from "react";
 import { useAppSelector } from "../app/hooks";
 import { selectAllTracks } from "../features/tracks/tracksSlice";
-import { getSourceHandle } from "../features/plugins/pluginsSlice";
+import {
+  getSourceHandle,
+  selectActivePlugins
+} from "../features/plugins/pluginsSlice";
 import { Track } from "../features/tracks/tracksTypes";
 import { useDebounce } from "react-use";
+import { store } from "../app/store";
 
 export const ArtworkContext = createContext<{
   artworkCache: Record<string, string>;
@@ -25,29 +29,41 @@ function filterByUniqueArtwork(array: Track[]) {
   );
 }
 
+const loadAllArtwork = async () => {
+  const cache: Record<string, string> = {};
+  for (const track of filterByUniqueArtwork(
+    selectAllTracks(store.getState())
+  )) {
+    if (track.artworkUri) {
+      const artwork = await (getSourceHandle(track.source)?.getTrackArtwork?.(
+        track
+      ) ?? Promise.resolve());
+      if (artwork) cache[track.artworkUri] = artwork;
+    }
+  }
+  return cache;
+};
+
 export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
   const [artworkCache, setArtworkCache] = useState<Record<string, string>>({});
   const allTracks = useAppSelector(selectAllTracks);
+  const activePlugins = useAppSelector(selectActivePlugins);
 
   useDebounce(
     () => {
-      const loadAllArtwork = async () => {
-        const store: Record<string, string> = {};
-        for (const track of filterByUniqueArtwork(allTracks)) {
-          if (track.artworkUri) {
-            const artwork = await (getSourceHandle(
-              track.source
-            )?.getTrackArtwork?.(track) ?? Promise.resolve());
-            if (artwork) store[track.artworkUri] = artwork;
-          }
-        }
-        setArtworkCache(store);
-      };
-      loadAllArtwork();
+      loadAllArtwork().then((result) => {
+        setArtworkCache(result);
+      });
     },
     10000,
     [allTracks]
   );
+
+  useEffect(() => {
+    loadAllArtwork().then((result) => {
+      setArtworkCache(result);
+    });
+  }, [activePlugins]);
 
   return (
     <ArtworkContext.Provider value={{ artworkCache }}>
