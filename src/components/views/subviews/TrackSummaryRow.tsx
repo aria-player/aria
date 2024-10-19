@@ -127,19 +127,25 @@ export const TrackSummaryRow = (props: ICellRendererParams) => {
         handleCellDoubleClicked(e, props);
       }}
     >
-      <span className={styles.trackNumber}>{props.node.data.track}</span>
+      <span className={`track-summary-row-number ${styles.trackNumber}`}>
+        {props.node.data.track}
+      </span>
       {visibleView == View.Queue && (
-        <span className={styles.trackArtwork}>
+        <span className={`track-summary-row-artwork ${styles.trackArtwork}`}>
           <AlbumArt track={props.node.data} />
         </span>
       )}
       <div className={styles.trackInfo}>
-        <span className={styles.trackText}>{props.node.data.title}</span>
-        <span className={`${styles.trackText} ${styles.trackArtist}`}>
+        <span className={`track-summary-row-title ${styles.trackText}`}>
+          {props.node.data.title}
+        </span>
+        <span
+          className={`track-summary-row-artist ${styles.trackText} ${styles.trackArtist}`}
+        >
           {formatStringArray(props.node.data.artist)}
         </span>
       </div>
-      <span className={styles.trackDuration}>
+      <span className={`track-summary-row-duration ${styles.trackDuration}`}>
         {formatDuration(props.node.data.duration)}
       </span>
     </div>
