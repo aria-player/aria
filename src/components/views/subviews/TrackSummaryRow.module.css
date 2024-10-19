@@ -8,9 +8,24 @@
   font-weight: 700;
 }
 
+.trackArtwork {
+  width: 2rem;
+  height: 2rem;
+  overflow: hidden;
+  border-radius: 0.25rem;
+  border-width: 1px;
+  border-color: var(--inset-background);
+  border-style: solid;
+  display: flex;
+  object-fit: contain;
+  aspect-ratio: 1/1;
+  margin-right: 1rem;
+  flex-shrink: 0;
+}
+
 .trackNumber {
   width: 1.5rem;
-  margin-left: 0.75rem;
+  margin: 0 0.75rem;
   text-align: center;
   flex-shrink: 0;
 }
@@ -19,7 +34,6 @@
   display: flex;
   flex-direction: column;
   width: 100%;
-  margin-left: 0.75rem;
   overflow: hidden;
 }
 

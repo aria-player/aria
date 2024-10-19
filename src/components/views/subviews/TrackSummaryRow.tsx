@@ -26,6 +26,7 @@ import {
   selectVisibleSelectedTrackGroup
 } from "../../../features/visibleSelectors";
 import { QueueListItem } from "../Queue";
+import { AlbumArt } from "./AlbumArt";
 
 export const TrackSummaryRow = (props: ICellRendererParams) => {
   const { show: showCellContextMenu } = useContextMenu({
@@ -127,6 +128,11 @@ export const TrackSummaryRow = (props: ICellRendererParams) => {
       }}
     >
       <span className={styles.trackNumber}>{props.node.data.track}</span>
+      {visibleView == View.Queue && (
+        <span className={styles.trackArtwork}>
+          <AlbumArt track={props.node.data} />
+        </span>
+      )}
       <div className={styles.trackInfo}>
         <span className={styles.trackText}>{props.node.data.title}</span>
         <span className={`${styles.trackText} ${styles.trackArtist}`}>
