@@ -10,7 +10,7 @@ import {
 } from "@ag-grid-community/core";
 import { nanoid } from "@reduxjs/toolkit";
 import { t } from "i18next";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { replace } from "redux-first-history";
 import { store } from "../app/store";
 import { addTracksToPlaylist } from "../features/playlists/playlistsSlice";
@@ -24,12 +24,15 @@ import { selectCurrentTrack } from "../features/currentSelectors";
 import { selectVisibleSelectedTrackGroup } from "../features/visibleSelectors";
 import { BASEPATH } from "../app/constants";
 
+const ROW_ANIMATION_DURATION_MS = 400;
+
 export function useTrackGrid() {
   const dispatch = useAppDispatch();
   const { gridRef } = useContext(GridContext);
   const location = useLocation();
   const [isGridReady, setIsGridReady] = useState(false);
   const selectedTrackGroup = useAppSelector(selectVisibleSelectedTrackGroup);
+  const disableAnimationTimeoutRef = useRef<number | null>(null);
 
   const getRowId = (params: GetRowIdParams) => params.data.itemId;
 
@@ -219,10 +222,41 @@ export function useTrackGrid() {
           count: params.rowNodes?.length
         });
 
+  const enableRowAnimation = () => {
+    if (!document.getElementById("row-drag-animation")) {
+      const style = document.createElement("style");
+      style.id = "row-drag-animation";
+      style.innerHTML = `.ag-row {
+      transition: transform ${ROW_ANIMATION_DURATION_MS}ms !important;
+    }`;
+      document.head.appendChild(style);
+    }
+  };
+
+  const disableRowAnimation = () => {
+    if (disableAnimationTimeoutRef.current) {
+      clearTimeout(disableAnimationTimeoutRef.current);
+    }
+    disableAnimationTimeoutRef.current = setTimeout(() => {
+      const style = document.getElementById("row-drag-animation");
+      if (style) {
+        document.head.removeChild(style);
+      }
+    }, ROW_ANIMATION_DURATION_MS);
+  };
+
+  const handleRowDataUpdated = () => {
+    enableRowAnimation();
+    disableRowAnimation();
+  };
+
   const gridProps: Partial<AgGridReactProps> = {
     getRowId,
     onGridReady: handleGridReady,
     onSelectionChanged: handleSelectionChanged,
+    onDragStarted: enableRowAnimation,
+    onDragStopped: disableRowAnimation,
+    onRowDataUpdated: handleRowDataUpdated,
     rowDragText,
     rowSelection: "multiple",
     animateRows: false,
