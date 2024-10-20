@@ -12,7 +12,7 @@ export function AboutPage() {
       <hr />
       <section>
         <h4>{t("settings.about.version")}</h4>
-        1.0
+        {import.meta.env.PACKAGE_VERSION}
       </section>
       <section>
         <h4>{t("settings.about.reset")}</h4>
