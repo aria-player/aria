@@ -66,8 +66,8 @@ const createPluginInstance = async (pluginId: PluginId) => {
       );
       if (handle) {
         pluginHandles[pluginId] = handle;
+        store.dispatch(setPluginActive({ plugin: pluginId, active: true }));
       }
-      store.dispatch(setPluginActive({ plugin: pluginId, active: true }));
     } catch (error) {
       console.error(
         `Failed to create plugin "${pluginId}" with error: ${error}`

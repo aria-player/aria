@@ -20,7 +20,10 @@ export type WebPlayerData = {
 export default function createWebPlayer(
   host: SourceCallbacks,
   i18n: i18n
-): SourceHandle {
+): SourceHandle | null {
+  if (!("showDirectoryPicker" in window)) {
+    return null;
+  }
   i18n.addResourceBundle("en-US", "webplayer", en_us);
   const { t } = i18n;
   const initialConfig = host.getData() as WebPlayerData | null;
