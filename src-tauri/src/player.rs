@@ -5,10 +5,12 @@ use std::fs::metadata;
 use std::io::Write;
 use std::time::UNIX_EPOCH;
 use std::{collections::HashMap, fs, path::Path};
-use tauri::AppHandle;
+use tauri::{AppHandle, Manager};
 
 #[tauri::command]
-pub fn get_audio_files_from_directory(directory_path: &Path) -> Result<Vec<String>, String> {
+pub fn get_audio_files_from_directory(app: AppHandle, directory_path: &Path) -> Result<Vec<String>, String> {
+    let asset_scope = app.asset_protocol_scope();
+    let _ = asset_scope.allow_directory(directory_path, true);
     let mut files = Vec::new();
     if directory_path.is_dir() {
         let read_dir = fs::read_dir(directory_path).map_err(|e| e.to_string())?;
@@ -19,7 +21,7 @@ pub fn get_audio_files_from_directory(directory_path: &Path) -> Result<Vec<Strin
             };
             let path = entry.path();
             if path.is_dir() {
-                let mut sub_files = get_audio_files_from_directory(&path)?;
+                let mut sub_files = get_audio_files_from_directory(app.clone(), &path)?;
                 files.append(&mut sub_files);
             } else if let Some(ext) = path.extension().and_then(|e| e.to_str()) {
                 match ext {

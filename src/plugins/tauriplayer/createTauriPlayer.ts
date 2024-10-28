@@ -182,7 +182,10 @@ export default function createTauriPlayer(
         audio.pause();
         audio.src = "";
       }
-      audio = new Audio(file);
+      const response = await fetch(file);
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      audio = new Audio(blobUrl);
       audio.volume = host.getVolume() / 100;
       audio.muted = host.getMuted();
       return new Promise<void>((resolve, reject) => {
