@@ -43,10 +43,9 @@ export function getSourceHandle(pluginId: PluginId): SourceHandle | undefined {
 
 export const installPluginsFromFiles = createAsyncThunk(
   "plugins/installPluginsFromFiles",
-  async (fileHandles: FileSystemFileHandle[], { dispatch }) => {
-    for (const fileHandle of fileHandles) {
-      const file = await fileHandle.getFile();
-      const fileName = fileHandle.name.toLowerCase();
+  async (files: File[], { dispatch }) => {
+    for (const file of files) {
+      const fileName = file.name.toLowerCase();
       if (fileName.endsWith(".zip")) {
         const extractedFiles = (await JSZip.loadAsync(file)).files;
         for (const extractedFileName in extractedFiles) {

@@ -39,10 +39,9 @@ const initialState: ConfigState = {
 
 export const installThemesFromFiles = createAsyncThunk(
   "config/installThemesFromFiles",
-  async (fileHandles: FileSystemFileHandle[], { dispatch }) => {
-    for (const fileHandle of fileHandles) {
-      const file = await fileHandle.getFile();
-      const fileName = fileHandle.name.toLowerCase();
+  async (files: File[], { dispatch }) => {
+    for (const file of files) {
+      const fileName = file.name.toLowerCase();
       if (fileName.endsWith(".zip")) {
         const themeId = fileName.replace(".zip", "");
         const extractedFiles = (await JSZip.loadAsync(file)).files;

@@ -60,17 +60,20 @@ export function AppearancePage() {
 
   const showThemeFilePicker = async () => {
     try {
-      const fileHandles = await window.showOpenFilePicker({
-        types: [
-          {
-            accept: {
-              "application/zip": [".zip"]
-            }
-          }
-        ],
-        multiple: true
-      });
-      dispatch(installThemesFromFiles(fileHandles));
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = ".zip";
+      input.multiple = true;
+      input.style.display = "none";
+      input.onchange = (event) => {
+        const files = (event.target as HTMLInputElement).files;
+        if (files) {
+          dispatch(installThemesFromFiles(Array.from(files)));
+        }
+      };
+      document.body.appendChild(input);
+      input.click();
+      document.body.removeChild(input);
     } catch (error) {
       console.error("Error installing theme:", error);
     }
