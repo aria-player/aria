@@ -45,7 +45,9 @@
     "goToAlbum": "Go to album",
     "goToArtist": "Go to artist",
     "quickStart": "To get started, add some music",
-    "librarySettingsShortcut": "Additional sources can be managed in <a>library settings</a>"
+    "librarySettingsShortcut": "Additional sources can be managed in <a>library settings</a>",
+    "localFilesNotSupported": "Local files are not currently supported for this browser.",
+    "localFilesNotSupportedSubtitle": " You can try using a Chromium-based browser or the desktop app."
   },
   "views": {
     "songs": "Songs",
