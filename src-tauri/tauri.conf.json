@@ -7,7 +7,7 @@
     "withGlobalTauri": false
   },
   "package": {
-    "productName": "tauri-app-template"
+    "productName": "Aria"
   },
   "tauri": {
     "allowlist": {
@@ -53,7 +53,7 @@
         "bundleMediaFramework": true
       },
       "targets": "all",
-      "identifier": "com.tauri-sample.dev",
+      "identifier": "com.aria-player.aria",
       "icon": [
         "icons/32x32.png",
         "icons/128x128.png",
@@ -75,7 +75,7 @@
         "fullscreen": false,
         "resizable": true,
         "visible": false,
-        "title": "tauri-app-template",
+        "title": "Aria",
         "width": 1000,
         "height": 600,
         "minWidth": 220,

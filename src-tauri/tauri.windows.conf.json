@@ -2,6 +2,7 @@
   "tauri": {
     "windows": [
       {
+        "title": "Aria",
         "visible": false,
         "decorations": false,
         "fileDropEnabled": false
