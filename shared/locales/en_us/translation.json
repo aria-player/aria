@@ -15,8 +15,8 @@
       "title": "Playlists",
       "empty": "No playlists",
       "menu": {
-        "addPlaylist": "Add new playlist",
-        "addFolder": "Add new folder",
+        "addPlaylist": "Add new playlist...",
+        "addFolder": "Add new folder...",
         "rename": "Rename...",
         "delete": "Delete",
         "confirmDelete": "Deleting this folder will also delete all of its contents. Are you sure?",
@@ -47,7 +47,7 @@
     "quickStart": "To get started, add some music",
     "librarySettingsShortcut": "Additional sources can be managed in <a>library settings</a>",
     "localFilesNotSupported": "Local files are not currently supported for this browser.",
-    "localFilesNotSupportedSubtitle": " You can try using a Chromium-based browser or the desktop app."
+    "localFilesNotSupportedSubtitle": "You can try using a Chromium-based browser or the desktop app."
   },
   "views": {
     "songs": "Songs",
@@ -94,7 +94,7 @@
       "noSources": "No sources are enabled, please add a plugin that provides music.",
       "info": "Statistics",
       "tracksCount": "Total tracks in library: {{totalTracks}}",
-      "scanProgress": "Scanning in progress ({{scannedTracks}}/{{totalTracks}})"
+      "scanProgress": "{{scannedTracks}}/{{totalTracks}} tracks scanned"
     },
     "appearance": {
       "subtitle": "Adjust the theme and layout of the application.",
