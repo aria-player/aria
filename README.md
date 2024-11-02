@@ -1,33 +1,60 @@
-# Vite, Tauri, React & Redux Template
+# Aria (alpha version)
 
+A modern music player for the desktop and browser
 ![Screenshot of app](image.png)
+Aria is a cross-platform music player featuring:
 
-This repository contains a preconfigured Tauri app featuring:
+- **Configurable views** so you can group tracks by album, artist, and more
+- **Playlists and folders** to keep things organised
+- **Queue management** with persistence across playlists
+- **Custom themes** and support for light/dark mode
+- **Plugins** for connecting to external services
 
-- Interoperable app menu that works in-browser and with native system menus
-- Custom window controls on Windows (enable or disable in settings)
-- Redux store sample setup with [redux-persist](https://github.com/rt2zz/redux-persist) for saving state
-- React Router setup to manage navigation across the app
-- Configuration for [i18next](https://github.com/i18next/i18next) to make localisation easy
-- Basic ESLint, Prettier and Stylelint config
-- Unit testing setup with Vitest
-- Custom theme system
+Aria is currently in an early 'alpha' state, so there are several limitations:
 
-## Usage
+- The desktop app is currently untested on macOS
+- The web app does not have a way of adding music on Firefox/Safari
+- Plug-ins/themes must be installed manually
+- Bugs and general instability are expected
 
-To install dependencies run `yarn` or `yarn install`
+## Installation
 
-Commands:
+TODO
 
-- `yarn tauri dev` to run the Tauri app in debug mode
-- `yarn tauri build` to build and package the app into an executable
-- `yarn dev` to run the web app only
-- `yarn test` to run tests
+## Building and running
 
-## Recommended IDE Setup
+Aria uses [Tauri](https://v1.tauri.app/) to provide a cross-platform desktop wrapper for a web app. The web app uses a combination of [TypeScript](https://www.typescriptlang.org/), [React](https://react.dev/), and [Redux](https://redux.js.org/), with [Vite](https://vite.dev/) for build tooling.
 
-Configuration files for debugging with [VS Code](https://code.visualstudio.com/) are included. The following extensions are also recommended:
+To build the web app, you will need to:
 
-- [Tauri](https://marketplace.visualstudio.com/items?itemName=tauri-apps.tauri-vscode)
-- [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer)
-- [CodeLLDB](https://marketplace.visualstudio.com/items?itemName=vadimcn.vscode-lldb)
+1. Install [Node.js](https://nodejs.org/) (any version newer than v18.0.0).
+2. Clone or download this repository.
+3. Navigate to the downloaded folder and run `pnpm install`.
+4. Accept the prompt to install a specific version of the [pnpm](https://pnpm.io/) package manager. If no prompt appears, you can install pnpm [manually](https://pnpm.io/installation).
+5. Run `pnpm dev` to run the web app in development mode or `pnpm build` to build the web app.
+
+To build the Tauri desktop app, you will also need to install the [prerequisites](https://v1.tauri.app/v1/guides/getting-started/prerequisites) listed on the Tauri website. You will then be able to use `pnpm tauri dev` to run the desktop app in development mode or `pnpm tauri build` to build and package the app into an executable.
+
+## Roadmap
+
+- [x] Project setup
+- [x] Player controls
+- [x] Initial plugin system
+- [x] Library management/views
+- [x] Shuffle/repeat
+- [x] Playlists
+- [x] Queue
+- [x] Library search
+- [x] Theme system
+- [ ] Initial streaming plugins
+- [ ] Plugin development documentation
+- [ ] Playlist import/export
+- [ ] Improved search (search for artists/albums)
+- [ ] Improved plugin system (currently, plugins can only include browser JavaScript)
+- [ ] Theme asset support (embedding images/fonts)
+- [ ] In-app plugin/theme browser
+- [ ] Metadata editing
+- [ ] Lyrics support
+- [ ] Equaliser
+
+Currently the most significant challenge in this project is the plugin system. The goal is to enable integration with music streaming services, cloud storage providers, and services like Last.fm. However, the current implementation might not be very scalable. Any advice, suggestions, or contributions towards this goal would be greatly appreciated.
