@@ -12,7 +12,6 @@ import {
 import { AgGridReact } from "@ag-grid-community/react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useTrackGrid } from "../../hooks/useTrackGrid";
-import { t } from "i18next";
 import { TrackSummaryRow } from "./subviews/TrackSummaryRow";
 import { selectCurrentQueueTracks } from "../../features/currentSelectors";
 import { useCallback } from "react";
@@ -28,7 +27,6 @@ import { store } from "../../app/store";
 import QueueSeparator from "./subviews/QueueSeparator";
 import { setSelectedTracks } from "../../features/tracks/tracksSlice";
 import { nanoid } from "@reduxjs/toolkit";
-import styles from "./Queue.module.css";
 import { QueueItem } from "../../features/player/playerTypes";
 import NoRowsOverlay from "./subviews/NoRowsOverlay";
 
@@ -273,7 +271,7 @@ export const Queue = () => {
     }
   };
 
-  return visibleTracks.length >= 2 ? (
+  return (
     <div
       style={{ height: "100%" }}
       className={
@@ -300,7 +298,5 @@ export const Queue = () => {
         suppressMoveWhenRowDragging
       />
     </div>
-  ) : (
-    <div className={styles.empty}>{t("queue.empty")}</div>
   );
 };
