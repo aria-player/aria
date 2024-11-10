@@ -8,7 +8,10 @@ use std::{collections::HashMap, fs, path::Path};
 use tauri::{AppHandle, Manager};
 
 #[tauri::command]
-pub fn get_audio_files_from_directory(app: AppHandle, directory_path: &Path) -> Result<Vec<String>, String> {
+pub fn get_audio_files_from_directory(
+    app: AppHandle,
+    directory_path: &Path,
+) -> Result<Vec<String>, String> {
     let asset_scope = app.asset_protocol_scope();
     let _ = asset_scope.allow_directory(directory_path, true);
     let mut files = Vec::new();
@@ -55,12 +58,20 @@ pub fn get_metadata(app: AppHandle, file_path: String) -> Result<HashMap<String,
         Err(_) => return Err("Failed to probe the file".to_string()),
     };
 
+    let mut metadata = HashMap::new();
+    metadata.insert(
+        "duration".to_string(),
+        tagged_file.properties().duration().as_millis().to_string(),
+    );
+    metadata.insert("dateModified".to_string(), modified);
+    metadata.insert("fileSize".to_string(), size);
+
     let tag = match tagged_file.primary_tag() {
         Some(primary_tag) => primary_tag,
-        None => tagged_file.first_tag().ok_or("No tags found")?,
+        None => {
+            return Ok(metadata);
+        }
     };
-
-    let mut metadata = HashMap::new();
 
     let mut artists: Vec<&str> = tag.get_strings(&ItemKey::TrackArtist).collect();
     if artists.len() == 1 {
@@ -80,17 +91,11 @@ pub fn get_metadata(app: AppHandle, file_path: String) -> Result<HashMap<String,
     let comments: Vec<&str> = tag.get_strings(&ItemKey::Comment).collect();
     let comments_json = serde_json::to_string(&comments).unwrap_or_else(|_| "[]".to_string());
     metadata.insert("comments".to_string(), comments_json);
-
-    metadata.insert("dateModified".to_string(), modified);
-    metadata.insert("fileSize".to_string(), size);
     metadata.insert(
         "title".to_string(),
         tag.title().unwrap_or_default().to_string(),
     );
-    metadata.insert(
-        "duration".to_string(),
-        tagged_file.properties().duration().as_millis().to_string(),
-    );
+
     metadata.insert(
         "album".to_string(),
         tag.album().unwrap_or_default().to_string(),
