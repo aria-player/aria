@@ -60,23 +60,10 @@ export const AlbumTrackList = () => {
       let currentAlbum: string | null = null;
       let currentDisc: number | null = null;
       let currentAlbumTracks = 0;
+      let currentAlbumDiscs = 0;
       const processedTracks: AlbumTrackListItem[] = [];
       visibleTracks.forEach((track) => {
-        if (
-          track.disc != null &&
-          track.disc != undefined &&
-          currentDisc !== track.disc &&
-          currentAlbum == track.albumId
-        ) {
-          processedTracks.push({
-            title: t("albumTrackList.disc", { number: track.disc }),
-            separator: true,
-            itemId: `disc-separator-${track.albumId}-${currentDisc}`
-          });
-        }
-
-        currentDisc = track.disc ?? null;
-        if (currentAlbum !== track.albumId) {
+        if (track.albumId !== currentAlbum) {
           if (currentAlbum !== null) {
             processedTracks.push({
               separator: true,
@@ -98,8 +85,27 @@ export const AlbumTrackList = () => {
             itemId: `album-header-${track.albumId}-`
           });
           currentAlbum = track.albumId ?? null;
+          currentAlbumDiscs = Math.max(
+            ...visibleTracks
+              .filter((t) => t.albumId === track.albumId)
+              .map((t) => t.disc || 1)
+          );
+          currentDisc = null;
+        }
+        if (
+          track.disc != null &&
+          track.disc != undefined &&
+          currentAlbumDiscs > 1 &&
+          currentDisc !== track.disc
+        ) {
+          processedTracks.push({
+            title: t("albumTrackList.disc", { number: track.disc }),
+            separator: true,
+            itemId: `disc-separator-${track.albumId}-${currentDisc}`
+          });
         }
         processedTracks.push(track);
+        currentDisc = track.disc ?? null;
         currentAlbumTracks += 1;
       });
       if (visibleTracks.length > 0)
