@@ -32,7 +32,11 @@ export default function AlbumGrid() {
   const selectedItem = useAppSelector(selectVisibleSelectedTrackGroup);
   const visibleDisplayMode = useAppSelector(selectVisibleDisplayMode);
   const allAlbums = [
-    ...new Map(libraryTracks.map((track) => [track.albumId, track])).values()
+    ...new Map(
+      libraryTracks
+        .filter((track) => track.albumId && track.album)
+        .map((track) => [track.albumId, track])
+    ).values()
   ].sort(
     (a, b) =>
       a.album?.localeCompare(b.album!, undefined, {
