@@ -30,8 +30,6 @@ export default function NoRowsOverlay() {
   switch (visibleViewType) {
     case View.Search:
       return <div className={styles.empty}>{t("search.noResults")}</div>;
-    case View.Playlist:
-      return <div className={styles.empty}>{t("tracks.emptyPlaylist")}</div>;
     case View.Queue:
       return <div className={styles.empty}>{t("tracks.emptyQueue")}</div>;
     default:
@@ -40,6 +38,8 @@ export default function NoRowsOverlay() {
         visibleDisplayMode == DisplayMode.SplitView
       ) {
         return <div className={styles.empty}>{t("albumTrackList.empty")}</div>;
+      } else if (visibleViewType == View.Playlist) {
+        return <div className={styles.empty}>{t("tracks.emptyPlaylist")}</div>;
       } else {
         return (
           <div className={styles.quickStart}>
