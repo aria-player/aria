@@ -11,12 +11,12 @@ export default function createSamplePlugin(
   host: BaseCallbacks,
   i18n: i18n
 ): BaseHandle {
-  i18n.addResourceBundle("en-US", "sampleplugin", en_us);
+  i18n.addResourceBundle("en-US", "sample-plugin", en_us);
 
   return {
     Config(props: { data: object }) {
       const currentData = props.data as SamplePluginData;
-      const { t } = useTranslation("sampleplugin", { i18n });
+      const { t } = useTranslation("sample-plugin", { i18n });
 
       return (
         <div>
@@ -36,7 +36,7 @@ export default function createSamplePlugin(
     },
 
     dispose() {
-      i18n.removeResourceBundle("en-US", "sampleplugin");
+      i18n.removeResourceBundle("en-US", "sample-plugin");
     }
   };
 }

@@ -1,5 +1,5 @@
 {
-  "id": "mediasession",
+  "id": "media-session",
   "name": "Media Session",
   "needsTauri": false,
   "main": "createMediaSession.ts",

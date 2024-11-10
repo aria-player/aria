@@ -19,7 +19,7 @@ export default function createTauriPlayer(
   host: SourceCallbacks,
   i18n: i18n
 ): SourceHandle {
-  i18n.addResourceBundle("en-US", "tauriplayer", en_us);
+  i18n.addResourceBundle("en-US", "tauri-player", en_us);
   const { t } = i18n;
   const initialConfig = host.getData() as TauriPlayerData;
   let folders = { ...initialConfig.folders };
@@ -41,7 +41,7 @@ export default function createTauriPlayer(
     try {
       const selectedDirectory = (await open({
         directory: true,
-        title: t("tauriplayer:chooseFolder")
+        title: t("tauri-player:chooseFolder")
       })) as string | null | undefined;
 
       if (!selectedDirectory) return;
@@ -151,7 +151,7 @@ export default function createTauriPlayer(
 
   async function removeFolder(folderPath: string) {
     const confirmed = await confirm(
-      t("tauriplayer:config.confirmRemove", {
+      t("tauri-player:config.confirmRemove", {
         folder: folderPath
       })
     );
@@ -162,7 +162,7 @@ export default function createTauriPlayer(
   }
 
   return {
-    displayName: t("tauriplayer:localFiles"),
+    displayName: t("tauri-player:localFiles"),
 
     LibraryConfig: (props) =>
       LibraryConfig({ ...props, folders, addFolder, removeFolder, i18n }),
@@ -225,7 +225,7 @@ export default function createTauriPlayer(
     },
 
     dispose() {
-      i18n.removeResourceBundle("en-US", "tauriplayer");
+      i18n.removeResourceBundle("en-US", "tauri-player");
     }
   };
 }

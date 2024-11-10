@@ -1,5 +1,5 @@
 {
-  "id": "tauriplayer",
+  "id": "tauri-player",
   "name": "Tauri Player",
   "needsTauri": true,
   "main": "createTauriPlayer.ts",

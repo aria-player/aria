@@ -5,7 +5,7 @@ export default function QuickStart(props: {
   pickDirectory: () => void;
   i18n: i18n;
 }) {
-  const { t } = useTranslation("webplayer", { i18n: props.i18n });
+  const { t } = useTranslation("web-player", { i18n: props.i18n });
 
   return <button onClick={props.pickDirectory}>{t("quickStart")}</button>;
 }

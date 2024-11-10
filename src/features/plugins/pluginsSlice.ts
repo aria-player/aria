@@ -29,7 +29,7 @@ export const pluginHandles: Partial<Record<PluginId, AnyPluginHandle>> = {};
 const initialState: PluginsState = {
   installedPluginInfo: {},
   installedPluginScripts: {},
-  enabledPlugins: ["mediasession", isTauri() ? "tauriplayer" : "webplayer"],
+  enabledPlugins: ["media-session", isTauri() ? "tauri-player" : "web-player"],
   activePlugins: [],
   pluginData: {}
 };

@@ -1,5 +1,5 @@
 {
-  "id": "webplayer",
+  "id": "web-player",
   "name": "Web Player",
   "needsTauri": false,
   "main": "createWebPlayer.ts",

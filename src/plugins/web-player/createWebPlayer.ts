@@ -24,7 +24,7 @@ export default function createWebPlayer(
   if (!("showDirectoryPicker" in window)) {
     return null;
   }
-  i18n.addResourceBundle("en-US", "webplayer", en_us);
+  i18n.addResourceBundle("en-US", "web-player", en_us);
   const { t } = i18n;
   const initialConfig = host.getData() as WebPlayerData | null;
 
@@ -113,7 +113,7 @@ export default function createWebPlayer(
   }
 
   return {
-    displayName: t("webplayer:localFiles"),
+    displayName: t("web-player:localFiles"),
 
     LibraryConfig: (props) =>
       LibraryConfig({ ...props, host, loaded, pickDirectory, i18n }),
@@ -124,7 +124,7 @@ export default function createWebPlayer(
       let file = fileHandles[track.uri];
       if (!file) {
         const confirmed = await confirm(
-          t("webplayer:fileNotLoaded", { folder })
+          t("web-player:fileNotLoaded", { folder })
         );
         if (!confirmed) throw new Error("Re-selection cancelled");
         await pickDirectory();
@@ -175,7 +175,7 @@ export default function createWebPlayer(
     },
 
     dispose() {
-      i18n.removeResourceBundle("en-US", "webplayer");
+      i18n.removeResourceBundle("en-US", "web-player");
     }
   };
 }
