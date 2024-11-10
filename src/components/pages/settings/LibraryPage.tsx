@@ -19,9 +19,6 @@ export function LibraryPage() {
   const activePlugins = useAppSelector(selectActivePlugins);
   const pluginData = useAppSelector(selectPluginData);
   const allTracks = useAppSelector(selectAllTracks);
-  const scannedTracks = allTracks.filter(
-    (track) => track.metadataLoaded
-  ).length;
   const totalTracks = allTracks.length;
   const plugins = useAppSelector(selectPluginInfo);
   const activeSourcePlugins = activePlugins
@@ -58,20 +55,7 @@ export function LibraryPage() {
       })}
       <section>
         <h4>{t("settings.library.info")}</h4>
-        {scannedTracks == totalTracks ? (
-          t("settings.library.tracksCount", {
-            totalTracks
-          })
-        ) : (
-          <>
-            {t("settings.library.scanProgress", {
-              scannedTracks,
-              totalTracks
-            })}
-            <br />
-            <progress value={scannedTracks} max={totalTracks} />
-          </>
-        )}
+        {t("settings.library.tracksCount", { totalTracks })}
       </section>
     </div>
   );

@@ -19,6 +19,7 @@ import { goBack, push } from "redux-first-history";
 import { View } from "../../app/view";
 import { selectVisibleViewType } from "../../features/visibleSelectors";
 import { useTranslation } from "react-i18next";
+import { selectAllTracks } from "../../features/tracks/tracksSlice";
 
 export function AuxiliaryControls() {
   const dispatch = useAppDispatch();
@@ -27,6 +28,11 @@ export function AuxiliaryControls() {
   const muted = useAppSelector(selectMuted);
   const volume = useAppSelector(selectVolume);
   const visibleViewType = useAppSelector(selectVisibleViewType);
+  const allTracks = useAppSelector(selectAllTracks);
+  const scannedTracks = allTracks.filter(
+    (track) => track.metadataLoaded
+  ).length;
+  const totalTracks = allTracks.length;
   const [localVolume, setLocalVolume] = useState(volume);
 
   useEffect(() => {
@@ -48,6 +54,16 @@ export function AuxiliaryControls() {
 
   return (
     <>
+      {scannedTracks != totalTracks && (
+        <div className={styles.scanProgress}>
+          {t("footer.scanProgressLabel")} <br />
+          <MediaSlider disabled value={[scannedTracks]} max={totalTracks} />
+          {t("footer.scanProgress", {
+            scannedTracks,
+            totalTracks
+          })}
+        </div>
+      )}
       <div className={styles.volume}>
         <MediaSlider
           min={0}

@@ -93,8 +93,7 @@
       "managePlugin": "Manage {{plugin}}",
       "noSources": "No sources are enabled, please add a plugin that provides music.",
       "info": "Statistics",
-      "tracksCount": "Total tracks in library: {{totalTracks}}",
-      "scanProgress": "{{scannedTracks}}/{{totalTracks}} tracks scanned"
+      "tracksCount": "Total tracks in library: {{totalTracks}}"
     },
     "appearance": {
       "subtitle": "Adjust the theme and layout of the application.",
@@ -234,7 +233,9 @@
     "deletedPlaylist": "(deleted playlist)"
   },
   "footer": {
-    "toggleTimeDisplay": "Toggle time display mode"
+    "toggleTimeDisplay": "Toggle time display mode",
+    "scanProgressLabel": "Scanning tracks...",
+    "scanProgress": "{{scannedTracks}}/{{totalTracks}}"
   },
   "accentColors": {
     "blue": "Blue",
