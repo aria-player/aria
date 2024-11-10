@@ -97,7 +97,8 @@ export const selectGroupFilteredTracks = (
     .sort((a, b) => compareMetadata(a.track, b.track))
     .sort((a, b) => compareMetadata(a.disc, b.disc))
     .sort((a, b) => compareMetadata(a.album, b.album))
-    .sort((a, b) => compareMetadata(a.albumId, b.albumId));
+    .sort((a, b) => compareMetadata(a.albumId, b.albumId))
+    .sort((a, b) => compareMetadata(a.year, b.year));
 };
 
 export const selectAlbumTitle = (state: RootState, albumId: string | null) => {
