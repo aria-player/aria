@@ -87,9 +87,11 @@ export const AlbumTrackList = () => {
             currentAlbumTracks = 0;
           }
           processedTracks.push({
-            artist: track.albumArtist ?? formatStringArray(track.artist),
-            album: track.album,
-            year: track.year,
+            artist:
+              (track.albumArtist ?? formatStringArray(track.artist)) ||
+              t("tracks.unknownArtist"),
+            album: track.album || t("tracks.unknownAlbum"),
+            year: track.year || undefined,
             artworkUri: track.artworkUri,
             source: track.source,
             separator: true,
