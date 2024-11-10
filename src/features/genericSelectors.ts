@@ -85,7 +85,7 @@ export const selectGroupFilteredTracks = (
   selectedTrackGroup?: string | null,
   playlistId?: PlaylistId
 ): TrackListItem[] => {
-  if (!trackGrouping) return [];
+  if (!trackGrouping || !selectedTrackGroup) return [];
   return selectTrackListMetadata(state, playlistId)
     .filter(
       (track) =>
