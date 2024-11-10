@@ -69,7 +69,7 @@ export default function createTauriPlayer(
             const metadata = result as Partial<Record<keyof Track, string>>;
             return {
               uri: track.uri,
-              title: metadata.title,
+              title: metadata.title || track.title,
               metadataLoaded: true,
               duration: parseNumber(metadata.duration),
               artist: JSON.parse(metadata.artist!),

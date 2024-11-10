@@ -85,7 +85,7 @@ export async function parseMetadata(track: TrackMetadata, file: File) {
       .filter((item) => item.id === "TPE1")
       .map((item) => item.value);
     newTrack.artist = artists.length > 1 ? artists : artists[0];
-    newTrack.title = ID3v23Data.get("TIT2");
+    newTrack.title = ID3v23Data.get("TIT2") || newTrack.title;
     newTrack.albumArtist = ID3v23Data.get("TPE2");
     newTrack.album = ID3v23Data.get("TALB");
     newTrack.genre = ID3v23Data.get("TCON");
@@ -103,7 +103,7 @@ export async function parseMetadata(track: TrackMetadata, file: File) {
     const artists = iTunesData.get("\u00A9ART");
     newTrack.artist =
       artists && artists.includes("/") ? artists.split("/") : artists;
-    newTrack.title = iTunesData.get("\u00A9nam");
+    newTrack.title = iTunesData.get("\u00A9nam") || newTrack.title;
     newTrack.albumArtist = iTunesData.get("aART");
     newTrack.album = iTunesData.get("\u00A9alb");
     newTrack.genre = iTunesData.get("gnre") || iTunesData.get("\u00A9gen");
