@@ -1,4 +1,4 @@
-import { TrackUri, TrackId } from "../features/tracks/tracksTypes";
+import { TrackUri, TrackId, Track } from "../features/tracks/tracksTypes";
 import { PluginId } from "../features/plugins/pluginsTypes";
 import { ColumnState } from "@ag-grid-community/core";
 import { defaultColumnDefinitions } from "../features/library/libraryColumns";
@@ -41,6 +41,21 @@ export function formatDate(date: number) {
 
 export function getTrackId(source: PluginId, uri: TrackUri): TrackId {
   return source + ":" + uri;
+}
+
+export function getMostCommonArtworkUri(albumTracks: Track[]) {
+  const artworkUriCount: { [key: string]: number } = {};
+  albumTracks.forEach((track) => {
+    if (track.artworkUri) {
+      artworkUriCount[track.artworkUri] =
+        (artworkUriCount[track.artworkUri] || 0) + 1;
+    }
+  });
+  const keys = Object.keys(artworkUriCount);
+  if (keys.length === 0) return;
+  return keys.reduce((a, b) =>
+    artworkUriCount[a] > artworkUriCount[b] ? a : b
+  );
 }
 
 export function getStringIfFirst(value: string, index: number) {

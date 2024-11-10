@@ -9,7 +9,7 @@ import { Track } from "../../../features/tracks/tracksTypes";
 import { useAppSelector } from "../../../app/hooks";
 import { TrackSummaryRow } from "./TrackSummaryRow";
 import { t } from "i18next";
-import { formatStringArray } from "../../../app/utils";
+import { formatStringArray, getMostCommonArtworkUri } from "../../../app/utils";
 import AlbumTrackListSeparator from "./AlbumTrackListSeparator";
 import { useTrackGrid } from "../../../hooks/useTrackGrid";
 import { selectVisibleGroupFilteredTracks } from "../../../features/visibleSelectors";
@@ -79,7 +79,9 @@ export const AlbumTrackList = () => {
               t("tracks.unknownArtist"),
             album: track.album || t("tracks.unknownAlbum"),
             year: track.year || undefined,
-            artworkUri: track.artworkUri,
+            artworkUri: getMostCommonArtworkUri(
+              visibleTracks.filter((t) => t.albumId === track.albumId)
+            ),
             source: track.source,
             separator: true,
             itemId: `album-header-${track.albumId}-`

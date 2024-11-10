@@ -1,7 +1,6 @@
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 
 import { selectAllTracks } from "../../features/tracks/tracksSlice";
-import { Track } from "../../features/tracks/tracksTypes";
 import { AlbumArt } from "./subviews/AlbumArt";
 import styles from "./AlbumGrid.module.css";
 import LeftArrow from "../../assets/arrow-left-solid.svg?react";
@@ -19,6 +18,7 @@ import {
 import { useEffect, useRef } from "react";
 import { store } from "../../app/store";
 import { useLocation } from "react-router-dom";
+import { getMostCommonArtworkUri } from "../../app/utils";
 
 export default function AlbumGrid() {
   const dispatch = useAppDispatch();
@@ -104,7 +104,14 @@ export default function AlbumGrid() {
                       : false
                   }
                 >
-                  <AlbumArt track={track as Track} />
+                  <AlbumArt
+                    track={{
+                      ...track,
+                      artworkUri: getMostCommonArtworkUri(
+                        libraryTracks.filter((t) => t.albumId === track.albumId)
+                      )
+                    }}
+                  />
                 </button>
                 <div className={`${styles.albumText} ${styles.albumTitle}`}>
                   {track.album}
