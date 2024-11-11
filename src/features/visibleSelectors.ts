@@ -22,14 +22,18 @@ import { selectSearch } from "./search/searchSlice";
 import { BASEPATH } from "../app/constants";
 
 export const selectVisibleViewType = (state: RootState) => {
-  const firstPath = state.router.location?.pathname
+  const path = state.router.location?.pathname
     .substring(BASEPATH.length)
-    .split("/")[0];
-  if (!firstPath) {
+    .replace(/\/$/, "");
+  if (!path) {
     return LibraryView.Songs;
-  } else if (isLibraryView(firstPath)) {
-    return firstPath as LibraryView;
-  } else if (Object.values(View).includes(firstPath as View)) {
+  } else if (isLibraryView(path)) {
+    return path as LibraryView;
+  } else if (Object.values(View).includes(path as View)) {
+    return path as View;
+  }
+  const firstPath = path.split("/")[0];
+  if (firstPath == View.Playlist || firstPath == View.Settings) {
     return firstPath as View;
   }
   return View.Error;
