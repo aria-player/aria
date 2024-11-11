@@ -20,10 +20,15 @@ export const CrashPage = ({ error }: { error: DOMException }) => {
       {platform == Platform.Windows && <WindowsMenuBar />}
       <div className={styles.error} {...tauriDragRegion}>
         <h1 {...tauriDragRegion}>
-          {t(contextError ? "crash.headingAlt" : "crash.heading")}
+          {t(
+            contextError ? "crash.headingAlt" : "crash.heading",
+            "Something went catastrophically wrong"
+          )}
         </h1>
         <p {...tauriDragRegion}>
-          {t("crash.errorMessage", { error: error.message })}
+          {t("crash.errorMessage", 'Error message: "{{error}}"', {
+            error: error.message
+          })}
         </p>
         <div className={styles.details} {...tauriDragRegion}>
           <button
@@ -32,8 +37,8 @@ export const CrashPage = ({ error }: { error: DOMException }) => {
             }}
           >
             {showDetails
-              ? t("crash.hideErrorDetails")
-              : t("crash.showErrorDetails")}
+              ? t("crash.hideErrorDetails", "Hide error details")
+              : t("crash.showErrorDetails", "Show error details")}
           </button>
           <div
             className={styles.collapsible}
