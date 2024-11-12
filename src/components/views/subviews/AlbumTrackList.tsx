@@ -1,8 +1,4 @@
-import {
-  ICellRendererParams,
-  RowHeightParams,
-  IRowNode
-} from "@ag-grid-community/core";
+import { ICellRendererParams, RowHeightParams } from "@ag-grid-community/core";
 import { AgGridReact } from "@ag-grid-community/react";
 import { useMemo, useEffect } from "react";
 import { Track } from "../../../features/tracks/tracksTypes";
@@ -34,8 +30,6 @@ const fullWidthCellRenderer = (params: ICellRendererParams) => {
     <TrackSummaryRow {...params} />
   );
 };
-
-const isRowSelectable = (node: IRowNode) => !node.data.separator;
 
 const getRowHeight = (params: RowHeightParams) => {
   if (params.data.separator) {
@@ -138,7 +132,6 @@ export const AlbumTrackList = () => {
         rowData={rowData}
         columnDefs={[]}
         getRowHeight={getRowHeight}
-        isRowSelectable={isRowSelectable}
         fullWidthCellRenderer={fullWidthCellRenderer}
         isFullWidthRow={() => true}
         headerHeight={0}

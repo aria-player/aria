@@ -289,7 +289,6 @@ export const Queue = () => {
         onRowDragEnd={handleRowDragEnd}
         onRowDragLeave={handleRowDragLeave}
         isFullWidthRow={() => true}
-        isRowSelectable={(params) => !params.data.separator}
         headerHeight={0}
         rowHeight={ROW_HEIGHT}
         noRowsOverlayComponent={NoRowsOverlay}

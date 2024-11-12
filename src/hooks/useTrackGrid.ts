@@ -4,8 +4,10 @@ import {
   RowDragMoveEvent,
   RowDragLeaveEvent,
   RowDragEndEvent,
+  RowSelectionOptions,
   GetRowIdParams,
   IRowDragItem,
+  IRowNode,
   GridApi
 } from "@ag-grid-community/core";
 import { nanoid } from "@reduxjs/toolkit";
@@ -23,8 +25,19 @@ import { AgGridReactProps } from "@ag-grid-community/react";
 import { selectCurrentTrack } from "../features/currentSelectors";
 import { selectVisibleSelectedTrackGroup } from "../features/visibleSelectors";
 import { BASEPATH } from "../app/constants";
+import { QueueListItem } from "../components/views/Queue";
+import { AlbumTrackListItem } from "../components/views/subviews/AlbumTrackList";
 
 const ROW_ANIMATION_DURATION_MS = 400;
+
+const rowSelectionOptions: RowSelectionOptions = {
+  mode: "multiRow",
+  headerCheckbox: false,
+  checkboxes: false,
+  enableClickSelection: true,
+  isRowSelectable: (node: IRowNode) =>
+    !(node.data as AlbumTrackListItem | QueueListItem).separator
+};
 
 export function useTrackGrid() {
   const dispatch = useAppDispatch();
@@ -258,7 +271,7 @@ export function useTrackGrid() {
     onDragStopped: disableRowAnimation,
     onRowDataUpdated: handleRowDataUpdated,
     rowDragText,
-    rowSelection: "multiple",
+    rowSelection: rowSelectionOptions,
     animateRows: false,
     suppressCellFocus: true,
     rowDragMultiRow: true,
