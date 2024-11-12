@@ -28,5 +28,12 @@ export default defineConfig(async () => ({
     },
     environment: "jsdom",
     setupFiles: "src/setupTests"
+  },
+  worker: {
+    rollupOptions: {
+      output: {
+        inlineDynamicImports: true
+      }
+    }
   }
 }));
