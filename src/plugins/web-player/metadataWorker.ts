@@ -4,6 +4,10 @@ import localforage from "localforage";
 import { expose } from "comlink";
 import { SHA256 } from "crypto-js";
 
+type IComment = {
+  text?: string;
+};
+
 const artworkStore = localforage.createInstance({
   storeName: "webPlayerArtwork"
 });
@@ -83,35 +87,36 @@ export async function parseMetadata(track: TrackMetadata, file: File) {
     );
     const artists = metadata.native["ID3v2.3"]
       .filter((item) => item.id === "TPE1")
-      .map((item) => item.value);
+      .map((item) => item.value as string);
     newTrack.artist = artists.length > 1 ? artists : artists[0];
-    newTrack.title = ID3v23Data.get("TIT2") || newTrack.title;
-    newTrack.albumArtist = ID3v23Data.get("TPE2");
-    newTrack.album = ID3v23Data.get("TALB");
-    newTrack.genre = ID3v23Data.get("TCON");
-    newTrack.composer = ID3v23Data.get("TCOM");
+    newTrack.title = (ID3v23Data.get("TIT2") as string) || newTrack.title;
+    newTrack.albumArtist = ID3v23Data.get("TPE2") as string;
+    newTrack.album = ID3v23Data.get("TALB") as string;
+    newTrack.genre = ID3v23Data.get("TCON") as string;
+    newTrack.composer = ID3v23Data.get("TCOM") as string;
     newTrack.comments = ID3v23Data.get("COMM")
-      ? ID3v23Data.get("COMM").text
-      : null;
+      ? (ID3v23Data.get("COMM") as IComment)?.text
+      : undefined;
     newTrack.year = Number(ID3v23Data.get("TYER"));
-    newTrack.disc = Number(ID3v23Data.get("TPOS")?.split("/")[0]);
-    newTrack.track = Number(ID3v23Data.get("TRCK")?.split("/")[0]);
+    newTrack.disc = Number((ID3v23Data.get("TPOS") as string)?.split("/")[0]);
+    newTrack.track = Number((ID3v23Data.get("TRCK") as string)?.split("/")[0]);
   } else if (metadata.native && metadata.native.iTunes) {
     const iTunesData = new Map(
       metadata.native.iTunes.map((item) => [item.id, item.value])
     );
-    const artists = iTunesData.get("\u00A9ART");
+    const artists = iTunesData.get("\u00A9ART") as string;
     newTrack.artist =
       artists && artists.includes("/") ? artists.split("/") : artists;
-    newTrack.title = iTunesData.get("\u00A9nam") || newTrack.title;
-    newTrack.albumArtist = iTunesData.get("aART");
-    newTrack.album = iTunesData.get("\u00A9alb");
-    newTrack.genre = iTunesData.get("gnre") || iTunesData.get("\u00A9gen");
-    newTrack.composer = iTunesData.get("\u00A9wrt");
-    newTrack.comments = iTunesData.get("\u00A9cmt");
+    newTrack.title = (iTunesData.get("\u00A9nam") as string) || newTrack.title;
+    newTrack.albumArtist = iTunesData.get("aART") as string;
+    newTrack.album = iTunesData.get("\u00A9alb") as string;
+    newTrack.genre = (iTunesData.get("gnre") ||
+      iTunesData.get("\u00A9gen")) as string;
+    newTrack.composer = iTunesData.get("\u00A9wrt") as string;
+    newTrack.comments = iTunesData.get("\u00A9cmt") as string;
     newTrack.year = Number(iTunesData.get("\u00A9day"));
-    newTrack.disc = Number(iTunesData.get("disk")?.split("/")[0]);
-    newTrack.track = Number(iTunesData.get("trkn")?.split("/")[0]);
+    newTrack.disc = Number((iTunesData.get("disk") as string)?.split("/")[0]);
+    newTrack.track = Number((iTunesData.get("trkn") as string)?.split("/")[0]);
   } else {
     newTrack.title = metadata.common.title || newTrack.title;
     newTrack.artist =
