@@ -188,7 +188,9 @@ export function AppearancePage() {
               style={{ backgroundColor: accentColors[color] }}
               className={`${styles.accentButton} ${accentColor === color ? styles.selected : ""}`}
               onClick={() => {
-                accentsEnabled ? handleAccentChange(color) : null;
+                if (accentsEnabled) {
+                  handleAccentChange(color);
+                }
               }}
               disabled={!accentsEnabled}
             ></button>
