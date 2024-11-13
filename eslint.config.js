@@ -23,7 +23,6 @@ export default [
     },
     rules: {
       ...pluginReactHooks.configs.recommended.rules,
-      semi: ["error", "always"],
       "react/react-in-jsx-scope": "off",
       "@typescript-eslint/no-deprecated": "error"
     },
