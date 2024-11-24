@@ -28,4 +28,15 @@ body {
     border: none;
     border-radius: 0.25rem;
   }
+
+  .settings-button {
+    border: 1px solid var(--settings-button-border);
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+
+    &:hover {
+      background-color: var(--button-background-hover);
+    }
+  }
 }

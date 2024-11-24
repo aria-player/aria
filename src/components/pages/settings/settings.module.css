@@ -30,19 +30,6 @@
     background-color: var(--settings-select-background);
     font-size: 0.9rem;
   }
-
-  button {
-    &:not(.accentButton, .themeButton, .removeButton) {
-      border: 1px solid var(--settings-button-border);
-      padding: 0.5rem 1rem;
-      font-size: 0.9rem;
-      font-weight: 500;
-    }
-
-    &:hover:not(.accentButton, .themeButton, .removeButton) {
-      background-color: var(--button-background-hover);
-    }
-  }
 }
 
 .checkbox {

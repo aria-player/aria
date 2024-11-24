@@ -7,5 +7,9 @@ export default function QuickStart(props: {
 }) {
   const { t } = useTranslation("tauri-player", { i18n: props.i18n });
 
-  return <button onClick={props.addFolder}>{t("quickStart")}</button>;
+  return (
+    <button className="settings-button" onClick={props.addFolder}>
+      {t("quickStart")}
+    </button>
+  );
 }

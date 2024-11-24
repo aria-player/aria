@@ -128,7 +128,7 @@ export function PluginsPage() {
           </p>
         )}
         <p>
-          <button onClick={showPluginFilePicker}>
+          <button className="settings-button" onClick={showPluginFilePicker}>
             {t("settings.plugins.installFromFile")}
           </button>
         </p>

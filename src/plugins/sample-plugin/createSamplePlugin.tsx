@@ -22,6 +22,7 @@ export default function createSamplePlugin(
         <div>
           {t("config.header")}
           <button
+            className="settings-button"
             onClick={() => {
               host.updateData({
                 pings: currentData?.pings >= 0 ? currentData?.pings + 1 : 1

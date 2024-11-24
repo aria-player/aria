@@ -12,17 +12,7 @@
   }
 
   button {
-    &:not(.link) {
-      border: 1px solid var(--settings-button-border);
-      padding: 0.5rem 1rem;
-      font-size: 0.9rem;
-      font-weight: 500;
-      margin-bottom: 0.5rem;
-
-      &:hover {
-        background-color: var(--button-background-hover);
-      }
-    }
+    margin-bottom: 0.5rem;
   }
 
   p {

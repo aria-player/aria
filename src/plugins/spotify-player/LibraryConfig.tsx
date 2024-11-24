@@ -32,27 +32,13 @@ export default function LibraryConfig(props: {
       {props.config.accessToken ? (
         <button onClick={props.logout}>Log out from Spotify</button>
       ) : (
-        // TODO: Remove 'style' attributes after adjusting settings.module.css to not apply styles to all buttons
-        <button
-          style={{
-            background: "#1DB954",
-            border: "none",
-            padding: "0.5rem 1.25rem"
-          }}
-          className={styles.loginButton}
-          onClick={props.authenticate}
-        >
+        <button className={styles.loginButton} onClick={props.authenticate}>
           <SpotifyLogo className={styles.spotifyLogo} />
           Log in with Spotify
         </button>
       )}
       <p>
         <button
-          style={{
-            background: "none",
-            border: "none",
-            padding: 0
-          }}
           className={styles.advancedSettingsButton}
           onClick={() => {
             setShowAdvancedSettings(!showAdvancedSettings);

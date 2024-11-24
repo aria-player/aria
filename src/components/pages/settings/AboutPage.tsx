@@ -17,6 +17,7 @@ export function AboutPage() {
       <section>
         <h4>{t("settings.about.reset")}</h4>
         <button
+          className="settings-button"
           onClick={async () => {
             const confirmed = await confirm(t("settings.about.confirmReset"));
             if (confirmed) {

@@ -154,7 +154,7 @@ export function AppearancePage() {
           ))}
         </div>
         <p>
-          <button onClick={showThemeFilePicker}>
+          <button className="settings-button" onClick={showThemeFilePicker}>
             {t("settings.appearance.installFromFile")}
           </button>
         </p>

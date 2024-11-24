@@ -33,11 +33,6 @@ export function LibraryConfig(props: {
                     props.removeFolder(folder);
                   }}
                   title={t("config.removeFolder")}
-                  // TODO: This is a workaround since CSS modules do not seem to take precedence over 'settings.module.css'
-                  style={{
-                    padding: 0,
-                    border: "none"
-                  }}
                   className={styles.removeButton}
                 >
                   <RemoveIcon />
@@ -56,7 +51,9 @@ export function LibraryConfig(props: {
           ) : null}
         </tbody>
       </table>
-      <button onClick={props.addFolder}>{t("config.addFolder")}</button>
+      <button className="settings-button" onClick={props.addFolder}>
+        {t("config.addFolder")}
+      </button>
     </>
   );
 }

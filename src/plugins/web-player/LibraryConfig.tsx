@@ -23,7 +23,7 @@ export function LibraryConfig(props: {
   return (
     <>
       <h4>{t("config.folder")}</h4>
-      <button onClick={() => props.pickDirectory()}>
+      <button className="settings-button" onClick={() => props.pickDirectory()}>
         {t("config.chooseFolder")}
       </button>
       <p>
@@ -31,7 +31,11 @@ export function LibraryConfig(props: {
           folder: webPlayerData.folder || t("config.noFolder")
         })}
         {webPlayerData?.folder && (
-          <button style={{ margin: "0 1rem" }} onClick={removeFolder}>
+          <button
+            className="settings-button"
+            style={{ margin: "0 1rem" }}
+            onClick={removeFolder}
+          >
             {t("config.remove")}
           </button>
         )}
