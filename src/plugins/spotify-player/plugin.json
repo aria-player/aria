@@ -1,0 +1,7 @@
+{
+  "id": "spotify-player",
+  "name": "Spotify",
+  "needsTauri": false,
+  "main": "createSpotifyPlayer.tsx",
+  "capabilities": ["source"]
+}
