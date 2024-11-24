@@ -5,6 +5,9 @@ import {
 } from "../../features/plugins/pluginsTypes";
 import LibraryConfig from "./LibraryConfig";
 import QuickStart from "./QuickStart";
+import { createRoot } from "react-dom/client";
+import ErrorDialog from "./ErrorDialog";
+import { createElement } from "react";
 
 export type SpotifyConfig = {
   accessToken?: string;
@@ -32,7 +35,7 @@ export default function createSpotifyPlayer(
       script.async = true;
       document.body.appendChild(script);
 
-      window.onSpotifyWebPlaybackSDKReady = () => {
+      window.onSpotifyWebPlaybackSDKReady = async () => {
         player = new Spotify.Player({
           name: "Aria",
           getOAuthToken: async (cb: (token: string) => void) => {
@@ -51,6 +54,8 @@ export default function createSpotifyPlayer(
 
         player.connect();
       };
+
+      await checkForSubscription();
       loadTracks();
     }
   }
@@ -117,6 +122,35 @@ export default function createSpotifyPlayer(
       return await response.json();
     }
     return response;
+  }
+
+  async function checkForSubscription() {
+    const profileResponse = (await spotifyRequest(
+      `/me/`
+    )) as SpotifyApi.CurrentUsersProfileResponse;
+    if (
+      profileResponse.product === "free" ||
+      profileResponse.product === "open"
+    ) {
+      const mainView = document.getElementsByClassName("main-view")[0];
+      if (!mainView) return;
+      if (document.getElementById("spotify-error-dialog")) return;
+
+      const dialogContainer = document.createElement("div");
+      dialogContainer.id = "spotify-error-dialog";
+      mainView.appendChild(dialogContainer);
+
+      const root = createRoot(dialogContainer);
+      root.render(
+        createElement(ErrorDialog, {
+          onClose: () => {
+            logout();
+            root.unmount();
+            mainView.removeChild(dialogContainer);
+          }
+        })
+      );
+    }
   }
 
   async function loadTracks() {
@@ -278,7 +312,7 @@ export default function createSpotifyPlayer(
     }
 
     const scopes =
-      "user-modify-playback-state user-read-playback-state app-remote-control streaming user-library-read";
+      "user-modify-playback-state user-read-playback-state app-remote-control streaming user-library-read user-read-private";
 
     const codeVerifier = generateRandomString(128);
     const codeChallenge = await generateCodeChallenge(codeVerifier);
