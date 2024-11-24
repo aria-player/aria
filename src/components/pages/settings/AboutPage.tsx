@@ -7,15 +7,15 @@ export function AboutPage() {
 
   return (
     <div className={styles.page}>
-      <h3>{t("settings.sections.about")}</h3>
+      <h3 className={styles.title}>{t("settings.sections.about")}</h3>
       <p>{t("settings.about.subtitle")}</p>
-      <hr />
-      <section>
-        <h4>{t("settings.about.version")}</h4>
+      <hr className={styles.separator} />
+      <section className="settings-section">
+        <h4 className="settings-heading">{t("settings.about.version")}</h4>
         {import.meta.env.PACKAGE_VERSION}
       </section>
-      <section>
-        <h4>{t("settings.about.reset")}</h4>
+      <section className="settings-section">
+        <h4 className="settings-heading">{t("settings.about.reset")}</h4>
         <button
           className="settings-button"
           onClick={async () => {

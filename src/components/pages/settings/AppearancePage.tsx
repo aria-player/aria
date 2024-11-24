@@ -112,11 +112,11 @@ export function AppearancePage() {
 
   return (
     <div className={styles.page}>
-      <h3>{t("settings.sections.appearance")}</h3>
+      <h3 className={styles.title}>{t("settings.sections.appearance")}</h3>
       <p>{t("settings.appearance.subtitle")}</p>
-      <hr />
-      <section>
-        <h4>{t("settings.appearance.theme")}</h4>
+      <hr className={styles.separator} />
+      <section className="settings-section">
+        <h4 className="settings-heading">{t("settings.appearance.theme")}</h4>
         <div className={styles.themeContainer}>
           {Object.keys(themes).map((theme) => (
             <div key={theme} className={styles.themeItem}>
@@ -160,8 +160,10 @@ export function AppearancePage() {
         </p>
       </section>
       {isTauri() && platform == Platform.Windows && (
-        <section>
-          <h4>{t("settings.appearance.window")}</h4>
+        <section className="settings-section">
+          <h4 className="settings-heading">
+            {t("settings.appearance.window")}
+          </h4>
           <div>
             <input
               className={styles.checkbox}
@@ -173,8 +175,10 @@ export function AppearancePage() {
           </div>
         </section>
       )}
-      <section>
-        <h4 className={`${!accentsEnabled ? styles.disabledSection : ""}`}>
+      <section className="settings-section">
+        <h4
+          className={`settings-heading ${!accentsEnabled ? styles.disabledSection : ""}`}
+        >
           {t("settings.appearance.accent")}
         </h4>
         <div className={styles.accentContainer}>

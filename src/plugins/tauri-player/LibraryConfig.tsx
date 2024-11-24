@@ -13,7 +13,7 @@ export function LibraryConfig(props: {
 
   return (
     <>
-      <h4>{t("config.folders")}</h4>
+      <h4 className="settings-heading">{t("config.folders")}</h4>
       <table className={styles.folders}>
         <thead>
           <tr>

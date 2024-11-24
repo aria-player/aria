@@ -63,11 +63,13 @@ export function PluginsPage() {
 
   return (
     <div className={styles.page}>
-      <h3>{t("settings.sections.plugins")}</h3>
+      <h3 className={styles.title}>{t("settings.sections.plugins")}</h3>
       <p>{t("settings.plugins.subtitle")}</p>
-      <hr />
-      <section>
-        <h4>{t("settings.plugins.availablePlugins")}</h4>
+      <hr className={styles.separator} />
+      <section className="settings-section">
+        <h4 className="settings-heading">
+          {t("settings.plugins.availablePlugins")}
+        </h4>
         {availablePlugins.map(
           (plugin, index) =>
             shouldShowPlugin(plugin) && (
@@ -133,9 +135,11 @@ export function PluginsPage() {
           </button>
         </p>
       </section>
-      <section>
+      <section className="settings-section">
         {configurablePlugins.length > 0 && (
-          <h4>{t("settings.plugins.pluginConfig")}</h4>
+          <h4 className="settings-heading">
+            {t("settings.plugins.pluginConfig")}
+          </h4>
         )}
         {configurablePlugins?.map((plugin: PluginId) => {
           const pluginHandle = pluginHandles[plugin];

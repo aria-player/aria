@@ -29,9 +29,9 @@ export function LibraryPage() {
 
   return (
     <div className={styles.page}>
-      <h3>{t("settings.sections.library")}</h3>
+      <h3 className={styles.title}>{t("settings.sections.library")}</h3>
       <p>{t("settings.library.subtitle")}</p>
-      <hr />
+      <hr className={styles.separator} />
       {platform == Platform.Web && !("showDirectoryPicker" in window) ? (
         <div className={styles.alert}>
           <i>{t("tracks.localFilesNotSupported")}</i>
@@ -46,15 +46,15 @@ export function LibraryPage() {
       {activeSourcePlugins?.map((plugin: PluginId) => {
         const pluginHandle = pluginHandles[plugin];
         return (
-          <section key={plugin}>
+          <section key={plugin} className="settings-section">
             {pluginHandle?.LibraryConfig && (
               <pluginHandle.LibraryConfig data={pluginData[plugin] ?? {}} />
             )}
           </section>
         );
       })}
-      <section>
-        <h4>{t("settings.library.info")}</h4>
+      <section className="settings-section">
+        <h4 className="settings-heading">{t("settings.library.info")}</h4>
         {t("settings.library.tracksCount", { totalTracks })}
       </section>
     </div>

@@ -22,7 +22,7 @@ export function LibraryConfig(props: {
 
   return (
     <>
-      <h4>{t("config.folder")}</h4>
+      <h4 className="settings-heading">{t("config.folder")}</h4>
       <button className="settings-button" onClick={() => props.pickDirectory()}>
         {t("config.chooseFolder")}
       </button>
