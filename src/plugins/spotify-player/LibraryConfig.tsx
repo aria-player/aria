@@ -1,6 +1,8 @@
 import { useState, ChangeEvent } from "react";
 import { SpotifyConfig } from "./createSpotifyPlayer";
 import { SourceCallbacks } from "../../features/plugins/pluginsTypes";
+import SpotifyLogo from "./assets/spotify-brands-solid.svg?react";
+import styles from "./spotify.module.css";
 
 export default function LibraryConfig(props: {
   host: SourceCallbacks;
@@ -26,14 +28,32 @@ export default function LibraryConfig(props: {
 
   return (
     <div>
-      <h4>Spotify Player Config</h4>
+      <h4>Spotify settings</h4>
       {props.config.accessToken ? (
         <button onClick={props.logout}>Log out from Spotify</button>
       ) : (
-        <button onClick={props.authenticate}>Log in with Spotify</button>
+        // TODO: Remove 'style' attributes after adjusting settings.module.css to not apply styles to all buttons
+        <button
+          style={{
+            background: "#1DB954",
+            border: "none",
+            padding: "0.5rem 1.25rem"
+          }}
+          className={styles.loginButton}
+          onClick={props.authenticate}
+        >
+          <SpotifyLogo className={styles.spotifyLogo} />
+          Log in with Spotify
+        </button>
       )}
       <p>
         <button
+          style={{
+            background: "none",
+            border: "none",
+            padding: 0
+          }}
+          className={styles.advancedSettingsButton}
           onClick={() => {
             setShowAdvancedSettings(!showAdvancedSettings);
           }}

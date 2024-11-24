@@ -1,0 +1,33 @@
+.spotifyLogo {
+  height: 1.5rem;
+}
+
+.loginButton {
+  background: #1db954;
+  border: none;
+  border-radius: 999px;
+  color: white;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 1.25rem;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.advancedSettingsButton {
+  color: var(--accent-color);
+
+  &:hover {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+}
+
+.quickStart {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
