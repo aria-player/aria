@@ -3,9 +3,10 @@ import {
   SourceCallbacks,
   SourceHandle
 } from "../../features/plugins/pluginsTypes";
-import { ChangeEvent, useState } from "react";
+import LibraryConfig from "./LibraryConfig";
+import QuickStart from "./QuickStart";
 
-type SpotifyConfig = {
+export type SpotifyConfig = {
   accessToken?: string;
   refreshToken?: string;
   tokenExpiry?: number;
@@ -252,7 +253,7 @@ export default function createSpotifyPlayer(
     host.updateTracks(updatedTracks);
   }
 
-  async function authenticateWithSpotify() {
+  async function authenticate() {
     function generateRandomString(length: number) {
       let text = "";
       const possible =
@@ -350,75 +351,10 @@ export default function createSpotifyPlayer(
   }
 
   return {
-    LibraryConfig: () => {
-      const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
-      const [clientId, setClientId] = useState(config.clientId);
-      const [redirectUri, setRedirectUri] = useState(config.redirectUri);
+    LibraryConfig: (props) =>
+      LibraryConfig({ ...props, host, config, authenticate, logout }),
 
-      function updateClientId(event: ChangeEvent<HTMLInputElement>) {
-        setClientId(event.target.value);
-        config = { ...config, clientId: event.target.value };
-        host.updateData(config);
-      }
-
-      function updateRedirectUri(event: ChangeEvent<HTMLInputElement>) {
-        setRedirectUri(event.target.value);
-        config = { ...config, redirectUri: event.target.value };
-        host.updateData(config);
-      }
-
-      return (
-        <div>
-          <h4>Spotify Player Config</h4>
-          {config.accessToken ? (
-            <button onClick={logout}>Log out from Spotify</button>
-          ) : (
-            <button onClick={authenticateWithSpotify}>
-              Log in with Spotify
-            </button>
-          )}
-          <p>
-            <button
-              onClick={() => {
-                setShowAdvancedSettings(!showAdvancedSettings);
-              }}
-            >
-              Toggle advanced settings
-            </button>
-          </p>
-          {showAdvancedSettings && (
-            <>
-              <p>
-                Client ID
-                <br />
-                <input
-                  type="text"
-                  value={clientId}
-                  onChange={updateClientId}
-                  onKeyDown={(e) => e.stopPropagation()}
-                />
-              </p>
-              <p>
-                Redirect URI
-                <br />
-                <input
-                  type="text"
-                  value={redirectUri}
-                  onChange={updateRedirectUri}
-                  onKeyDown={(e) => e.stopPropagation()}
-                />
-              </p>
-            </>
-          )}
-        </div>
-      );
-    },
-
-    QuickStart: () => {
-      return (
-        <button onClick={authenticateWithSpotify}>Log in with Spotify</button>
-      );
-    },
+    QuickStart: (props) => QuickStart({ ...props, authenticate }),
 
     async loadAndPlayTrack(track: TrackMetadata) {
       if (!hasTransferredPlayback && deviceId) {
