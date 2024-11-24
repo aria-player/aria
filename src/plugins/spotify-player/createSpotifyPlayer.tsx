@@ -217,27 +217,29 @@ export default function createSpotifyPlayer(
           const genres = existingTracks.find(
             (track) => track.albumId == album.album.id
           )?.genre;
-          const tracksFromResponse = album.album.tracks.items.map((track) => {
-            tracksInLibrary.push(track.uri);
-            return {
-              uri: track.uri,
-              title: track.name,
-              metadataLoaded: true,
-              dateAdded: new Date(album.added_at).getTime(),
-              duration: track.duration_ms,
-              artist: track.artists.map((artist) => artist.name),
-              albumArtist: album.album.artists
-                .map((artist) => artist.name)
-                .join("/"),
-              album: album.album.name,
-              albumId: album.album.id,
-              genre: genres,
-              year: parseInt(album.album.release_date.split("-")[0]),
-              track: track.track_number,
-              disc: track.disc_number,
-              artworkUri: album.album.images[0].url
-            };
-          });
+          const tracksFromResponse = album.album.tracks.items
+            .filter((track) => !tracksInLibrary.includes(track.uri))
+            .map((track) => {
+              tracksInLibrary.push(track.uri);
+              return {
+                uri: track.uri,
+                title: track.name,
+                metadataLoaded: true,
+                dateAdded: new Date(album.added_at).getTime(),
+                duration: track.duration_ms,
+                artist: track.artists.map((artist) => artist.name),
+                albumArtist: album.album.artists
+                  .map((artist) => artist.name)
+                  .join("/"),
+                album: album.album.name,
+                albumId: album.album.id,
+                genre: genres,
+                year: parseInt(album.album.release_date.split("-")[0]),
+                track: track.track_number,
+                disc: track.disc_number,
+                artworkUri: album.album.images[0].url
+              };
+            });
           albumArtistMapping[album.album.id] = album.album.artists[0].id;
           tracksToAdd.push(...tracksFromResponse);
         }
