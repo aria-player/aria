@@ -30,7 +30,9 @@ export default function LibraryConfig(props: {
     <div>
       <h4 className="settings-heading">Spotify settings</h4>
       {props.config.accessToken ? (
-        <button onClick={props.logout}>Log out from Spotify</button>
+        <button className="settings-button" onClick={props.logout}>
+          Log out from Spotify
+        </button>
       ) : (
         <button className={styles.loginButton} onClick={props.authenticate}>
           <SpotifyLogo className={styles.spotifyLogo} />
