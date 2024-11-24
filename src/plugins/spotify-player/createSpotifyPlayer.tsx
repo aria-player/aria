@@ -159,8 +159,7 @@ export default function createSpotifyPlayer(
           tracksToAdd.push(newTrack);
         }
         if (!config.accessToken) return;
-        host.updateMetadata(tracksToAdd);
-        host.addTracks(tracksToAdd);
+        host.updateTracks(tracksToAdd);
         if (tracksResponse.items.length < tracksLimit) {
           tracksRemaining = false;
         } else {
@@ -207,8 +206,7 @@ export default function createSpotifyPlayer(
           albumArtistMapping[album.album.id] = album.album.artists[0].id;
           tracksToAdd.push(...tracksFromResponse);
         }
-        host.updateMetadata(tracksToAdd);
-        host.addTracks(tracksToAdd);
+        host.updateTracks(tracksToAdd);
         if (albumsResponse.items.length < albumsLimit) {
           albumsRemaining = false;
         } else {
@@ -251,7 +249,7 @@ export default function createSpotifyPlayer(
       );
       return { ...track, genre: formattedGenres };
     });
-    host.updateMetadata(updatedTracks);
+    host.updateTracks(updatedTracks);
   }
 
   async function authenticateWithSpotify() {

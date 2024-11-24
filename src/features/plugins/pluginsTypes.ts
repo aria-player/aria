@@ -53,7 +53,7 @@ export interface SourceHandle extends BaseHandle {
 export interface SourceCallbacks extends BaseCallbacks {
   addTracks: (metadata: TrackMetadata[]) => void;
   removeTracks: (uris?: TrackUri[]) => void;
-  updateMetadata: (metadata: TrackMetadata[]) => void;
+  updateTracks: (metadata: TrackMetadata[]) => void;
   getTracks: () => Track[];
   getTrackByUri: (uri: TrackUri) => Track | undefined;
   getVolume: () => number;

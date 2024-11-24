@@ -84,7 +84,7 @@ export default function createWebPlayer(
         .filter((track) => !host.getTrackByUri(track.uri)?.metadataLoaded)
         .map((track) => parseMetadata(track, fileHandles[track.uri]));
       const newMetadata = await Promise.all(metadataPromises);
-      host.updateMetadata(newMetadata);
+      host.updateTracks(newMetadata);
     }
   }
 
@@ -133,7 +133,7 @@ export default function createWebPlayer(
       }
       if (!track.metadataLoaded) {
         const metadata = await parseMetadata(track, fileHandles[track.uri]);
-        host.updateMetadata([metadata]);
+        host.updateTracks([metadata]);
       }
 
       if (audio) {

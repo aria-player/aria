@@ -44,18 +44,13 @@ function handleAddTracks(source: PluginId, metadata: TrackMetadata[]) {
   store.dispatch(addTracks({ source, tracks: newTracks }));
 }
 
-function handleUpdateMetadata(source: PluginId, metadata: TrackMetadata[]) {
+function handleUpdateTracks(source: PluginId, metadata: TrackMetadata[]) {
   if (!isPluginActive(source)) return;
-  const libraryTrackIds = selectTrackIds(store.getState());
-  const newTracks = metadata
-    .filter((track: TrackMetadata) =>
-      libraryTrackIds.includes(getTrackId(source, track.uri))
-    )
-    .map((track: TrackMetadata) => ({
-      ...track,
-      trackId: getTrackId(source, track.uri),
-      source: source
-    }));
+  const newTracks = metadata.map((track: TrackMetadata) => ({
+    ...track,
+    trackId: getTrackId(source, track.uri),
+    source: source
+  }));
 
   store.dispatch(addTracks({ source, tracks: newTracks }));
 }
@@ -98,8 +93,8 @@ export const getSourceCallbacks = (pluginId: PluginId): SourceCallbacks => {
     addTracks: (metadata: TrackMetadata[]) =>
       handleAddTracks(pluginId, metadata),
     removeTracks: (uris?: TrackUri[]) => handleRemoveTracks(pluginId, uris),
-    updateMetadata: (metadata: TrackMetadata[]) =>
-      handleUpdateMetadata(pluginId, metadata),
+    updateTracks: (metadata: TrackMetadata[]) =>
+      handleUpdateTracks(pluginId, metadata),
     getTracks: () => {
       const libraryTracks = selectAllTracks(store.getState());
       return libraryTracks.filter((track: Track) => track.source === pluginId);

@@ -100,7 +100,7 @@ export default function createTauriPlayer(
       );
 
       if (batchMetadata.length > 0) {
-        host.updateMetadata(
+        host.updateTracks(
           batchMetadata.filter((item) => item != null) as TrackMetadata[]
         );
       }
