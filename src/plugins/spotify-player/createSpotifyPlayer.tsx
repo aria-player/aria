@@ -163,6 +163,49 @@ export default function createSpotifyPlayer(
         tracksRemaining = false;
       }
     }
+    const albumsLimit = 50;
+    let albumsOffset = 0;
+    let albumsRemaining = true;
+    while (albumsRemaining) {
+      const albumsResponse = (await spotifyRequest(
+        `/me/albums?limit=${albumsLimit}&offset=${albumsOffset}`
+      )) as SpotifyApi.UsersSavedAlbumsResponse;
+      if (albumsResponse && albumsResponse.items) {
+        const tracksToAdd = [];
+        for (const album of albumsResponse.items) {
+          const tracksFromResponse = album.album.tracks.items.map((track) => {
+            tracksInLibrary.push(track.uri);
+            return {
+              uri: track.uri,
+              title: track.name,
+              metadataLoaded: true,
+              dateAdded: new Date(album.added_at).getTime(),
+              duration: track.duration_ms,
+              artist: track.artists.map((artist) => artist.name),
+              albumArtist: album.album.artists
+                .map((artist) => artist.name)
+                .join("/"),
+              album: album.album.name,
+              albumId: album.album.id,
+              year: parseInt(album.album.release_date.split("-")[0]),
+              track: track.track_number,
+              disc: track.disc_number,
+              artworkUri: album.album.images[0].url
+            };
+          });
+          tracksToAdd.push(...tracksFromResponse);
+        }
+        host.updateMetadata(tracksToAdd);
+        host.addTracks(tracksToAdd);
+        if (albumsResponse.items.length < albumsLimit) {
+          albumsRemaining = false;
+        } else {
+          albumsOffset += albumsLimit;
+        }
+      } else {
+        albumsRemaining = false;
+      }
+    }
     const removedTracks = existingTracks.filter(
       (track) => !tracksInLibrary.includes(track.uri)
     );
