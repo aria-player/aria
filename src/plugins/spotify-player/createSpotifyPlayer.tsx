@@ -326,27 +326,18 @@ export default function createSpotifyPlayer(
       "_blank"
     );
 
-    // TODO: Handle redirect within app rather than polling for URL changes
-    const pollAuthWindow = setInterval(() => {
-      if (authWindow && authWindow.location) {
-        try {
-          authWindow.location.href;
-        } catch {
-          return;
-        }
-        const url = new URL(authWindow.location.href);
-        if (url.origin === window.location.origin) {
-          if (url.searchParams.get("code")) {
-            const code = url.searchParams.get("code");
-            if (code) {
-              exchangeCodeForToken(code, codeVerifier);
-            }
-          }
-          authWindow.close();
-          clearInterval(pollAuthWindow);
+    window.addEventListener("message", (event) => {
+      if (event.origin !== window.location.origin) {
+        return;
+      }
+      if (event.data && event.data.type === "OAuthCode") {
+        const code = event.data.code;
+        if (code) {
+          authWindow?.close();
+          exchangeCodeForToken(code, codeVerifier);
         }
       }
-    }, 1);
+    });
   }
 
   async function exchangeCodeForToken(code: string, codeVerifier: string) {

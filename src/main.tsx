@@ -62,3 +62,16 @@ createRoot(document.getElementById("root") as HTMLElement).render(
 // Make React available to plugins
 window.React = React;
 window.ReactDOM = ReactDOM;
+
+// Allow plugins to authenticate with OAuth
+if (window.location.search.includes("code")) {
+  const params = new URLSearchParams(window.location.search);
+  window.opener.postMessage(
+    {
+      type: "OAuthCode",
+      code: params.get("code"),
+      state: params.get("state"),
+    },
+    window.location.origin
+  );
+}
