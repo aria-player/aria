@@ -38,6 +38,8 @@ window-shadows = "0.2.2"
 tauri-plugin-window-state = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
 tauri-plugin-single-instance = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
 tauri-plugin-store = { git = "https://github.com/tauri-apps/plugins-workspace", branch = "v1" }
+tauri-plugin-oauth = "1.0.0"
+url = "2.5.4"
 lofty = "0.19.2"
 sha2 = "0.10.8"
 

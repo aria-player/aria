@@ -3,6 +3,7 @@
 
 mod commands;
 mod menu;
+mod oauth;
 mod player;
 mod translation;
 mod utils;
@@ -137,6 +138,7 @@ fn main() {
             commands::set_initial_language,
             player::get_audio_files_from_directory,
             player::get_metadata,
+            oauth::start_server
         ]);
     if OS != "windows" {
         let (default_labels, _) = translation::get_translations("en-US");

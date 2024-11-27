@@ -17,6 +17,9 @@ import { DndProvider } from "react-dnd-multi-backend";
 import { ArtworkProvider } from "./contexts/ArtworkContext";
 import { ErrorBoundary } from "react-error-boundary";
 import { CrashPage } from "./components/pages/CrashPage";
+import { isTauri } from "./app/utils";
+import { invoke } from "@tauri-apps/api";
+import { listen } from "@tauri-apps/api/event";
 import App from "./App";
 import "./i18n";
 
@@ -70,8 +73,24 @@ if (window.location.search.includes("code")) {
     {
       type: "OAuthCode",
       code: params.get("code"),
-      state: params.get("state"),
+      state: params.get("state")
     },
     window.location.origin
   );
+}
+
+if (isTauri()) {
+  invoke("start_server");
+  listen("oauth_code", (event) => {
+    const { code, state } = event.payload as { code: string; state: string };
+    window.postMessage(
+      {
+        type: "OAuthCode",
+        code: code,
+        state: state
+      },
+      window.location.origin
+    );
+    invoke("start_server");
+  });
 }

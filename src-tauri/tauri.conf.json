@@ -64,7 +64,7 @@
       "resources": ["../shared/menus.json"]
     },
     "security": {
-      "csp": "default-src 'self' asset: https://asset.localhost; img-src 'self' asset: https://asset.localhost; media-src 'self' asset: https://asset.localhost blob:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' blob:"
+      "csp": "default-src 'self' asset: https:; media-src 'self' asset: https: blob:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' blob: https:"
     },
     "systemTray": {
       "iconPath": "icons/icon.png",
