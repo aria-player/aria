@@ -20,15 +20,16 @@ export type SpotifyConfig = {
 export default function createSpotifyPlayer(
   host: SourceCallbacks
 ): SourceHandle {
-  let config = { ...host.getData() } as SpotifyConfig;
   let player: Spotify.Player | null;
   let deviceId: string | null;
   let hasTransferredPlayback = false;
 
+  const getConfig = () => host.getData() as SpotifyConfig;
+
   initialize();
 
   async function initialize() {
-    if (config.accessToken) {
+    if (getConfig().accessToken) {
       const script = document.createElement("script");
       script.id = "spotify";
       script.src = "https://sdk.scdn.co/spotify-player.js";
@@ -61,27 +62,29 @@ export default function createSpotifyPlayer(
   }
 
   function getClientId() {
-    return config.clientId && config.clientId.trim() !== ""
-      ? config.clientId
+    const clientId = getConfig().clientId;
+    return clientId && clientId.trim() !== ""
+      ? clientId
       : import.meta.env.VITE_SPOTIFY_CLIENT_ID;
   }
 
   function getRedirectUri() {
-    return config.redirectUri && config.redirectUri.trim() !== ""
-      ? config.redirectUri
+    const redirectUri = getConfig().redirectUri;
+    return redirectUri && redirectUri.trim() !== ""
+      ? redirectUri
       : import.meta.env.VITE_SPOTIFY_REDIRECT_URI;
   }
 
   async function getOrRefreshAccessToken() {
-    const expiryTime = config.tokenExpiry;
+    const expiryTime = getConfig().tokenExpiry;
     if (expiryTime && Date.now() > Number(expiryTime)) {
       await refreshToken();
     }
-    return config.accessToken;
+    return getConfig().accessToken;
   }
 
   async function refreshToken() {
-    const refresh_token = config?.refreshToken;
+    const refresh_token = getConfig()?.refreshToken;
     if (!refresh_token) return;
     const response = await fetch("https://accounts.spotify.com/api/token", {
       method: "POST",
@@ -95,10 +98,12 @@ export default function createSpotifyPlayer(
       console.error("Failed to refresh token:", responseBody);
       throw new Error(`Failed to refresh token. Status: ${response.status}`);
     }
-    config.accessToken = responseBody.access_token;
-    config.refreshToken = responseBody.refresh_token;
-    config.tokenExpiry = Date.now() + responseBody.expires_in * 1000;
-    host.updateData(config);
+    host.updateData({
+      ...getConfig(),
+      accessToken: responseBody.access_token,
+      refreshToken: responseBody.refresh_token,
+      tokenExpiry: Date.now() + responseBody.expires_in * 1000
+    });
   }
 
   async function spotifyRequest(
@@ -193,7 +198,7 @@ export default function createSpotifyPlayer(
             track.track.album.artists[0].id;
           tracksToAdd.push(newTrack);
         }
-        if (!config.accessToken) return;
+        if (!getConfig().accessToken) return;
         host.updateTracks(tracksToAdd);
         if (tracksResponse.items.length < tracksLimit) {
           tracksRemaining = false;
@@ -352,10 +357,12 @@ export default function createSpotifyPlayer(
         )}&client_id=${getClientId()}&code_verifier=${codeVerifier}`
       });
       const responseBody = await response.json();
-      config.accessToken = responseBody.access_token;
-      config.refreshToken = responseBody.refresh_token;
-      config.tokenExpiry = Date.now() + responseBody.expires_in * 1000;
-      host.updateData(config);
+      host.updateData({
+        ...getConfig(),
+        accessToken: responseBody.access_token,
+        refreshToken: responseBody.refresh_token,
+        tokenExpiry: Date.now() + responseBody.expires_in * 1000
+      });
       initialize();
     } catch (error) {
       console.error("Error exchanging code for token:", error);
@@ -367,19 +374,19 @@ export default function createSpotifyPlayer(
       player.disconnect();
     }
     host.removeTracks();
-    config = {
+    const config = getConfig();
+    host.updateData({
       accessToken: undefined,
       refreshToken: undefined,
       tokenExpiry: undefined,
       clientId: config.clientId,
       redirectUri: config.redirectUri
-    };
-    host.updateData(config);
+    });
   }
 
   return {
     LibraryConfig: (props) =>
-      LibraryConfig({ ...props, host, config, authenticate, logout }),
+      LibraryConfig({ ...props, host, authenticate, logout }),
 
     QuickStart: (props) => QuickStart({ ...props, authenticate }),
 

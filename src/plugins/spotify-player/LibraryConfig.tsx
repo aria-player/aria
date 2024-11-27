@@ -5,31 +5,30 @@ import SpotifyLogo from "./assets/spotify-brands-solid.svg?react";
 import styles from "./spotify.module.css";
 
 export default function LibraryConfig(props: {
+  data: object;
   host: SourceCallbacks;
-  config: SpotifyConfig;
   authenticate: () => void;
   logout: () => void;
 }) {
+  const config = props.data as SpotifyConfig;
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
-  const [clientId, setClientId] = useState(props.config.clientId);
-  const [redirectUri, setRedirectUri] = useState(props.config.redirectUri);
+  const [clientId, setClientId] = useState(config.clientId ?? "");
+  const [redirectUri, setRedirectUri] = useState(config.redirectUri ?? "");
 
   function updateClientId(event: ChangeEvent<HTMLInputElement>) {
     setClientId(event.target.value);
-    props.config = { ...props.config, clientId: event.target.value };
-    props.host.updateData(props.config);
+    props.host.updateData({ ...config, clientId: event.target.value });
   }
 
   function updateRedirectUri(event: ChangeEvent<HTMLInputElement>) {
     setRedirectUri(event.target.value);
-    props.config = { ...props.config, redirectUri: event.target.value };
-    props.host.updateData(props.config);
+    props.host.updateData({ ...config, redirectUri: event.target.value });
   }
 
   return (
     <div>
       <h4 className="settings-heading">Spotify settings</h4>
-      {props.config.accessToken ? (
+      {config.accessToken ? (
         <button className="settings-button" onClick={props.logout}>
           Log out from Spotify
         </button>
