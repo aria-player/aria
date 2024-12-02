@@ -19,6 +19,7 @@ import { useEffect, useRef } from "react";
 import { store } from "../../app/store";
 import { useLocation } from "react-router-dom";
 import { getMostCommonArtworkUri } from "../../app/utils";
+import { getSourceHandle } from "../../features/plugins/pluginsSlice";
 
 export default function AlbumGrid() {
   const dispatch = useAppDispatch();
@@ -82,45 +83,56 @@ export default function AlbumGrid() {
         style={{ display: visibleAlbums.length == 0 ? "none" : "grid" }}
       >
         {allAlbums.map((track, index) => {
-          if (track)
-            return (
-              <div
-                key={track.albumId ?? index}
-                ref={(el) => {
-                  albumRefs.current[track.albumId ?? index] = el;
-                }}
-                style={{
-                  display: visibleAlbums.includes(track.albumId)
-                    ? "block"
-                    : "none"
-                }}
+          const pluginHandle = getSourceHandle(track.source);
+          return (
+            <div
+              key={track.albumId ?? index}
+              ref={(el) => {
+                albumRefs.current[track.albumId ?? index] = el;
+              }}
+              style={{
+                display: visibleAlbums.includes(track.albumId)
+                  ? "block"
+                  : "none"
+              }}
+            >
+              <button
+                className={`album-grid-item ${styles.gridItem}`}
+                onClick={() => setSelectedItem(track.albumId)}
+                disabled={
+                  selectedItem || visibleDisplayMode != DisplayMode.AlbumGrid
+                    ? true
+                    : false
+                }
               >
-                <button
-                  className={`album-grid-item ${styles.gridItem}`}
-                  onClick={() => setSelectedItem(track.albumId)}
-                  disabled={
-                    selectedItem || visibleDisplayMode != DisplayMode.AlbumGrid
-                      ? true
-                      : false
-                  }
-                >
-                  <AlbumArt
-                    track={{
-                      ...track,
-                      artworkUri: getMostCommonArtworkUri(
-                        libraryTracks.filter((t) => t.albumId === track.albumId)
-                      )
-                    }}
+                <AlbumArt
+                  track={{
+                    ...track,
+                    artworkUri: getMostCommonArtworkUri(
+                      libraryTracks.filter((t) => t.albumId === track.albumId)
+                    )
+                  }}
+                />
+              </button>
+              <div className={styles.albumInfo}>
+                <div className={styles.albumTextContainer}>
+                  <div className={`${styles.albumText} ${styles.albumTitle}`}>
+                    {track.album}
+                  </div>
+                  <div className={`${styles.albumText} ${styles.albumArtist}`}>
+                    {track.albumArtist ?? track.artist}
+                  </div>
+                </div>
+                {track.albumId && pluginHandle?.Attribution && (
+                  <pluginHandle.Attribution
+                    type="album"
+                    id={track.albumId}
+                    compact={true}
                   />
-                </button>
-                <div className={`${styles.albumText} ${styles.albumTitle}`}>
-                  {track.album}
-                </div>
-                <div className={`${styles.albumText} ${styles.albumArtist}`}>
-                  {track.albumArtist ?? track.artist}
-                </div>
+                )}
               </div>
-            );
+            </div>
+          );
         })}
         {selectedItem && visibleDisplayMode == DisplayMode.AlbumGrid && (
           <div

@@ -26,6 +26,7 @@ import {
   selectVisibleSelectedTrackGroup
 } from "../../../features/visibleSelectors";
 import { QueueListItem } from "../Queue";
+import { getSourceHandle } from "../../../features/plugins/pluginsSlice";
 import { AlbumArt } from "./AlbumArt";
 
 export const TrackSummaryRow = (props: ICellRendererParams) => {
@@ -39,6 +40,7 @@ export const TrackSummaryRow = (props: ICellRendererParams) => {
   const queueSource = useAppSelector(selectQueueSource);
   const currentTrack = useAppSelector(selectCurrentTrack);
   const visibleView = visiblePlaylist?.id ?? visibleViewType;
+  const pluginHandle = getSourceHandle(props.data.source);
 
   props.registerRowDragger(
     props.eParentOfValue,
@@ -145,6 +147,13 @@ export const TrackSummaryRow = (props: ICellRendererParams) => {
           {formatStringArray(props.node.data.artist)}
         </span>
       </div>
+      {visibleViewType == View.Queue && pluginHandle?.Attribution && (
+        <pluginHandle.Attribution
+          type="track"
+          id={props.data.uri}
+          compact={true}
+        />
+      )}
       <span className={`track-summary-row-duration ${styles.trackDuration}`}>
         {formatDuration(props.node.data.duration)}
       </span>

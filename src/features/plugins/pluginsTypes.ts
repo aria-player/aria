@@ -36,10 +36,17 @@ export interface IntegrationCallbacks extends BaseCallbacks {
   previous: () => void;
 }
 
+export type AttributionProps = {
+  type: "track" | "album";
+  compact: boolean;
+  id?: string;
+};
+
 export interface SourceHandle extends BaseHandle {
   displayName?: string;
   LibraryConfig?: React.FC<{ data: object }>;
   QuickStart?: React.FC;
+  Attribution?: React.FC<AttributionProps>;
   loadAndPlayTrack: (track: Track) => void;
   getTrackArtwork?: (track: Track) => Promise<string | undefined>;
   onTracksUpdate?: (tracks: Track[]) => void;

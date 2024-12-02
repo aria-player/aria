@@ -62,3 +62,19 @@
   white-space: nowrap;
   text-overflow: ellipsis;
 }
+
+.metadata.compact {
+  .title,
+  .artist {
+    line-height: 1.2;
+  }
+
+  .title {
+    font-size: 0.9rem;
+  }
+
+  .artist {
+    font-size: 0.8rem;
+    padding-bottom: 0.25rem;
+  }
+}

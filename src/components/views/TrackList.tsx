@@ -60,6 +60,8 @@ import {
   selectSearch
 } from "../../features/search/searchSlice";
 import NoRowsOverlay from "./subviews/NoRowsOverlay";
+import { pluginHandles } from "../../features/plugins/pluginsSlice";
+import { selectAllTracks } from "../../features/tracks/tracksSlice";
 
 export const TrackList = () => {
   const dispatch = useAppDispatch();
@@ -81,6 +83,10 @@ export const TrackList = () => {
   const { t } = useTranslation();
   const libraryColumnState = useAppSelector(selectLibraryColumnState);
   const playlistConfig = useAppSelector(selectVisiblePlaylistConfig);
+  const libraryTracks = useAppSelector(selectAllTracks);
+  const showAttribution = [
+    ...new Set(libraryTracks.map((track) => track.source))
+  ].some((source) => pluginHandles[source]?.Attribution);
 
   const columnDefs = useMemo<ColDef[]>(() => {
     return defaultColumnDefinitions
@@ -124,13 +130,19 @@ export const TrackList = () => {
           ...colDefOverrides,
           sort,
           sortIndex,
-          sortable: visibleViewType != View.Search && colDef.field != "art",
+          sortable:
+            visibleViewType != View.Search &&
+            colDef.field != "art" &&
+            colDef.field != "attribution",
           headerName:
-            colDef.field != "trackId" && colDef.field != "uri"
+            colDef.field != "trackId" &&
+            colDef.field != "uri" &&
+            colDef.field != "attribution"
               ? t(`columns.${colDef.field}`)
               : colDef.field
         };
       })
+      .filter((col) => col.field !== "attribution" || showAttribution)
       .sort((colDefA, colDefB) => {
         const orderedColumns =
           playlistConfig?.useCustomLayout && playlistConfig?.columnState
@@ -144,7 +156,7 @@ export const TrackList = () => {
         );
         return (indexA || 2) - (indexB || 1);
       });
-  }, [libraryColumnState, t, visibleViewType, playlistConfig]);
+  }, [libraryColumnState, t, visibleViewType, playlistConfig, showAttribution]);
 
   const defaultColDef = useMemo(
     () => ({
@@ -380,6 +392,17 @@ export const TrackList = () => {
       if (firstFocusableColumn) {
         params.api.setFocusedHeader(firstFocusableColumn);
       }
+    } else if (showAttribution) {
+      const lastFocusableColumn = gridRef?.current?.api
+        .getAllDisplayedColumns()
+        .slice()
+        .reverse()
+        .find((col) => col.getColId() !== "attribution")
+        ?.getColId();
+      if (lastFocusableColumn) {
+        params.api.setFocusedHeader(lastFocusableColumn);
+        return true;
+      }
     }
     return !params.fromBottom;
   };
@@ -387,7 +410,7 @@ export const TrackList = () => {
   const handleTabToNextHeader = (params: TabToNextHeaderParams) => {
     if (
       params.backwards &&
-      (params.nextHeaderPosition?.column.getUniqueId() == "art" ||
+      (params.nextHeaderPosition?.column.getUniqueId() === "art" ||
         !params.nextHeaderPosition)
     ) {
       const treeElement = document.querySelector(
@@ -397,14 +420,22 @@ export const TrackList = () => {
         treeElement.focus();
       }
       return false;
+    } else if (
+      (!params.backwards &&
+        params.nextHeaderPosition?.column.getUniqueId() === "attribution") ||
+      !params.nextHeaderPosition
+    ) {
+      return false;
     }
     return params.nextHeaderPosition || false;
   };
 
   const handleNavigateToNextHeader = (params: NavigateToNextHeaderParams) => {
     if (
-      params.key == "ArrowLeft" &&
-      params.nextHeaderPosition?.column.getUniqueId() == "art"
+      (params.key === "ArrowLeft" &&
+        params.nextHeaderPosition?.column.getUniqueId() === "art") ||
+      (params.key === "ArrowRight" &&
+        params.nextHeaderPosition?.column.getUniqueId() === "attribution")
     ) {
       return null;
     }

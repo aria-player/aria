@@ -146,5 +146,38 @@ export const defaultColumnDefinitions: ColDef[] = [
         selectPluginInfo(store.getState())[params.value].name
       );
     }
+  },
+  {
+    field: "attribution",
+    headerValueGetter: () => "",
+    resizable: false,
+    sortable: false,
+    suppressSizeToFit: true,
+    suppressAutoSize: true,
+    suppressMovable: true,
+    lockPosition: "right",
+    width: 50,
+    minWidth: 50,
+    maxWidth: 50,
+    cellRenderer: (params: { data: TrackListItem }) => {
+      return createElement(
+        "div",
+        {
+          style: {
+            marginTop: "5px",
+            height: "30px",
+            borderRadius: "0.25rem",
+            overflow: "hidden"
+          }
+        },
+        createElement(() =>
+          getSourceHandle(params.data.source)?.Attribution?.({
+            type: "track",
+            id: params.data.uri,
+            compact: true
+          })
+        )
+      );
+    }
   }
 ];

@@ -242,4 +242,8 @@ body {
       pointer-events: none !important;
     }
   }
+
+  .ag-header-cell.ag-column-last[col-id^="attribution"] {
+    display: none;
+  }
 }

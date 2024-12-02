@@ -16,8 +16,12 @@
 
 .albumTitle {
   margin: 0.75rem 0;
+  margin-right: 1rem;
   font-size: 1.4rem;
   font-weight: 500;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 .albumDetails {

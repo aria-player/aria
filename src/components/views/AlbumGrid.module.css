@@ -29,6 +29,23 @@
   }
 }
 
+.albumInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.albumTextContainer {
+  flex-grow: 1;
+  min-width: 0;
+}
+
+.albumText {
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+}
+
 .albumTitle {
   font-weight: 500;
   margin-top: 0.4rem;
@@ -40,12 +57,6 @@
   margin-top: 0.1rem;
   padding: 0 0.2rem;
   font-size: 0.9rem;
-}
-
-.albumText {
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
 }
 
 .detailOuter {

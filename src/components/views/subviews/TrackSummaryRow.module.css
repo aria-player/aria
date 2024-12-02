@@ -49,7 +49,10 @@
 }
 
 .trackDuration {
+  width: 2rem;
   margin-left: 0.75rem;
   margin-right: 1rem;
+  display: flex;
+  justify-content: flex-end;
   flex-shrink: 0;
 }

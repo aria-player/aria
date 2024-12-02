@@ -17,6 +17,7 @@ export interface AlbumTrackListItem {
   title?: string;
   artist?: string | string[];
   album?: string;
+  albumId?: string;
   year?: number;
   artworkUri?: string;
   tracks?: number;
@@ -72,13 +73,14 @@ export const AlbumTrackList = () => {
               (track.albumArtist ?? formatStringArray(track.artist)) ||
               t("tracks.unknownArtist"),
             album: track.album || t("tracks.unknownAlbum"),
+            albumId: track.albumId,
             year: track.year || undefined,
             artworkUri: getMostCommonArtworkUri(
               visibleTracks.filter((t) => t.albumId === track.albumId)
             ),
             source: track.source,
             separator: true,
-            itemId: `album-header-${track.albumId}-`
+            itemId: `album-header-${track.albumId}`
           });
           currentAlbum = track.albumId ?? null;
           currentAlbumDiscs = Math.max(

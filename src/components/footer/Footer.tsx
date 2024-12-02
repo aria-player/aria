@@ -10,6 +10,7 @@ import { useTranslation } from "react-i18next";
 import { TriggerEvent, useContextMenu } from "react-contexify";
 import { useContext } from "react";
 import { MenuContext } from "../../contexts/MenuContext";
+import { getSourceHandle } from "../../features/plugins/pluginsSlice";
 
 export function Footer() {
   const { t } = useTranslation();
@@ -20,6 +21,8 @@ export function Footer() {
   const { show: showTrackContextMenu } = useContextMenu({
     id: "track"
   });
+  const pluginHandle = metadata && getSourceHandle(metadata?.source);
+  const displayAttribution = pluginHandle?.Attribution != null;
 
   return (
     <footer className={`footer ${styles.footer}`}>
@@ -27,7 +30,9 @@ export function Footer() {
         <div className={`footer-art ${styles.art}`}>
           <AlbumArt track={currentTrack} />
         </div>
-        <div className={styles.metadata}>
+        <div
+          className={`${styles.metadata} ${displayAttribution ? styles.compact : ""}`}
+        >
           <div className={styles.metadataRow}>
             {metadata && (
               <button
@@ -57,6 +62,15 @@ export function Footer() {
               {formatStringArray(metadata?.artist)}
             </div>
           </div>
+          {metadata && pluginHandle?.Attribution && (
+            <div className={styles.metadataRow}>
+              <pluginHandle.Attribution
+                type="track"
+                id={metadata.uri}
+                compact={false}
+              />
+            </div>
+          )}
         </div>
       </section>
       <section>

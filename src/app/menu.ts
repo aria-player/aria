@@ -357,7 +357,8 @@ export const selectMenuState = createSelector(
     }
     const columnVisibility = {} as { [key: string]: MenuItemState };
     defaultColumnDefinitions?.forEach((c) => {
-      if (c.field == "uri" || c.field == "trackId") return;
+      if (c.field == "uri" || c.field == "trackId" || c.field == "attribution")
+        return;
       const hidden = columnState?.find((col) => c.field == col.colId)?.hide;
       columnVisibility["columns." + c.field] = {
         selected: hidden != undefined ? !hidden : !c.hide,
