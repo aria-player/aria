@@ -8,6 +8,7 @@ import QuickStart from "./QuickStart";
 import { createRoot } from "react-dom/client";
 import ErrorDialog from "./ErrorDialog";
 import { createElement } from "react";
+import Attribution from "./Attribution";
 
 export type SpotifyConfig = {
   accessToken?: string;
@@ -389,6 +390,8 @@ export default function createSpotifyPlayer(
       LibraryConfig({ ...props, host, authenticate, logout }),
 
     QuickStart: (props) => QuickStart({ ...props, authenticate }),
+
+    Attribution: (props) => Attribution(props),
 
     async loadAndPlayTrack(track: TrackMetadata) {
       if (!hasTransferredPlayback && deviceId) {
