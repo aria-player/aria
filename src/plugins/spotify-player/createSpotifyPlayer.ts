@@ -9,6 +9,8 @@ import { createRoot } from "react-dom/client";
 import ErrorDialog from "./ErrorDialog";
 import { createElement } from "react";
 import Attribution from "./Attribution";
+import { i18n } from "i18next";
+import en_us from "./locales/en_us/translation.json";
 
 export type SpotifyConfig = {
   accessToken?: string;
@@ -19,8 +21,10 @@ export type SpotifyConfig = {
 };
 
 export default function createSpotifyPlayer(
-  host: SourceCallbacks
+  host: SourceCallbacks,
+  i18n: i18n
 ): SourceHandle {
+  i18n.addResourceBundle("en-US", "spotify-player", en_us);
   let player: Spotify.Player | null;
   let deviceId: string | null;
   let hasTransferredPlayback = false;
@@ -153,7 +157,8 @@ export default function createSpotifyPlayer(
             logout();
             root.unmount();
             mainView.removeChild(dialogContainer);
-          }
+          },
+          i18n
         })
       );
     }
@@ -387,11 +392,11 @@ export default function createSpotifyPlayer(
 
   return {
     LibraryConfig: (props) =>
-      LibraryConfig({ ...props, host, authenticate, logout }),
+      LibraryConfig({ ...props, host, authenticate, logout, i18n }),
 
-    QuickStart: (props) => QuickStart({ ...props, authenticate }),
+    QuickStart: (props) => QuickStart({ ...props, authenticate, i18n }),
 
-    Attribution: (props) => Attribution(props),
+    Attribution: (props) => Attribution({ ...props, i18n }),
 
     async loadAndPlayTrack(track: TrackMetadata) {
       if (!hasTransferredPlayback && deviceId) {

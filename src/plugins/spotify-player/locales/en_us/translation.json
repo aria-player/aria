@@ -1,0 +1,16 @@
+{
+  "settings": {
+    "heading": "Spotify settings",
+    "logInWithSpotify": "Log in with Spotify",
+    "logOutFromSpotify": "Log out from Spotify",
+    "toggleAdvancedSettings": "Toggle advanced settings",
+    "clientId": "Client ID",
+    "redirectUri": "Redirect URI"
+  },
+  "errorDialog": {
+    "premiumRequiredHeading": "Spotify Premium Required",
+    "premiumRequiredMessage": "Your Spotify account does not have an active Spotify Premium subscription. Spotify Premium is required for playback of tracks from Spotify within the app.",
+    "logOut": "Log out"
+  },
+  "playOnSpotify": "Play on Spotify"
+}

@@ -3,14 +3,18 @@ import { SpotifyConfig } from "./createSpotifyPlayer";
 import { SourceCallbacks } from "../../features/plugins/pluginsTypes";
 import SpotifyLogo from "./assets/spotify-brands-solid.svg?react";
 import styles from "./spotify.module.css";
+import { useTranslation } from "react-i18next";
+import { i18n } from "i18next";
 
 export default function LibraryConfig(props: {
   data: object;
   host: SourceCallbacks;
   authenticate: () => void;
   logout: () => void;
+  i18n: i18n;
 }) {
   const config = props.data as SpotifyConfig;
+  const { t } = useTranslation("spotify-player", { i18n: props.i18n });
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
   const [clientId, setClientId] = useState(config.clientId ?? "");
   const [redirectUri, setRedirectUri] = useState(config.redirectUri ?? "");
@@ -27,15 +31,15 @@ export default function LibraryConfig(props: {
 
   return (
     <div>
-      <h4 className="settings-heading">Spotify settings</h4>
+      <h4 className="settings-heading">{t("settings.heading")}</h4>
       {config.accessToken ? (
         <button className="settings-button" onClick={props.logout}>
-          Log out from Spotify
+          {t("settings.logOutFromSpotify")}
         </button>
       ) : (
         <button className={styles.loginButton} onClick={props.authenticate}>
           <SpotifyLogo className={styles.spotifyLogo} />
-          Log in with Spotify
+          {t("settings.logInWithSpotify")}
         </button>
       )}
       <p>
@@ -45,13 +49,13 @@ export default function LibraryConfig(props: {
             setShowAdvancedSettings(!showAdvancedSettings);
           }}
         >
-          Toggle advanced settings
+          {t("settings.toggleAdvancedSettings")}
         </button>
       </p>
       {showAdvancedSettings && (
         <>
           <p>
-            Client ID
+            {t("settings.clientId")}
             <br />
             <input
               type="text"
@@ -61,7 +65,7 @@ export default function LibraryConfig(props: {
             />
           </p>
           <p>
-            Redirect URI
+            {t("settings.redirectUri")}
             <br />
             <input
               type="text"

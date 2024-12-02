@@ -1,8 +1,12 @@
+import { i18n } from "i18next";
 import { AttributionProps } from "../../features/plugins/pluginsTypes";
 import SpotifyLogo from "./assets/spotify-brands-solid.svg?react";
 import styles from "./spotify.module.css";
+import { useTranslation } from "react-i18next";
 
-export default function Attribution(props: AttributionProps) {
+export default function Attribution(props: AttributionProps & { i18n: i18n }) {
+  const { t } = useTranslation("spotify-player", { i18n: props.i18n });
+
   return (
     <button
       className={styles.attribution}
@@ -15,7 +19,7 @@ export default function Attribution(props: AttributionProps) {
       }}
     >
       <SpotifyLogo style={{ width: "21px", height: "21px" }} />
-      {props.compact ? "" : "Play on Spotify"}
+      {props.compact ? "" : t("playOnSpotify")}
     </button>
   );
 }
