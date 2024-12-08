@@ -9,7 +9,7 @@ import {
   selectPluginInfo
 } from "../../../features/plugins/pluginsSlice";
 import { selectAllTracks } from "../../../features/tracks/tracksSlice";
-import { sortDefaultPluginsFirst } from "../../../app/utils";
+import { sortPlugins } from "../../../app/utils";
 import { useContext } from "react";
 import { Platform, PlatformContext } from "../../../contexts/PlatformContext";
 
@@ -25,7 +25,7 @@ export function LibraryPage() {
     .filter((plugin: PluginId) =>
       plugins[plugin].capabilities?.includes("source")
     )
-    .sort(sortDefaultPluginsFirst);
+    .sort(sortPlugins);
 
   return (
     <div className={styles.page}>

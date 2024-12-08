@@ -120,9 +120,16 @@ export function colorIsDark(accentColor: string, contrastThreshold = 2) {
   return contrastRatio >= contrastThreshold;
 }
 
-export function sortDefaultPluginsFirst(a: PluginId, b: PluginId) {
+export function sortPlugins(a: PluginId, b: PluginId) {
+  const localFilePlugins = ["tauri-player", "web-player"];
   const defaultPlugins = Object.keys(defaultPluginInfo);
-  const inDefaultA = defaultPlugins.includes(a) ? -1 : 1;
-  const inDefaultB = defaultPlugins.includes(b) ? -1 : 1;
-  return inDefaultA - inDefaultB;
+
+  const getPriority = (plugin: PluginId) => {
+    if (localFilePlugins.includes(plugin)) return 0;
+    if (defaultPlugins.includes(plugin)) return 1;
+    return 2;
+  };
+
+  const priorityDiff = getPriority(a) - getPriority(b);
+  return priorityDiff !== 0 ? priorityDiff : a.localeCompare(b);
 }

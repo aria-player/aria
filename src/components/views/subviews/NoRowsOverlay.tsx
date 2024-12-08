@@ -15,6 +15,7 @@ import { BASEPATH } from "../../../app/constants";
 import { push } from "redux-first-history";
 import { useContext } from "react";
 import { Platform, PlatformContext } from "../../../contexts/PlatformContext";
+import { sortPlugins } from "../../../app/utils";
 
 export default function NoRowsOverlay() {
   const dispatch = useAppDispatch();
@@ -23,9 +24,9 @@ export default function NoRowsOverlay() {
   const visibleViewType = useAppSelector(selectVisibleViewType);
   const visibleDisplayMode = useAppSelector(selectVisibleDisplayMode);
   const activePlugins = useAppSelector(selectActivePlugins);
-  const configurablePlugins = activePlugins.filter(
-    (plugin) => pluginHandles[plugin]?.QuickStart
-  );
+  const configurablePlugins = activePlugins
+    .filter((plugin) => pluginHandles[plugin]?.QuickStart)
+    .sort(sortPlugins);
 
   switch (visibleViewType) {
     case View.Search:
