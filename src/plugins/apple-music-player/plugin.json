@@ -1,0 +1,7 @@
+{
+  "id": "apple-music-player",
+  "name": "Apple Music",
+  "needsTauri": false,
+  "main": "createAppleMusicPlayer.tsx",
+  "capabilities": ["source"]
+}
