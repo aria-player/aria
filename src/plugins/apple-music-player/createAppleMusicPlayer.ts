@@ -1,3 +1,4 @@
+import { i18n } from "i18next";
 import {
   SourceCallbacks,
   SourceHandle
@@ -5,6 +6,7 @@ import {
 import { Track, TrackMetadata } from "../../features/tracks/tracksTypes";
 import LibraryConfig from "./LibraryConfig";
 import QuickStart from "./QuickStart";
+import en_us from "./locales/en_us/translation.json";
 
 export type AppleMusicConfig = {
   loggedIn?: boolean;
@@ -12,8 +14,11 @@ export type AppleMusicConfig = {
 };
 
 export default function createAppleMusicPlayer(
-  host: SourceCallbacks
+  host: SourceCallbacks,
+  i18n: i18n
 ): SourceHandle {
+  i18n.addResourceBundle("en-US", "apple-music-player", en_us);
+
   let music: MusicKit.MusicKitInstance;
 
   const getConfig = () => host.getData() as AppleMusicConfig;
@@ -103,9 +108,9 @@ export default function createAppleMusicPlayer(
     displayName: "Apple Music",
 
     LibraryConfig: (props) =>
-      LibraryConfig({ ...props, host, authenticate, logout }),
+      LibraryConfig({ ...props, host, authenticate, logout, i18n }),
 
-    QuickStart: (props) => QuickStart({ ...props, authenticate }),
+    QuickStart: (props) => QuickStart({ ...props, authenticate, i18n }),
 
     loadAndPlayTrack: async (track: Track) => {
       await music.setQueue({ song: track.uri });
