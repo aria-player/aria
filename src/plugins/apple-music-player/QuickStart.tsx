@@ -1,6 +1,8 @@
+import styles from "./applemusic.module.css";
+
 export default function QuickStart(props: { authenticate: () => void }) {
   return (
-    <button className="settings-button" onClick={props.authenticate}>
+    <button className={styles.loginButton} onClick={props.authenticate}>
       Log in with Apple Music
     </button>
   );

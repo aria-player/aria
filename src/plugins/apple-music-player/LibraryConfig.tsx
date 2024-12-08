@@ -1,6 +1,7 @@
 import { useState, ChangeEvent } from "react";
 import { SourceCallbacks } from "../../features/plugins/pluginsTypes";
 import { AppleMusicConfig } from "./createAppleMusicPlayer";
+import styles from "./applemusic.module.css";
 
 export default function LibraryConfig(props: {
   data: object;
@@ -24,7 +25,7 @@ export default function LibraryConfig(props: {
     <div>
       <h3 className="settings-heading">Apple Music settings</h3>
       {!config.loggedIn ? (
-        <button className="settings-button" onClick={props.authenticate}>
+        <button className={styles.loginButton} onClick={props.authenticate}>
           Log in with Apple Music
         </button>
       ) : (
@@ -34,7 +35,7 @@ export default function LibraryConfig(props: {
       )}
       <p>
         <button
-          className="settings-button"
+          className={styles.advancedSettingsButton}
           onClick={() => {
             setShowAdvancedSettings(!showAdvancedSettings);
           }}

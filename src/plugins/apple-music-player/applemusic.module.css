@@ -1,0 +1,19 @@
+.loginButton {
+  color: white;
+  background: #e5294e;
+  border: none;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.advancedSettingsButton {
+  color: var(--accent-color);
+
+  &:hover {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+}
