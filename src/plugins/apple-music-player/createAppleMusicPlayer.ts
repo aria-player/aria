@@ -1,9 +1,10 @@
-import { ChangeEvent, useState } from "react";
 import {
   SourceCallbacks,
   SourceHandle
 } from "../../features/plugins/pluginsTypes";
 import { Track, TrackMetadata } from "../../features/tracks/tracksTypes";
+import LibraryConfig from "./LibraryConfig";
+import QuickStart from "./QuickStart";
 
 export type AppleMusicConfig = {
   loggedIn?: boolean;
@@ -101,64 +102,10 @@ export default function createAppleMusicPlayer(
   return {
     displayName: "Apple Music",
 
-    LibraryConfig: (props: { data: object }) => {
-      const config = props.data as AppleMusicConfig;
+    LibraryConfig: (props) =>
+      LibraryConfig({ ...props, host, authenticate, logout }),
 
-      const [developerToken, setDeveloperToken] = useState(
-        config.developerToken ?? ""
-      );
-      const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
-
-      function updateDeveloperToken(event: ChangeEvent<HTMLInputElement>) {
-        setDeveloperToken(event.target.value);
-        host.updateData({ ...config, clientId: event.target.value });
-      }
-
-      return (
-        <div>
-          <h3 className="settings-heading">Apple Music settings</h3>
-          {!config.loggedIn ? (
-            <button className="settings-button" onClick={authenticate}>
-              Log in with Apple Music
-            </button>
-          ) : (
-            <button className="settings-button" onClick={logout}>
-              Log out from Apple Music
-            </button>
-          )}
-          <p>
-            <button
-              className="settings-button"
-              onClick={() => {
-                setShowAdvancedSettings(!showAdvancedSettings);
-              }}
-            >
-              Toggle advanced settings
-            </button>
-          </p>
-          {showAdvancedSettings && (
-            <>
-              <p>
-                Developer Token
-                <br />
-                <input
-                  type="text"
-                  value={developerToken}
-                  onChange={updateDeveloperToken}
-                  onKeyDown={(e) => e.stopPropagation()}
-                />
-              </p>
-            </>
-          )}
-        </div>
-      );
-    },
-
-    QuickStart: () => (
-      <button className="settings-button" onClick={authenticate}>
-        Log in with Apple Music
-      </button>
-    ),
+    QuickStart: (props) => QuickStart({ ...props, authenticate }),
 
     loadAndPlayTrack: async (track: Track) => {
       await music.setQueue({ song: track.uri });
