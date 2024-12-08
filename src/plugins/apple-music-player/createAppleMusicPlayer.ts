@@ -53,7 +53,9 @@ export default function createAppleMusicPlayer(
     let url = "v1/me/library/songs?" as string | null;
     while (url) {
       try {
-        const tracksResponse = await music.api.music(url + "&include=albums");
+        const tracksResponse = await music.api.music(
+          url + "&sort=-dateAdded&include=albums"
+        );
         const { data, next } = (
           tracksResponse as { data: MusicKit.Relationship<MusicKit.Songs> }
         ).data;
