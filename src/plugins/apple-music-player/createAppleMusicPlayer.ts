@@ -50,6 +50,8 @@ export default function createAppleMusicPlayer(
   }
 
   async function fetchUserLibrary() {
+    const existingTracks = host.getTracks();
+    const tracksInLibrary: string[] = [];
     let url = "v1/me/library/songs?" as string | null;
     while (url) {
       try {
@@ -84,6 +86,7 @@ export default function createAppleMusicPlayer(
             metadataLoaded: true
           } as TrackMetadata;
           tracks.push(trackMetadata);
+          tracksInLibrary.push(track.id);
         });
         url = next || null;
         if (!music.isAuthorized) return;
@@ -91,6 +94,12 @@ export default function createAppleMusicPlayer(
       } catch (error) {
         console.error("Error fetching user library:", error);
       }
+    }
+    const removedTracks = existingTracks.filter(
+      (track) => !tracksInLibrary.includes(track.uri)
+    );
+    if (removedTracks.length > 0) {
+      host.removeTracks(removedTracks.map((track) => track.uri));
     }
   }
 
