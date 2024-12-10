@@ -13,7 +13,7 @@ import {
 import { listenForAction, listenForChange } from "../../app/listener";
 import { removeTracks } from "../tracks/tracksSlice";
 import { store } from "../../app/store";
-import { defaultPluginInfo } from "../../plugins/plugins";
+import { defaultPluginInfo, defaultPluginScripts } from "../../plugins/plugins";
 import i18n from "../../i18n";
 import { isAnyOf } from "@reduxjs/toolkit";
 
@@ -45,15 +45,7 @@ const createPluginInstance = async (pluginId: PluginId) => {
     try {
       let module;
       if (Object.keys(defaultPluginInfo).includes(pluginId)) {
-        if (plugin.main.endsWith("tsx")) {
-          module = await import(
-            `../../plugins/${plugin.id}/${plugin.main.split(".")[0]}.tsx`
-          );
-        } else {
-          module = await import(
-            `../../plugins/${plugin.id}/${plugin.main.split(".")[0]}.ts`
-          );
-        }
+        module = defaultPluginScripts[pluginId];
       } else {
         module = await convertModuleStringToFunction(
           store.getState().plugins.installedPluginScripts[pluginId]
