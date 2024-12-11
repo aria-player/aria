@@ -82,7 +82,8 @@ export default function createSpotifyPlayer(
 
   async function getOrRefreshAccessToken() {
     const expiryTime = getConfig().tokenExpiry;
-    if (expiryTime && Date.now() > Number(expiryTime)) {
+    if (!expiryTime) return;
+    if (Date.now() > Number(expiryTime)) {
       await refreshToken();
     }
     return getConfig().accessToken;
@@ -117,6 +118,7 @@ export default function createSpotifyPlayer(
     body?: Record<string, string | string[]>
   ) {
     const token = await getOrRefreshAccessToken();
+    if (!token) return;
     const response = await fetch(`https://api.spotify.com/v1${endpoint}`, {
       method: method,
       headers: {
