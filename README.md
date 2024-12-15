@@ -48,7 +48,7 @@ To build the Tauri desktop app, you will also need to install the [prerequisites
 - [x] Library search
 - [x] Theme system
 - [x] Initial streaming plugins
-- [ ] Plugin development documentation
+- [x] Plugin development documentation
 - [ ] Playlist import/export
 - [ ] Improved search (search for artists/albums)
 - [ ] Improved plugin system (currently, plugins can only include browser JavaScript)

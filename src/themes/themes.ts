@@ -1,7 +1,27 @@
 export interface Theme {
+  /**
+   * Display name for this theme.
+   */
   label: string;
+  /**
+   * Whether to use light/dark default styles for this theme.
+   *
+   * The `color-scheme` CSS property is set based on this value. If not provided, the app will use the system theme setting for window elements like scrollbars.
+   */
   base?: "light" | "dark";
+  /**
+   * The file name of the theme stylesheet, e.g. `'theme.css'`.
+   */
   stylesheet?: string;
+  /**
+   * Whether to disable the accent color setting while this theme is enabled.
+   *
+   * If set to `true`, the stylesheet should include two additional CSS variables:
+   *
+   * - `--accent-color`: the accent color to use while this theme is enabled.
+   *
+   * - `--button-text-selected`: the text color to use against the accent color.
+   */
   disableAccentPicker?: boolean;
 }
 
