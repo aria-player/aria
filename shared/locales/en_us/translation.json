@@ -47,7 +47,9 @@
     "quickStart": "To get started, add some music",
     "librarySettingsShortcut": "Additional sources can be managed in <a>library settings</a>",
     "localFilesNotSupported": "Local files are not currently supported for this browser.",
-    "localFilesNotSupportedSubtitle": "You can try using a Chromium-based browser or the desktop app."
+    "localFilesNotSupportedSubtitle": "You can try using a Chromium-based browser or the desktop app.",
+    "unknownAlbum": "Unknown Album",
+    "unknownArtist": "Unknown Artist"
   },
   "views": {
     "songs": "Songs",
@@ -224,9 +226,7 @@
   },
   "albumTrackList": {
     "disc": "Disc {{number}}",
-    "empty": "No tracks to display",
-    "unknownAlbum": "Unknown Album",
-    "unknownArtist": "Unknown Artist"
+    "empty": "No tracks to display"
   },
   "queue": {
     "currentTrack": "Current track",
