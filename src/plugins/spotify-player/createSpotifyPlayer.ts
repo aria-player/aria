@@ -451,6 +451,7 @@ export default function createSpotifyPlayer(
       logout();
       const script = document.getElementById("spotify");
       script?.remove();
+      i18n.removeResourceBundle("en-US", "spotify-player");
     }
   };
 }

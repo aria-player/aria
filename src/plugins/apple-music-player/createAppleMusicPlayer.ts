@@ -160,6 +160,7 @@ export default function createAppleMusicPlayer(
         script.parentNode.removeChild(script);
       }
       document.removeEventListener("musickitloaded", fetchUserLibrary);
+      i18n.removeResourceBundle("en-US", "apple-music-player");
     }
   };
 }
