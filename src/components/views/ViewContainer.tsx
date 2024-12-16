@@ -44,17 +44,17 @@ export default function ViewContainer() {
           <TrackList />
         </div>
       )}
-      <div
-        style={{
-          height: "100%",
-          width: "100%",
-          overflow: "auto",
-          display:
-            visibleDisplayMode == DisplayMode.AlbumGrid ? "block" : "none"
-        }}
-      >
-        <AlbumGrid />
-      </div>
+      {visibleDisplayMode == DisplayMode.AlbumGrid && (
+        <div
+          style={{
+            height: "100%",
+            width: "100%",
+            overflow: "auto"
+          }}
+        >
+          <AlbumGrid />
+        </div>
+      )}
       {visibleDisplayMode == DisplayMode.SplitView && <SplitView />}
     </>
   );

@@ -1,22 +1,15 @@
-.albumGrid {
+.grid {
   position: relative;
   height: 100%;
   overflow: hidden;
 }
 
-.grid {
-  display: grid;
-  height: 100%;
-  overflow: auto;
+.gridItem {
   padding: 1rem;
-  grid-gap: 1.5rem;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  box-sizing: border-box;
 }
 
-.gridItem {
+.albumArt {
   width: 100%;
-  font-size: 14px;
   padding: 0;
   overflow: hidden;
   border-radius: 0.5rem;

@@ -133,3 +133,16 @@ export function sortPlugins(a: PluginId, b: PluginId) {
   const priorityDiff = getPriority(a) - getPriority(b);
   return priorityDiff !== 0 ? priorityDiff : a.localeCompare(b);
 }
+
+// From https://stackoverflow.com/questions/13382516/getting-scroll-bar-width-using-javascript
+export function getScrollbarWidth() {
+  const outer = document.createElement("div");
+  outer.style.visibility = "hidden";
+  outer.style.overflow = "scroll";
+  document.body.appendChild(outer);
+  const inner = document.createElement("div");
+  outer.appendChild(inner);
+  const scrollbarWidth = outer.offsetWidth - inner.offsetWidth;
+  outer.parentNode?.removeChild(outer);
+  return scrollbarWidth;
+}

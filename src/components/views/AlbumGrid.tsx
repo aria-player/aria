@@ -1,5 +1,4 @@
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-
 import { selectAllTracks } from "../../features/tracks/tracksSlice";
 import { AlbumArt } from "./subviews/AlbumArt";
 import styles from "./AlbumGrid.module.css";
@@ -15,37 +14,41 @@ import {
   selectVisibleDisplayMode,
   selectVisibleTrackGroups
 } from "../../features/visibleSelectors";
-import { useEffect, useRef } from "react";
-import { store } from "../../app/store";
-import { useLocation } from "react-router-dom";
-import { getMostCommonArtworkUri } from "../../app/utils";
+import { useRef } from "react";
+import { getMostCommonArtworkUri, getScrollbarWidth } from "../../app/utils";
 import { getSourceHandle } from "../../features/plugins/pluginsSlice";
+import { FixedSizeGrid, GridChildComponentProps } from "react-window";
+import AutoSizer from "react-virtualized-auto-sizer";
+
+type AlbumGridItemProps = GridChildComponentProps & {
+  index: number;
+};
 
 export default function AlbumGrid() {
   const dispatch = useAppDispatch();
 
-  const location = useLocation();
-  const scrollDivRef = useRef<HTMLDivElement>(null);
-  const albumRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const fixedSizeGridRef = useRef<FixedSizeGrid>(null);
   const { t } = useTranslation();
   const libraryTracks = useAppSelector(selectAllTracks);
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
   const selectedItem = useAppSelector(selectVisibleSelectedTrackGroup);
   const visibleDisplayMode = useAppSelector(selectVisibleDisplayMode);
-  const allAlbums = [
+  const visibleTrackGroups = useAppSelector(selectVisibleTrackGroups);
+  const visibleAlbums = [
     ...new Map(
       libraryTracks
         .filter((track) => track.albumId && track.album)
         .map((track) => [track.albumId, track])
     ).values()
-  ].sort(
-    (a, b) =>
-      a.album?.localeCompare(b.album!, undefined, {
-        sensitivity: "base",
-        ignorePunctuation: true
-      }) ?? 0
-  );
-  const visibleAlbums = useAppSelector(selectVisibleTrackGroups);
+  ]
+    .filter((track) => visibleTrackGroups.includes(track.albumId))
+    .sort(
+      (a, b) =>
+        a.album?.localeCompare(b.album!, undefined, {
+          sensitivity: "base",
+          ignorePunctuation: true
+        }) ?? 0
+    );
 
   function setSelectedItem(albumId?: string) {
     if (visiblePlaylist?.id) {
@@ -60,111 +63,130 @@ export default function AlbumGrid() {
     }
   }
 
-  useEffect(() => {
-    if (scrollDivRef.current) {
-      const selectedItem = selectVisibleSelectedTrackGroup(store.getState());
-      if (selectedItem == null) {
-        scrollDivRef.current.scrollTop = 0;
-      } else {
-        if (selectedItem && albumRefs.current[selectedItem]) {
-          albumRefs.current[selectedItem]?.scrollIntoView({
-            block: "center"
-          });
-        }
-      }
-    }
-  }, [location]);
+  const itemRenderer = ({ index, style }: AlbumGridItemProps) => {
+    if (index >= visibleAlbums.length) return null;
+    const track = visibleAlbums[index];
+    const pluginHandle = getSourceHandle(track.source);
+    return (
+      <div key={track.albumId ?? index} style={style}>
+        <div className={`album-grid-item ${styles.gridItem}`}>
+          <button
+            className={styles.albumArt}
+            onClick={() => setSelectedItem(track.albumId)}
+            disabled={
+              selectedItem || visibleDisplayMode !== DisplayMode.AlbumGrid
+                ? true
+                : false
+            }
+          >
+            <AlbumArt
+              track={{
+                ...track,
+                artworkUri: getMostCommonArtworkUri(
+                  libraryTracks.filter((t) => t.albumId === track.albumId)
+                )
+              }}
+            />
+          </button>
+          <div className={styles.albumInfo}>
+            <div className={styles.albumTextContainer}>
+              <div className={`${styles.albumText} ${styles.albumTitle}`}>
+                {track.album}
+              </div>
+              <div className={`${styles.albumText} ${styles.albumArtist}`}>
+                {track.albumArtist ?? track.artist}
+              </div>
+            </div>
+            {track.albumId && pluginHandle?.Attribution && (
+              <pluginHandle.Attribution
+                type="album"
+                id={track.albumId}
+                compact={true}
+              />
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
 
   return (
-    <div className={`album-grid ${styles.albumGrid}`}>
-      <div
-        ref={scrollDivRef}
-        className={styles.grid}
-        style={{ display: visibleAlbums.length == 0 ? "none" : "grid" }}
-      >
-        {allAlbums.map((track, index) => {
-          const pluginHandle = getSourceHandle(track.source);
-          return (
-            <div
-              key={track.albumId ?? index}
-              ref={(el) => {
-                albumRefs.current[track.albumId ?? index] = el;
-              }}
-              style={{
-                display: visibleAlbums.includes(track.albumId)
-                  ? "block"
-                  : "none"
-              }}
-            >
-              <button
-                className={`album-grid-item ${styles.gridItem}`}
-                onClick={() => setSelectedItem(track.albumId)}
-                disabled={
-                  selectedItem || visibleDisplayMode != DisplayMode.AlbumGrid
-                    ? true
-                    : false
+    <div className={`album-grid ${styles.grid}`}>
+      {visibleAlbums.length > 0 ? (
+        <AutoSizer>
+          {({ height, width }) => {
+            const widthWithoutScrollbar = width - (getScrollbarWidth() ?? 0);
+            const minItemWidth = 240;
+            const columnCount = Math.max(
+              1,
+              Math.floor(widthWithoutScrollbar / minItemWidth)
+            );
+            const columnWidth = widthWithoutScrollbar / columnCount;
+            const rowHeight = columnWidth + 40;
+            const rowCount = Math.ceil(visibleAlbums.length / columnCount);
+            const selectedIndex = visibleAlbums.findIndex(
+              (album) => album.albumId === selectedItem
+            );
+            const initialRowIndex =
+              selectedIndex >= 0 ? Math.floor(selectedIndex / columnCount) : 0;
+            const initialScrollTop =
+              initialRowIndex * rowHeight - height / 2 + rowHeight / 2;
+
+            return (
+              <FixedSizeGrid
+                ref={fixedSizeGridRef}
+                width={width}
+                height={height}
+                rowCount={rowCount}
+                columnCount={columnCount}
+                columnWidth={columnWidth}
+                rowHeight={rowHeight}
+                initialScrollTop={initialScrollTop}
+                style={{ overflowX: "hidden" }}
+              >
+                {({ columnIndex, rowIndex, style, data }) =>
+                  itemRenderer({
+                    columnIndex,
+                    rowIndex,
+                    style,
+                    data,
+                    index: rowIndex * columnCount + columnIndex
+                  })
                 }
-              >
-                <AlbumArt
-                  track={{
-                    ...track,
-                    artworkUri: getMostCommonArtworkUri(
-                      libraryTracks.filter((t) => t.albumId === track.albumId)
-                    )
-                  }}
-                />
-              </button>
-              <div className={styles.albumInfo}>
-                <div className={styles.albumTextContainer}>
-                  <div className={`${styles.albumText} ${styles.albumTitle}`}>
-                    {track.album}
-                  </div>
-                  <div className={`${styles.albumText} ${styles.albumArtist}`}>
-                    {track.albumArtist ?? track.artist}
-                  </div>
-                </div>
-                {track.albumId && pluginHandle?.Attribution && (
-                  <pluginHandle.Attribution
-                    type="album"
-                    id={track.albumId}
-                    compact={true}
-                  />
-                )}
-              </div>
-            </div>
-          );
-        })}
-        {selectedItem && visibleDisplayMode == DisplayMode.AlbumGrid && (
+              </FixedSizeGrid>
+            );
+          }}
+        </AutoSizer>
+      ) : (
+        <div className={styles.empty}>{t("albumGrid.empty")}</div>
+      )}
+      {selectedItem && (
+        <div
+          className={`album-grid-overlay-background ${styles.detailOuter}`}
+          onClick={(e) => {
+            if (e.currentTarget === e.target) {
+              setSelectedItem();
+            }
+          }}
+        >
           <div
-            className={`album-grid-overlay-background ${styles.detailOuter}`}
-            onClick={(e) => {
-              if (e.currentTarget === e.target) {
-                setSelectedItem();
-              }
-            }}
+            className={`album-grid-overlay-foreground ${styles.detailInner}`}
           >
-            <div
-              className={`album-grid-overlay-foreground ${styles.detailInner}`}
+            <button
+              className={`album-grid-overlay-back-button ${styles.backButton}`}
+              onClick={() => {
+                setSelectedItem();
+              }}
             >
-              <button
-                className={`album-grid-overlay-back-button ${styles.backButton}`}
-                onClick={() => {
-                  setSelectedItem();
-                }}
-              >
-                <LeftArrow />
-              </button>
-              <div
-                className={`album-grid-album-track-list ${styles.albumTrackList}`}
-              >
-                <AlbumTrackList />
-              </div>
+              <LeftArrow />
+            </button>
+            <div
+              className={`album-grid-album-track-list ${styles.albumTrackList}`}
+            >
+              <AlbumTrackList />
             </div>
           </div>
-        )}
-      </div>
-      {visibleAlbums.length == 0 && (
-        <div className={styles.empty}>{t("albumGrid.empty")}</div>
+        </div>
       )}
     </div>
   );
