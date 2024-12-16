@@ -1,3 +1,4 @@
+import { i18n } from "i18next";
 import {
   IntegrationCallbacks,
   IntegrationHandle
@@ -5,8 +6,11 @@ import {
 import { Track } from "../../features/tracks/tracksTypes";
 
 export default function createMediaSession(
-  host: IntegrationCallbacks
+  host: IntegrationCallbacks,
+  i18n: i18n
 ): IntegrationHandle | null {
+  const { t } = i18n;
+
   if (!("mediaSession" in navigator)) {
     return null;
   }
@@ -23,8 +27,8 @@ export default function createMediaSession(
         title: track.title,
         artist: Array.isArray(track.artist)
           ? track.artist.join("/")
-          : (track.artist ?? "Unknown Artist"),
-        album: track.album ?? "Unknown Album",
+          : (track.artist ?? t("tracks.unknownArtist")),
+        album: track.album ?? t("tracks.unknownAlbum"),
         artwork:
           artwork != null && artwork != undefined
             ? [{ src: artwork }]
