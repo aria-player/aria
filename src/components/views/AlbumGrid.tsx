@@ -14,7 +14,7 @@ import {
   selectVisibleDisplayMode,
   selectVisibleTrackGroups
 } from "../../features/visibleSelectors";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getMostCommonArtworkUri, getScrollbarWidth } from "../../app/utils";
 import { getSourceHandle } from "../../features/plugins/pluginsSlice";
 import { FixedSizeGrid, GridChildComponentProps } from "react-window";
@@ -49,6 +49,11 @@ export default function AlbumGrid() {
           ignorePunctuation: true
         }) ?? 0
     );
+  const [overscanRowCount, setOverscanRowCount] = useState(0);
+
+  useEffect(() => {
+    setOverscanRowCount(20);
+  }, []);
 
   function setSelectedItem(albumId?: string) {
     if (visiblePlaylist?.id) {
@@ -143,6 +148,7 @@ export default function AlbumGrid() {
                 rowHeight={rowHeight}
                 initialScrollTop={initialScrollTop}
                 style={{ overflowX: "hidden" }}
+                overscanRowCount={overscanRowCount}
               >
                 {({ columnIndex, rowIndex, style, data }) =>
                   itemRenderer({
