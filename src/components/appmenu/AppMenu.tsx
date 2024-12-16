@@ -72,7 +72,7 @@ export function AppMenu(props: {
             disabled={menuState[menuStateId]?.disabled}
             closeOnClick={!item.keepopen}
           >
-            <span className={styles.tick}>
+            <span className={styles.check}>
               {menuState[menuStateId]?.selected ? "✔" : ""}
             </span>
             {label}

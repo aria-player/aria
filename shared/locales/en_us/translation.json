@@ -85,8 +85,8 @@
       "initialView": "Initial view",
       "continueFromLastView": "Continue from last open view",
       "initialViewLabel": "Choose which view should appear when starting the application.",
-      "behaviour": "Application behavior",
-      "minimiseToTray": "Close button minimizes app to system tray"
+      "behavior": "Application behavior",
+      "minimizeToTray": "Close button minimizes app to system tray"
     },
     "library": {
       "subtitle": "Configure your music sources and organize your library.",

@@ -19,14 +19,14 @@ export function GeneralPage() {
   const { t, i18n } = useTranslation();
   const dispatch = useAppDispatch();
   const language = useAppSelector(selectLanguage);
-  const { platform, minimiseToTray, setMinimiseToTray } =
+  const { platform, minimizeToTray, setMinimizeToTray } =
     useContext(PlatformContext);
   const initialView = useAppSelector(selectInitialView);
 
   const handleCheckboxChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setMinimiseToTray(event.target.checked);
+    setMinimizeToTray(event.target.checked);
   };
 
   const handleLanguageChange = (
@@ -106,17 +106,15 @@ export function GeneralPage() {
       )}
       {isTauri() && platform != Platform.Mac && (
         <section className="settings-section">
-          <h4 className="settings-heading">
-            {t("settings.general.behaviour")}
-          </h4>
+          <h4 className="settings-heading">{t("settings.general.behavior")}</h4>
           <div>
             <input
               className={styles.checkbox}
               type="checkbox"
-              checked={minimiseToTray ?? false}
+              checked={minimizeToTray ?? false}
               onChange={handleCheckboxChange}
             />
-            {t("settings.general.minimiseToTray")}
+            {t("settings.general.minimizeToTray")}
           </div>
         </section>
       )}

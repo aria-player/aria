@@ -53,15 +53,15 @@ pub fn close(app_handle: tauri::AppHandle) {
     {
         let stores = app_handle.state::<StoreCollection<Wry>>();
         let path = PathBuf::from(".app-config");
-        let minimise_to_tray = with_store(app_handle.to_owned(), stores, path, |store| {
+        let minimize_to_tray = with_store(app_handle.to_owned(), stores, path, |store| {
             Ok(store
-                .get("minimisetotray")
+                .get("minimizetotray")
                 .and_then(|val| val.as_bool())
                 .unwrap_or(false))
         })
         .unwrap_or(false);
 
-        if minimise_to_tray {
+        if minimize_to_tray {
             let window = app_handle.get_window("main").unwrap();
             window.hide().unwrap();
             app_handle

@@ -34,9 +34,9 @@ test("renders search bar when loaded", () => {
     platform: Platform.Web,
     fullscreen: null,
     decorations: null,
-    minimiseToTray: null,
+    minimizeToTray: null,
     setDecorations: () => {},
-    setMinimiseToTray: () => {}
+    setMinimizeToTray: () => {}
   };
   ModuleRegistry.registerModules([ClientSideRowModelModule]);
 

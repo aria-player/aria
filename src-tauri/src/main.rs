@@ -60,7 +60,7 @@ fn main() {
             let stores = app.state::<StoreCollection<Wry>>();
             let path = PathBuf::from(".app-config");
             with_store(app.app_handle(), stores, path, |store| {
-                utils::set_config_if_null(store, "minimisetotray", || json!(false));
+                utils::set_config_if_null(store, "minimizetotray", || json!(false));
                 store.save()
             })
             .unwrap();

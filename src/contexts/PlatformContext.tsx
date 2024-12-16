@@ -29,16 +29,16 @@ export const PlatformContext = createContext<{
   platform: Platform;
   fullscreen: boolean | null;
   decorations: boolean | null;
-  minimiseToTray: boolean | null;
+  minimizeToTray: boolean | null;
   setDecorations: (decorations: boolean) => void;
-  setMinimiseToTray: (minimiseToTray: boolean) => void;
+  setMinimizeToTray: (minimizeToTray: boolean) => void;
 }>({
   platform: Platform.Unknown,
   fullscreen: null,
   decorations: null,
-  minimiseToTray: null,
+  minimizeToTray: null,
   setDecorations: () => {},
-  setMinimiseToTray: () => {}
+  setMinimizeToTray: () => {}
 });
 
 export function PlatformProvider({ children }: { children: ReactNode }) {
@@ -52,10 +52,10 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
   const [platform, setPlatform] = useState<Platform>(Platform.Unknown);
   const [fullscreen, setFullscreen] = useState<boolean | null>(null);
   const [decorations, setDecorations] = useState<boolean | null>(null);
-  const [minimiseToTray, setMinimiseToTray] = useState<boolean | null>(null);
+  const [minimizeToTray, setMinimizeToTray] = useState<boolean | null>(null);
 
   useEffect(() => {
-    async function initialise() {
+    async function initialize() {
       if (platform !== Platform.Unknown) return;
       const initialView = selectInitialView(store.getState());
       if (window.location.pathname == BASEPATH) {
@@ -88,16 +88,16 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
       if (osType == "Windows_NT") {
         setDecorations(await appWindow.isDecorated());
       }
-      setMinimiseToTray(
+      setMinimizeToTray(
         await invoke("get_app_config", {
-          configItem: "minimisetotray"
+          configItem: "minimizetotray"
         })
       );
       setReady(true);
       invoke("ready");
     }
 
-    initialise();
+    initialize();
   }, [dispatch, platform, location]);
 
   useEffect(() => {
@@ -163,12 +163,12 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
     setDecorations(decorations);
   };
 
-  const setMinimiseToTrayConfig = async (minimiseToTray: boolean) => {
+  const setMinimizeToTrayConfig = async (minimizeToTray: boolean) => {
     invoke("update_app_config", {
-      configItem: "minimisetotray",
-      newValue: minimiseToTray
+      configItem: "minimizetotray",
+      newValue: minimizeToTray
     });
-    setMinimiseToTray(minimiseToTray);
+    setMinimizeToTray(minimizeToTray);
   };
 
   return (
@@ -177,9 +177,9 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
         platform,
         fullscreen,
         decorations,
-        minimiseToTray,
+        minimizeToTray,
         setDecorations: setDecorationsConfig,
-        setMinimiseToTray: setMinimiseToTrayConfig
+        setMinimizeToTray: setMinimizeToTrayConfig
       }}
     >
       {children}

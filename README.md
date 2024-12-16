@@ -5,7 +5,7 @@ A modern music player for the desktop and browser
 Aria is a cross-platform music player featuring:
 
 - **Configurable views** so you can group tracks by album, artist, and more
-- **Playlists and folders** to keep things organised
+- **Playlists and folders** to keep things organized
 - **Queue management** with persistence across playlists
 - **Custom themes** and support for light/dark mode
 - **Plugins** for connecting to external services
@@ -56,6 +56,6 @@ To build the Tauri desktop app, you will also need to install the [prerequisites
 - [ ] In-app plugin/theme browser
 - [ ] Metadata editing
 - [ ] Lyrics support
-- [ ] Equaliser
+- [ ] Equalizer
 
 Currently the most significant challenge in this project is the plugin system. The goal is to enable integration with music streaming services, cloud storage providers, and services like Last.fm. However, the current implementation might not be very scalable. Any advice, suggestions, or contributions towards this goal would be greatly appreciated.
