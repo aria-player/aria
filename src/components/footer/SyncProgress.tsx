@@ -1,12 +1,34 @@
+import { useTranslation } from "react-i18next";
+import { useAppSelector } from "../../app/hooks";
+import {
+  pluginHandles,
+  selectPluginInfo,
+  selectSourceSyncProgress
+} from "../../features/plugins/pluginsSlice";
 import styles from "./SyncProgress.module.css";
 
 export const SyncProgress = (props: { percentage: number }) => {
+  const { t } = useTranslation();
+  const pluginInfo = useAppSelector(selectPluginInfo);
+  const syncingSources = Object.entries(
+    useAppSelector(selectSourceSyncProgress)
+  )
+    .filter(([, progress]) => progress.synced < progress.total)
+    .map(
+      ([pluginId]) =>
+        pluginHandles[pluginId]?.displayName ?? pluginInfo[pluginId].name
+    );
   const radius = 10;
   const circumference = 2 * Math.PI * radius;
   const strokeOffset = ((100 - props.percentage) * circumference) / 100;
 
   return (
-    <div className={styles.syncProgress}>
+    <div
+      className={styles.syncProgress}
+      title={t("footer.syncInProgress", {
+        source: syncingSources.join("/")
+      })}
+    >
       <svg width={50} height={50}>
         <g transform={`rotate(-90 100 100)`}>
           <circle

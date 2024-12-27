@@ -237,7 +237,8 @@
   "footer": {
     "toggleTimeDisplay": "Toggle time display mode",
     "scanProgressLabel": "Scanning tracks...",
-    "scanProgress": "{{scannedTracks}}/{{totalTracks}}"
+    "scanProgress": "{{scannedTracks}}/{{totalTracks}}",
+    "syncInProgress": "{{source}} sync in progress..."
   },
   "accentColors": {
     "blue": "Blue",
