@@ -1,0 +1,9 @@
+.syncProgress {
+  position: relative;
+  width: 50;
+  height: 50;
+}
+
+.percentage {
+  stroke-dashoffset: 0.5s ease;
+}

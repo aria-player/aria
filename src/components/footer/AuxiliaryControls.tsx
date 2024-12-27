@@ -20,6 +20,8 @@ import { View } from "../../app/view";
 import { selectVisibleViewType } from "../../features/visibleSelectors";
 import { useTranslation } from "react-i18next";
 import { selectAllTracks } from "../../features/tracks/tracksSlice";
+import { SyncProgress } from "./SyncProgress";
+import { selectAggregateSyncProgress } from "../../features/plugins/pluginsSlice";
 
 export function AuxiliaryControls() {
   const dispatch = useAppDispatch();
@@ -29,6 +31,7 @@ export function AuxiliaryControls() {
   const volume = useAppSelector(selectVolume);
   const visibleViewType = useAppSelector(selectVisibleViewType);
   const allTracks = useAppSelector(selectAllTracks);
+  const aggregateProgress = useAppSelector(selectAggregateSyncProgress);
   const scannedTracks = allTracks.filter(
     (track) => track.metadataLoaded
   ).length;
@@ -63,6 +66,9 @@ export function AuxiliaryControls() {
             totalTracks
           })}
         </div>
+      )}
+      {aggregateProgress != null && aggregateProgress < 100 && (
+        <SyncProgress percentage={aggregateProgress} />
       )}
       <div className={styles.volume}>
         <MediaSlider

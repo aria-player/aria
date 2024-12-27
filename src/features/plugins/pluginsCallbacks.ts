@@ -8,12 +8,17 @@ import {
   selectTrackById,
   selectTrackIds
 } from "../tracks/tracksSlice";
-import { selectActivePlugins, setPluginData } from "./pluginsSlice";
+import {
+  selectActivePlugins,
+  setPluginData,
+  setSourceSyncProgress
+} from "./pluginsSlice";
 import {
   PluginId,
   BaseCallbacks,
   SourceCallbacks,
-  IntegrationCallbacks
+  IntegrationCallbacks,
+  SyncProgress
 } from "./pluginsTypes";
 import { nextTrack, pause, resume, stop } from "../player/playerSlice";
 import { restartOrPreviousTrack } from "../player/playerTime";
@@ -95,6 +100,9 @@ export const getSourceCallbacks = (pluginId: PluginId): SourceCallbacks => {
     removeTracks: (uris?: TrackUri[]) => handleRemoveTracks(pluginId, uris),
     updateTracks: (metadata: TrackMetadata[]) =>
       handleUpdateTracks(pluginId, metadata),
+    setSyncProgress(syncProgress: SyncProgress) {
+      store.dispatch(setSourceSyncProgress({ pluginId, syncProgress }));
+    },
     getTracks: () => {
       const libraryTracks = selectAllTracks(store.getState());
       return libraryTracks.filter((track: Track) => track.source === pluginId);

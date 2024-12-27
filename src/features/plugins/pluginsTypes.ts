@@ -185,6 +185,19 @@ export interface SourceHandle extends BaseHandle {
   setTime: (position: number) => void;
 }
 
+export type SyncProgress = {
+  /**
+   * The number of tracks that have been synchronized (or other metric relative to `total`) to match the external source so far.
+   */
+  synced: number;
+  /**
+   * The total number of tracks being synchronized from the external source.
+   *
+   * If the exact number of tracks is unknown, an alternative metric can be used, e.g. albums or API requests to complete.
+   */
+  total: number;
+};
+
 /**
  * Callbacks for a plugin that provides an audio backend and can manage the user's music library.
  */
@@ -203,6 +216,12 @@ export interface SourceCallbacks extends BaseCallbacks {
    * Add new tracks to the library and update existing tracks with new metadata.
    */
   updateTracks: (metadata: TrackMetadata[]) => void;
+  /**
+   * Set the current progress while synchronizing the user's library to be up to date with an external source.
+   *
+   * A progress indicator will appear if `status` indicates that there are still tracks left to synchronize.
+   */
+  setSyncProgress: (status: SyncProgress) => void;
   /**
    * Returns all tracks for this source in the library.
    */

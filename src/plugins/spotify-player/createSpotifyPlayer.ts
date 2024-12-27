@@ -173,6 +173,30 @@ export default function createSpotifyPlayer(
     const tracksLimit = 50;
     let tracksOffset = 0;
     let tracksRemaining = true;
+    let progress = 0;
+    // TODO: Possibly refactor to make use of initial response data
+    const [totalTracksResponse, totalAlbumsResponse] = await Promise.all([
+      spotifyRequest(
+        `/me/tracks?limit=1`
+      ) as Promise<SpotifyApi.UsersSavedTracksResponse>,
+      spotifyRequest(
+        `/me/albums?limit=1`
+      ) as Promise<SpotifyApi.UsersSavedAlbumsResponse>
+    ]);
+    const totalTracks = totalTracksResponse?.total || 0;
+    const totalAlbums = totalAlbumsResponse?.total || 0;
+
+    const incrementProgress = (amount: number) => {
+      progress += amount;
+      host.setSyncProgress({
+        synced: progress,
+        total:
+          totalTracks +
+          totalAlbums +
+          new Set(Object.values(albumArtistMapping)).size
+      });
+    };
+
     while (tracksRemaining) {
       const tracksResponse = (await spotifyRequest(
         `/me/tracks?limit=${tracksLimit}&offset=${tracksOffset}`
@@ -208,6 +232,7 @@ export default function createSpotifyPlayer(
         }
         if (!getConfig().accessToken) return;
         host.updateTracks(tracksToAdd);
+        incrementProgress(tracksResponse.items.length);
         if (tracksResponse.items.length < tracksLimit) {
           tracksRemaining = false;
         } else {
@@ -257,6 +282,7 @@ export default function createSpotifyPlayer(
           tracksToAdd.push(...tracksFromResponse);
         }
         host.updateTracks(tracksToAdd);
+        incrementProgress(albumsResponse.items.length);
         if (albumsResponse.items.length < albumsLimit) {
           albumsRemaining = false;
         } else {
@@ -284,6 +310,7 @@ export default function createSpotifyPlayer(
         for (const artist of artistResponse.artists) {
           artistGenreMapping[artist.id] = artist.genres;
         }
+        incrementProgress(artistResponse.artists.length);
       }
     }
     const updatedTracks = tracks.map((track) => {
@@ -381,6 +408,7 @@ export default function createSpotifyPlayer(
     if (player) {
       player.disconnect();
     }
+    host.setSyncProgress({ synced: 0, total: 0 });
     host.removeTracks();
     const config = getConfig();
     host.updateData({

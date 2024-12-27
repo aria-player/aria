@@ -8,7 +8,8 @@ import {
   AnyPluginHandle,
   PluginId,
   PluginInfo,
-  SourceHandle
+  SourceHandle,
+  SyncProgress
 } from "./pluginsTypes";
 import { setupPluginListeners } from "./pluginsListeners";
 import { RootState, store } from "../../app/store";
@@ -22,6 +23,7 @@ type PluginsState = {
   enabledPlugins: PluginId[];
   activePlugins: PluginId[];
   pluginData: Partial<Record<PluginId, object>>;
+  sourceSyncProgress: Record<PluginId, SyncProgress>;
 };
 
 export const pluginHandles: Partial<Record<PluginId, AnyPluginHandle>> = {};
@@ -36,7 +38,8 @@ const initialState: PluginsState = {
     "apple-music-player"
   ],
   activePlugins: [],
-  pluginData: {}
+  pluginData: {},
+  sourceSyncProgress: {}
 };
 
 export function getSourceHandle(pluginId: PluginId): SourceHandle | undefined {
@@ -103,6 +106,7 @@ export const pluginsSlice = createSlice({
       } else {
         state.enabledPlugins = state.enabledPlugins.filter((p) => p !== plugin);
         delete state.pluginData[plugin];
+        delete state.sourceSyncProgress[plugin];
       }
     },
     setPluginActive: (
@@ -125,6 +129,13 @@ export const pluginsSlice = createSlice({
         ...state.pluginData[plugin],
         ...data
       };
+    },
+    setSourceSyncProgress(
+      state,
+      action: PayloadAction<{ pluginId: string; syncProgress: SyncProgress }>
+    ) {
+      const { pluginId, syncProgress } = action.payload;
+      state.sourceSyncProgress[pluginId] = syncProgress;
     }
   }
 });
@@ -134,7 +145,8 @@ export const {
   uninstallPlugin,
   setPluginEnabled,
   setPluginActive,
-  setPluginData
+  setPluginData,
+  setSourceSyncProgress
 } = pluginsSlice.actions;
 
 export const selectEnabledPlugins = (state: RootState) =>
@@ -142,6 +154,8 @@ export const selectEnabledPlugins = (state: RootState) =>
 export const selectActivePlugins = (state: RootState) =>
   state.plugins.activePlugins;
 export const selectPluginData = (state: RootState) => state.plugins.pluginData;
+export const selectSourceSyncProgress = (state: RootState) =>
+  state.plugins.sourceSyncProgress;
 
 export const selectPluginInfo = createSelector(
   (state: RootState) => state.plugins.installedPluginInfo,
@@ -149,6 +163,20 @@ export const selectPluginInfo = createSelector(
     ...defaultPluginInfo,
     ...installedPluginInfo
   })
+);
+
+export const selectAggregateSyncProgress = createSelector(
+  (state: RootState) => state.plugins.sourceSyncProgress,
+  (sourceSyncProgress) => {
+    const pluginIds = Object.keys(sourceSyncProgress);
+    let synced = 0;
+    let total = 0;
+    for (const pluginId of pluginIds) {
+      synced += sourceSyncProgress[pluginId].synced;
+      total += sourceSyncProgress[pluginId].total;
+    }
+    return total > 0 ? Math.round((synced / total) * 100) : null;
+  }
 );
 
 export default pluginsSlice.reducer;

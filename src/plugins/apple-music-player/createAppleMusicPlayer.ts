@@ -53,15 +53,21 @@ export default function createAppleMusicPlayer(
     const existingTracks = host.getTracks();
     const tracksInLibrary: string[] = [];
     let url = "v1/me/library/songs?" as string | null;
+    let progress = 0;
     while (url) {
       try {
         const tracksResponse = await music.api.music(
           url + "&sort=-dateAdded&include=albums"
         );
-        const { data, next } = (
+        const { data, meta, next } = (
           tracksResponse as { data: MusicKit.Relationship<MusicKit.Songs> }
         ).data;
         const tracks: TrackMetadata[] = [];
+        progress += data.length;
+        host.setSyncProgress({
+          synced: progress,
+          total: meta?.total
+        });
         data.forEach((track) => {
           const albumData = track.relationships?.albums
             .data[0] as unknown as MusicKit.LibraryAlbums;
@@ -112,6 +118,7 @@ export default function createAppleMusicPlayer(
   async function logout() {
     await music.unauthorize();
     host.updateData({ ...getConfig(), loggedIn: false });
+    host.setSyncProgress({ synced: 0, total: 0 });
     host.removeTracks();
   }
 
