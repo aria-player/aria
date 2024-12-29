@@ -3,6 +3,7 @@ import {
   pluginHandles,
   selectPluginInfo,
   setPluginActive,
+  setPluginData,
   uninstallPlugin
 } from "./pluginsSlice";
 import {
@@ -101,5 +102,21 @@ export function setupPluginListeners() {
   listenForAction(isAnyOf(uninstallPlugin), (_, action) => {
     const pluginId = action.payload as PluginId;
     disposePluginInstance(pluginId);
+  });
+
+  listenForAction(isAnyOf(setPluginData), (state, action) => {
+    if (!state.tracks._persist?.rehydrated) return;
+    const { plugin, data } = action.payload as {
+      plugin: PluginId;
+      data: object;
+    };
+    const handle = pluginHandles[plugin];
+    if (handle?.onDataUpdate) {
+      try {
+        handle.onDataUpdate(data);
+      } catch (e) {
+        console.error(`Error invoking onDataUpdate for ${plugin}:`, e);
+      }
+    }
   });
 }
