@@ -19,7 +19,7 @@ export default function createAppleMusicPlayer(
 ): SourceHandle {
   i18n.addResourceBundle("en-US", "apple-music-player", en_us);
 
-  let music: MusicKit.MusicKitInstance;
+  let music: MusicKit.MusicKitInstance | undefined;
 
   const getConfig = () => host.getData() as AppleMusicConfig;
 
@@ -56,7 +56,7 @@ export default function createAppleMusicPlayer(
     let progress = 0;
     while (url) {
       try {
-        const tracksResponse = await music.api.music(
+        const tracksResponse = await music?.api.music(
           url + "&sort=-dateAdded&include=albums"
         );
         const { data, meta, next } = (
@@ -95,7 +95,7 @@ export default function createAppleMusicPlayer(
           tracksInLibrary.push(track.id);
         });
         url = next || null;
-        if (!music.isAuthorized) return;
+        if (!music?.isAuthorized) return;
         host.updateTracks(tracks);
       } catch (error) {
         console.error("Error fetching user library:", error);
@@ -110,13 +110,13 @@ export default function createAppleMusicPlayer(
   }
 
   async function authenticate() {
-    await music.authorize();
+    await music?.authorize();
     host.updateData({ ...getConfig(), loggedIn: true });
     await fetchUserLibrary();
   }
 
   async function logout() {
-    await music.unauthorize();
+    await music?.unauthorize();
     host.updateData({ ...getConfig(), loggedIn: false });
     host.setSyncProgress({ synced: 0, total: 0 });
     host.removeTracks();
@@ -131,8 +131,8 @@ export default function createAppleMusicPlayer(
     QuickStart: (props) => QuickStart({ ...props, authenticate, i18n }),
 
     loadAndPlayTrack: async (track: Track) => {
-      await music.setQueue({ song: track.uri });
-      await music.play();
+      await music?.setQueue({ song: track.uri });
+      await music?.play();
     },
 
     getTrackArtwork: async (track: Track) => {
@@ -140,29 +140,33 @@ export default function createAppleMusicPlayer(
     },
 
     pause: () => {
-      music.pause();
+      music?.pause();
     },
 
     resume: () => {
-      music.play();
+      music?.play();
     },
 
     setVolume: (volume: number) => {
-      (music as unknown as MusicKit.Player).volume = volume / 100;
+      if (music) {
+        (music as unknown as MusicKit.Player).volume = volume / 100;
+      }
     },
 
     setMuted: (muted: boolean) => {
-      (music as unknown as MusicKit.Player).volume = muted
-        ? 0
-        : host.getVolume() / 100;
+      if (music) {
+        (music as unknown as MusicKit.Player).volume = muted
+          ? 0
+          : host.getVolume() / 100;
+      }
     },
 
     setTime: (position: number) => {
-      music.seekToTime(position / 1000);
+      music?.seekToTime(position / 1000);
     },
 
     dispose: () => {
-      music.stop();
+      music?.stop();
       if (script.parentNode) {
         script.parentNode.removeChild(script);
       }
