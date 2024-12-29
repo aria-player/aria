@@ -10,7 +10,10 @@
   "errorDialog": {
     "premiumRequiredHeading": "Spotify Premium Required",
     "premiumRequiredMessage": "Your Spotify account does not have an active Spotify Premium subscription. Spotify Premium is required for playback of tracks from Spotify within the app.",
-    "logOut": "Log out"
+    "clientIdRequiredHeading": "Client ID Not Set",
+    "clientIdRequiredMessage": "Logging in with Spotify is not currently available unless you provide a Spotify application client ID. To obtain one, set up a Spotify developer account and create an app. Your app must include <uri /> as a Redirect URI.\n\nOnce you have created an app, go to its settings and copy the client ID. Then, in Aria, go to Settings -> Library, click 'Toggle advanced settings' under 'Spotify settings', and paste your client ID into the 'Client ID' field.",
+    "logOut": "Log out",
+    "close": "Close"
   },
   "playOnSpotify": "Play on Spotify"
 }

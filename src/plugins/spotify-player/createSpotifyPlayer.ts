@@ -6,7 +6,7 @@ import {
 import LibraryConfig from "./LibraryConfig";
 import QuickStart from "./QuickStart";
 import { createRoot } from "react-dom/client";
-import ErrorDialog from "./ErrorDialog";
+import ErrorDialog, { ErrorDialogType } from "./ErrorDialog";
 import { createElement } from "react";
 import Attribution from "./Attribution";
 import { i18n } from "i18next";
@@ -144,26 +144,31 @@ export default function createSpotifyPlayer(
       profileResponse.product === "free" ||
       profileResponse.product === "open"
     ) {
-      const mainView = document.getElementsByClassName("main-view")[0];
-      if (!mainView) return;
-      if (document.getElementById("spotify-error-dialog")) return;
-
-      const dialogContainer = document.createElement("div");
-      dialogContainer.id = "spotify-error-dialog";
-      mainView.appendChild(dialogContainer);
-
-      const root = createRoot(dialogContainer);
-      root.render(
-        createElement(ErrorDialog, {
-          onClose: () => {
-            logout();
-            root.unmount();
-            mainView.removeChild(dialogContainer);
-          },
-          i18n
-        })
-      );
+      showErrorDialog("premiumRequired");
     }
+  }
+
+  function showErrorDialog(errorDialogType: ErrorDialogType) {
+    const mainView = document.getElementsByClassName("main-view")[0];
+    if (!mainView) return;
+    if (document.getElementById("spotify-error-dialog")) return;
+
+    const dialogContainer = document.createElement("div");
+    dialogContainer.id = "spotify-error-dialog";
+    mainView.appendChild(dialogContainer);
+
+    const root = createRoot(dialogContainer);
+    root.render(
+      createElement(ErrorDialog, {
+        errorDialogType,
+        onClose: () => {
+          logout();
+          root.unmount();
+          mainView.removeChild(dialogContainer);
+        },
+        i18n
+      })
+    );
   }
 
   async function loadTracks() {
@@ -330,6 +335,11 @@ export default function createSpotifyPlayer(
   }
 
   async function authenticate() {
+    if (!getClientId()) {
+      showErrorDialog("clientIdRequired");
+      return;
+    }
+
     function generateRandomString(length: number) {
       let text = "";
       const possible =
