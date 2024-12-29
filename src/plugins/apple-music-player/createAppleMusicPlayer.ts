@@ -110,6 +110,18 @@ export default function createAppleMusicPlayer(
   }
 
   async function authenticate() {
+    if (!getDeveloperToken()) {
+      host.showAlert({
+        heading: i18n.t(
+          "apple-music-player:errorDialog.developerTokenRequiredHeading"
+        ),
+        message: i18n.t(
+          "apple-music-player:errorDialog.developerTokenRequiredMessage"
+        ),
+        closeLabel: i18n.t("apple-music-player:errorDialog.close")
+      });
+      return;
+    }
     await music?.authorize();
     host.updateData({ ...getConfig(), loggedIn: true });
     await fetchUserLibrary();

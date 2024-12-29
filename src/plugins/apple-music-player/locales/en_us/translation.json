@@ -5,5 +5,10 @@
     "logOutFromAppleMusic": "Log out from Apple Music",
     "toggleAdvancedSettings": "Toggle advanced settings",
     "developerToken": "Developer Token"
+  },
+  "errorDialog": {
+    "developerTokenRequiredHeading": "Developer Token Not Set",
+    "developerTokenRequiredMessage": "Logging in with Apple Music is not currently available unless you provide a Apple Music developer token. A subscription to the Apple Developer Program is required to obtain one.\n\nIf you have a token, you can go to Settings -> Library in Aria, click 'Toggle advanced settings' under 'Apple Music settings', and paste your developer token into the 'Developer Token' field.",
+    "close": "Close"
   }
 }
