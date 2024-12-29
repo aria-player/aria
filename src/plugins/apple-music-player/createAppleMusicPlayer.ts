@@ -123,6 +123,7 @@ export default function createAppleMusicPlayer(
       return;
     }
     await music?.authorize();
+    if (!music?.isAuthorized) return;
     host.updateData({ ...getConfig(), loggedIn: true });
     await fetchUserLibrary();
   }
