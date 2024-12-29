@@ -1,13 +1,20 @@
-import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import {
-  selectCurrentAlert,
-  setCurrentAlert
-} from "../../../features/plugins/pluginsSlice";
+import { useEffect, useState } from "react";
+import { setAlertListener } from "../../../features/plugins/pluginsAlerts";
 import styles from "./PluginAlertDialog.module.css";
+import { Alert } from "../../../features/plugins/pluginsTypes";
 
 export default function ErrorDialog() {
-  const dispatch = useAppDispatch();
-  const alert = useAppSelector(selectCurrentAlert);
+  const [alert, setAlert] = useState<Alert | null>(null);
+
+  useEffect(() => {
+    setAlertListener((alert) => {
+      setAlert(alert);
+    });
+    return () => {
+      setAlertListener(null);
+    };
+  }, []);
+
   if (!alert) return;
 
   return (
@@ -22,8 +29,8 @@ export default function ErrorDialog() {
         <button
           className="settings-button"
           onClick={() => {
-            dispatch(setCurrentAlert(null));
             alert?.onClose?.();
+            setAlert(null);
           }}
         >
           {alert?.closeLabel}

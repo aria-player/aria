@@ -10,7 +10,6 @@ import {
 } from "../tracks/tracksSlice";
 import {
   selectActivePlugins,
-  setCurrentAlert,
   setPluginData,
   setSourceSyncProgress
 } from "./pluginsSlice";
@@ -23,6 +22,7 @@ import {
 } from "./pluginsTypes";
 import { nextTrack, pause, resume, stop } from "../player/playerSlice";
 import { restartOrPreviousTrack } from "../player/playerTime";
+import { showAlert } from "./pluginsAlerts";
 
 function isPluginActive(pluginId: PluginId): boolean {
   const activePlugins = selectActivePlugins(store.getState());
@@ -78,7 +78,7 @@ export const getBaseCallbacks = (pluginId: PluginId): BaseCallbacks => {
     updateData: (data: object) => handleUpdateData(pluginId, data),
     getData: () => store.getState().plugins.pluginData[pluginId] ?? {},
     showAlert: (alert) => {
-      store.dispatch(setCurrentAlert(alert));
+      showAlert(alert);
     }
   };
 };
