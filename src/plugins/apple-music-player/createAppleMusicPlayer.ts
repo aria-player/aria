@@ -27,7 +27,9 @@ export default function createAppleMusicPlayer(
   script.src = "https://js-cdn.music.apple.com/musickit/v3/musickit.js";
   script.async = true;
   document.body.appendChild(script);
-  document.addEventListener("musickitloaded", async function () {
+  document.addEventListener("musickitloaded", initialize);
+
+  async function initialize() {
     const musicKitConfig = {
       developerToken: getDeveloperToken(),
       app: {
@@ -40,7 +42,7 @@ export default function createAppleMusicPlayer(
     if (music.isAuthorized) {
       fetchUserLibrary();
     }
-  });
+  }
 
   function getDeveloperToken() {
     const developerToken = getConfig().developerToken;
@@ -176,6 +178,12 @@ export default function createAppleMusicPlayer(
 
     setTime: (position: number) => {
       music?.seekToTime(position / 1000);
+    },
+
+    onDataUpdate: (data) => {
+      if (!music && (data as AppleMusicConfig).developerToken) {
+        initialize();
+      }
     },
 
     dispose: () => {
