@@ -73,7 +73,7 @@ export function useTrackGrid() {
       !(store.getState().router.location?.state as { focusCurrent: boolean })
         ?.focusCurrent
     ) {
-      timeout = setTimeout(resetScrollPosition, 0);
+      timeout = window.setTimeout(resetScrollPosition, 0);
     }
     return () => clearTimeout(timeout);
   }, [dispatch, gridRef, location.pathname, selectedTrackGroup]);
@@ -250,7 +250,7 @@ export function useTrackGrid() {
     if (disableAnimationTimeoutRef.current) {
       clearTimeout(disableAnimationTimeoutRef.current);
     }
-    disableAnimationTimeoutRef.current = setTimeout(() => {
+    disableAnimationTimeoutRef.current = window.setTimeout(() => {
       const style = document.getElementById("row-drag-animation");
       if (style) {
         document.head.removeChild(style);
