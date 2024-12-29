@@ -39,7 +39,11 @@ export function setupPlayerListeners() {
           activePlugins.includes(plugin) &&
           plugin != selectCurrentTrack(state)?.source
         ) {
-          getSourceHandle(plugin)?.pause();
+          try {
+            getSourceHandle(plugin)?.pause();
+          } catch (e) {
+            console.error(`Error pausing ${plugin}:`, e);
+          }
         }
       });
       if (state.player.currentTrack != null) {
@@ -52,7 +56,11 @@ export function setupPlayerListeners() {
         await getCurrentSource(state)?.getTrackArtwork?.(currentTrack);
       for (const plugin of activePlugins) {
         if (plugins[plugin].capabilities?.includes("integration")) {
-          pluginHandles[plugin]?.onPlay?.(currentTrack, artwork);
+          try {
+            pluginHandles[plugin]?.onPlay?.(currentTrack, artwork);
+          } catch (e) {
+            console.error(`Error invoking onPlay for ${plugin}:`, e);
+          }
         }
       }
     }
@@ -70,7 +78,11 @@ export function setupPlayerListeners() {
         startTimer();
         for (const plugin of activePlugins) {
           if (plugins[plugin].capabilities?.includes("integration")) {
-            pluginHandles[plugin]?.onResume?.();
+            try {
+              pluginHandles[plugin]?.onResume?.();
+            } catch (e) {
+              console.error(`Error invoking onResume for ${plugin}:`, e);
+            }
           }
         }
       } else if (status === Status.Paused) {
@@ -78,7 +90,11 @@ export function setupPlayerListeners() {
         stopTimer();
         for (const plugin of activePlugins) {
           if (plugins[plugin].capabilities?.includes("integration")) {
-            pluginHandles[plugin]?.onPause?.();
+            try {
+              pluginHandles[plugin]?.onPause?.();
+            } catch (e) {
+              console.error(`Error invoking onPause for ${plugin}:`, e);
+            }
           }
         }
       } else if (status === Status.Stopped) {
@@ -87,7 +103,11 @@ export function setupPlayerListeners() {
         for (const plugin of activePlugins) {
           getSourceHandle(plugin)?.pause();
           if (plugins[plugin].capabilities?.includes("integration")) {
-            pluginHandles[plugin]?.onStop?.();
+            try {
+              pluginHandles[plugin]?.onStop?.();
+            } catch (e) {
+              console.error(`Error invoking onStop for ${plugin}:`, e);
+            }
           }
         }
       }
