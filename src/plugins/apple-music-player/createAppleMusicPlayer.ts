@@ -124,6 +124,14 @@ export default function createAppleMusicPlayer(
       });
       return;
     }
+    if (!music) {
+      host.showAlert({
+        heading: i18n.t("apple-music-player:errorDialog.musicKitErrorHeading"),
+        message: i18n.t("apple-music-player:errorDialog.musicKitErrorMessage"),
+        closeLabel: i18n.t("apple-music-player:errorDialog.close")
+      });
+      return;
+    }
     await music?.authorize();
     if (!music?.isAuthorized) return;
     host.updateData({ ...getConfig(), loggedIn: true });
