@@ -22,7 +22,7 @@ export default function LibraryConfig(props: {
 
   function updateDeveloperToken(event: ChangeEvent<HTMLInputElement>) {
     setDeveloperToken(event.target.value);
-    props.host.updateData({ ...config, clientId: event.target.value });
+    props.host.updateData({ ...config, developerToken: event.target.value });
   }
 
   return (
