@@ -3,7 +3,7 @@ import { setAlertListener } from "../../../features/plugins/pluginsAlerts";
 import styles from "./PluginAlertDialog.module.css";
 import { Alert } from "../../../features/plugins/pluginsTypes";
 
-export default function ErrorDialog() {
+export default function PluginAlertDialog() {
   const [alert, setAlert] = useState<Alert | null>(null);
 
   useEffect(() => {
