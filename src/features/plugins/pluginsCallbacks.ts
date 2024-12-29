@@ -10,6 +10,7 @@ import {
 } from "../tracks/tracksSlice";
 import {
   selectActivePlugins,
+  setCurrentAlert,
   setPluginData,
   setSourceSyncProgress
 } from "./pluginsSlice";
@@ -75,7 +76,10 @@ function handleRemoveTracks(source: PluginId, uris?: TrackUri[]) {
 export const getBaseCallbacks = (pluginId: PluginId): BaseCallbacks => {
   return {
     updateData: (data: object) => handleUpdateData(pluginId, data),
-    getData: () => store.getState().plugins.pluginData[pluginId] ?? {}
+    getData: () => store.getState().plugins.pluginData[pluginId] ?? {},
+    showAlert: (alert) => {
+      store.dispatch(setCurrentAlert(alert));
+    }
   };
 };
 

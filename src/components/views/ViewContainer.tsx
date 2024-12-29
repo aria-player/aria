@@ -13,6 +13,7 @@ import { Queue } from "./Queue";
 import { useTranslation } from "react-i18next";
 import { selectPlaylistsLayoutItemById } from "../../features/playlists/playlistsSlice";
 import { selectSearch } from "../../features/search/searchSlice";
+import PluginAlertDialog from "./subviews/PluginAlertDialog";
 
 export default function ViewContainer() {
   const visibleDisplayMode = useAppSelector(selectVisibleDisplayMode);
@@ -26,6 +27,7 @@ export default function ViewContainer() {
 
   return (
     <>
+      <PluginAlertDialog />
       <header
         className={`header ${styles.header} ${visibleDisplayMode != DisplayMode.TrackList ? styles.border : ""}`}
       >

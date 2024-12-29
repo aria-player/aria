@@ -5,12 +5,13 @@ import {
 } from "../../features/plugins/pluginsTypes";
 import LibraryConfig from "./LibraryConfig";
 import QuickStart from "./QuickStart";
-import { createRoot } from "react-dom/client";
-import ErrorDialog, { ErrorDialogType } from "./ErrorDialog";
 import { createElement } from "react";
 import Attribution from "./Attribution";
 import { i18n } from "i18next";
 import en_us from "./locales/en_us/translation.json";
+import { Trans } from "react-i18next";
+import { BASEPATH } from "../../app/constants";
+import styles from "./spotify.module.css";
 
 export type SpotifyConfig = {
   accessToken?: string;
@@ -144,31 +145,15 @@ export default function createSpotifyPlayer(
       profileResponse.product === "free" ||
       profileResponse.product === "open"
     ) {
-      showErrorDialog("premiumRequired");
-    }
-  }
-
-  function showErrorDialog(errorDialogType: ErrorDialogType) {
-    const mainView = document.getElementsByClassName("main-view")[0];
-    if (!mainView) return;
-    if (document.getElementById("spotify-error-dialog")) return;
-
-    const dialogContainer = document.createElement("div");
-    dialogContainer.id = "spotify-error-dialog";
-    mainView.appendChild(dialogContainer);
-
-    const root = createRoot(dialogContainer);
-    root.render(
-      createElement(ErrorDialog, {
-        errorDialogType,
+      host.showAlert({
+        heading: i18n.t("spotify-player:errorDialog.premiumRequiredHeading"),
+        message: i18n.t("spotify-player:errorDialog.premiumRequiredMessage"),
+        closeLabel: i18n.t("spotify-player:errorDialog.logOut"),
         onClose: () => {
           logout();
-          root.unmount();
-          mainView.removeChild(dialogContainer);
-        },
-        i18n
-      })
-    );
+        }
+      });
+    }
   }
 
   async function loadTracks() {
@@ -336,7 +321,21 @@ export default function createSpotifyPlayer(
 
   async function authenticate() {
     if (!getClientId()) {
-      showErrorDialog("clientIdRequired");
+      host.showAlert({
+        heading: i18n.t("spotify-player:errorDialog.clientIdRequiredHeading"),
+        message: () =>
+          createElement(Trans, {
+            i18nKey: "spotify-player:errorDialog.clientIdRequiredMessage",
+            components: {
+              uri: createElement(
+                "span",
+                { className: styles.uri },
+                window.location.origin + BASEPATH
+              )
+            }
+          }),
+        closeLabel: i18n.t("spotify-player:errorDialog.close")
+      });
       return;
     }
 

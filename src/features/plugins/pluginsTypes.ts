@@ -48,6 +48,25 @@ export interface BaseHandle {
   dispose?: () => void;
 }
 
+export type Alert = {
+  /**
+   * Heading to display at the top of the alert dialog.
+   */
+  heading: string;
+  /**
+   * Message to display in the alert dialog. Can be a React component for greater control over its appearance.
+   */
+  message: string | React.FC;
+  /**
+   * Label that appears on the alert dialog close button.
+   */
+  closeLabel: string;
+  /**
+   * Called when the alert dialog close button is clicked.
+   */
+  onClose?: () => void;
+};
+
 /**
  * Callbacks for a basic plugin.
  */
@@ -60,6 +79,10 @@ export interface BaseCallbacks {
    * Get the current plugin data.
    */
   getData: () => object;
+  /**
+   * Display a dialog containing an alert, such as a plugin configuration error.
+   */
+  showAlert: (alert: Alert) => void;
 }
 
 /**

@@ -59,7 +59,7 @@ const reducer = combineReducers({
     {
       key: "plugins",
       storage,
-      blacklist: ["activePlugins", "sourceSyncProgress"]
+      blacklist: ["activePlugins", "sourceSyncProgress", "currentAlert"]
     },
     pluginsReducer
   ),

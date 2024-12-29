@@ -5,6 +5,7 @@ import {
   PayloadAction
 } from "@reduxjs/toolkit";
 import {
+  Alert,
   AnyPluginHandle,
   PluginId,
   PluginInfo,
@@ -24,6 +25,7 @@ type PluginsState = {
   activePlugins: PluginId[];
   pluginData: Partial<Record<PluginId, object>>;
   sourceSyncProgress: Record<PluginId, SyncProgress>;
+  currentAlert: Alert | null;
 };
 
 export const pluginHandles: Partial<Record<PluginId, AnyPluginHandle>> = {};
@@ -39,7 +41,8 @@ const initialState: PluginsState = {
   ],
   activePlugins: [],
   pluginData: {},
-  sourceSyncProgress: {}
+  sourceSyncProgress: {},
+  currentAlert: null
 };
 
 export function getSourceHandle(pluginId: PluginId): SourceHandle | undefined {
@@ -136,6 +139,9 @@ export const pluginsSlice = createSlice({
     ) {
       const { pluginId, syncProgress } = action.payload;
       state.sourceSyncProgress[pluginId] = syncProgress;
+    },
+    setCurrentAlert: (state, action: PayloadAction<Alert | null>) => {
+      state.currentAlert = action.payload;
     }
   }
 });
@@ -146,7 +152,8 @@ export const {
   setPluginEnabled,
   setPluginActive,
   setPluginData,
-  setSourceSyncProgress
+  setSourceSyncProgress,
+  setCurrentAlert
 } = pluginsSlice.actions;
 
 export const selectEnabledPlugins = (state: RootState) =>
@@ -156,6 +163,8 @@ export const selectActivePlugins = (state: RootState) =>
 export const selectPluginData = (state: RootState) => state.plugins.pluginData;
 export const selectSourceSyncProgress = (state: RootState) =>
   state.plugins.sourceSyncProgress;
+export const selectCurrentAlert = (state: RootState) =>
+  state.plugins.currentAlert;
 
 export const selectPluginInfo = createSelector(
   (state: RootState) => state.plugins.installedPluginInfo,
