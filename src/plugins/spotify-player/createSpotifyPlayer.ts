@@ -354,7 +354,7 @@ export default function createSpotifyPlayer(
     }
 
     const scopes =
-      "user-modify-playback-state user-read-playback-state app-remote-control streaming user-library-read user-read-private";
+      "user-modify-playback-state user-read-playback-state app-remote-control streaming user-library-read user-read-private user-read-email";
 
     const codeVerifier = generateRandomString(128);
     const codeChallenge = await generateCodeChallenge(codeVerifier);
