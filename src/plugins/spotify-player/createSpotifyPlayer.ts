@@ -141,6 +141,17 @@ export default function createSpotifyPlayer(
     const profileResponse = (await spotifyRequest(
       `/me/`
     )) as SpotifyApi.CurrentUsersProfileResponse;
+    if ("status" in profileResponse && profileResponse.status === 403) {
+      host.showAlert({
+        heading: i18n.t("spotify-player:errorDialog.profileErrorHeading"),
+        message: i18n.t("spotify-player:errorDialog.profileErrorMessage"),
+        closeLabel: i18n.t("spotify-player:errorDialog.logOut"),
+        onClose: () => {
+          logout();
+        }
+      });
+      return;
+    }
     if (
       profileResponse.product === "free" ||
       profileResponse.product === "open"
