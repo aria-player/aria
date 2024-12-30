@@ -283,6 +283,7 @@ export default function createSpotifyPlayer(
           albumArtistMapping[album.album.id] = album.album.artists[0].id;
           tracksToAdd.push(...tracksFromResponse);
         }
+        if (!getConfig().accessToken) return;
         host.updateTracks(tracksToAdd);
         incrementProgress(albumsResponse.items.length);
         if (albumsResponse.items.length < albumsLimit) {
@@ -328,6 +329,7 @@ export default function createSpotifyPlayer(
       );
       return { ...track, genre: formattedGenres };
     });
+    if (!getConfig().accessToken) return;
     host.updateTracks(updatedTracks);
   }
 
