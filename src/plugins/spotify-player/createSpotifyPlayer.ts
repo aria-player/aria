@@ -78,7 +78,8 @@ export default function createSpotifyPlayer(
     const redirectUri = getConfig().redirectUri;
     return redirectUri && redirectUri.trim() !== ""
       ? redirectUri
-      : import.meta.env.VITE_SPOTIFY_REDIRECT_URI;
+      : (import.meta.env.VITE_SPOTIFY_REDIRECT_URI ??
+          window.location.origin + BASEPATH);
   }
 
   async function getOrRefreshAccessToken() {
