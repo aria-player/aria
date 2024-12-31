@@ -11,6 +11,7 @@ import { i18n } from "i18next";
 import en_us from "./locales/en_us/translation.json";
 import { Trans } from "react-i18next";
 import { BASEPATH } from "../../app/constants";
+import { isTauri } from "../../app/utils";
 import styles from "./spotify.module.css";
 
 export type SpotifyConfig = {
@@ -344,7 +345,9 @@ export default function createSpotifyPlayer(
               uri: createElement(
                 "span",
                 { className: styles.uri },
-                window.location.origin + BASEPATH
+                isTauri()
+                  ? "http://127.0.0.1:2742/"
+                  : window.location.origin + BASEPATH
               )
             }
           }),
