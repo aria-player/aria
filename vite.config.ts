@@ -5,7 +5,7 @@ import packageJson from "./package.json";
 
 // https://vitejs.dev/config/
 export default defineConfig(async () => ({
-  base: process.env.VITE_BASEPATH || "./",
+  base: process.env.VITE_BASEPATH || "/",
   plugins: [react(), svgr()],
   define: {
     "import.meta.env.PACKAGE_VERSION": JSON.stringify(packageJson.version)
