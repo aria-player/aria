@@ -63,6 +63,14 @@
       ],
       "resources": ["../shared/menus.json"]
     },
+    "updater": {
+      "active": true,
+      "endpoints": [
+        "https://github.com/aria-player/aria/releases/latest/download/latest.json"
+      ],
+      "dialog": true,
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDU4RDEwOTBDQzNBOUZEODUKUldTRi9hbkREQW5SV09sTmdaZGFrY0I2RFpDS3U2ZlFPeHkrQXJ0WGxsNy9Oeks2Y0hJdW55VSsK"
+    },
     "security": {
       "csp": "default-src 'self' asset: https:; media-src 'self' asset: https: blob:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' blob: https:"
     },
