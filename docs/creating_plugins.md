@@ -2,7 +2,7 @@
 
 This tutorial describes how to create, package, and install Aria plugins. As an example, we'll create a simple plugin that logs the player state to the console.
 
-> ⚠️ This tutorial uses JavaScript rather than TypeScript for simplicity, as the plugin installation system expects a plain ES Module as an entry point. TypeScript types are not yet available to install, but they are defined in `src/features/plugins/pluginsTypes.ts` and `src/features/tracks/tracksTypes.ts`.
+> ⚠️ This tutorial uses JavaScript rather than TypeScript for simplicity, as the plugin installation system expects a plain ES Module as an entry point. If you'd like to write your plugin in TypeScript, you can access the relevant types via the `@aria-player/types` npm package.
 
 ## Plugin structure
 
@@ -30,7 +30,7 @@ Plugins can use multiple capabilities at once. The following capabilities are av
 - `integration`: Allows the plugin to control playback and monitor changes to the player state.
 - `source`: Allows the plugin to provide an audio backend for the player and manage tracks in the user's music library.
 
-The full plugin manifest specification is available as `PluginInfo` in `src/features/plugins/pluginsTypes.ts`.
+The full plugin manifest specification is available as `PluginInfo` in `packages/types/plugins.d.ts`.
 
 ## Step 2: Create the plugin entry point
 
