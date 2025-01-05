@@ -4,13 +4,13 @@ import {
   createSlice,
   PayloadAction
 } from "@reduxjs/toolkit";
+import { AnyPluginHandle } from "./pluginsTypes";
 import {
-  AnyPluginHandle,
   PluginId,
   PluginInfo,
   SourceHandle,
   SyncProgress
-} from "./pluginsTypes";
+} from "../../../../types/plugins";
 import { setupPluginListeners } from "./pluginsListeners";
 import { RootState, store } from "../../app/store";
 import { isTauri } from "../../app/utils";

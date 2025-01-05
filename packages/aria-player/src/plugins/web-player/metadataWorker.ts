@@ -1,5 +1,5 @@
 import { parseBlob } from "music-metadata";
-import { TrackMetadata } from "../../features/tracks/tracksTypes";
+import { TrackMetadata } from "../../../../types/tracks";
 import localforage from "localforage";
 import { expose } from "comlink";
 import { SHA256 } from "crypto-js";

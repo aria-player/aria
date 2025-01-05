@@ -6,8 +6,8 @@ import {
 } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 import { setupTracksListeners } from "./tracksListeners";
-import { Track, TrackId } from "./tracksTypes";
-import { PluginId } from "../plugins/pluginsTypes";
+import { Track, TrackId } from "../../../../types/tracks";
+import { PluginId } from "../../../../types/plugins";
 import { PlaylistItem } from "../playlists/playlistsTypes";
 
 const tracksAdapter = createEntityAdapter<Track, TrackId>({

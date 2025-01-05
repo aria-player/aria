@@ -1,10 +1,7 @@
 import { convertFileSrc, invoke } from "@tauri-apps/api/tauri";
-import {
-  SourceCallbacks,
-  SourceHandle
-} from "../../features/plugins/pluginsTypes";
+import { SourceCallbacks, SourceHandle } from "../../../../types/plugins";
 import { open } from "@tauri-apps/api/dialog";
-import { Track, TrackMetadata } from "../../features/tracks/tracksTypes";
+import { Track, TrackMetadata } from "../../../../types/tracks";
 import { appDataDir } from "@tauri-apps/api/path";
 import { i18n } from "i18next";
 import en_us from "./locales/en_us/translation.json";

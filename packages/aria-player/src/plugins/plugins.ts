@@ -1,4 +1,4 @@
-import { PluginInfo } from "../features/plugins/pluginsTypes";
+import { PluginInfo } from "../../../types/plugins";
 
 export const defaultPluginInfo: Record<string, PluginInfo> = {};
 export const defaultPluginScripts: Record<string, unknown> = {};

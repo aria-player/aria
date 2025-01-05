@@ -1,6 +1,11 @@
 import { store } from "../../app/store";
 import { getTrackId } from "../../app/utils";
-import { Track, TrackId, TrackMetadata, TrackUri } from "../tracks/tracksTypes";
+import {
+  Track,
+  TrackId,
+  TrackMetadata,
+  TrackUri
+} from "../../../../types/tracks";
 import {
   addTracks,
   removeTracks,
@@ -19,7 +24,7 @@ import {
   SourceCallbacks,
   IntegrationCallbacks,
   SyncProgress
-} from "./pluginsTypes";
+} from "../../../../types/plugins";
 import { nextTrack, pause, resume, stop } from "../player/playerSlice";
 import { restartOrPreviousTrack } from "../player/playerTime";
 import { showAlert } from "./pluginsAlerts";

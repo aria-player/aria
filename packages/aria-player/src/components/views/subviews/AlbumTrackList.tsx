@@ -1,7 +1,7 @@
 import { ICellRendererParams, RowHeightParams } from "@ag-grid-community/core";
 import { AgGridReact } from "@ag-grid-community/react";
 import { useMemo, useEffect } from "react";
-import { Track } from "../../../features/tracks/tracksTypes";
+import { Track } from "../../../../../types/tracks";
 import { useAppSelector } from "../../../app/hooks";
 import { TrackSummaryRow } from "./TrackSummaryRow";
 import { t } from "i18next";

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { setAlertListener } from "../../../features/plugins/pluginsAlerts";
 import styles from "./PluginAlertDialog.module.css";
-import { Alert } from "../../../features/plugins/pluginsTypes";
+import { Alert } from "../../../../../types/plugins";
 
 export default function PluginAlertDialog() {
   const [alert, setAlert] = useState<Alert | null>(null);

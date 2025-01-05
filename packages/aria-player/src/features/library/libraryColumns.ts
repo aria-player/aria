@@ -1,5 +1,6 @@
 import { ColDef } from "@ag-grid-community/core";
-import { Track, TrackListItem } from "../tracks/tracksTypes";
+import { TrackListItem } from "../tracks/tracksTypes";
+import { Track } from "../../../../types/tracks";
 import {
   formatStringArray,
   formatBytes,

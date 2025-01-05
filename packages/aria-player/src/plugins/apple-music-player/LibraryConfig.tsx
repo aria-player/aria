@@ -1,5 +1,5 @@
 import { useState, ChangeEvent } from "react";
-import { SourceCallbacks } from "../../features/plugins/pluginsTypes";
+import { SourceCallbacks } from "../../../../types/plugins";
 import { AppleMusicConfig } from "./createAppleMusicPlayer";
 import styles from "./applemusic.module.css";
 import { useTranslation } from "react-i18next";

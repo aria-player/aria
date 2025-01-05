@@ -1,4 +1,4 @@
-import { Track } from "../features/tracks/tracksTypes";
+import { Track } from "../../../types/tracks";
 
 export const searchTracks = (tracks: Track[], search: string): Track[] => {
   // TODO: More elaborate search result sorting (e.g. prioritising whole word matches)

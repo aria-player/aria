@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import styles from "./settings.module.css";
 import { isTauri, sortPlugins } from "../../../app/utils";
-import { PluginId } from "../../../features/plugins/pluginsTypes";
+import { PluginId } from "../../../../../types/plugins";
 import React from "react";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import {

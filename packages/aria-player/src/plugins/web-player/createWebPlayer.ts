@@ -1,12 +1,5 @@
-import {
-  Track,
-  TrackMetadata,
-  TrackUri
-} from "../../features/tracks/tracksTypes";
-import {
-  SourceCallbacks,
-  SourceHandle
-} from "../../features/plugins/pluginsTypes";
+import { Track, TrackMetadata, TrackUri } from "../../../../types/tracks";
+import { SourceCallbacks, SourceHandle } from "../../../../types/plugins";
 import { LibraryConfig } from "./LibraryConfig";
 import { wrap } from "comlink";
 import { i18n } from "i18next";

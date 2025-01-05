@@ -5,7 +5,7 @@ import {
   getSourceHandle,
   selectActivePlugins
 } from "../features/plugins/pluginsSlice";
-import { Track } from "../features/tracks/tracksTypes";
+import { Track } from "../../../types/tracks";
 import { useDebounce } from "react-use";
 import { store } from "../app/store";
 

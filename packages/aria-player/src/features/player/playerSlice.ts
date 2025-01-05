@@ -1,7 +1,7 @@
 import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 import { QueueItem, RepeatMode, Status } from "./playerTypes";
-import { TrackId } from "../tracks/tracksTypes";
+import { TrackId } from "../../../../types/tracks";
 import { getSourceHandle } from "../plugins/pluginsSlice";
 import { setupPlayerListeners } from "./playerListeners";
 import { selectTrackById } from "../tracks/tracksSlice";

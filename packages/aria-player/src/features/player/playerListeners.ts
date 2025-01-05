@@ -6,7 +6,7 @@ import {
   selectActivePlugins,
   selectPluginInfo
 } from "../plugins/pluginsSlice";
-import { SourceHandle } from "../plugins/pluginsTypes";
+import { SourceHandle } from "../../../../types/plugins";
 import { loadAndPlayTrack, selectStatus } from "./playerSlice";
 import { Status } from "./playerTypes";
 import { resetTimer, startTimer, stopTimer } from "./playerTime";

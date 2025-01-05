@@ -1,5 +1,5 @@
 import { i18n } from "i18next";
-import { AttributionProps } from "../../features/plugins/pluginsTypes";
+import { AttributionProps } from "../../../../types/plugins";
 import SpotifyLogo from "./assets/spotify-brands-solid.svg?react";
 import styles from "./spotify.module.css";
 import { useTranslation } from "react-i18next";

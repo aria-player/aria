@@ -1,9 +1,6 @@
 import { i18n } from "i18next";
-import {
-  SourceCallbacks,
-  SourceHandle
-} from "../../features/plugins/pluginsTypes";
-import { Track, TrackMetadata } from "../../features/tracks/tracksTypes";
+import { SourceCallbacks, SourceHandle } from "../../../../types/plugins";
+import { Track, TrackMetadata } from "../../../../types/tracks";
 import LibraryConfig from "./LibraryConfig";
 import QuickStart from "./QuickStart";
 import en_us from "./locales/en_us/translation.json";

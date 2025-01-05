@@ -1,6 +1,6 @@
 import { useContext, useEffect, useState } from "react";
 import MusicIcon from "../../../assets/music.svg?react";
-import { Track } from "../../../features/tracks/tracksTypes";
+import { Track } from "../../../../../types/tracks";
 import styles from "./AlbumArt.module.css";
 import { ArtworkContext } from "../../../contexts/ArtworkContext";
 import { getSourceHandle } from "../../../features/plugins/pluginsSlice";

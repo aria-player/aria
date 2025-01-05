@@ -1,4 +1,4 @@
-import { PluginId } from "./pluginsTypes";
+import { PluginId } from "../../../../types/plugins";
 import {
   pluginHandles,
   selectPluginInfo,

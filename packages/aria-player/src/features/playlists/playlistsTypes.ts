@@ -1,5 +1,5 @@
 import { ColumnState } from "@ag-grid-community/core";
-import { TrackId } from "../tracks/tracksTypes";
+import { TrackId } from "../../../../types/tracks";
 import { DisplayMode, SplitViewState } from "../../app/view";
 
 export type PlaylistId = string;

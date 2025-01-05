@@ -2,8 +2,8 @@ import { i18n } from "i18next";
 import {
   IntegrationCallbacks,
   IntegrationHandle
-} from "../../features/plugins/pluginsTypes";
-import { Track } from "../../features/tracks/tracksTypes";
+} from "../../../../types/plugins";
+import { Track } from "../../../../types/tracks";
 
 export default function createMediaSession(
   host: IntegrationCallbacks,

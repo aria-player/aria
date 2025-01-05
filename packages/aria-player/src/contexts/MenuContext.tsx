@@ -1,6 +1,6 @@
 import { createContext, useState } from "react";
 import { ReactNode } from "react";
-import { Track } from "../features/tracks/tracksTypes";
+import { Track } from "../../../types/tracks";
 
 type MenuData = {
   itemId: string;

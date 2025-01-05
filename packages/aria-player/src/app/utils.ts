@@ -1,5 +1,5 @@
-import { TrackUri, TrackId, Track } from "../features/tracks/tracksTypes";
-import { PluginId } from "../features/plugins/pluginsTypes";
+import { TrackUri, TrackId, Track } from "../../../types/tracks";
+import { PluginId } from "../../../types/plugins";
 import { ColumnState } from "@ag-grid-community/core";
 import { defaultColumnDefinitions } from "../features/library/libraryColumns";
 import i18n from "../i18n";

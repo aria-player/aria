@@ -1,6 +1,6 @@
 import { useState, ChangeEvent } from "react";
 import { SpotifyConfig } from "./createSpotifyPlayer";
-import { SourceCallbacks } from "../../features/plugins/pluginsTypes";
+import { SourceCallbacks } from "../../../../types/plugins";
 import SpotifyLogo from "./assets/spotify-brands-solid.svg?react";
 import styles from "./spotify.module.css";
 import { useTranslation } from "react-i18next";

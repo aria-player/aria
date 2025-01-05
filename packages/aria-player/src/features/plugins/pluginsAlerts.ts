@@ -1,4 +1,4 @@
-import { Alert } from "./pluginsTypes";
+import { Alert } from "../../../../types/plugins";
 
 let alertListener: ((alert: Alert | null) => void) | null;
 

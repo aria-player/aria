@@ -1,5 +1,5 @@
 import { i18n } from "i18next";
-import { SourceCallbacks } from "../../features/plugins/pluginsTypes";
+import { SourceCallbacks } from "../../../../types/plugins";
 import { WebPlayerData } from "./createWebPlayer";
 import { useTranslation } from "react-i18next";
 

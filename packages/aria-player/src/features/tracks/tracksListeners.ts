@@ -1,9 +1,9 @@
 import { isAnyOf } from "@reduxjs/toolkit";
 import { listenForAction, listenForChange } from "../../app/listener";
 import { getSourceHandle } from "../plugins/pluginsSlice";
-import { PluginId } from "../plugins/pluginsTypes";
+import { PluginId } from "../../../../types/plugins";
 import { addTracks, removeTracks, selectAllTracks } from "./tracksSlice";
-import { Track, TrackId } from "./tracksTypes";
+import { Track, TrackId } from "../../../../types/tracks";
 import { compareMetadata } from "../../app/sort";
 
 export function setupTracksListeners() {

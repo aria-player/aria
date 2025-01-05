@@ -1,6 +1,6 @@
 import { i18n } from "i18next";
 import en_us from "./locales/en_us/translation.json";
-import { BaseCallbacks, BaseHandle } from "../../features/plugins/pluginsTypes";
+import { BaseCallbacks, BaseHandle } from "../../../../types/plugins";
 import { useTranslation } from "react-i18next";
 
 type SamplePluginData = {

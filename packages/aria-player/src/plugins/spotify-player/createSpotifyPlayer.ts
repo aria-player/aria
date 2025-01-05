@@ -1,8 +1,5 @@
-import { TrackMetadata } from "../../features/tracks/tracksTypes";
-import {
-  SourceCallbacks,
-  SourceHandle
-} from "../../features/plugins/pluginsTypes";
+import { TrackMetadata } from "../../../../types/tracks";
+import { SourceCallbacks, SourceHandle } from "../../../../types/plugins";
 import LibraryConfig from "./LibraryConfig";
 import QuickStart from "./QuickStart";
 import { createElement } from "react";

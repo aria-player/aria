@@ -1,6 +1,6 @@
 import { useTranslation } from "react-i18next";
 import styles from "./settings.module.css";
-import { PluginId } from "../../../features/plugins/pluginsTypes";
+import { PluginId } from "../../../../../types/plugins";
 import { useAppSelector } from "../../../app/hooks";
 import {
   pluginHandles,
