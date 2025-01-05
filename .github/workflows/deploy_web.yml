@@ -44,14 +44,14 @@ jobs:
       - name: Build
         env:
           VITE_BASEPATH: /aria/
-        run: pnpm run build
+        run: pnpm run --filter ./packages/aria-player build
       - name: Setup Pages
         uses: actions/configure-pages@v4
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           # Upload dist folder
-          path: './dist'
+          path: './packages/aria-player/dist'
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4

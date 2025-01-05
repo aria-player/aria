@@ -71,4 +71,5 @@ jobs:
           releaseName: "Aria v__VERSION__"
           releaseDraft: true
           updaterJsonPreferNsis: true
+          projectPath: ./packages/aria-player
           args: ${{ matrix.args }}
