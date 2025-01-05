@@ -1,0 +1,12 @@
+{
+  "private": true,
+  "scripts": {
+    "dev": "pnpm --filter aria-player dev",
+    "build": "pnpm --filter aria-player build",
+    "preview": "pnpm --filter aria-player preview",
+    "tauri": "pnpm --filter aria-player tauri",
+    "test": "pnpm --filter aria-player test",
+    "lint": "pnpm --filter aria-player lint"
+  },
+  "packageManager": "pnpm@9.0.6"
+}
