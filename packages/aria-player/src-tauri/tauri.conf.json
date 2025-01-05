@@ -64,7 +64,7 @@
       "resources": ["../shared/menus.json"]
     },
     "updater": {
-      "active": true,
+      "active": false,
       "endpoints": [
         "https://github.com/aria-player/aria/releases/latest/download/latest.json"
       ],

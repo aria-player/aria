@@ -72,4 +72,4 @@ jobs:
           releaseDraft: true
           updaterJsonPreferNsis: true
           projectPath: ./packages/aria-player
-          args: ${{ matrix.args }}
+          args: '${{ matrix.args }} -c ''{"tauri": {"updater": {"active": true}}}'''
