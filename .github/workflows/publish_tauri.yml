@@ -9,6 +9,10 @@ on:
 
 jobs:
   publish-tauri:
+    env:
+      APP_NAME: aria
+      APP_PATH: ./packages/aria-player
+      RENAMED_ARTIFACT:
     permissions:
       contents: write
     strategy:
@@ -60,6 +64,7 @@ jobs:
         run: pnpm install # change this to npm, pnpm or bun depending on which one you use.
 
       - uses: tauri-apps/tauri-action@v0
+        id: tauri-action
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           TAURI_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
@@ -69,5 +74,30 @@ jobs:
           releaseName: "Aria v__VERSION__"
           releaseDraft: true
           updaterJsonPreferNsis: true
-          projectPath: ./packages/aria-player
+          projectPath: ${{ env.APP_PATH }}
           args: '${{ matrix.args }} -c ''{"tauri": {"updater": {"active": true}}}'''
+
+      - name: Copy and rename artifact
+        shell: bash
+        run: |
+          if [ "${{ matrix.platform }}" = "windows-latest" ]; then
+            ARTIFACT="release/bundle/nsis/${{ env.APP_NAME }}_${{ steps.tauri-action.outputs.appVersion }}_x64-setup.exe"
+            RENAMED_ARTIFACT="${{ env.APP_NAME }}_x64-setup.exe"
+          elif [ "${{ matrix.platform }}" = "macos-latest" ]; then
+            ARTIFACT="universal-apple-darwin/release/bundle/dmg/${{ env.APP_NAME }}_${{ steps.tauri-action.outputs.appVersion }}_universal.dmg"
+            RENAMED_ARTIFACT="${{ env.APP_NAME }}_universal.dmg"
+          elif [ "${{ matrix.platform }}" = "ubuntu-20.04" ]; then
+            ARTIFACT="release/bundle/appimage/${{ env.APP_NAME }}_${{ steps.tauri-action.outputs.appVersion }}_amd64.AppImage"
+            RENAMED_ARTIFACT="${{ env.APP_NAME }}_amd64.AppImage"
+          else
+            exit 0
+          fi
+          cp "${{ env.APP_PATH }}/src-tauri/target/${ARTIFACT}" "./${RENAMED_ARTIFACT}"
+          echo "RENAMED_ARTIFACT=${RENAMED_ARTIFACT}" >> $GITHUB_ENV
+
+      - name: Upload renamed artifact
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          gh release upload "v${{ steps.tauri-action.outputs.appVersion }}" "./${{ env.RENAMED_ARTIFACT }}" --clobber
