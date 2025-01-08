@@ -5,6 +5,8 @@ on:
     tags:
       - v*
 
+  workflow_dispatch:
+
 # This workflow will create or update a GitHub release, build your app, and upload the artifacts to the release.
 
 jobs:
