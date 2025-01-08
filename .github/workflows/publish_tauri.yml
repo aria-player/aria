@@ -13,6 +13,7 @@ jobs:
       APP_NAME: aria
       APP_PATH: ./packages/aria-player
       RENAMED_ARTIFACT:
+      TAG_MESSAGE:
     permissions:
       contents: write
     strategy:
@@ -63,6 +64,17 @@ jobs:
       - name: install frontend dependencies
         run: pnpm install # change this to npm, pnpm or bun depending on which one you use.
 
+      - name: Get tag message
+        id: tag_message
+        shell: bash
+        run: |
+          git fetch --depth=1 origin +refs/tags/*:refs/tags/*
+          TAG=$(git describe --tags --exact-match)
+          TAG_MESSAGE=$(git tag -l --format='%(contents)' "$TAG" | sed '1,2d')
+          echo "TAG_MESSAGE<<EOF" >> $GITHUB_ENV
+          echo "$TAG_MESSAGE" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
       - uses: tauri-apps/tauri-action@v0
         id: tauri-action
         env:
@@ -72,6 +84,7 @@ jobs:
         with:
           tagName: v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version.
           releaseName: "Aria v__VERSION__"
+          releaseBody: ${{ env.TAG_MESSAGE }}
           releaseDraft: true
           updaterJsonPreferNsis: true
           projectPath: ${{ env.APP_PATH }}
