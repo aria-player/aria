@@ -20,7 +20,13 @@ Aria is currently in an early 'alpha' state, so there are several limitations:
 
 ## Installation
 
-TODO
+To install Aria, download and run the latest release for your platform:
+
+[Windows (.exe)](https://github.com/aria-player/aria/releases/latest/download/aria_x64-setup.exe) | [macOS (.dmg)](https://github.com/aria-player/aria/releases/latest/download/aria_universal.dmg) | [Linux (.AppImage)](https://github.com/aria-player/aria/releases/latest/download/aria_amd64.AppImage)
+
+Additional formats (including `.rpm`, `.deb`, and `.msi`) are available on the [Releases](https://github.com/aria-player/aria/releases/) page.
+
+You can also try out Aria [online](https://aria-player.github.io/aria/). The web version contains most of the desktop functionality, but requires that you re-select your music library folder at the start of each session.
 
 ## Building and running
 
