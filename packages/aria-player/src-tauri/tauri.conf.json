@@ -2,81 +2,54 @@
   "build": {
     "beforeDevCommand": "pnpm dev",
     "beforeBuildCommand": "pnpm build",
-    "devPath": "http://localhost:1420",
-    "distDir": "../dist",
-    "withGlobalTauri": false
+    "frontendDist": "../dist",
+    "devUrl": "http://localhost:1420"
   },
-  "package": {
-    "productName": "Aria"
+  "bundle": {
+    "active": true,
+    "icon": [
+      "icons/32x32.png",
+      "icons/128x128.png",
+      "icons/128x128@2x.png",
+      "icons/icon.icns",
+      "icons/icon.ico"
+    ],
+    "targets": "all",
+    "resources": ["../shared/menus.json"],
+    "linux": {
+      "appimage": {
+        "bundleMediaFramework": true
+      }
+    },
+    "createUpdaterArtifacts": "v1Compatible"
   },
-  "tauri": {
-    "allowlist": {
-      "all": false,
-      "shell": {
-        "all": false,
-        "open": true
-      },
-      "window": {
-        "all": false,
-        "close": true,
-        "maximize": true,
-        "minimize": true,
-        "unmaximize": true,
-        "unminimize": true,
-        "startDragging": true,
-        "setDecorations": true,
-        "setFullscreen": true
-      },
-      "os": {
-        "all": true
-      },
-      "dialog": {
-        "confirm": true,
-        "open": true
-      },
-      "path": {
-        "all": true
-      },
-      "protocol": {
-        "asset": true,
-        "assetScope": {
+  "productName": "Aria",
+  "mainBinaryName": "Aria",
+  "identifier": "com.aria-player.aria",
+  "plugins": {
+    "updater": {
+      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDU4RDEwOTBDQzNBOUZEODUKUldTRi9hbkREQW5SV09sTmdaZGFrY0I2RFpDS3U2ZlFPeHkrQXJ0WGxsNy9Oeks2Y0hJdW55VSsK",
+      "endpoints": [
+        "https://github.com/aria-player/aria/releases/latest/download/latest.json"
+      ]
+    }
+  },
+  "app": {
+    "withGlobalTauri": false,
+    "trayIcon": {
+      "iconPath": "icons/icon.png",
+      "iconAsTemplate": true
+    },
+    "security": {
+      "assetProtocol": {
+        "scope": {
           "allow": ["$APPDATA/**"],
           "deny": [],
           "requireLiteralLeadingDot": false
-        }
-      }
-    },
-
-    "bundle": {
-      "active": true,
-      "appimage": {
-        "bundleMediaFramework": true
+        },
+        "enable": true
       },
-      "targets": "all",
-      "identifier": "com.aria-player.aria",
-      "icon": [
-        "icons/32x32.png",
-        "icons/128x128.png",
-        "icons/128x128@2x.png",
-        "icons/icon.icns",
-        "icons/icon.ico"
-      ],
-      "resources": ["../shared/menus.json"]
-    },
-    "updater": {
-      "active": false,
-      "endpoints": [
-        "https://github.com/aria-player/aria/releases/latest/download/latest.json"
-      ],
-      "dialog": true,
-      "pubkey": "dW50cnVzdGVkIGNvbW1lbnQ6IG1pbmlzaWduIHB1YmxpYyBrZXk6IDU4RDEwOTBDQzNBOUZEODUKUldTRi9hbkREQW5SV09sTmdaZGFrY0I2RFpDS3U2ZlFPeHkrQXJ0WGxsNy9Oeks2Y0hJdW55VSsK"
-    },
-    "security": {
-      "csp": "default-src 'self' asset: https:; media-src 'self' asset: https: blob:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' blob: https:"
-    },
-    "systemTray": {
-      "iconPath": "icons/icon.png",
-      "iconAsTemplate": true
+      "csp": "default-src 'self' asset: https:; media-src 'self' asset: https: blob:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' blob: https:; connect-src ipc: http://ipc.localhost"
     },
     "windows": [
       {
@@ -87,7 +60,8 @@
         "width": 1000,
         "height": 600,
         "minWidth": 220,
-        "minHeight": 32
+        "minHeight": 32,
+        "useHttpsScheme": true
       }
     ]
   }

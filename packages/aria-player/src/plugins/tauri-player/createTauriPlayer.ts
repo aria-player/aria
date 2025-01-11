@@ -1,6 +1,6 @@
-import { convertFileSrc, invoke } from "@tauri-apps/api/tauri";
+import { convertFileSrc, invoke } from "@tauri-apps/api/core";
 import { SourceCallbacks, SourceHandle } from "../../../../types/plugins";
-import { open } from "@tauri-apps/api/dialog";
+import { open } from "@tauri-apps/plugin-dialog";
 import { Track, TrackMetadata } from "../../../../types/tracks";
 import { appDataDir } from "@tauri-apps/api/path";
 import { i18n } from "i18next";

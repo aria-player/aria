@@ -1,6 +1,6 @@
 import { invoke } from "@tauri-apps/api";
-import { type } from "@tauri-apps/api/os";
-import { appWindow } from "@tauri-apps/api/window";
+import { type } from "@tauri-apps/plugin-os";
+import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { ReactNode, createContext, useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { selectMenuState } from "../app/menu";
@@ -16,6 +16,7 @@ import {
 } from "../features/config/configSlice";
 import { store } from "../app/store";
 import { useLocation } from "react-router-dom";
+const appWindow = getCurrentWebviewWindow()
 
 export enum Platform {
   Unknown = "Unknown",

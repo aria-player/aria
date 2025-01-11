@@ -1,4 +1,4 @@
-import { appWindow } from "@tauri-apps/api/window";
+import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { useState, useCallback, useEffect } from "react";
 import { isTauri } from "../../../app/utils";
 
@@ -9,6 +9,7 @@ import Close from "../../../assets/win-close.svg?react";
 
 import styles from "./WindowsControls.module.css";
 import { invoke } from "@tauri-apps/api";
+const appWindow = getCurrentWebviewWindow()
 
 export function WindowsControls() {
   const [isMaximized, setIsMaximized] = useState<boolean | null>(null);
