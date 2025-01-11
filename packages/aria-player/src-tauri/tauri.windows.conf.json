@@ -1,12 +1,12 @@
 {
-  "tauri": {
+  "app": {
     "windows": [
       {
         "title": "Aria",
         "visible": false,
-        "decorations": false,
-        "fileDropEnabled": false
+        "decorations": false
       }
     ]
-  }
+  },
+  "identifier": "com.aria-player.aria"
 }

@@ -1,5 +1,5 @@
 {
-  "tauri": {
+  "app": {
     "windows": [
       {
         "decorations": true,
@@ -7,5 +7,6 @@
         "hiddenTitle": true
       }
     ]
-  }
+  },
+  "identifier": "com.aria-player.aria"
 }

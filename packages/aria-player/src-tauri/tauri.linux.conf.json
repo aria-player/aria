@@ -1,9 +1,10 @@
 {
-  "tauri": {
+  "app": {
     "windows": [
       {
         "decorations": true
       }
     ]
-  }
+  },
+  "identifier": "com.aria-player.aria"
 }
