@@ -1,11 +1,11 @@
 use std::borrow::Cow;
 
-use tauri::{command, Window};
+use tauri::{command, Emitter, WebviewWindow};
 use tauri_plugin_oauth::{start_with_config, OauthConfig};
 use url::Url;
 
 #[command]
-pub async fn start_server(window: Window) -> Result<u16, String> {
+pub async fn start_server(window: WebviewWindow) -> Result<u16, String> {
     let config = OauthConfig {
         ports: Some(vec![2742]),
         response: Some(Cow::Borrowed("<html><script>close()</script></html>")),

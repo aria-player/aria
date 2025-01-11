@@ -2,7 +2,7 @@ use super::translation;
 
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, path::PathBuf};
-use tauri::Manager;
+use tauri::{Manager, WebviewWindow};
 use tauri_plugin_store::{JsonValue, StoreExt};
 use tauri_plugin_window_state::{AppHandleExt, StateFlags};
 
@@ -114,7 +114,7 @@ pub fn set_initial_language(app_handle: tauri::AppHandle, language: JsonValue) {
 }
 
 #[tauri::command]
-pub fn update_menu_state(window: tauri::Window, menu_state: HashMap<String, MenuItemState>) {
+pub fn update_menu_state(window: WebviewWindow, menu_state: HashMap<String, MenuItemState>) {
     for (key, value) in menu_state.iter() {
         if let Some(item) = window.menu_handle().try_get_item(key) {
             if let Some(disabled) = value.disabled {

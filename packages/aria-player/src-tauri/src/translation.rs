@@ -1,7 +1,7 @@
 use crate::menu::{read_menu_json, MenuItem};
 use serde_json::Value;
 use std::env::consts::OS;
-use tauri::{Manager, Window};
+use tauri::{Manager, WebviewWindow};
 
 const EN_GB: &str = include_str!("../../shared/locales/en_gb/translation.json");
 const EN_US: &str = include_str!("../../shared/locales/en_us/translation.json");
@@ -20,7 +20,7 @@ pub fn get_translations(lang_code: &str) -> (Value, Value) {
     (translations, defaults)
 }
 
-pub fn update_menu_language(window: &Window, lang_code: &str) {
+pub fn update_menu_language(window: &WebviewWindow, lang_code: &str) {
     let (translations, defaults) = get_translations(lang_code);
     let menu_items = read_menu_json();
     for item in menu_items {
@@ -45,7 +45,7 @@ pub fn update_menu_language(window: &Window, lang_code: &str) {
 }
 
 fn update_menu_item_language(
-    window: &Window,
+    window: &WebviewWindow,
     item: &MenuItem,
     translations: &Value,
     defaults: &Value,
