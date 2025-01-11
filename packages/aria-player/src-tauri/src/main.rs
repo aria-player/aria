@@ -67,14 +67,15 @@ fn main() {
 
             Ok(())
         })
-        .on_window_event(|e| {
-            if let WindowEvent::Resized(_) = e.event() {
+        .on_window_event(|window, e| match e {
+            WindowEvent::Resized(_) => {
                 std::thread::sleep(std::time::Duration::from_nanos(1));
             }
-            if let WindowEvent::CloseRequested { api, .. } = e.event() {
-                commands::close(e.window().app_handle());
+            WindowEvent::CloseRequested {api, .. } => {
+                commands::close(window.app_handle().clone());
                 api.prevent_close();
             }
+            _ => {}
         })
         .on_system_tray_event(|app, event| match event {
             SystemTrayEvent::DoubleClick {
