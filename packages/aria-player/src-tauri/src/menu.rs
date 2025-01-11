@@ -1,6 +1,9 @@
 use serde::{Deserialize, Serialize};
 use std::env::consts::OS;
-use tauri::{CustomMenuItem, Menu, Submenu};
+use tauri::{
+    menu::{CheckMenuItem, IsMenuItem, Menu, MenuItemKind, PredefinedMenuItem, Submenu},
+    AppHandle,
+};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct MenuItem {
@@ -17,14 +20,16 @@ pub fn read_menu_json() -> Vec<MenuItem> {
     serde_json::from_str(MENUS).expect("JSON was not well-formatted")
 }
 
-pub fn create_menu_from_json(items: &[MenuItem], labels: &serde_json::Value) -> Menu {
-    items.iter().fold(Menu::new(), |menu, item| {
-        if should_include_item(item) {
-            menu.add_submenu(create_menu_item(item, labels))
-        } else {
-            menu
-        }
-    })
+pub fn create_menu_from_json<R: tauri::Runtime>(
+    handle: &AppHandle<R>,
+    items: &[MenuItem],
+    labels: &serde_json::Value,
+) -> Result<Menu<R>, tauri::Error> {
+    let menu = Menu::new(handle).unwrap();
+    for item in create_menu_items(handle, items, labels).unwrap() {
+        menu.append(&item).unwrap();
+    }
+    Ok(menu)
 }
 
 fn should_include_item(item: &MenuItem) -> bool {
@@ -46,71 +51,92 @@ fn should_add_separator(index: usize, items: &[MenuItem]) -> bool {
     previous_item && next_item
 }
 
-fn create_menu_item(item: &MenuItem, labels: &serde_json::Value) -> Submenu {
-    let mut menu = Menu::new();
-    let parent_label = labels["menu"][&item.id].as_str().unwrap_or(&item.id);
-    if let Some(submenu_items) = &item.submenu {
-        for (index, sub_item) in submenu_items.iter().enumerate() {
-            if !should_include_item(sub_item) {
-                continue;
-            }
-            let sub_item_label = if sub_item.id.contains('.') {
-                let parts: Vec<&str> = sub_item.id.split('.').collect();
-                labels[parts[0]][parts[1]].as_str().unwrap_or(&sub_item.id)
-            } else {
-                labels["menu"][&sub_item.id]
-                    .as_str()
-                    .unwrap_or(&sub_item.id)
-            };
+fn create_menu_items<R: tauri::Runtime>(
+    handle: &AppHandle<R>,
+    items: &[MenuItem],
+    labels: &serde_json::Value,
+) -> Result<Vec<MenuItemKind<R>>, tauri::Error> {
+    let mut menu_items = Vec::new();
+    for (index, sub_item) in items.iter().enumerate() {
+        if !should_include_item(sub_item) {
+            continue;
+        }
+        let sub_item_label = if sub_item.id.contains('.') {
+            let parts: Vec<&str> = sub_item.id.split('.').collect();
+            labels[parts[0]][parts[1]].as_str().unwrap_or(&sub_item.id)
+        } else {
+            labels["menu"][&sub_item.id]
+                .as_str()
+                .unwrap_or(&sub_item.id)
+        };
+        if let Some(submenu) = &sub_item.submenu {
+            let submenu_items = create_menu_items(handle, submenu, labels)?;
+            let submenu = Submenu::with_id_and_items(
+                handle,
+                sub_item.id.as_str(),
+                sub_item_label,
+                true,
+                &submenu_items
+                    .iter()
+                    .map(|i| i as &dyn IsMenuItem<R>)
+                    .collect::<Vec<&dyn IsMenuItem<R>>>(),
+            )?;
+            menu_items.push(MenuItemKind::Submenu(submenu));
+        } else {
             match sub_item.id.as_str() {
                 "separator" => {
-                    if should_add_separator(index, submenu_items) {
-                        menu = menu.add_native_item(tauri::MenuItem::Separator);
+                    if should_add_separator(index, items) {
+                        let separator = PredefinedMenuItem::separator(handle).unwrap();
+                        menu_items.push(MenuItemKind::Predefined(separator));
                     }
-                    continue;
                 }
                 "macServices" => {
-                    menu = menu.add_native_item(tauri::MenuItem::Services);
-                    continue;
+                    menu_items.push(MenuItemKind::Predefined(
+                        PredefinedMenuItem::quit(handle, Some(sub_item_label)).unwrap(),
+                    ));
                 }
                 "macHide" => {
-                    menu = menu.add_native_item(tauri::MenuItem::Hide);
-                    continue;
+                    menu_items.push(MenuItemKind::Predefined(
+                        PredefinedMenuItem::hide(handle, Some(sub_item_label)).unwrap(),
+                    ));
                 }
                 "macHideOthers" => {
-                    menu = menu.add_native_item(tauri::MenuItem::HideOthers);
-                    continue;
+                    menu_items.push(MenuItemKind::Predefined(
+                        PredefinedMenuItem::hide_others(handle, Some(sub_item_label)).unwrap(),
+                    ));
                 }
                 "macShowAll" => {
-                    menu = menu.add_native_item(tauri::MenuItem::ShowAll);
-                    continue;
+                    menu_items.push(MenuItemKind::Predefined(
+                        PredefinedMenuItem::show_all(handle, Some(sub_item_label)).unwrap(),
+                    ));
                 }
                 "macMinimize" => {
-                    menu = menu.add_native_item(tauri::MenuItem::Minimize);
-                    continue;
+                    menu_items.push(MenuItemKind::Predefined(
+                        PredefinedMenuItem::minimize(handle, Some(sub_item_label)).unwrap(),
+                    ));
                 }
                 "macZoom" => {
-                    menu = menu.add_native_item(tauri::MenuItem::Zoom);
-                    continue;
+                    // TODO: No PredefinedMenuItem for zoom at the moment
+                    // https://github.com/tauri-apps/tauri/issues/11497
+                    menu_items.push(MenuItemKind::Predefined(
+                        PredefinedMenuItem::maximize(handle, Some(sub_item_label)).unwrap(),
+                    ));
                 }
-                _ => {}
-            }
-            if sub_item.submenu.is_some() {
-                menu = menu.add_submenu(create_menu_item(sub_item, labels));
-            } else {
-                let mut custom_menu_item =
-                    CustomMenuItem::new(sub_item.id.clone(), sub_item_label.to_string());
-                if let Some(shortcut) = &sub_item.shortcut {
-                    custom_menu_item.keyboard_accelerator = Some(shortcut.clone());
+                _ => {
+                    // Just use CheckMenuItem for all items since the menu JSON doesn't specify which ones can be checked
+                    let custom_item = CheckMenuItem::with_id(
+                        handle,
+                        sub_item.id.as_str(),
+                        sub_item_label,
+                        true,
+                        false,
+                        sub_item.shortcut.clone(),
+                    )
+                    .unwrap();
+                    menu_items.push(MenuItemKind::Check(custom_item));
                 }
-                menu = menu.add_item(custom_menu_item);
             }
         }
-    } else {
-        menu = menu.add_item(CustomMenuItem::new(
-            item.id.clone(),
-            parent_label.to_string(),
-        ));
     }
-    Submenu::new(parent_label.to_string(), menu)
+    Ok(menu_items)
 }

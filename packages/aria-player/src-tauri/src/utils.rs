@@ -1,4 +1,5 @@
 use std::path::PathBuf;
+use tauri::menu::MenuItemKind;
 use tauri::AppHandle;
 use tauri::Wry;
 use tauri_plugin_store::JsonValue;
@@ -19,4 +20,18 @@ pub fn get_language(app: &AppHandle<Wry>) -> String {
         .get("language")
         .and_then(|val| val.as_str().map(String::from))
         .unwrap_or_else(|| "en-US".to_string())
+}
+
+pub fn get_menu_item(items: &[MenuItemKind<Wry>], id: &str) -> Option<MenuItemKind<Wry>> {
+    for item in items {
+        if item.id().0.as_str() == id {
+            return Some(item.clone());
+        }
+        if let Some(submenu) = item.as_submenu() {
+            if let Some(found) = get_menu_item(&submenu.items().unwrap(), id) {
+                return Some(found);
+            }
+        }
+    }
+    None
 }

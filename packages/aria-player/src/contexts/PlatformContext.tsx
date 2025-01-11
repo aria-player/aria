@@ -1,9 +1,9 @@
 import { invoke } from "@tauri-apps/api/core";
 import { type } from "@tauri-apps/plugin-os";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
-import { ReactNode, createContext, useEffect, useRef, useState } from "react";
+import { ReactNode, createContext, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
-import { selectMenuState } from "../app/menu";
+import { MenuItem, selectMenuState } from "../app/menu";
 import { isTauri } from "../app/utils";
 import i18n from "../i18n";
 import { useMenuActions } from "../hooks/useMenuActions";
@@ -16,6 +16,7 @@ import {
 } from "../features/config/configSlice";
 import { store } from "../app/store";
 import { useLocation } from "react-router-dom";
+import menus from "../../shared/menus.json";
 
 const appWindow = getCurrentWebviewWindow();
 
@@ -49,7 +50,6 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
   const { invokeMenuAction } = useMenuActions();
   const location = useLocation();
 
-  const listeningToTauri = useRef(false);
   const [ready, setReady] = useState(false);
   const [platform, setPlatform] = useState<Platform>(Platform.Unknown);
   const [fullscreen, setFullscreen] = useState<boolean | null>(null);
@@ -128,23 +128,26 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
   }, [platform]);
 
   useEffect(() => {
-    let unlisten: (() => void) | undefined;
-    async function init() {
-      if (isTauri() && !listeningToTauri.current) {
-        listeningToTauri.current = true;
-        // TODO: Fix menu actions
-        // unlisten = await appWindow.onMenuClicked(
-        //   ({ payload: menuId }: { payload: string }) => {
-        //     invokeMenuAction(menuId);
-        //   }
-        // );
+    const registerListeners = async (items: MenuItem[]) => {
+      const unlistenFns: (() => void)[] = [];
+      for (const item of items) {
+        const unlisten = await getCurrentWebviewWindow().listen(
+          item.id.replace(".", ":"),
+          () => invokeMenuAction(item.id)
+        );
+        unlistenFns.push(unlisten);
+        if (item.submenu) {
+          unlistenFns.push(...(await registerListeners(item.submenu)));
+        }
       }
-    }
-    init();
+      return unlistenFns;
+    };
+
+    const unlistenFunctions = registerListeners(menus);
     return () => {
-      if (unlisten) {
-        unlisten();
-      }
+      unlistenFunctions.then((unlistenFns) => {
+        unlistenFns.forEach((unlisten) => unlisten());
+      });
     };
   }, [invokeMenuAction]);
 

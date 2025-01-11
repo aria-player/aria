@@ -11,10 +11,7 @@ mod utils;
 use serde_json::json;
 use std::env::consts::OS;
 use std::path::PathBuf;
-use tauri::{
-    CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem,
-    WindowEvent,
-};
+use tauri::{Emitter, Manager, WindowEvent};
 use tauri_plugin_store::StoreExt;
 use translation::update_menu_language;
 
@@ -63,7 +60,7 @@ fn main() {
             store.save().unwrap();
 
             let language_code = utils::get_language(&app.app_handle());
-            update_menu_language(&window, &language_code);
+            update_menu_language(&window.app_handle(), &language_code);
 
             Ok(())
         })
@@ -71,11 +68,26 @@ fn main() {
             WindowEvent::Resized(_) => {
                 std::thread::sleep(std::time::Duration::from_nanos(1));
             }
-            WindowEvent::CloseRequested {api, .. } => {
+            WindowEvent::CloseRequested { api, .. } => {
                 commands::close(window.app_handle().clone());
                 api.prevent_close();
             }
             _ => {}
+        })
+        .on_menu_event(|app, event| {
+            let menu_item_id: &str = event.id().0.as_str();
+            app.emit(&menu_item_id.replace('.', ":"), ()).unwrap();
+
+            if let Some(menu) = app.menu() {
+                if let Some(menu_item) = utils::get_menu_item(&menu.items().unwrap(), menu_item_id)
+                {
+                    if let Some(check_menu_item) = menu_item.as_check_menuitem() {
+                        // The web app manages the checked state, so this cancels out Tauri's automatic 'checked' toggle
+                        let checked = check_menu_item.is_checked().unwrap_or(false);
+                        let _ = check_menu_item.set_checked(!checked);
+                    }
+                }
+            }
         })
         .on_system_tray_event(|app, event| match event {
             SystemTrayEvent::DoubleClick {
@@ -139,10 +151,11 @@ fn main() {
             oauth::start_server
         ]);
     if OS != "windows" {
-        let (default_labels, _) = translation::get_translations("en-US");
-        let items = menu::read_menu_json();
-        let menu = menu::create_menu_from_json(&items, &default_labels);
-        app_builder = app_builder.menu(menu);
+        app_builder = app_builder.menu(|handle| {
+            let (default_labels, _) = translation::get_translations("en-US");
+            let items = menu::read_menu_json();
+            menu::create_menu_from_json(handle, &items, &default_labels)
+        });
     }
     app_builder
         .run(tauri::generate_context!())

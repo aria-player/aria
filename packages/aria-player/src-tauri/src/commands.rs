@@ -1,8 +1,10 @@
+use crate::utils;
+
 use super::translation;
 
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, path::PathBuf};
-use tauri::{Manager, WebviewWindow};
+use tauri::Manager;
 use tauri_plugin_store::{JsonValue, StoreExt};
 use tauri_plugin_window_state::{AppHandleExt, StateFlags};
 
@@ -78,13 +80,10 @@ pub fn close(app_handle: tauri::AppHandle) {
 #[tauri::command]
 pub fn update_app_config(app_handle: tauri::AppHandle, config_item: String, new_value: JsonValue) {
     if config_item == "language" {
-        translation::update_menu_language(
-            &app_handle.get_webview_window("main").unwrap(),
-            new_value.as_str().unwrap(),
-        );
+        translation::update_menu_language(&app_handle, new_value.as_str().unwrap());
     }
     let path = PathBuf::from(".app-config");
-    let store = app_handle.store(path).unwrap();
+    let store = app_handle.clone().store(path).unwrap();
     store.set(config_item, new_value);
     store.save().unwrap();
 }
@@ -101,10 +100,7 @@ pub fn get_app_config(
 
 #[tauri::command]
 pub fn set_initial_language(app_handle: tauri::AppHandle, language: JsonValue) {
-    translation::update_menu_language(
-        &app_handle.get_webview_window("main").unwrap(),
-        &language.as_str().unwrap(),
-    );
+    translation::update_menu_language(&app_handle, &language.as_str().unwrap());
     let path = PathBuf::from(".app-config");
     let store = app_handle.store(path).unwrap();
     if store.get("language").is_none() {
@@ -114,14 +110,19 @@ pub fn set_initial_language(app_handle: tauri::AppHandle, language: JsonValue) {
 }
 
 #[tauri::command]
-pub fn update_menu_state(window: WebviewWindow, menu_state: HashMap<String, MenuItemState>) {
-    for (key, value) in menu_state.iter() {
-        if let Some(item) = window.menu_handle().try_get_item(key) {
-            if let Some(disabled) = value.disabled {
-                let _ = item.set_enabled(!disabled);
-            }
-            if let Some(selected) = value.selected {
-                let _ = item.set_selected(selected);
+pub fn update_menu_state(app_handle: tauri::AppHandle, menu_state: HashMap<String, MenuItemState>) {
+    if let Some(menu) = app_handle.menu() {
+        if let Ok(items) = menu.items() {
+            for (key, value) in menu_state.iter() {
+                if let Some(item) = utils::get_menu_item(&items, key) {
+                    if let Some(check_item) = item.as_check_menuitem() {
+                        let _ = check_item.set_enabled(!value.disabled.unwrap_or(false));
+                        let _ = check_item.set_checked(value.selected.unwrap_or(false));
+                    }
+                    if let Some(menu_item) = item.as_submenu() {
+                        let _ = menu_item.set_enabled(!value.disabled.unwrap_or(false));
+                    }
+                }
             }
         }
     }
