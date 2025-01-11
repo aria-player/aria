@@ -34,7 +34,7 @@ fn main() {
         .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
             app.emit_all("single-instance", Payload { args: argv, cwd })
                 .unwrap();
-            let window = app.get_window("main").unwrap();
+            let window = app.get_webview_window("main").unwrap();
             if !window.is_visible().unwrap() {
                 window.show().unwrap();
             }
@@ -42,7 +42,7 @@ fn main() {
         }))
         .plugin(tauri_plugin_store::Builder::default().build())
         .setup(|app| {
-            let window = app.get_window("main").unwrap();
+            let window = app.get_webview_window("main").unwrap();
             let _ = set_shadow(&window, true).ok();
 
             if OS != "macos" {
@@ -93,7 +93,7 @@ fn main() {
                 let hide_title = translations["tray"]["hide"]
                     .as_str()
                     .unwrap_or(defaults["tray"]["hide"].as_str().unwrap());
-                let window = app.get_window("main").unwrap();
+                let window = app.get_webview_window("main").unwrap();
                 window.show().unwrap();
                 window.set_focus().unwrap();
                 app.tray_handle()
@@ -107,7 +107,7 @@ fn main() {
                 match id.as_str() {
                     "exit" => commands::exit(app.app_handle()),
                     "hide" => {
-                        let window = app.get_window("main").unwrap();
+                        let window = app.get_webview_window("main").unwrap();
                         let tray_handle = app.tray_handle();
                         if window.is_visible().unwrap() {
                             window.hide().unwrap();

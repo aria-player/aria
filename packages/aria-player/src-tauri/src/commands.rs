@@ -15,7 +15,7 @@ pub struct MenuItemState {
 
 #[tauri::command]
 pub fn ready(app_handle: tauri::AppHandle) {
-    let window = app_handle.get_window("main").unwrap();
+    let window = app_handle.get_webview_window("main").unwrap();
     window.show().unwrap();
 }
 
@@ -26,14 +26,14 @@ pub fn greet(name: &str) -> String {
 
 #[tauri::command]
 pub fn exit(app_handle: tauri::AppHandle) {
-    app_handle.get_window("main").unwrap().hide().unwrap();
+    app_handle.get_webview_window("main").unwrap().hide().unwrap();
     let _ = app_handle.save_window_state(StateFlags::all() - StateFlags::VISIBLE);
     app_handle.exit(0);
 }
 
 #[tauri::command]
 pub fn toggle_fullscreen(app_handle: tauri::AppHandle) {
-    let window = app_handle.get_window("main").unwrap();
+    let window = app_handle.get_webview_window("main").unwrap();
     let is_fullscreen = window.is_fullscreen().unwrap();
     if !is_fullscreen {
         window.unmaximize().unwrap();
@@ -62,7 +62,7 @@ pub fn close(app_handle: tauri::AppHandle) {
         .unwrap_or(false);
 
         if minimize_to_tray {
-            let window = app_handle.get_window("main").unwrap();
+            let window = app_handle.get_webview_window("main").unwrap();
             window.hide().unwrap();
             app_handle
                 .tray_handle()
@@ -81,7 +81,7 @@ pub fn update_app_config(app_handle: tauri::AppHandle, config_item: String, new_
     let path = PathBuf::from(".app-config");
     if config_item == "language" {
         translation::update_menu_language(
-            &app_handle.get_window("main").unwrap(),
+            &app_handle.get_webview_window("main").unwrap(),
             new_value.as_str().unwrap(),
         );
     }
@@ -109,7 +109,7 @@ pub fn set_initial_language(app_handle: tauri::AppHandle, language: JsonValue) {
     let stores = app_handle.state::<StoreCollection<Wry>>();
     let path = PathBuf::from(".app-config");
     translation::update_menu_language(
-        &app_handle.get_window("main").unwrap(),
+        &app_handle.get_webview_window("main").unwrap(),
         &language.as_str().unwrap(),
     );
     with_store(app_handle.to_owned(), stores, path, |store| {
