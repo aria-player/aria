@@ -31,8 +31,6 @@ fn main() {
         .plugin(tauri_plugin_os::init())
         .plugin(tauri_plugin_window_state::Builder::default().build())
         .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
-            app.emit_all("single-instance", Payload { args: argv, cwd })
-                .unwrap();
             let window = app.get_webview_window("main").unwrap();
             if !window.is_visible().unwrap() {
                 window.show().unwrap();
