@@ -17,7 +17,7 @@
     "@ag-grid-community/react": "^32.3.2",
     "@ag-grid-community/styles": "^32.3.2",
     "@reduxjs/toolkit": "^2.3.0",
-    "@tauri-apps/api": "^2.0.0",
+    "@tauri-apps/api": "^2.2.0",
     "@tauri-apps/plugin-dialog": "^2.2.0",
     "@tauri-apps/plugin-os": "^2.2.0",
     "@tauri-apps/plugin-shell": "^2.2.0",
@@ -53,7 +53,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.14.0",
-    "@tauri-apps/cli": "2.1.0",
+    "@tauri-apps/cli": "2.2.3",
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.0.1",
     "@types/crypto-js": "^4.2.2",
