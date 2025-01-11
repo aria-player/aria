@@ -6,11 +6,11 @@ import i18n from "../i18n";
 import { defaultPluginInfo } from "../plugins/plugins";
 
 interface Window {
-  __TAURI__?: unknown;
+  __TAURI_INTERNALS__?: unknown;
 }
 
 export function isTauri() {
-  return (window as Window).__TAURI__ !== undefined;
+  return (window as Window).__TAURI_INTERNALS__ !== undefined;
 }
 
 export function formatDuration(duration: number) {
