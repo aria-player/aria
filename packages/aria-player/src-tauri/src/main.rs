@@ -17,7 +17,6 @@ use tauri::{
 };
 use tauri_plugin_store::{with_store, StoreCollection};
 use translation::update_menu_language;
-use window_shadows::set_shadow;
 
 #[derive(Clone, serde::Serialize)]
 struct Payload {
@@ -43,7 +42,7 @@ fn main() {
         .plugin(tauri_plugin_store::Builder::default().build())
         .setup(|app| {
             let window = app.get_webview_window("main").unwrap();
-            let _ = set_shadow(&window, true).ok();
+            window.set_shadow(true);
 
             if OS != "macos" {
                 if window.is_fullscreen().unwrap() {
