@@ -12,7 +12,7 @@ import {
   setLanguage,
   setLastView
 } from "../../../features/config/configSlice";
-import { invoke } from "@tauri-apps/api";
+import { invoke } from "@tauri-apps/api/core";
 import { LibraryView } from "../../../app/view";
 
 export function GeneralPage() {

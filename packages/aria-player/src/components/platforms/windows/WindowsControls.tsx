@@ -8,8 +8,9 @@ import Restore from "../../../assets/win-restore.svg?react";
 import Close from "../../../assets/win-close.svg?react";
 
 import styles from "./WindowsControls.module.css";
-import { invoke } from "@tauri-apps/api";
-const appWindow = getCurrentWebviewWindow()
+import { invoke } from "@tauri-apps/api/core";
+
+const appWindow = getCurrentWebviewWindow();
 
 export function WindowsControls() {
   const [isMaximized, setIsMaximized] = useState<boolean | null>(null);

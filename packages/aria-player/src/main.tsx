@@ -18,7 +18,7 @@ import { ArtworkProvider } from "./contexts/ArtworkContext";
 import { ErrorBoundary } from "react-error-boundary";
 import { CrashPage } from "./components/pages/CrashPage";
 import { isTauri } from "./app/utils";
-import { invoke } from "@tauri-apps/api";
+import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import App from "./App";
 import "./i18n";

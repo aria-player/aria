@@ -1,4 +1,4 @@
-import { invoke } from "@tauri-apps/api";
+import { invoke } from "@tauri-apps/api/core";
 import { type } from "@tauri-apps/plugin-os";
 import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { ReactNode, createContext, useEffect, useRef, useState } from "react";
@@ -16,7 +16,8 @@ import {
 } from "../features/config/configSlice";
 import { store } from "../app/store";
 import { useLocation } from "react-router-dom";
-const appWindow = getCurrentWebviewWindow()
+
+const appWindow = getCurrentWebviewWindow();
 
 export enum Platform {
   Unknown = "Unknown",
@@ -73,20 +74,20 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
       }
       const osType = await type();
       switch (osType) {
-        case "Windows_NT":
+        case "windows":
           setPlatform(Platform.Windows);
           break;
-        case "Darwin":
+        case "macos":
           setPlatform(Platform.Mac);
           break;
-        case "Linux":
+        case "linux":
           setPlatform(Platform.Linux);
           break;
         default:
           break;
       }
       setFullscreen(await appWindow.isFullscreen());
-      if (osType == "Windows_NT") {
+      if (osType == "windows") {
         setDecorations(await appWindow.isDecorated());
       }
       setMinimizeToTray(
@@ -131,11 +132,12 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
     async function init() {
       if (isTauri() && !listeningToTauri.current) {
         listeningToTauri.current = true;
-        unlisten = await appWindow.onMenuClicked(
-          ({ payload: menuId }: { payload: string }) => {
-            invokeMenuAction(menuId);
-          }
-        );
+        // TODO: Fix menu actions
+        // unlisten = await appWindow.onMenuClicked(
+        //   ({ payload: menuId }: { payload: string }) => {
+        //     invokeMenuAction(menuId);
+        //   }
+        // );
       }
     }
     init();
