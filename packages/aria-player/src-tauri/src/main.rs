@@ -13,9 +13,9 @@ use std::env::consts::OS;
 use std::path::PathBuf;
 use tauri::{
     CustomMenuItem, Manager, SystemTray, SystemTrayEvent, SystemTrayMenu, SystemTrayMenuItem,
-    WindowEvent, Wry,
+    WindowEvent,
 };
-use tauri_plugin_store::{with_store, StoreCollection};
+use tauri_plugin_store::StoreExt;
 use translation::update_menu_language;
 
 #[derive(Clone, serde::Serialize)]
@@ -57,13 +57,10 @@ fn main() {
                 SystemTray::new().with_menu(tray_menu).build(app).unwrap();
             }
 
-            let stores = app.state::<StoreCollection<Wry>>();
             let path = PathBuf::from(".app-config");
-            with_store(app.app_handle(), stores, path, |store| {
-                utils::set_config_if_null(store, "minimizetotray", || json!(false));
-                store.save()
-            })
-            .unwrap();
+            let store = app.store(path).unwrap();
+            utils::set_config_if_null(&store, "minimizetotray", || json!(false));
+            store.save().unwrap();
 
             let language_code = utils::get_language(&app.app_handle());
             update_menu_language(&window, &language_code);
