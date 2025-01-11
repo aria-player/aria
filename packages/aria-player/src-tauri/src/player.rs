@@ -119,16 +119,19 @@ pub fn get_metadata(app: AppHandle, file_path: String) -> Result<HashMap<String,
         let mut hasher = Sha256::new();
         hasher.update(cover.data());
         let hash = format!("{:x}", hasher.finalize());
-        if let Some(app_data_dir) = app.path_resolver().app_data_dir() {
-            let artwork_subdir = app_data_dir.join(".artwork-cache");
-            fs::create_dir_all(&artwork_subdir).unwrap();
-            let artwork_path = artwork_subdir.join(&hash);
-            if !artwork_path.exists() {
-                if let Ok(mut file) = fs::File::create(&artwork_path) {
-                    file.write_all(cover.data()).unwrap();
+        match app.path().app_data_dir() {
+            Ok(path) => {
+                let artwork_subdir = path.join(".artwork-cache");
+                fs::create_dir_all(&artwork_subdir);
+                let artwork_path = artwork_subdir.join(&hash);
+                if !artwork_path.exists() {
+                    if let Ok(mut file) = fs::File::create(&artwork_path) {
+                        file.write_all(cover.data()).unwrap();
+                    }
                 }
             }
-        }
+            Err(_) => return Err("Couldn't get app data directory".to_string()),
+        };
         metadata.insert("artworkUri".to_string(), hash);
     }
     Ok(metadata)
