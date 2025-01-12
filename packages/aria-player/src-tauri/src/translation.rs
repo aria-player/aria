@@ -1,10 +1,9 @@
 use crate::{
     menu::{read_menu_json, MenuItem},
-    utils,
+    tray, utils,
 };
 use serde_json::Value;
-use std::env::consts::OS;
-use tauri::{AppHandle, Manager};
+use tauri::AppHandle;
 
 const EN_GB: &str = include_str!("../../shared/locales/en_gb/translation.json");
 const EN_US: &str = include_str!("../../shared/locales/en_us/translation.json");
@@ -29,22 +28,7 @@ pub fn update_menu_language(handle: &AppHandle, lang_code: &str) {
     for item in menu_items {
         update_menu_item_language(handle, &item, &translations, &defaults);
     }
-    if OS == "macos" {
-        return;
-    }
-    if let Value::Object(tray_translations) = &translations["tray"] {
-        for (key, value) in tray_translations {
-            let title = value
-                .as_str()
-                .or_else(|| defaults["tray"].get(key).and_then(|v| v.as_str()));
-            if let Some(title) = title {
-                if let Some(tray_item_handle) = window.app_handle().tray_handle().try_get_item(key)
-                {
-                    tray_item_handle.set_title(title).unwrap();
-                }
-            }
-        }
-    }
+    tray::update_tray_with_language(handle, &lang_code);
 }
 
 fn update_menu_item_language(

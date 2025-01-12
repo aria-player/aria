@@ -1,4 +1,4 @@
-use crate::utils;
+use crate::{tray, utils};
 
 use super::translation;
 
@@ -18,6 +18,7 @@ pub struct MenuItemState {
 pub fn ready(app_handle: tauri::AppHandle) {
     let window = app_handle.get_webview_window("main").unwrap();
     window.show().unwrap();
+    tray::update_tray(&app_handle);
 }
 
 #[tauri::command]
@@ -66,11 +67,7 @@ pub fn close(app_handle: tauri::AppHandle) {
         if minimize_to_tray {
             let window = app_handle.get_webview_window("main").unwrap();
             window.hide().unwrap();
-            app_handle
-                .tray_handle()
-                .get_item("hide")
-                .set_title("Show")
-                .unwrap();
+            tray::update_tray(&app_handle);
         } else {
             exit(app_handle);
         }

@@ -6,12 +6,13 @@ mod menu;
 mod oauth;
 mod player;
 mod translation;
+mod tray;
 mod utils;
 
 use serde_json::json;
 use std::env::consts::OS;
 use std::path::PathBuf;
-use tauri::{Emitter, Manager, WindowEvent};
+use tauri::{tray::TrayIconEvent, Emitter, Manager, WindowEvent};
 use tauri_plugin_store::StoreExt;
 use translation::update_menu_language;
 
@@ -43,15 +44,9 @@ fn main() {
                 if window.is_fullscreen().unwrap() {
                     window.set_resizable(false).unwrap();
                 }
-
-                let quit = CustomMenuItem::new("exit".to_string(), "Exit");
-                let hide = CustomMenuItem::new("hide".to_string(), "Hide");
-                let tray_menu = SystemTrayMenu::new()
-                    .add_item(hide)
-                    .add_native_item(SystemTrayMenuItem::Separator)
-                    .add_item(quit);
-
-                SystemTray::new().with_menu(tray_menu).build(app).unwrap();
+                let tray_menu = app.tray_by_id("main").unwrap();
+                let _ = tray_menu.set_show_menu_on_left_click(false);
+                let _ = tray_menu.set_tooltip(Some("Aria"));
             }
 
             let path = PathBuf::from(".app-config");
@@ -75,6 +70,20 @@ fn main() {
             _ => {}
         })
         .on_menu_event(|app, event| {
+            match event.id.as_ref() {
+                "hide" => {
+                    if let Some(window) = app.get_webview_window("main") {
+                        if window.is_visible().unwrap() {
+                            window.hide().unwrap();
+                        } else {
+                            window.show().unwrap();
+                            window.set_focus().unwrap();
+                        }
+                        tray::update_tray(&app);
+                    }
+                }
+                _ => {}
+            }
             let menu_item_id: &str = event.id().0.as_str();
             app.emit(&menu_item_id.replace('.', ":"), ()).unwrap();
 
@@ -89,49 +98,12 @@ fn main() {
                 }
             }
         })
-        .on_system_tray_event(|app, event| match event {
-            SystemTrayEvent::DoubleClick {
-                position: _,
-                size: _,
-                ..
-            } => {
-                let language = utils::get_language(app);
-                let (translations, defaults) = translation::get_translations(&language);
-                let hide_title = translations["tray"]["hide"]
-                    .as_str()
-                    .unwrap_or(defaults["tray"]["hide"].as_str().unwrap());
-                let window = app.get_webview_window("main").unwrap();
-                window.show().unwrap();
-                window.set_focus().unwrap();
-                app.tray_handle()
-                    .get_item("hide")
-                    .set_title(hide_title)
-                    .unwrap();
-            }
-            SystemTrayEvent::MenuItemClick { id, .. } => {
-                let language = utils::get_language(app);
-                let (translations, defaults) = translation::get_translations(&language);
-                match id.as_str() {
-                    "exit" => commands::exit(app.app_handle()),
-                    "hide" => {
-                        let window = app.get_webview_window("main").unwrap();
-                        let tray_handle = app.tray_handle();
-                        if window.is_visible().unwrap() {
-                            window.hide().unwrap();
-                            let show_title = translations["tray"]["show"]
-                                .as_str()
-                                .unwrap_or(defaults["tray"]["show"].as_str().unwrap());
-                            tray_handle.get_item(&id).set_title(show_title).unwrap();
-                        } else {
-                            window.show().unwrap();
-                            window.set_focus().unwrap();
-                            let hide_title = translations["tray"]["hide"]
-                                .as_str()
-                                .unwrap_or(defaults["tray"]["hide"].as_str().unwrap());
-                            tray_handle.get_item(&id).set_title(hide_title).unwrap();
-                        }
-                    }
-                    _ => {}
+        .on_tray_icon_event(|app, event| match event {
+            TrayIconEvent::DoubleClick { .. } => {
+                if let Some(window) = app.get_webview_window("main") {
+                    window.show().unwrap();
+                    window.set_focus().unwrap();
+                    tray::update_tray(&app);
                 }
             }
             _ => {}
