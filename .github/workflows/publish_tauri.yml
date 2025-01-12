@@ -24,7 +24,7 @@ jobs:
         include:
           - platform: "macos-latest"
             args: "--target universal-apple-darwin"
-          - platform: "ubuntu-20.04" # for Tauri v1 you could replace this with ubuntu-20.04.
+          - platform: "ubuntu-22.04" # for Tauri v1 you could replace this with ubuntu-20.04.
             args: ""
           - platform: "windows-latest"
             args: ""
@@ -45,10 +45,10 @@ jobs:
           targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
 
       - name: install dependencies (ubuntu only)
-        if: matrix.platform == 'ubuntu-20.04' # This must match the platform value defined above.
+        if: matrix.platform == 'ubuntu-22.04' # This must match the platform value defined above.
         run: |
           sudo apt-get update
-          sudo apt-get install -y libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
+          sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
         # webkitgtk 4.0 is for Tauri v1 - webkitgtk 4.1 is for Tauri v2.
         # You can remove the one that doesn't apply to your app to speed up the workflow a bit.
 
@@ -90,7 +90,7 @@ jobs:
           releaseDraft: true
           updaterJsonPreferNsis: true
           projectPath: ${{ env.APP_PATH }}
-          args: '${{ matrix.args }} -c ''{"tauri": {"updater": {"active": true}}}'''
+          args: '${{ matrix.args }} -c ''{"bundle": {"createUpdaterArtifacts": "v1Compatible"}}'''
 
       - name: Copy and rename artifact
         shell: bash
@@ -101,7 +101,7 @@ jobs:
           elif [ "${{ matrix.platform }}" = "macos-latest" ]; then
             ARTIFACT="universal-apple-darwin/release/bundle/dmg/${{ env.APP_NAME }}_${{ steps.tauri-action.outputs.appVersion }}_universal.dmg"
             RENAMED_ARTIFACT="${{ env.APP_NAME }}_universal.dmg"
-          elif [ "${{ matrix.platform }}" = "ubuntu-20.04" ]; then
+          elif [ "${{ matrix.platform }}" = "ubuntu-22.04" ]; then
             ARTIFACT="release/bundle/appimage/${{ env.APP_NAME }}_${{ steps.tauri-action.outputs.appVersion }}_amd64.AppImage"
             RENAMED_ARTIFACT="${{ env.APP_NAME }}_amd64.AppImage"
           else
