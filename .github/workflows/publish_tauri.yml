@@ -12,7 +12,7 @@ on:
 jobs:
   publish-tauri:
     env:
-      APP_NAME: aria
+      APP_NAME: Aria
       APP_PATH: ./packages/aria-player
       RENAMED_ARTIFACT:
       TAG_MESSAGE:
