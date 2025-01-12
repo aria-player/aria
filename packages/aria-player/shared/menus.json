@@ -91,26 +91,26 @@
       {
         "id": "columns",
         "submenu": [
-          { "id": "columns.art", "keepopen": true },
-          { "id": "columns.title", "keepopen": true },
-          { "id": "columns.duration", "keepopen": true },
-          { "id": "columns.artist", "keepopen": true },
-          { "id": "columns.album", "keepopen": true },
-          { "id": "columns.genre", "keepopen": true },
-          { "id": "columns.year", "keepopen": true },
-          { "id": "columns.albumArtist", "keepopen": true },
-          { "id": "columns.composer", "keepopen": true },
-          { "id": "columns.comments", "keepopen": true },
-          { "id": "columns.track", "keepopen": true },
-          { "id": "columns.disc", "keepopen": true },
-          { "id": "columns.dateAdded", "keepopen": true },
-          { "id": "columns.dateModified", "keepopen": true },
-          { "id": "columns.fileFolder", "keepopen": true },
-          { "id": "columns.filePath", "keepopen": true },
-          { "id": "columns.fileSize", "keepopen": true },
-          { "id": "columns.source", "keepopen": true },
+          { "id": "columns.art", "keepopen": true, "checkbox": true },
+          { "id": "columns.title", "keepopen": true, "checkbox": true },
+          { "id": "columns.duration", "keepopen": true, "checkbox": true },
+          { "id": "columns.artist", "keepopen": true, "checkbox": true },
+          { "id": "columns.album", "keepopen": true, "checkbox": true },
+          { "id": "columns.genre", "keepopen": true, "checkbox": true },
+          { "id": "columns.year", "keepopen": true, "checkbox": true },
+          { "id": "columns.albumArtist", "keepopen": true, "checkbox": true },
+          { "id": "columns.composer", "keepopen": true, "checkbox": true },
+          { "id": "columns.comments", "keepopen": true, "checkbox": true },
+          { "id": "columns.track", "keepopen": true, "checkbox": true },
+          { "id": "columns.disc", "keepopen": true, "checkbox": true },
+          { "id": "columns.dateAdded", "keepopen": true, "checkbox": true },
+          { "id": "columns.dateModified", "keepopen": true, "checkbox": true },
+          { "id": "columns.fileFolder", "keepopen": true, "checkbox": true },
+          { "id": "columns.filePath", "keepopen": true, "checkbox": true },
+          { "id": "columns.fileSize", "keepopen": true, "checkbox": true },
+          { "id": "columns.source", "keepopen": true, "checkbox": true },
           { "id": "separator" },
-          { "id": "togglePlaylistLayout" },
+          { "id": "togglePlaylistLayout", "checkbox": true },
           { "id": "separator" },
           { "id": "resetColumns" }
         ]
@@ -118,20 +118,20 @@
       {
         "id": "viewType",
         "submenu": [
-          { "id": "viewType.trackList" },
-          { "id": "viewType.albumGrid" },
-          { "id": "viewType.splitView" }
+          { "id": "viewType.trackList", "checkbox": true },
+          { "id": "viewType.albumGrid", "checkbox": true },
+          { "id": "viewType.splitView", "checkbox": true }
         ]
       },
       {
         "id": "groupBy",
         "submenu": [
-          { "id": "groupBy.artist" },
-          { "id": "groupBy.albumArtist" },
-          { "id": "groupBy.composer" },
-          { "id": "groupBy.genre" },
-          { "id": "groupBy.year" },
-          { "id": "groupBy.fileFolder" }
+          { "id": "groupBy.artist", "checkbox": true },
+          { "id": "groupBy.albumArtist", "checkbox": true },
+          { "id": "groupBy.composer", "checkbox": true },
+          { "id": "groupBy.genre", "checkbox": true },
+          { "id": "groupBy.year", "checkbox": true },
+          { "id": "groupBy.fileFolder", "checkbox": true }
         ]
       },
       {

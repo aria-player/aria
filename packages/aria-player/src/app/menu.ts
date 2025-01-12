@@ -59,6 +59,7 @@ export interface MenuItem {
   maconly?: boolean;
   winlinuxonly?: boolean;
   keepopen?: boolean;
+  checkbox?: boolean;
 }
 
 export interface MenuItemState {

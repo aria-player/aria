@@ -116,6 +116,9 @@ pub fn update_menu_state(app_handle: tauri::AppHandle, menu_state: HashMap<Strin
                         let _ = check_item.set_enabled(!value.disabled.unwrap_or(false));
                         let _ = check_item.set_checked(value.selected.unwrap_or(false));
                     }
+                    if let Some(menu_item) = item.as_menuitem() {
+                        let _ = menu_item.set_enabled(!value.disabled.unwrap_or(false));
+                    }
                     if let Some(menu_item) = item.as_submenu() {
                         let _ = menu_item.set_enabled(!value.disabled.unwrap_or(false));
                     }

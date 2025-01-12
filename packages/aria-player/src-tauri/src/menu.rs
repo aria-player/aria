@@ -13,6 +13,7 @@ pub struct MenuItem {
     pub maconly: Option<bool>,
     pub winlinuxonly: Option<bool>,
     pub keepopen: Option<bool>,
+    pub checkbox: Option<bool>,
 }
 
 pub fn read_menu_json() -> Vec<MenuItem> {
@@ -123,17 +124,28 @@ fn create_menu_items<R: tauri::Runtime>(
                     ));
                 }
                 _ => {
-                    // Just use CheckMenuItem for all items since the menu JSON doesn't specify which ones can be checked
-                    let custom_item = CheckMenuItem::with_id(
-                        handle,
-                        sub_item.id.as_str(),
-                        sub_item_label,
-                        true,
-                        false,
-                        sub_item.shortcut.clone(),
-                    )
-                    .unwrap();
-                    menu_items.push(MenuItemKind::Check(custom_item));
+                    if sub_item.checkbox.unwrap_or(false) {
+                        let custom_item = CheckMenuItem::with_id(
+                            handle,
+                            sub_item.id.as_str(),
+                            sub_item_label,
+                            true,
+                            false,
+                            sub_item.shortcut.clone(),
+                        )
+                        .unwrap();
+                        menu_items.push(MenuItemKind::Check(custom_item));
+                    } else {
+                        let custom_item = tauri::menu::MenuItem::with_id(
+                            handle,
+                            sub_item.id.as_str(),
+                            sub_item_label,
+                            true,
+                            sub_item.shortcut.clone(),
+                        )
+                        .unwrap();
+                        menu_items.push(MenuItemKind::MenuItem(custom_item));
+                    }
                 }
             }
         }
