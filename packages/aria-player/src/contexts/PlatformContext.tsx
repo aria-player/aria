@@ -1,6 +1,9 @@
 import { invoke } from "@tauri-apps/api/core";
 import { type } from "@tauri-apps/plugin-os";
-import { getCurrentWebviewWindow } from "@tauri-apps/api/webviewWindow";
+import {
+  getCurrentWebviewWindow,
+  WebviewWindow
+} from "@tauri-apps/api/webviewWindow";
 import { ReactNode, createContext, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { MenuItem, selectMenuState } from "../app/menu";
@@ -18,7 +21,7 @@ import { store } from "../app/store";
 import { useLocation } from "react-router-dom";
 import menus from "../../shared/menus.json";
 
-const appWindow = getCurrentWebviewWindow();
+const appWindow = isTauri() ? getCurrentWebviewWindow() : null;
 
 export enum Platform {
   Unknown = "Unknown",
@@ -67,7 +70,7 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
           dispatch(replace(BASEPATH + initialView));
         }
       }
-      if (!isTauri()) {
+      if (!isTauri() || !appWindow) {
         setPlatform(Platform.Web);
         setReady(true);
         return;
@@ -112,7 +115,7 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
     let unlisten: (() => void) | undefined;
     async function init() {
       if (isTauri()) {
-        unlisten = await appWindow.onResized(() => {
+        unlisten = await appWindow?.onResized(() => {
           appWindow.isFullscreen().then((isFullscreen: boolean) => {
             setFullscreen(isFullscreen);
           });
@@ -128,24 +131,30 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
   }, [platform]);
 
   useEffect(() => {
-    const registerListeners = async (items: MenuItem[]) => {
+    const registerListeners = async (
+      appWindow: WebviewWindow,
+      items: MenuItem[]
+    ) => {
       const unlistenFns: (() => void)[] = [];
       for (const item of items) {
-        const unlisten = await getCurrentWebviewWindow().listen(
-          item.id.replace(".", ":"),
-          () => invokeMenuAction(item.id)
+        const unlisten = await appWindow.listen(item.id.replace(".", ":"), () =>
+          invokeMenuAction(item.id)
         );
         unlistenFns.push(unlisten);
         if (item.submenu) {
-          unlistenFns.push(...(await registerListeners(item.submenu)));
+          unlistenFns.push(
+            ...(await registerListeners(appWindow, item.submenu))
+          );
         }
       }
       return unlistenFns;
     };
 
-    const unlistenFunctions = registerListeners(menus);
+    const unlistenFunctions = appWindow
+      ? registerListeners(appWindow, menus)
+      : null;
     return () => {
-      unlistenFunctions.then((unlistenFns) => {
+      unlistenFunctions?.then((unlistenFns) => {
         unlistenFns.forEach((unlisten) => unlisten());
       });
     };
@@ -165,7 +174,7 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const setDecorationsConfig = async (decorations: boolean) => {
-    await appWindow.setDecorations(decorations);
+    await appWindow?.setDecorations(decorations);
     setDecorations(decorations);
   };
 

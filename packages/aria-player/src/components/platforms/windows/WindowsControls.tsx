@@ -10,13 +10,15 @@ import Close from "../../../assets/win-close.svg?react";
 import styles from "./WindowsControls.module.css";
 import { invoke } from "@tauri-apps/api/core";
 
-const appWindow = getCurrentWebviewWindow();
+const appWindow = isTauri() ? getCurrentWebviewWindow() : null;
 
 export function WindowsControls() {
   const [isMaximized, setIsMaximized] = useState<boolean | null>(null);
 
   const updateIsMaximized = useCallback(async () => {
-    setIsMaximized(await appWindow.isMaximized());
+    if (appWindow) {
+      setIsMaximized(await appWindow.isMaximized());
+    }
   }, []);
 
   useEffect(() => {
@@ -27,7 +29,7 @@ export function WindowsControls() {
     let unsubscribe: (() => void) | undefined = undefined;
 
     const subscribeToWindowChanges = async () => {
-      unsubscribe = await appWindow.onResized(() => {
+      unsubscribe = await appWindow?.onResized(() => {
         updateIsMaximized();
       });
     };
@@ -41,7 +43,7 @@ export function WindowsControls() {
       <button
         className={styles.windowsControl}
         onClick={() => {
-          appWindow.minimize();
+          appWindow?.minimize();
         }}
       >
         <Minimize />
@@ -49,7 +51,7 @@ export function WindowsControls() {
       <button
         className={styles.windowsControl}
         onClick={() => {
-          appWindow.toggleMaximize();
+          appWindow?.toggleMaximize();
         }}
       >
         {isMaximized ? <Restore /> : <Maximize />}
