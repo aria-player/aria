@@ -122,7 +122,7 @@ pub fn get_metadata(app: AppHandle, file_path: String) -> Result<HashMap<String,
         match app.path().app_data_dir() {
             Ok(path) => {
                 let artwork_subdir = path.join(".artwork-cache");
-                fs::create_dir_all(&artwork_subdir);
+                let _ = fs::create_dir_all(&artwork_subdir);
                 let artwork_path = artwork_subdir.join(&hash);
                 if !artwork_path.exists() {
                     if let Ok(mut file) = fs::File::create(&artwork_path) {

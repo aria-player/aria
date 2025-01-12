@@ -12,15 +12,12 @@ mod utils;
 use serde_json::json;
 use std::env::consts::OS;
 use std::path::PathBuf;
-use tauri::{tray::TrayIconEvent, Emitter, Manager, WindowEvent};
+use tauri::{
+    tray::{TrayIconBuilder, TrayIconEvent},
+    Emitter, Manager, WindowEvent, Wry,
+};
 use tauri_plugin_store::StoreExt;
 use translation::update_menu_language;
-
-#[derive(Clone, serde::Serialize)]
-struct Payload {
-    args: Vec<String>,
-    cwd: String,
-}
 
 fn main() {
     let mut app_builder = tauri::Builder::default()
@@ -28,7 +25,7 @@ fn main() {
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_os::init())
         .plugin(tauri_plugin_window_state::Builder::default().build())
-        .plugin(tauri_plugin_single_instance::init(|app, argv, cwd| {
+        .plugin(tauri_plugin_single_instance::init(|app, _, _| {
             let window = app.get_webview_window("main").unwrap();
             if !window.is_visible().unwrap() {
                 window.show().unwrap();
@@ -38,15 +35,18 @@ fn main() {
         .plugin(tauri_plugin_store::Builder::default().build())
         .setup(|app| {
             let window = app.get_webview_window("main").unwrap();
-            window.set_shadow(true);
+            let _ = window.set_shadow(true);
 
             if OS != "macos" {
                 if window.is_fullscreen().unwrap() {
                     window.set_resizable(false).unwrap();
                 }
-                let tray_menu = app.tray_by_id("main").unwrap();
-                let _ = tray_menu.set_show_menu_on_left_click(false);
-                let _ = tray_menu.set_tooltip(Some("Aria"));
+                let _ = TrayIconBuilder::<Wry>::with_id("main")
+                    .tooltip("Aria")
+                    .icon(app.default_window_icon().unwrap().clone())
+                    .icon_as_template(false)
+                    .show_menu_on_left_click(false)
+                    .build(app);
             }
 
             let path = PathBuf::from(".app-config");
