@@ -45,7 +45,7 @@
         },
         "enable": true
       },
-      "csp": "default-src 'self' asset: https:; media-src 'self' asset: https: blob:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' blob: https:; connect-src ipc: http://ipc.localhost"
+      "csp": "default-src 'self' asset: http://asset.localhost https:; media-src 'self' asset: https: blob:; font-src 'self' data:; style-src 'self' 'unsafe-inline'; script-src 'self' blob: https:; connect-src ipc: http://ipc.localhost asset: http://asset.localhost https:"
     },
     "windows": [
       {
