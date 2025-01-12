@@ -21,7 +21,7 @@
         "bundleMediaFramework": true
       }
     },
-    "createUpdaterArtifacts": "v1Compatible"
+    "createUpdaterArtifacts": false
   },
   "productName": "Aria",
   "mainBinaryName": "Aria",
