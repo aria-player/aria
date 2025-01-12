@@ -21,7 +21,9 @@
 
 .removeButton {
   color: var(--button-destructive);
+  width: 1.5rem;
   height: 1rem;
+  padding: 0 0.4rem;
 
   &.selected {
     color: var(--button-text-selected);
