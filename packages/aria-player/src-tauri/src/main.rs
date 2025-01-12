@@ -30,6 +30,7 @@ fn main() {
             if !window.is_visible().unwrap() {
                 window.show().unwrap();
             }
+            window.unminimize().unwrap();
             window.set_focus().unwrap();
         }))
         .plugin(tauri_plugin_store::Builder::default().build())
@@ -77,6 +78,7 @@ fn main() {
                             window.hide().unwrap();
                         } else {
                             window.show().unwrap();
+                            window.unminimize().unwrap();
                             window.set_focus().unwrap();
                         }
                         tray::update_tray(&app);
@@ -102,6 +104,7 @@ fn main() {
             TrayIconEvent::DoubleClick { .. } => {
                 if let Some(window) = app.get_webview_window("main") {
                     window.show().unwrap();
+                    window.unminimize().unwrap();
                     window.set_focus().unwrap();
                     tray::update_tray(&app);
                 }
