@@ -77,7 +77,9 @@ export default function createSpotifyPlayer(
     return redirectUri && redirectUri.trim() !== ""
       ? redirectUri
       : (import.meta.env.VITE_SPOTIFY_REDIRECT_URI ??
-          window.location.origin + BASEPATH);
+          (isTauri()
+            ? "http://127.0.0.1:2742/"
+            : window.location.origin + BASEPATH));
   }
 
   async function getOrRefreshAccessToken() {
