@@ -92,7 +92,7 @@ jobs:
           releaseDraft: true
           updaterJsonPreferNsis: true
           projectPath: ${{ env.APP_PATH }}
-          args: '${{ matrix.args }} -c ''{"bundle": {"createUpdaterArtifacts": "v1Compatible"}}'''
+          args: '${{ matrix.args }} -c ''{"bundle": {"createUpdaterArtifacts": true}}'''
 
       - name: Copy and rename artifact
         shell: bash
