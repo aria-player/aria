@@ -70,6 +70,7 @@ jobs:
         id: tag_message
         shell: bash
         run: |
+          git fetch --depth=1 origin +refs/tags/*:refs/tags/*
           TAG=$(git describe --tags --exact-match 2>/dev/null || echo "")
           if [[ -n "$TAG" ]]; then
             TAG_MESSAGE=$(git tag -l --format='%(contents)' "$TAG" | sed '1,2d')
