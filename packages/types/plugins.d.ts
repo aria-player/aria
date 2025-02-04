@@ -13,15 +13,25 @@ export type PluginInfo = {
    */
   name: string;
   /**
-   * `true` if this plugin should only be available in the desktop version.
-   */
-  needsTauri: boolean;
-  /**
    * The file name of the plugin entry point, e.g. `'main.js'`.
    *
    * The plugin creation function should be the specified file's default export.
    */
   main: string;
+  /**
+   * Semantic version of the plugin following the format `MAJOR.MINOR.PATCH`, e.g. `'1.0.0'`.
+   */
+  version?: string;
+  /**
+   * Version of the plugin format that this plugin uses. 
+   * 
+   * Set this to the version of the `@aria-player/types` package your plugin references to enable compatibility checks.
+   */
+  formatVersion?: string;
+  /**
+   * `true` if this plugin should only be available in the desktop version.
+   */
+  needsTauri?: boolean;
   /**
    * List of capabilities this plugin uses. If using multiple capabilities, intersection types can be used for the plugin implementation, e.g.
    * ```
