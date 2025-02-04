@@ -145,3 +145,26 @@
     margin: 0.5rem 0;
   }
 }
+
+.versionCard {
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 4px rgb(0 0 0 / 10%);
+  border: 1px solid var(--primary-border);
+  padding: 1rem;
+  min-width: 12rem;
+  display: inline-block;
+  text-align: left;
+  user-select: text;
+
+  .title {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+  }
+
+  .subtitle {
+    font-size: 0.8rem;
+    color: var(--secondary-text);
+    margin: 0.25rem 0 0;
+  }
+}

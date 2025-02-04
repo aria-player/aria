@@ -1,6 +1,7 @@
 import { useTranslation } from "react-i18next";
 import styles from "./settings.module.css";
 import localforage from "localforage";
+import { pluginFormatVersion } from "../../../plugins/plugins";
 
 export function AboutPage() {
   const { t } = useTranslation();
@@ -12,7 +13,18 @@ export function AboutPage() {
       <hr className={styles.separator} />
       <section className="settings-section">
         <h4 className="settings-heading">{t("settings.about.version")}</h4>
-        {import.meta.env.PACKAGE_VERSION}
+        <div className={styles.versionCard}>
+          <h4 className={styles.title}>
+            {t("settings.about.appVersion", {
+              version: import.meta.env.PACKAGE_VERSION
+            })}
+          </h4>
+          <p className={styles.subtitle}>
+            {t("settings.about.pluginFormatVersion", {
+              version: pluginFormatVersion
+            })}
+          </p>
+        </div>
       </section>
       <section className="settings-section">
         <h4 className="settings-heading">{t("settings.about.reset")}</h4>
