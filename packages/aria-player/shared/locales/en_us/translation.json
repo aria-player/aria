@@ -116,7 +116,8 @@
       "confirmUninstall": "Are you sure you want to uninstall '{{plugin}}'?",
       "confirmDisable": "Are you sure you want to disable '{{plugin}}'?",
       "pluginConfig": "Plugin configuration",
-      "noPlugins": "No plugins available"
+      "noPlugins": "No plugins available",
+      "confirmInstallIncompatiblePlugin": "This plugin is not compatible with the current version of Aria and may not function correctly. Are you sure you want to install it?"
     },
     "about": {
       "subtitle": "View information about the application.",

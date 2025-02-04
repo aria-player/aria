@@ -2,13 +2,17 @@ import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 import svgr from "vite-plugin-svgr";
 import packageJson from "./package.json";
+import typesPackageJson from "../types/package.json";
 
 // https://vitejs.dev/config/
 export default defineConfig(async () => ({
   base: process.env.VITE_BASEPATH || "/",
   plugins: [react(), svgr()],
   define: {
-    "import.meta.env.PACKAGE_VERSION": JSON.stringify(packageJson.version)
+    "import.meta.env.PACKAGE_VERSION": JSON.stringify(packageJson.version),
+    "import.meta.env.TYPES_PACKAGE_VERSION": JSON.stringify(
+      typesPackageJson.version
+    )
   },
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   //

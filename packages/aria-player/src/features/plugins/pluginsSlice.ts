@@ -15,7 +15,8 @@ import { setupPluginListeners } from "./pluginsListeners";
 import { RootState, store } from "../../app/store";
 import { isTauri } from "../../app/utils";
 import JSZip from "jszip";
-import { defaultPluginInfo } from "../../plugins/plugins";
+import { defaultPluginInfo, pluginFormatVersion } from "../../plugins/plugins";
+import { t } from "i18next";
 
 type PluginsState = {
   installedPluginInfo: Record<PluginId, PluginInfo>;
@@ -49,6 +50,24 @@ export function getSourceHandle(pluginId: PluginId): SourceHandle | undefined {
   }
 }
 
+function checkPluginCompatibility(version?: string) {
+  if (!version) return true;
+  const versionParts = version.split(".");
+  if (versionParts.length < 2) {
+    return true;
+  }
+  const majorVersion = parseInt(versionParts[0], 10);
+  const minorVersion = parseInt(versionParts[1], 10);
+  const formatMajorVersion = parseInt(pluginFormatVersion.split(".")[0], 10);
+  const formatMinorVersion = parseInt(pluginFormatVersion.split(".")[1], 10);
+  if (majorVersion == 0 && formatMajorVersion == 0) {
+    return minorVersion == formatMinorVersion;
+  }
+  return (
+    majorVersion == formatMajorVersion && minorVersion <= formatMinorVersion
+  );
+}
+
 export const installPluginsFromFiles = createAsyncThunk(
   "plugins/installPluginsFromFiles",
   async (files: File[], { dispatch }) => {
@@ -63,6 +82,12 @@ export const installPluginsFromFiles = createAsyncThunk(
             const info = JSON.parse(fileData) as PluginInfo;
             const mainFileName = info.main;
             if (mainFileName) {
+              if (!checkPluginCompatibility(info.formatVersion)) {
+                const confirmed = await confirm(
+                  t("settings.plugins.confirmInstallIncompatiblePlugin")
+                );
+                if (!confirmed) return;
+              }
               const script = await extractedFiles[mainFileName].async("string");
               dispatch(installPlugin({ info, script }));
             }
