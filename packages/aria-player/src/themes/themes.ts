@@ -4,6 +4,16 @@ export interface Theme {
    */
   label: string;
   /**
+   * Semantic version of the theme following the format `MAJOR.MINOR.PATCH`, e.g. `'1.0.0'`.
+   */
+  version?: string;
+  /**
+   * Version of the theme format that this theme uses.
+   *
+   * Set this to the theme format version displayed in Aria's Settings -> About page to enable compatibility checks.
+   */
+  formatVersion?: string;
+  /**
    * Whether to use light/dark default styles for this theme.
    *
    * The `color-scheme` CSS property is set based on this value. If not provided, the app will use the system theme setting for window elements like scrollbars.
@@ -25,6 +35,7 @@ export interface Theme {
   disableAccentPicker?: boolean;
 }
 
+export const themeFormatVersion = "0.1.0";
 export const defaultStylesheets: Record<string, string> = {};
 export const defaultThemes: Record<string, Theme> = {
   system: { label: "System" }

@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import styles from "./settings.module.css";
 import localforage from "localforage";
 import { pluginFormatVersion } from "../../../plugins/plugins";
+import { themeFormatVersion } from "../../../themes/themes";
 
 export function AboutPage() {
   const { t } = useTranslation();
@@ -22,6 +23,11 @@ export function AboutPage() {
           <p className={styles.subtitle}>
             {t("settings.about.pluginFormatVersion", {
               version: pluginFormatVersion
+            })}
+          </p>
+          <p className={styles.subtitle}>
+            {t("settings.about.themeFormatVersion", {
+              version: themeFormatVersion
             })}
           </p>
         </div>

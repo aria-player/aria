@@ -105,7 +105,8 @@
       "window": "Window",
       "windowsControls": "Use system window controls",
       "accent": "Accent color",
-      "customAccent": "Pick custom accent color"
+      "customAccent": "Pick custom accent color",
+      "confirmInstallIncompatibleTheme": "This theme is not compatible with the current version of Aria and may not appear correctly. Are you sure you want to install it?"
     },
     "plugins": {
       "subtitle": "Manage plugins to provide additional functionality.",
@@ -124,6 +125,7 @@
       "version": "Version",
       "appVersion": "Aria v{{version}}",
       "pluginFormatVersion": "Plugin format version: {{version}}",
+      "themeFormatVersion": "Theme format version: {{version}}",
       "reset": "Factory reset",
       "resetApplication": "Reset application",
       "confirmReset": "Are you sure you want to reset? All data and settings will be deleted."

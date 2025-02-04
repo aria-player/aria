@@ -7,7 +7,14 @@ import {
 import { RootState } from "../../app/store";
 import { LibraryView } from "../../app/view";
 import JSZip from "jszip";
-import { defaultStylesheets, Theme, defaultThemes } from "../../themes/themes";
+import {
+  defaultStylesheets,
+  Theme,
+  defaultThemes,
+  themeFormatVersion
+} from "../../themes/themes";
+import { checkCompatibility } from "../../app/utils";
+import { t } from "i18next";
 
 export interface ConfigState {
   theme: string;
@@ -52,6 +59,14 @@ export const installThemesFromFiles = createAsyncThunk(
             const themeData = JSON.parse(fileData) as Theme;
             const stylesheetFileName = themeData.stylesheet;
             if (stylesheetFileName) {
+              if (
+                !checkCompatibility(themeFormatVersion, themeData.formatVersion)
+              ) {
+                const confirmed = await confirm(
+                  t("settings.appearance.confirmInstallIncompatibleTheme")
+                );
+                if (!confirmed) return;
+              }
               const stylesheet =
                 await extractedFiles[stylesheetFileName].async("string");
               dispatch(addTheme({ themeId, themeData, stylesheet }));
