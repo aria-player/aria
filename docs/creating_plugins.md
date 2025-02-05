@@ -160,10 +160,14 @@ log-plugin.zip
   |-- createLogPlugin.js
 ```
 
+3. Change the new file's extension from .zip to .ariaplugin. This step is not required, but makes it easier to install your plugin in the desktop version of the app.
+
 ### Installing the plugin
 
+If you're using the desktop app and your plugin uses the .ariaplugin extension, opening the plugin file will install it automatically. Alternatively, plugins can be installed using the following steps:
+
 1. Open the plugin settings page in Aria by going to the menu bar/button and choosing "File" -> "Settings...", then switching to the "Plugins" tab.
-2. Click "Install from file..." and locate the plugin .zip file.
+2. Click "Install from file..." and locate the plugin .zip/.ariaplugin file.
 3. If the installation was successful, your plugin should appear in the list of available plugins. If not, you can check your browser developer tools for any errors that occurred while parsing the files.
 
 By checking/unchecking the plugin in the list of "Available plugins", you can test your plugin initialization/disposal logic without having to uninstall and reinstall it. Newly installed plugins enable automatically, so if you open your browser developer tools after completing these steps, the example plugin code should log "Plugin created!" to the console.

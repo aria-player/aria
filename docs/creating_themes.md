@@ -82,10 +82,14 @@ my-theme.zip
   |-- theme.css
 ```
 
+3. Change the new file's extension from .zip to .ariatheme. This step is not required, but makes it easier to install your theme in the desktop version of the app.
+
 ### Installing the theme
 
+If you're using the desktop app and your theme uses the .ariatheme extension, opening the theme file will install it automatically. Alternatively, themes can be installed using the following steps:
+
 1. Open the theme settings page in Aria by going to the menu bar/button and choosing "File" -> "Settings...", then switching to the "Appearance" tab.
-2. Click "Install from file..." and locate the plugin .zip file.
+2. Click "Install from file..." and locate the theme .zip/.ariatheme file.
 3. If the installation was successful, your theme should appear in the list of themes. You can click the theme preview to apply it.
 
 
