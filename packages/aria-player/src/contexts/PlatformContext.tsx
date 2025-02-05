@@ -168,23 +168,21 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
       try {
         const paths: string[] = payload?.payload as unknown as string[];
         if (paths.length < 1) return;
-        const themes: File[] = [];
-        const plugins: File[] = [];
+        const themeBlobs: Blob[] = [];
+        const pluginBlobs: Blob[] = [];
         await Promise.all(
           paths.map(async (filePath) => {
             const response = await fetch(convertFileSrc(filePath));
             const blob = await response.blob();
-            const fileName = filePath.split(/[/\\]/).pop() || "";
-            const file = new File([blob], fileName, { type: blob.type });
-            if (fileName.toLowerCase().endsWith(".ariatheme")) {
-              themes.push(file);
-            } else if (fileName.toLowerCase().endsWith(".ariaplugin")) {
-              plugins.push(file);
+            if (filePath.toLowerCase().endsWith(".ariatheme")) {
+              themeBlobs.push(blob);
+            } else if (filePath.toLowerCase().endsWith(".ariaplugin")) {
+              pluginBlobs.push(blob);
             }
           })
         );
-        dispatch(installThemesFromFiles(themes));
-        dispatch(installPluginsFromFiles(plugins));
+        dispatch(installThemesFromFiles(themeBlobs));
+        dispatch(installPluginsFromFiles(pluginBlobs));
       } catch (error) {
         console.error("Error processing opened files:", error);
       }

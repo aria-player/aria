@@ -52,30 +52,22 @@ export function getSourceHandle(pluginId: PluginId): SourceHandle | undefined {
 
 export const installPluginsFromFiles = createAsyncThunk(
   "plugins/installPluginsFromFiles",
-  async (files: File[], { dispatch }) => {
-    for (const file of files) {
-      const fileName = file.name.toLowerCase();
-      if (fileName.endsWith(".zip") || fileName.endsWith(".ariaplugin")) {
-        const extractedFiles = (await JSZip.loadAsync(file)).files;
-        for (const extractedFileName in extractedFiles) {
-          if (extractedFileName === "plugin.json") {
-            const fileData =
-              await extractedFiles[extractedFileName].async("string");
-            const info = JSON.parse(fileData) as PluginInfo;
-            const mainFileName = info.main;
-            if (mainFileName) {
-              if (
-                !checkCompatibility(pluginFormatVersion, info.formatVersion)
-              ) {
-                const confirmed = await confirm(
-                  t("settings.plugins.confirmInstallIncompatiblePlugin")
-                );
-                if (!confirmed) return;
-              }
-              const script = await extractedFiles[mainFileName].async("string");
-              dispatch(installPlugin({ info, script }));
-            }
+  async (blobs: Blob[], { dispatch }) => {
+    for (const blob of blobs) {
+      const extractedFiles = (await JSZip.loadAsync(blob)).files;
+      if ("plugin.json" in extractedFiles) {
+        const fileData = await extractedFiles["plugin.json"].async("string");
+        const info = JSON.parse(fileData) as PluginInfo;
+        const mainFileName = info.main;
+        if (mainFileName) {
+          if (!checkCompatibility(pluginFormatVersion, info.formatVersion)) {
+            const confirmed = await confirm(
+              t("settings.plugins.confirmInstallIncompatiblePlugin")
+            );
+            if (!confirmed) return;
           }
+          const script = await extractedFiles[mainFileName].async("string");
+          dispatch(installPlugin({ info, script }));
         }
       }
     }

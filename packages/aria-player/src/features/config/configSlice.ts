@@ -46,31 +46,25 @@ const initialState: ConfigState = {
 
 export const installThemesFromFiles = createAsyncThunk(
   "config/installThemesFromFiles",
-  async (files: File[], { dispatch }) => {
-    for (const file of files) {
-      const fileName = file.name.toLowerCase();
-      if (fileName.endsWith(".zip") || fileName.endsWith(".ariatheme")) {
-        const extractedFiles = (await JSZip.loadAsync(file)).files;
-        for (const extractedFileName in extractedFiles) {
-          if (extractedFileName === "theme.json") {
-            const fileData =
-              await extractedFiles[extractedFileName].async("string");
-            const themeData = JSON.parse(fileData) as Theme;
-            const stylesheetFileName = themeData.stylesheet;
-            if (stylesheetFileName) {
-              if (
-                !checkCompatibility(themeFormatVersion, themeData.formatVersion)
-              ) {
-                const confirmed = await confirm(
-                  t("settings.appearance.confirmInstallIncompatibleTheme")
-                );
-                if (!confirmed) return;
-              }
-              const stylesheet =
-                await extractedFiles[stylesheetFileName].async("string");
-              dispatch(addTheme({ themeData, stylesheet }));
-            }
+  async (blobs: Blob[], { dispatch }) => {
+    for (const blob of blobs) {
+      const extractedFiles = (await JSZip.loadAsync(blob)).files;
+      if ("theme.json" in extractedFiles) {
+        const fileData = await extractedFiles["theme.json"].async("string");
+        const themeData = JSON.parse(fileData) as Theme;
+        const stylesheetFileName = themeData.stylesheet;
+        if (stylesheetFileName) {
+          if (
+            !checkCompatibility(themeFormatVersion, themeData.formatVersion)
+          ) {
+            const confirmed = await confirm(
+              t("settings.appearance.confirmInstallIncompatibleTheme")
+            );
+            if (!confirmed) return;
           }
+          const stylesheet =
+            await extractedFiles[stylesheetFileName].async("string");
+          dispatch(addTheme({ themeData, stylesheet }));
         }
       }
     }
