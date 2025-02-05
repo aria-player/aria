@@ -34,7 +34,7 @@ export function PluginsPage() {
     try {
       const input = document.createElement("input");
       input.type = "file";
-      input.accept = ".zip";
+      input.accept = ".ariaplugin,application/zip";
       input.multiple = true;
       input.style.display = "none";
       input.onchange = (event) => {

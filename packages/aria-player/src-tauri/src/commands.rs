@@ -19,6 +19,7 @@ pub fn ready(app_handle: tauri::AppHandle) {
     let window = app_handle.get_webview_window("main").unwrap();
     window.show().unwrap();
     tray::update_tray(&app_handle);
+    utils::check_for_files(&app_handle, std::env::args().skip(1).collect());
 }
 
 #[tauri::command]

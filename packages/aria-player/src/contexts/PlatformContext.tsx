@@ -1,4 +1,4 @@
-import { invoke } from "@tauri-apps/api/core";
+import { convertFileSrc, invoke } from "@tauri-apps/api/core";
 import { type } from "@tauri-apps/plugin-os";
 import {
   getCurrentWebviewWindow,
@@ -13,6 +13,7 @@ import { useMenuActions } from "../hooks/useMenuActions";
 import { replace } from "redux-first-history";
 import { BASEPATH } from "../app/constants";
 import {
+  installThemesFromFiles,
   selectInitialView,
   selectLastView,
   setLastView
@@ -20,6 +21,7 @@ import {
 import { store } from "../app/store";
 import { useLocation } from "react-router-dom";
 import menus from "../../shared/menus.json";
+import { installPluginsFromFiles } from "../features/plugins/pluginsSlice";
 
 const appWindow = isTauri() ? getCurrentWebviewWindow() : null;
 
@@ -159,6 +161,39 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
       });
     };
   }, [invokeMenuAction]);
+
+  useEffect(() => {
+    const unlisten = appWindow?.listen("opened_files", async (payload) => {
+      if (!payload) return;
+      try {
+        const paths: string[] = payload?.payload as unknown as string[];
+        if (paths.length < 1) return;
+        const themes: File[] = [];
+        const plugins: File[] = [];
+        await Promise.all(
+          paths.map(async (filePath) => {
+            const response = await fetch(convertFileSrc(filePath));
+            const blob = await response.blob();
+            const fileName = filePath.split(/[/\\]/).pop() || "";
+            const file = new File([blob], fileName, { type: blob.type });
+            if (fileName.toLowerCase().endsWith(".ariatheme")) {
+              themes.push(file);
+            } else if (fileName.toLowerCase().endsWith(".ariaplugin")) {
+              plugins.push(file);
+            }
+          })
+        );
+        dispatch(installThemesFromFiles(themes));
+        dispatch(installPluginsFromFiles(plugins));
+      } catch (error) {
+        console.error("Error processing opened files:", error);
+      }
+    });
+
+    return () => {
+      unlisten?.then((unlisten) => unlisten());
+    };
+  }, [dispatch]);
 
   useEffect(() => {
     if (isTauri()) {

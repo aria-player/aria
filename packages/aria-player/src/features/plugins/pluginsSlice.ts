@@ -55,7 +55,7 @@ export const installPluginsFromFiles = createAsyncThunk(
   async (files: File[], { dispatch }) => {
     for (const file of files) {
       const fileName = file.name.toLowerCase();
-      if (fileName.endsWith(".zip")) {
+      if (fileName.endsWith(".zip") || fileName.endsWith(".ariaplugin")) {
         const extractedFiles = (await JSZip.loadAsync(file)).files;
         for (const extractedFileName in extractedFiles) {
           if (extractedFileName === "plugin.json") {

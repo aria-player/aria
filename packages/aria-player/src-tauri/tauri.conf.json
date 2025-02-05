@@ -21,7 +21,19 @@
         "bundleMediaFramework": true
       }
     },
-    "createUpdaterArtifacts": false
+    "createUpdaterArtifacts": false,
+    "fileAssociations": [
+      {
+        "ext": ["ariaplugin"],
+        "description": "Aria Plugin",
+        "mimeType": "application/zip"
+      },
+      {
+        "ext": ["ariatheme"],
+        "description": "Aria Theme",
+        "mimeType": "application/zip"
+      }
+    ]
   },
   "productName": "Aria",
   "mainBinaryName": "Aria",

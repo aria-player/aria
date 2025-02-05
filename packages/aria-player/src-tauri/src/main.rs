@@ -25,13 +25,14 @@ fn main() {
         .plugin(tauri_plugin_shell::init())
         .plugin(tauri_plugin_os::init())
         .plugin(tauri_plugin_window_state::Builder::default().build())
-        .plugin(tauri_plugin_single_instance::init(|app, _, _| {
+        .plugin(tauri_plugin_single_instance::init(|app, args, _| {
             let window = app.get_webview_window("main").unwrap();
             if !window.is_visible().unwrap() {
                 window.show().unwrap();
             }
             window.unminimize().unwrap();
             window.set_focus().unwrap();
+            utils::check_for_files(app, args);
         }))
         .plugin(tauri_plugin_store::Builder::default().build())
         .setup(|app| {
@@ -133,6 +134,21 @@ fn main() {
         });
     }
     app_builder
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+        .build(tauri::generate_context!())
+        .expect("error while running tauri application")
+        .run(
+            #[allow(unused_variables)]
+            |app, event| match event {
+                #[cfg(target_os = "macos")]
+                tauri::RunEvent::Opened { urls } => {
+                    let files = urls
+                        .into_iter()
+                        .filter_map(|url| url.to_file_path().ok())
+                        .collect::<Vec<_>>();
+
+                    utils::check_for_files(app, files);
+                }
+                _ => {}
+            },
+        )
 }

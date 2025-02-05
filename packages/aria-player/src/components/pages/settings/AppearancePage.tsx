@@ -62,7 +62,7 @@ export function AppearancePage() {
     try {
       const input = document.createElement("input");
       input.type = "file";
-      input.accept = ".zip";
+      input.accept = ".ariatheme,application/zip";
       input.multiple = true;
       input.style.display = "none";
       input.onchange = (event) => {
