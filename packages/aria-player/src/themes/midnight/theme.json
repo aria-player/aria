@@ -1,5 +1,6 @@
 {
-  "label": "Midnight",
+  "id": "midnight",
+  "name": "Midnight",
   "base": "dark",
   "stylesheet": "midnight.css"
 }

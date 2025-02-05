@@ -1,8 +1,12 @@
 export interface Theme {
   /**
+   * Theme identifier that should be all lowercase with no spaces.
+   */
+  id: string;
+  /**
    * Display name for this theme.
    */
-  label: string;
+  name: string;
   /**
    * Semantic version of the theme following the format `MAJOR.MINOR.PATCH`, e.g. `'1.0.0'`.
    */
@@ -38,7 +42,7 @@ export interface Theme {
 export const themeFormatVersion = "0.1.0";
 export const defaultStylesheets: Record<string, string> = {};
 export const defaultThemes: Record<string, Theme> = {
-  system: { label: "System" }
+  system: { id: "system", name: "System" }
 };
 
 const themeManifests = import.meta.glob("./*/theme.json", { eager: true });

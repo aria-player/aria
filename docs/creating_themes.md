@@ -15,7 +15,8 @@ Create a file called `theme.json` that defines the theme information.
 
 ```json
 {
-  "label": "My Theme",
+  "id": "my-theme",
+  "name": "My Theme",
   "base": "light",
   "stylesheet": "theme.css"
 }
@@ -90,6 +91,5 @@ my-theme.zip
 
 ## Current limitations
 
-- The theme archive filename is currently used to uniquely identify themes, so you should use a name that describes your theme. If you install another theme with the same filename, it will overwrite the old one.
 - There are no default fallbacks for theme variables, so if you don't include all of the variables that the built-in themes include, there may be unstyled content in the app.
 - Relative URLs in your stylesheet won't work since other files in the theme archive are not scanned at the moment. Linking to external assets hosted on the web will work but might lead to an unreliable experience due to requiring an internet connection.

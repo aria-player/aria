@@ -132,14 +132,14 @@ export function AppearancePage() {
                 ) : (
                   <ThemePreview stylesheet={stylesheets[theme]} />
                 )}
-                <p>{themes[theme].label}</p>
+                <p>{themes[theme].name}</p>
               </button>
               {!Object.keys(defaultThemes).includes(theme) && (
                 <button
                   onClick={async () => {
                     const confirmed = await confirm(
                       t("settings.appearance.confirmDelete", {
-                        theme: themes[theme].label
+                        theme: themes[theme].name
                       })
                     );
                     if (!confirmed) return;

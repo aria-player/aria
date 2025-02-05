@@ -1,5 +1,6 @@
 {
-  "label": "Light",
+  "id": "light",
+  "name": "Light",
   "base": "light",
   "stylesheet": "light.css"
 }

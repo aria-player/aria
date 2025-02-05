@@ -50,7 +50,6 @@ export const installThemesFromFiles = createAsyncThunk(
     for (const file of files) {
       const fileName = file.name.toLowerCase();
       if (fileName.endsWith(".zip")) {
-        const themeId = fileName.replace(".zip", "");
         const extractedFiles = (await JSZip.loadAsync(file)).files;
         for (const extractedFileName in extractedFiles) {
           if (extractedFileName === "theme.json") {
@@ -69,7 +68,7 @@ export const installThemesFromFiles = createAsyncThunk(
               }
               const stylesheet =
                 await extractedFiles[stylesheetFileName].async("string");
-              dispatch(addTheme({ themeId, themeData, stylesheet }));
+              dispatch(addTheme({ themeData, stylesheet }));
             }
           }
         }
@@ -88,16 +87,17 @@ export const configSlice = createSlice({
     addTheme: (
       state,
       action: PayloadAction<{
-        themeId: string;
         themeData: Theme;
         stylesheet: string;
       }>
     ) => {
-      if (Object.keys(defaultThemes).includes(action.payload.themeId)) return;
-      state.installedThemes[action.payload.themeId] = action.payload.themeData;
-      state.installedStylesheets[action.payload.themeId] =
+      if (Object.keys(defaultThemes).includes(action.payload.themeData.id))
+        return;
+      state.installedThemes[action.payload.themeData.id] =
+        action.payload.themeData;
+      state.installedStylesheets[action.payload.themeData.id] =
         action.payload.stylesheet;
-      state.theme = action.payload.themeId;
+      state.theme = action.payload.themeData.id;
     },
     removeTheme: (state, action: PayloadAction<string>) => {
       if (state.theme == action.payload) {
