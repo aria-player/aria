@@ -144,6 +144,7 @@ fn main() {
                     let files = urls
                         .into_iter()
                         .filter_map(|url| url.to_file_path().ok())
+                        .map(|path| path.to_string_lossy().into_owned())
                         .collect::<Vec<_>>();
 
                     utils::check_for_files(app, files);
