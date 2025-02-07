@@ -74,7 +74,10 @@ export async function fetchCoverArt(hash: string) {
 export async function parseMetadata(track: TrackMetadata, file: File) {
   const metadata = await parseBlob(file);
   const newTrack = { ...track };
-  newTrack.duration = (metadata.format.duration ?? 0) * 1000;
+  newTrack.duration =
+    metadata.format.duration !== undefined
+      ? metadata.format.duration * 1000
+      : undefined;
   if (metadata.common.picture && metadata.common.picture[0]) {
     const picture = metadata.common.picture[0];
     const pictureData = `data:${picture.format};base64,${chunkedUint8ArrayToBase64(picture.data)}`;
