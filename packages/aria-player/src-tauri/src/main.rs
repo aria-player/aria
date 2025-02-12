@@ -36,6 +36,7 @@ fn main() {
         }))
         .plugin(tauri_plugin_store::Builder::default().build())
         .setup(|app| {
+            let _ = app.handle().plugin(tauri_plugin_updater::Builder::new().build());
             let window = app.get_webview_window("main").unwrap();
             let _ = window.set_shadow(true);
 
