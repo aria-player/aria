@@ -73,7 +73,7 @@ dependencies = [
 
 [[package]]
 name = "aria-player"
-version = "1.1.2"
+version = "1.1.3"
 dependencies = [
  "lofty",
  "serde",
