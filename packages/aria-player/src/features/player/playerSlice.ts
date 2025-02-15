@@ -7,6 +7,7 @@ import { setupPlayerListeners } from "./playerListeners";
 import { selectTrackById } from "../tracks/tracksSlice";
 import { PlaylistId, PlaylistItemId } from "../playlists/playlistsTypes";
 import { LibraryView, TrackGrouping } from "../../app/view";
+import { selectNextTrack } from "../currentSelectors";
 
 interface PlayerState {
   status: Status;
@@ -66,6 +67,12 @@ export const loadAndPlayTrack = createAsyncThunk(
       throw new Error("Plugin not found");
     }
     await plugin.loadAndPlayTrack(track);
+    const nextTrack = selectNextTrack(state);
+    if (nextTrack && nextTrack.source == track.source) {
+      plugin.setTrackToPreload?.(nextTrack);
+    } else {
+      plugin.setTrackToPreload?.(null);
+    }
   }
 );
 

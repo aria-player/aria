@@ -9,6 +9,7 @@ import { PlaylistItem } from "./playlists/playlistsTypes";
 import { selectTrackById } from "./tracks/tracksSlice";
 import { TrackListItem } from "./tracks/tracksTypes";
 import { selectGroupFilteredTracks } from "./genericSelectors";
+import { RepeatMode } from "./player/playerTypes";
 
 export const selectCurrentQueueTracks = createSelector(
   [
@@ -55,6 +56,31 @@ export const selectCurrentQueueTracks = createSelector(
     ];
 
     return queueWithSeparators;
+  }
+);
+
+export const selectNextTrack = createSelector(
+  [
+    (state: RootState) => state.tracks.tracks,
+    (state: RootState) => state.player.queue,
+    (state: RootState) => state.player.queueIndex,
+    (state: RootState) => state.player.upNext,
+    (state: RootState) => state.player.repeatMode
+  ],
+  () => {
+    const state = store.getState();
+    if (state.player.queueIndex == null) return null;
+    if (state.player.repeatMode == RepeatMode.One) {
+      return selectCurrentTrack(state);
+    }
+    const isAtEndOfQueue =
+      state.player.queueIndex === state.player.queue.length - 1;
+    const nextTrackId =
+      state.player.upNext[0]?.trackId ??
+      (isAtEndOfQueue && state.player.repeatMode === RepeatMode.All
+        ? state.player.queue[0]?.trackId
+        : state.player.queue[state.player.queueIndex + 1]?.trackId);
+    return nextTrackId ? selectTrackById(state, nextTrackId) : null;
   }
 );
 

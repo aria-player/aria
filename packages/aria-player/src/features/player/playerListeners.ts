@@ -13,7 +13,8 @@ import { resetTimer, startTimer, stopTimer } from "./playerTime";
 import { isAnyOf } from "@reduxjs/toolkit";
 import {
   selectCurrentTrack,
-  selectCurrentTrackItemId
+  selectCurrentTrackItemId,
+  selectNextTrack
 } from "../currentSelectors";
 
 const getCurrentSource = (state: RootState): SourceHandle | undefined => {
@@ -62,6 +63,22 @@ export function setupPlayerListeners() {
             console.error(`Error invoking onPlay for ${plugin}:`, e);
           }
         }
+      }
+    }
+  );
+
+  listenForChange(
+    (state) => selectNextTrack(state),
+    async (state) => {
+      const nextTrack = selectNextTrack(state);
+      if (
+        nextTrack &&
+        selectCurrentTrack(state)?.source == nextTrack.source &&
+        state.player.status != Status.Stopped
+      ) {
+        getCurrentSource(state)?.setTrackToPreload?.(nextTrack);
+      } else {
+        getCurrentSource(state)?.setTrackToPreload?.(null);
       }
     }
   );

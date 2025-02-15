@@ -194,7 +194,15 @@ export interface SourceHandle extends BaseHandle {
    *
    * The player status will be `Status.Loading` until this method returns, allowing for asynchronous logic.
    */
-  loadAndPlayTrack: (track: Track) => void;
+  loadAndPlayTrack: (track: Track) => Promise<void>;
+  /**
+   * Set the track to preload so that it can play immediately after the current track finishes.
+   *
+   * This will be called every time the next track in the queue changes.
+   *
+   * If the current track is the last in the queue or the next track is from a different source, `track` will be `null`.
+   */
+  setTrackToPreload?: (track: Track | null) => void;
   /**
    * Return an image URL for the specified track's album artwork.
    *

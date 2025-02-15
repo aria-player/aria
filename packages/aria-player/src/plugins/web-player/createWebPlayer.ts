@@ -5,6 +5,7 @@ import { wrap } from "comlink";
 import { i18n } from "i18next";
 import en_us from "./locales/en_us/translation.json";
 import QuickStart from "./QuickStart";
+import { createWebAudioBackend } from "../../app/audio";
 
 export type WebPlayerData = {
   folder: string;
@@ -20,7 +21,11 @@ export default function createWebPlayer(
   i18n.addResourceBundle("en-US", "web-player", en_us);
   const { t } = i18n;
   const initialConfig = host.getData() as WebPlayerData | null;
-
+  const webAudioBackend = createWebAudioBackend({
+    onFinishedPlayback: () => {
+      host.finishPlayback();
+    }
+  });
   const metadataWorker = new Worker(
     new URL("./metadataWorker.ts", import.meta.url),
     { type: "module" }
@@ -30,7 +35,6 @@ export default function createWebPlayer(
 
   let folder = initialConfig?.folder;
   let fileHandles: { [key: TrackUri]: File } = {};
-  let audio: HTMLAudioElement | null;
   let loaded: boolean;
 
   async function pickDirectory() {
@@ -130,22 +134,27 @@ export default function createWebPlayer(
         const metadata = await parseMetadata(track, fileHandles[track.uri]);
         host.updateTracks([metadata]);
       }
-
-      if (audio) {
-        audio.pause();
-        audio.src = "";
+      const actualDuration = await webAudioBackend.loadPrimaryAudioFile(
+        track.uri,
+        URL.createObjectURL(file),
+        host.getVolume()
+      );
+      if (actualDuration != null && actualDuration != track.duration) {
+        host.updateTracks([{ ...track, duration: actualDuration }]);
       }
-      audio = new Audio(await URL.createObjectURL(file));
-      audio.volume = host.getVolume() / 100;
-      audio.muted = host.getMuted();
-      return new Promise<void>((resolve, reject) => {
-        if (audio) {
-          audio.play().then(resolve).catch(reject);
-          audio.onended = () => {
-            host.finishPlayback();
-          };
-        }
-      });
+    },
+
+    setTrackToPreload(track: Track | null) {
+      webAudioBackend.clearSecondaryAudioFile();
+      if (!track) {
+        return;
+      }
+      const file = fileHandles[track.uri];
+      if (!file) return;
+      webAudioBackend.loadSecondaryAudioFile(
+        track.uri,
+        URL.createObjectURL(file)
+      );
     },
 
     async getTrackArtwork(track: Track) {
@@ -153,27 +162,28 @@ export default function createWebPlayer(
     },
 
     pause() {
-      audio?.pause();
+      webAudioBackend.pause();
     },
 
     resume() {
-      audio?.play();
+      webAudioBackend.resume();
     },
 
     setVolume(volume: number) {
-      audio!.volume = volume / 100;
+      webAudioBackend.setVolume(volume / 100);
     },
 
     setMuted(muted: boolean) {
-      audio!.muted = muted;
+      webAudioBackend.setVolume(muted ? 0 : host.getVolume() / 100);
     },
 
     setTime(position: number) {
-      audio!.currentTime = position / 1000;
+      webAudioBackend.setTime(position);
     },
 
     dispose() {
       i18n.removeResourceBundle("en-US", "web-player");
+      webAudioBackend?.dispose();
     }
   };
 }

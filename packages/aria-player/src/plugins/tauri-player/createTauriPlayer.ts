@@ -7,6 +7,7 @@ import { i18n } from "i18next";
 import en_us from "./locales/en_us/translation.json";
 import QuickStart from "./QuickStart";
 import { LibraryConfig } from "./LibraryConfig";
+import { createWebAudioBackend } from "../../app/audio";
 
 export type TauriPlayerData = {
   folders: Record<string, string[]>;
@@ -19,8 +20,12 @@ export default function createTauriPlayer(
   i18n.addResourceBundle("en-US", "tauri-player", en_us);
   const { t } = i18n;
   const initialConfig = host.getData() as TauriPlayerData;
+  const webAudioBackend = createWebAudioBackend({
+    onFinishedPlayback: () => {
+      host.finishPlayback();
+    }
+  });
   let folders = { ...initialConfig.folders };
-  let audio: HTMLAudioElement | null;
   rescanFolders();
   getMetadata(host.getTracks().filter((track) => !track.metadataLoaded));
 
@@ -168,33 +173,27 @@ export default function createTauriPlayer(
 
     QuickStart: (props) => QuickStart({ ...props, addFolder, i18n }),
 
-    async loadAndPlayTrack(track: Track): Promise<void> {
-      const file = await convertFileSrc(track.uri);
-      if (!file) {
-        if (!file) throw new Error("File not found");
+    async loadAndPlayTrack(track: Track) {
+      const file = convertFileSrc(track.uri);
+      if (!file) throw new Error("File not found");
+      const actualDuration = await webAudioBackend.loadPrimaryAudioFile(
+        track.uri,
+        file,
+        host.getVolume()
+      );
+      if (actualDuration != null && actualDuration != track.duration) {
+        host.updateTracks([{ ...track, duration: actualDuration }]);
       }
-      if (!track.metadataLoaded) {
-        getMetadata([track]);
-      }
+    },
 
-      if (audio) {
-        audio.pause();
-        audio.src = "";
+    setTrackToPreload(track: Track | null) {
+      webAudioBackend.clearSecondaryAudioFile();
+      if (!track) {
+        return;
       }
-      const response = await fetch(file);
-      const blob = await response.blob();
-      const blobUrl = URL.createObjectURL(blob);
-      audio = new Audio(blobUrl);
-      audio.volume = host.getVolume() / 100;
-      audio.muted = host.getMuted();
-      return new Promise<void>((resolve, reject) => {
-        if (audio) {
-          audio.play().then(resolve).catch(reject);
-          audio.onended = () => {
-            host.finishPlayback();
-          };
-        }
-      });
+      const file = convertFileSrc(track.uri);
+      if (!file) return;
+      webAudioBackend.loadSecondaryAudioFile(track.uri, file);
     },
 
     async getTrackArtwork(track: Track) {
@@ -207,27 +206,28 @@ export default function createTauriPlayer(
     },
 
     pause() {
-      audio?.pause();
+      webAudioBackend.pause();
     },
 
     resume() {
-      audio?.play();
+      webAudioBackend.resume();
     },
 
     setVolume(volume: number) {
-      audio!.volume = volume / 100;
+      webAudioBackend.setVolume(volume / 100);
     },
 
     setMuted(muted: boolean) {
-      audio!.muted = muted;
+      webAudioBackend.setVolume(muted ? 0 : host.getVolume() / 100);
     },
 
     setTime(position: number) {
-      audio!.currentTime = position / 1000;
+      webAudioBackend.setTime(position);
     },
 
     dispose() {
       i18n.removeResourceBundle("en-US", "tauri-player");
+      webAudioBackend?.dispose();
     }
   };
 }
