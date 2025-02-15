@@ -1,7 +1,8 @@
 import { RootState, store } from "../../app/store";
 import { selectCurrentTrack } from "../currentSelectors";
 import { getSourceHandle } from "../plugins/pluginsSlice";
-import { previousTrack } from "./playerSlice";
+import { nextTrack, previousTrack, selectRepeatMode } from "./playerSlice";
+import { RepeatMode } from "./playerTypes";
 
 let playing = false;
 let lastStartPosition = 0;
@@ -45,5 +46,13 @@ export function restartOrPreviousTrack() {
     seek(0);
   } else {
     store.dispatch(previousTrack());
+  }
+}
+
+export function restartOrNextTrack() {
+  if (selectRepeatMode(store.getState()) == RepeatMode.One) {
+    seek(0);
+  } else {
+    store.dispatch(nextTrack());
   }
 }

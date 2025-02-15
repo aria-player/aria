@@ -26,7 +26,10 @@ import {
   SyncProgress
 } from "../../../../types/plugins";
 import { nextTrack, pause, resume, stop } from "../player/playerSlice";
-import { restartOrPreviousTrack } from "../player/playerTime";
+import {
+  restartOrNextTrack,
+  restartOrPreviousTrack
+} from "../player/playerTime";
 import { showAlert } from "./pluginsAlerts";
 
 function isPluginActive(pluginId: PluginId): boolean {
@@ -111,6 +114,9 @@ export const getSourceCallbacks = (pluginId: PluginId): SourceCallbacks => {
       handleUpdateTracks(pluginId, metadata),
     setSyncProgress(syncProgress: SyncProgress) {
       store.dispatch(setSourceSyncProgress({ pluginId, syncProgress }));
+    },
+    finishPlayback() {
+      restartOrNextTrack();
     },
     getTracks: () => {
       const libraryTracks = selectAllTracks(store.getState());

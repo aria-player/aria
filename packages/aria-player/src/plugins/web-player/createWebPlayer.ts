@@ -108,6 +108,8 @@ export default function createWebPlayer(
   return {
     displayName: t("web-player:localFiles"),
 
+    disableAutomaticTrackSkip: true,
+
     LibraryConfig: (props) =>
       LibraryConfig({ ...props, host, loaded, pickDirectory, i18n }),
 
@@ -139,6 +141,9 @@ export default function createWebPlayer(
       return new Promise<void>((resolve, reject) => {
         if (audio) {
           audio.play().then(resolve).catch(reject);
+          audio.onended = () => {
+            host.finishPlayback();
+          };
         }
       });
     },

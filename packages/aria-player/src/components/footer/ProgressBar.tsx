@@ -1,20 +1,20 @@
 import { useState, useEffect } from "react";
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { useAppSelector } from "../../app/hooks";
 import { MediaSlider } from "soprano-ui";
-import { getElapsedPlayerTime, seek } from "../../features/player/playerTime";
 import {
-  nextTrack,
-  selectRepeatMode,
-  selectStatus
-} from "../../features/player/playerSlice";
-import { RepeatMode, Status } from "../../features/player/playerTypes";
-import { store } from "../../app/store";
+  getElapsedPlayerTime,
+  restartOrNextTrack,
+  seek
+} from "../../features/player/playerTime";
+import { selectStatus } from "../../features/player/playerSlice";
+import { Status } from "../../features/player/playerTypes";
 import { selectCurrentTrack } from "../../features/currentSelectors";
+import { getSourceHandle } from "../../features/plugins/pluginsSlice";
+import { store } from "../../app/store";
 
 export function ProgressBar(props: {
   progressValueState: [number, (progressValue: number) => void];
 }) {
-  const dispatch = useAppDispatch();
   const duration = useAppSelector(selectCurrentTrack)?.duration;
   const status = useAppSelector(selectStatus);
   const [progressValue, setProgressValue] = props.progressValueState;
@@ -27,11 +27,16 @@ export function ProgressBar(props: {
       progressUpdateIntervalId = setInterval(() => {
         const elapsedTime = getElapsedPlayerTime();
         setProgressValue(Math.min(duration ?? 0, elapsedTime));
-        if (duration != null && elapsedTime >= duration) {
-          if (selectRepeatMode(store.getState()) == RepeatMode.One) {
-            seek(0);
-          } else {
-            dispatch(nextTrack());
+        if (
+          duration != null &&
+          elapsedTime >= duration &&
+          status == Status.Playing
+        ) {
+          const source = selectCurrentTrack(store.getState())?.source;
+          if (!source) return;
+          const sourceHandle = getSourceHandle(source);
+          if (!sourceHandle?.disableAutomaticTrackSkip) {
+            restartOrNextTrack();
           }
         }
       }, 100) as unknown as number;
@@ -39,7 +44,7 @@ export function ProgressBar(props: {
     return () => {
       clearInterval(progressUpdateIntervalId);
     };
-  }, [dispatch, setProgressValue, progressValue, dragging, duration]);
+  }, [setProgressValue, progressValue, dragging, duration, status]);
 
   return (
     <MediaSlider

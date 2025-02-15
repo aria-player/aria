@@ -161,6 +161,8 @@ export default function createTauriPlayer(
   return {
     displayName: t("tauri-player:localFiles"),
 
+    disableAutomaticTrackSkip: true,
+
     LibraryConfig: (props) =>
       LibraryConfig({ ...props, folders, addFolder, removeFolder, i18n }),
 
@@ -188,6 +190,9 @@ export default function createTauriPlayer(
       return new Promise<void>((resolve, reject) => {
         if (audio) {
           audio.play().then(resolve).catch(reject);
+          audio.onended = () => {
+            host.finishPlayback();
+          };
         }
       });
     },

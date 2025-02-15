@@ -39,6 +39,12 @@ export default function createAppleMusicPlayer(
     if (music.isAuthorized) {
       fetchUserLibrary();
     }
+
+    music?.addEventListener("playbackStateDidChange", () => {
+      if (music?.playbackState === MusicKit.PlaybackStates.ended) {
+        host.finishPlayback();
+      }
+    });
   }
 
   function getDeveloperToken() {
@@ -144,6 +150,8 @@ export default function createAppleMusicPlayer(
 
   return {
     displayName: "Apple Music",
+
+    disableAutomaticTrackSkip: true,
 
     LibraryConfig: (props) =>
       LibraryConfig({ ...props, host, authenticate, logout, i18n }),

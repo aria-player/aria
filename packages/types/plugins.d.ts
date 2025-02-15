@@ -23,8 +23,8 @@ export type PluginInfo = {
    */
   version?: string;
   /**
-   * Version of the plugin format that this plugin uses. 
-   * 
+   * Version of the plugin format that this plugin uses.
+   *
    * Set this to the version of the `@aria-player/types` package your plugin references to enable compatibility checks.
    */
   formatVersion?: string;
@@ -182,6 +182,14 @@ export interface SourceHandle extends BaseHandle {
    */
   Attribution?: React.FC<AttributionProps>;
   /**
+   * Whether to disable automatic skipping to the next track after the track duration elapses.
+   *
+   * If set to `true`, you must always call `host.finishedPlayback` after reaching the end of a track.
+   *
+   * This option may be useful if track durations reported by this source are not guaranteed to be accurate.
+   */
+  disableAutomaticTrackSkip?: boolean;
+  /**
    * Load the specified track and begin playback.
    *
    * The player status will be `Status.Loading` until this method returns, allowing for asynchronous logic.
@@ -256,6 +264,12 @@ export interface SourceCallbacks extends BaseCallbacks {
    * A progress indicator will appear if `status` indicates that there are still tracks left to synchronize.
    */
   setSyncProgress: (status: SyncProgress) => void;
+  /**
+   * Signal that there is nothing more to play from the current track, regardless of the current time position.
+   *
+   * Depending on the repeat mode, this will either restart the current track or skip to the next track.
+   */
+  finishPlayback: () => void;
   /**
    * Returns all tracks for this source in the library.
    */
