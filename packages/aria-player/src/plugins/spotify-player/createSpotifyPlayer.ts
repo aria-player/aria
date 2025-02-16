@@ -472,32 +472,23 @@ export default function createSpotifyPlayer(
     },
 
     pause() {
-      spotifyRequest(`/me/player/pause?device_id=${deviceId}`, "PUT");
+      player?.pause();
     },
 
     resume() {
-      spotifyRequest(`/me/player/play?device_id=${deviceId}`, "PUT");
+      player?.resume();
     },
 
     setVolume(volume: number) {
-      spotifyRequest(
-        `/me/player/volume?device_id=${deviceId}&volume_percent=${Math.floor(volume)}`,
-        "PUT"
-      );
+      player?.setVolume(volume / 100);
     },
 
     setMuted(muted: boolean) {
-      spotifyRequest(
-        `/me/player/volume?device_id=${deviceId}&volume_percent=${muted ? 0 : host.getVolume()}`,
-        "PUT"
-      );
+      player?.setVolume(muted ? 0 : host.getVolume() / 100);
     },
 
     setTime(time: number) {
-      spotifyRequest(
-        `/me/player/seek?device_id=${deviceId}&position_ms=${Math.round(time)}`,
-        "PUT"
-      );
+      player?.seek(Math.round(time));
     },
 
     dispose() {
