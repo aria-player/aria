@@ -13,6 +13,7 @@ import { AlbumArt } from "../../components/views/subviews/AlbumArt";
 import { createElement } from "react";
 import { getSourceHandle, selectPluginInfo } from "../plugins/pluginsSlice";
 import { store } from "../../app/store";
+import { t } from "i18next";
 
 export const defaultColumnDefinitions: ColDef[] = [
   { field: "trackId", hide: true, filter: false },
@@ -47,7 +48,13 @@ export const defaultColumnDefinitions: ColDef[] = [
   },
   {
     field: "title",
-    flex: 0.8
+    flex: 0.8,
+    valueFormatter: (params: { data: Track; value: string | null }) => {
+      if (params.data.uri == undefined) {
+        return t("tracks.unknownTrack");
+      }
+      return params.value ?? "";
+    }
   },
   {
     field: "duration",
@@ -169,7 +176,7 @@ export const defaultColumnDefinitions: ColDef[] = [
     valueFormatter: (params: { value: string }) => {
       return (
         getSourceHandle(params.value)?.displayName ??
-        selectPluginInfo(store.getState())[params.value].name
+        selectPluginInfo(store.getState())[params.value]?.name
       );
     }
   },
