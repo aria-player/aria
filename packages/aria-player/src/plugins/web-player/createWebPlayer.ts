@@ -96,7 +96,8 @@ export default function createWebPlayer(
         : `${directoryHandle.name}/${entry.name}`;
       if (entry.kind === "file") {
         const file = await entry.getFile();
-        if (file.type.startsWith("audio/")) {
+        const ext = file.name.split(".").pop()?.toLowerCase();
+        if (ext && ["mp3", "wav", "flac", "ogg", "m4a", "aac"].includes(ext)) {
           localFileHandles[entryRelativePath] = file;
         }
       } else if (entry.kind === "directory") {
