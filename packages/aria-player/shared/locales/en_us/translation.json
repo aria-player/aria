@@ -211,6 +211,9 @@
     "fileFolder": "Folder",
     "filePath": "Path",
     "fileSize": "Size",
+    "fileFormat": "Format",
+    "sampleRate": "Sample Rate",
+    "bitRate": "Bit Rate",
     "source": "Source"
   },
   "viewType": {

@@ -65,6 +65,7 @@ export default function createWebPlayer(
         filePath: uri,
         fileFolder: uri.split("/").slice(-2, -1)[0],
         fileSize: fileHandles[uri].size,
+        fileFormat: fileHandles[uri].name.split(".").pop()?.toUpperCase(),
         album: uri.split("/").slice(-2, -1)[0],
         metadataLoaded: false
       }));

@@ -29,6 +29,18 @@ export function formatBytes(bytes: number) {
   return (bytes / Math.pow(1024, unit)).toFixed(2) + " " + sizes[unit];
 }
 
+export function formatSampleRate(sampleRate: number) {
+  return sampleRate >= 1000
+    ? `${(sampleRate / 1000).toString()} kHz`
+    : `${sampleRate} Hz`;
+}
+
+export function formatBitRate(bitRate: number) {
+  return bitRate >= 1000
+    ? `${(bitRate / 1000).toFixed(0)} kbps`
+    : `${bitRate} bps`;
+}
+
 export function formatDate(date: number) {
   return new Date(date).toLocaleString(i18n.language, {
     year: "numeric",

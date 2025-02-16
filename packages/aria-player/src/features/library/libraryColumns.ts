@@ -5,7 +5,9 @@ import {
   formatStringArray,
   formatBytes,
   formatDuration,
-  formatDate
+  formatDate,
+  formatSampleRate,
+  formatBitRate
 } from "../../app/utils";
 import { AlbumArt } from "../../components/views/subviews/AlbumArt";
 import { createElement } from "react";
@@ -134,6 +136,29 @@ export const defaultColumnDefinitions: ColDef[] = [
     valueFormatter: (params: { value: number | null }) => {
       return params.value !== undefined && params.value !== null
         ? formatBytes(params.value)
+        : "";
+    },
+    type: "rightAligned"
+  },
+  { field: "fileFormat", hide: true, filter: false },
+  {
+    field: "sampleRate",
+    hide: true,
+    filter: false,
+    valueFormatter: (params: { value: number | null }) => {
+      return params.value !== undefined && params.value !== null
+        ? formatSampleRate(params.value)
+        : "";
+    },
+    type: "rightAligned"
+  },
+  {
+    field: "bitRate",
+    hide: true,
+    filter: false,
+    valueFormatter: (params: { value: number | null }) => {
+      return params.value !== undefined && params.value !== null
+        ? formatBitRate(params.value)
         : "";
     },
     type: "rightAligned"

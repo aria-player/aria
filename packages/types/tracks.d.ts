@@ -91,6 +91,18 @@ export interface TrackMetadata {
    */
   fileSize?: number;
   /**
+   * The file format of this track, e.g. 'MP3'.
+   */
+  fileFormat?: string;
+  /**
+   * The sample rate of this track in hertz.
+   */
+  sampleRate?: number;
+  /**
+   * The bit rate of this track in bits per second.
+   */
+  bitRate?: number;
+  /**
    * A unique identifier for the artwork associated with this track.
    */
   artworkUri?: string;

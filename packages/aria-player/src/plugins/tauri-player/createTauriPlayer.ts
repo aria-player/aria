@@ -85,6 +85,8 @@ export default function createTauriPlayer(
               track: parseNumber(metadata.track),
               disc: parseNumber(metadata.disc),
               fileSize: parseNumber(metadata.fileSize),
+              sampleRate: parseNumber(metadata.sampleRate),
+              bitRate: parseNumber(metadata.bitRate),
               dateModified: parseNumber(metadata.dateModified)
             } as Track;
           })
@@ -120,6 +122,7 @@ export default function createTauriPlayer(
           dateAdded,
           filePath: fileName,
           fileFolder: fileName.split("\\").slice(-2, -1)[0],
+          fileFormat: fileName.split(".").pop()?.toUpperCase(),
           metadataLoaded: false
         }) as Track
     );

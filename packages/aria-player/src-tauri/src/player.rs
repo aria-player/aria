@@ -59,12 +59,19 @@ pub fn get_metadata(app: AppHandle, file_path: String) -> Result<HashMap<String,
     };
 
     let mut metadata = HashMap::new();
+    let properties = tagged_file.properties();
     metadata.insert(
         "duration".to_string(),
-        tagged_file.properties().duration().as_millis().to_string(),
+        properties.duration().as_millis().to_string(),
     );
     metadata.insert("dateModified".to_string(), modified);
     metadata.insert("fileSize".to_string(), size);
+    if let Some(sample_rate) = properties.sample_rate() {
+        metadata.insert("sampleRate".to_string(), (sample_rate).to_string());
+    }
+    if let Some(bit_rate) = properties.audio_bitrate() {
+        metadata.insert("bitRate".to_string(), (bit_rate * 1000).to_string());
+    }
 
     let tag = match tagged_file.primary_tag() {
         Some(primary_tag) => primary_tag,

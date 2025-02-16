@@ -78,6 +78,8 @@ export async function parseMetadata(track: TrackMetadata, file: File) {
     metadata.format.duration !== undefined
       ? metadata.format.duration * 1000
       : undefined;
+  newTrack.sampleRate = metadata.format.sampleRate;
+  newTrack.bitRate = metadata.format.bitrate;
   if (metadata.common.picture && metadata.common.picture[0]) {
     const picture = metadata.common.picture[0];
     const pictureData = `data:${picture.format};base64,${chunkedUint8ArrayToBase64(picture.data)}`;
