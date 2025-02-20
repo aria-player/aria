@@ -19,7 +19,8 @@ export function ProgressBar(props: {
   const status = useAppSelector(selectStatus);
   const [progressValue, setProgressValue] = props.progressValueState;
   const [dragging, setDragging] = useState(false);
-  const disabled = duration == null || status == Status.Stopped;
+  const disabled =
+    duration == null || status == Status.Stopped || status == Status.Loading;
 
   useEffect(() => {
     let progressUpdateIntervalId: number;
@@ -57,18 +58,18 @@ export function ProgressBar(props: {
       disabled={disabled}
       value={[progressValue ?? 1]}
       onPointerDown={() => {
-        if (!disabled) {
-          setDragging(true);
-        }
+        setDragging(true);
       }}
       onPointerUp={() => {
-        if (progressValue != null && !disabled) {
+        if (progressValue != null && dragging) {
           setDragging(false);
           seek(progressValue);
         }
       }}
       onValueChange={(value) => {
-        setProgressValue(value[0]);
+        if (!disabled) {
+          setProgressValue(value[0]);
+        }
       }}
       onKeyDown={(e) => {
         setDragging(true);
