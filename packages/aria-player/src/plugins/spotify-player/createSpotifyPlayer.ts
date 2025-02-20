@@ -26,6 +26,8 @@ export default function createSpotifyPlayer(
   i18n.addResourceBundle("en-US", "spotify-player", en_us);
   let player: Spotify.Player | null;
   let deviceId: string | null;
+  let requestTimeout: NodeJS.Timeout | null;
+  let requestingTrack = false;
   let hasTransferredPlayback = false;
 
   const getConfig = () => host.getData() as SpotifyConfig;
@@ -451,6 +453,31 @@ export default function createSpotifyPlayer(
     });
   }
 
+  async function requestTrack(track: TrackMetadata) {
+    requestingTrack = true;
+    await player?.pause();
+    await spotifyRequest(`/me/player/play?device_id=${deviceId}`, "PUT", {
+      uris: [track.uri]
+    });
+    return new Promise<void>((resolve) => {
+      const onPlaybackStateChanged = (event: Spotify.PlaybackState) => {
+        if (
+          (event.track_window.current_track.linked_from.uri ??
+            event.track_window.current_track.uri) == track.uri &&
+          event.loading == false
+        ) {
+          player?.removeListener(
+            "player_state_changed",
+            onPlaybackStateChanged
+          );
+          requestingTrack = false;
+          resolve();
+        }
+      };
+      player?.addListener("player_state_changed", onPlaybackStateChanged);
+    });
+  }
+
   return {
     LibraryConfig: (props) =>
       LibraryConfig({ ...props, host, authenticate, logout, i18n }),
@@ -468,9 +495,17 @@ export default function createSpotifyPlayer(
         });
         hasTransferredPlayback = true;
       }
-      await spotifyRequest(`/me/player/play?device_id=${deviceId}`, "PUT", {
-        uris: [track.uri]
-      });
+      if (!requestingTrack) {
+        return await requestTrack(track);
+      } else {
+        return new Promise<void>((resolve) => {
+          if (requestTimeout) clearTimeout(requestTimeout);
+          requestTimeout = setTimeout(async () => {
+            await requestTrack(track);
+            resolve();
+          }, 500);
+        });
+      }
     },
 
     async getTrackArtwork(track) {
@@ -482,7 +517,9 @@ export default function createSpotifyPlayer(
     },
 
     resume() {
-      player?.resume();
+      if (!requestingTrack) {
+        player?.resume();
+      }
     },
 
     setVolume(volume: number) {
