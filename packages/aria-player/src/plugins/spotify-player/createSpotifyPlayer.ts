@@ -214,6 +214,9 @@ export default function createSpotifyPlayer(
       if (tracksResponse && tracksResponse.items) {
         const tracksToAdd = [];
         for (const track of tracksResponse.items) {
+          if (track.track.restrictions?.reason) {
+            continue;
+          }
           const genres = existingTracks.find(
             (existingTrack) => existingTrack.albumId == track.track.album.id
           )?.genre;
@@ -266,7 +269,11 @@ export default function createSpotifyPlayer(
             (track) => track.albumId == album.album.id
           )?.genre;
           const tracksFromResponse = album.album.tracks.items
-            .filter((track) => !tracksInLibrary.includes(track.uri))
+            .filter(
+              (track) =>
+                !tracksInLibrary.includes(track.uri) &&
+                !track.restrictions?.reason
+            )
             .map((track) => {
               tracksInLibrary.push(track.uri);
               return {
