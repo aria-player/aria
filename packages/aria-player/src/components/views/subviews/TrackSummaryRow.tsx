@@ -155,7 +155,9 @@ export const TrackSummaryRow = (props: ICellRendererParams) => {
         />
       )}
       <span className={`track-summary-row-duration ${styles.trackDuration}`}>
-        {formatDuration(props.node.data.duration)}
+        {props.node.data.duration == undefined
+          ? "-"
+          : formatDuration(props.node.data.duration)}
       </span>
     </div>
   );
