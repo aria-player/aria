@@ -121,21 +121,27 @@ export default function createSpotifyPlayer(
   ) {
     const token = await getOrRefreshAccessToken();
     if (!token) return;
-    const response = await fetch(`https://api.spotify.com/v1${endpoint}`, {
-      method: method,
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json"
-      },
-      body: body ? JSON.stringify(body) : undefined
-    });
-    if (
-      response.status !== 204 &&
-      response.headers.get("content-type")?.includes("application/json")
-    ) {
-      return await response.json();
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const response = await fetch(`https://api.spotify.com/v1${endpoint}`, {
+        method,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: body ? JSON.stringify(body) : undefined
+      });
+      if (response.status === 429) {
+        const retryAfter = response.headers.get("Retry-After");
+        const waitTime = retryAfter ? parseInt(retryAfter, 10) * 1000 : 1000;
+        await new Promise((resolve) => setTimeout(resolve, waitTime));
+      } else if (
+        response.status !== 204 &&
+        response.headers.get("content-type")?.includes("application/json")
+      ) {
+        return await response.json();
+      }
+      return response;
     }
-    return response;
   }
 
   async function checkForSubscription() {
