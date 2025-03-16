@@ -261,5 +261,11 @@
     "grape": "Grape",
     "violet": "Violet",
     "indigo": "Indigo"
+  },
+  "updateDialog": {
+    "title": "A new version of Aria is available!",
+    "message": "Aria {{newVersion}} is now available -- you have {{currentVersion}}.\n\nWould you like to install it now?\n\nRelease notes:\n{{releaseNotes}}",
+    "yes": "Yes",
+    "no": "No"
   }
 }

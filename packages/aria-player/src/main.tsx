@@ -18,8 +18,11 @@ import { ArtworkProvider } from "./contexts/ArtworkContext";
 import { ErrorBoundary } from "react-error-boundary";
 import { CrashPage } from "./components/pages/CrashPage";
 import { isTauri } from "./app/utils";
+import { check } from "@tauri-apps/plugin-updater";
+import { ask } from "@tauri-apps/plugin-dialog";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
+import { t } from "i18next";
 import App from "./App";
 import "./i18n";
 
@@ -93,4 +96,26 @@ if (isTauri()) {
     );
     invoke("start_server");
   });
+  (async () => {
+    const update = await check();
+    if (update?.available) {
+      const confirmed = await ask(
+        t("updateDialog.message", {
+          newVersion: update.version,
+          currentVersion: import.meta.env.PACKAGE_VERSION,
+          releaseNotes: update.body
+        }),
+        {
+          title: t("updateDialog.title"),
+          kind: "info",
+          okLabel: t("updateDialog.yes"),
+          cancelLabel: t("updateDialog.no")
+        }
+      );
+      if (confirmed) {
+        await update.downloadAndInstall();
+        await invoke("graceful_restart");
+      }
+    }
+  })();
 }
