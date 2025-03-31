@@ -29,8 +29,10 @@ export default function createAppleMusicPlayer(
   document.addEventListener("musickitloaded", initialize);
 
   async function initialize() {
+    const developerToken = await getDeveloperToken();
+    if (!developerToken) return;
     const musicKitConfig = {
-      developerToken: await getDeveloperToken(),
+      developerToken,
       app: {
         name: "Aria",
         build: "1.0.0"
