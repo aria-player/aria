@@ -44,6 +44,7 @@ jobs:
       - name: Build
         env:
           VITE_BASEPATH: /aria/
+          VITE_APPLE_MUSIC_TOKEN_ENDPOINT: ${{ vars.VITE_APPLE_MUSIC_TOKEN_ENDPOINT }}
         run: pnpm run --filter ./packages/aria-player build
       - name: Setup Pages
         uses: actions/configure-pages@v4

@@ -7,7 +7,9 @@ import en_us from "./locales/en_us/translation.json";
 
 export type AppleMusicConfig = {
   loggedIn?: boolean;
-  developerToken?: string;
+  token?: string;
+  tokenExpiration?: number;
+  tokenEndpoint?: string;
 };
 
 export default function createAppleMusicPlayer(
@@ -28,7 +30,7 @@ export default function createAppleMusicPlayer(
 
   async function initialize() {
     const musicKitConfig = {
-      developerToken: getDeveloperToken(),
+      developerToken: await getDeveloperToken(),
       app: {
         name: "Aria",
         build: "1.0.0"
@@ -47,11 +49,36 @@ export default function createAppleMusicPlayer(
     });
   }
 
-  function getDeveloperToken() {
-    const developerToken = getConfig().developerToken;
-    return developerToken && developerToken.trim() !== ""
-      ? developerToken
-      : import.meta.env.VITE_APPLE_MUSIC_DEVELOPER_TOKEN;
+  function getTokenEndpoint() {
+    const tokenEndpoint = getConfig().tokenEndpoint;
+    return tokenEndpoint && tokenEndpoint.trim() !== ""
+      ? tokenEndpoint
+      : import.meta.env.VITE_APPLE_MUSIC_TOKEN_ENDPOINT;
+  }
+
+  async function getDeveloperToken(): Promise<string | undefined> {
+    const config = getConfig();
+    if (
+      config.token &&
+      config.tokenExpiration &&
+      Date.now() < config.tokenExpiration
+    ) {
+      return config.token;
+    }
+    const tokenEndpoint = getTokenEndpoint();
+    if (!tokenEndpoint) return;
+    try {
+      const response = await fetch(tokenEndpoint);
+      const data = await response.json();
+      host.updateData({
+        ...getConfig(),
+        token: data.token,
+        tokenExpiration: data.expiresAt
+      });
+      return data.token;
+    } catch (error) {
+      console.error("Failed to fetch developer token:", error);
+    }
   }
 
   async function fetchUserLibrary() {
@@ -115,13 +142,25 @@ export default function createAppleMusicPlayer(
   }
 
   async function authenticate() {
-    if (!getDeveloperToken()) {
+    if (!getTokenEndpoint()) {
       host.showAlert({
         heading: i18n.t(
-          "apple-music-player:errorDialog.developerTokenRequiredHeading"
+          "apple-music-player:errorDialog.tokenEndpointRequiredHeading"
         ),
         message: i18n.t(
-          "apple-music-player:errorDialog.developerTokenRequiredMessage"
+          "apple-music-player:errorDialog.tokenEndpointRequiredMessage"
+        ),
+        closeLabel: i18n.t("apple-music-player:errorDialog.close")
+      });
+      return;
+    }
+    if (!(await getDeveloperToken())) {
+      host.showAlert({
+        heading: i18n.t(
+          "apple-music-player:errorDialog.tokenFetchErrorHeading"
+        ),
+        message: i18n.t(
+          "apple-music-player:errorDialog.tokenFetchErrorMessage"
         ),
         closeLabel: i18n.t("apple-music-player:errorDialog.close")
       });
@@ -194,7 +233,7 @@ export default function createAppleMusicPlayer(
     },
 
     onDataUpdate: (data) => {
-      if (!music && (data as AppleMusicConfig).developerToken) {
+      if (!music && (data as AppleMusicConfig).tokenEndpoint) {
         initialize();
       }
     },

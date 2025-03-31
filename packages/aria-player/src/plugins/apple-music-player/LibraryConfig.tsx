@@ -15,14 +15,14 @@ export default function LibraryConfig(props: {
   const config = props.data as AppleMusicConfig;
   const { t } = useTranslation("apple-music-player", { i18n: props.i18n });
 
-  const [developerToken, setDeveloperToken] = useState(
-    config.developerToken ?? ""
+  const [tokenEndpoint, setTokenEndpoint] = useState(
+    config.tokenEndpoint ?? ""
   );
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
 
-  function updateDeveloperToken(event: ChangeEvent<HTMLInputElement>) {
-    setDeveloperToken(event.target.value);
-    props.host.updateData({ ...config, developerToken: event.target.value });
+  function updateTokenEndpoint(event: ChangeEvent<HTMLInputElement>) {
+    setTokenEndpoint(event.target.value);
+    props.host.updateData({ ...config, tokenEndpoint: event.target.value });
   }
 
   return (
@@ -49,12 +49,12 @@ export default function LibraryConfig(props: {
       </p>
       {showAdvancedSettings && (
         <p>
-          {t("settings.developerToken")}
+          {t("settings.tokenEndpoint")}
           <br />
           <input
             type="text"
-            value={developerToken}
-            onChange={updateDeveloperToken}
+            value={tokenEndpoint}
+            onChange={updateTokenEndpoint}
             onKeyDown={(e) => e.stopPropagation()}
           />
         </p>
