@@ -26,7 +26,10 @@ export default function createAppleMusicPlayer(
   script.src = "https://js-cdn.music.apple.com/musickit/v3/musickit.js";
   script.async = true;
   document.body.appendChild(script);
-  document.addEventListener("musickitloaded", initialize);
+
+  if (getConfig().loggedIn) {
+    document.addEventListener("musickitloaded", initialize);
+  }
 
   async function initialize() {
     const developerToken = await getDeveloperToken();
@@ -168,6 +171,7 @@ export default function createAppleMusicPlayer(
       });
       return;
     }
+    await initialize();
     if (!music) {
       host.showAlert({
         heading: i18n.t("apple-music-player:errorDialog.musicKitErrorHeading"),

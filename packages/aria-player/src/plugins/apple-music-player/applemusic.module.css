@@ -7,6 +7,15 @@
   padding: 0.5rem 1rem;
   font-size: 0.9rem;
   font-weight: 500;
+  transition:
+    background 0.1s ease,
+    opacity 0.1s ease;
+
+  &:disabled {
+    cursor: default;
+    background: grey;
+    opacity: 0.7;
+  }
 }
 
 .advancedSettingsButton {

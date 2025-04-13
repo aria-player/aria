@@ -8,7 +8,7 @@ import { i18n } from "i18next";
 export default function LibraryConfig(props: {
   data: object;
   host: SourceCallbacks;
-  authenticate: () => void;
+  authenticate: () => Promise<void>;
   logout: () => void;
   i18n: i18n;
 }) {
@@ -19,6 +19,7 @@ export default function LibraryConfig(props: {
     config.tokenEndpoint ?? ""
   );
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
+  const [loginEnabled, setLoginEnabled] = useState(true);
 
   function updateTokenEndpoint(event: ChangeEvent<HTMLInputElement>) {
     setTokenEndpoint(event.target.value);
@@ -29,7 +30,18 @@ export default function LibraryConfig(props: {
     <div>
       <h3 className="settings-heading">{t("settings.heading")}</h3>
       {!config.loggedIn ? (
-        <button className={styles.loginButton} onClick={props.authenticate}>
+        <button
+          className={styles.loginButton}
+          disabled={!loginEnabled}
+          onClick={async () => {
+            setLoginEnabled(false);
+            try {
+              await props.authenticate();
+            } finally {
+              setLoginEnabled(true);
+            }
+          }}
+        >
           {t("settings.logInWithAppleMusic")}
         </button>
       ) : (
