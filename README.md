@@ -15,7 +15,7 @@ Aria is currently in an early 'alpha' state, so there are several limitations:
 - The desktop app is currently untested on macOS
 - The web app does not have a way of adding local music on Firefox/Safari
 - Plug-ins/themes must be installed manually
-- You must provide your own developer credentials to log in with Apple Music/Spotify
+- You must provide your own developer credentials to log in with Spotify
 - Bugs and general instability are expected
 
 ## Installation
