@@ -1,4 +1,4 @@
-name: Publish Tauri desktop app
+name: Build and publish Tauri desktop app
 
 on:
   push:
@@ -6,12 +6,16 @@ on:
       - v*
 
   workflow_dispatch:
-
-# This workflow will create or update a GitHub release, build your app, and upload the artifacts to the release.
+    inputs:
+      publish:
+        type: boolean
+        required: false
+        default: false
 
 jobs:
-  publish-tauri:
+  build-tauri:
     env:
+      PUBLISH: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && 'true' || inputs.publish }}
       APP_NAME: Aria
       APP_PATH: ./packages/aria-player
       RENAMED_ARTIFACT:
@@ -67,6 +71,7 @@ jobs:
         run: pnpm install # change this to npm, pnpm or bun depending on which one you use.
 
       - name: Get tag message
+        if: env.PUBLISH == 'true'
         id: tag_message
         shell: bash
         run: |
@@ -79,6 +84,14 @@ jobs:
             echo "EOF" >> $GITHUB_ENV
           fi
 
+      - name: Set Tauri release args
+        if: env.PUBLISH == 'true'
+        id: release_args
+        shell: bash
+        run: |
+          echo "tagName=v__VERSION__" >> $GITHUB_OUTPUT
+          echo "releaseName=Aria v__VERSION__" >> $GITHUB_OUTPUT
+
       - uses: tauri-apps/tauri-action@v0
         id: tauri-action
         env:
@@ -87,8 +100,8 @@ jobs:
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
           VITE_APPLE_MUSIC_TOKEN_ENDPOINT: ${{ vars.VITE_APPLE_MUSIC_TOKEN_ENDPOINT }}
         with:
-          tagName: v__VERSION__ # the action automatically replaces \_\_VERSION\_\_ with the app version.
-          releaseName: "Aria v__VERSION__"
+          tagName: ${{ steps.release_args.outputs.tagName }}
+          releaseName: ${{ steps.release_args.outputs.releaseName }}
           releaseBody: ${{ env.TAG_MESSAGE }}
           releaseDraft: true
           updaterJsonPreferNsis: true
@@ -96,6 +109,7 @@ jobs:
           args: '${{ matrix.args }} -c ''{"bundle": {"createUpdaterArtifacts": true}}'''
 
       - name: Copy and rename artifact
+        if: env.PUBLISH == 'true'
         shell: bash
         run: |
           if [ "${{ matrix.platform }}" = "windows-latest" ]; then
@@ -114,6 +128,7 @@ jobs:
           echo "RENAMED_ARTIFACT=${RENAMED_ARTIFACT}" >> $GITHUB_ENV
 
       - name: Upload renamed artifact
+        if: env.PUBLISH == 'true'
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
