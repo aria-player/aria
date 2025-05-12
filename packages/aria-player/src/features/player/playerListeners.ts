@@ -134,14 +134,20 @@ export function setupPlayerListeners() {
   listenForChange(
     (state) => state.player.volume,
     (state) => {
-      getCurrentSource(state)?.setVolume(state.player.volume);
+      const activePlugins = selectActivePlugins(state);
+      for (const plugin of activePlugins) {
+        getSourceHandle(plugin)?.setVolume(state.player.volume);
+      }
     }
   );
 
   listenForChange(
     (state) => state.player.muted,
     (state) => {
-      getCurrentSource(state)?.setMuted(state.player.muted);
+      const activePlugins = selectActivePlugins(state);
+      for (const plugin of activePlugins) {
+        getSourceHandle(plugin)?.setMuted(state.player.muted);
+      }
     }
   );
 }
