@@ -204,6 +204,11 @@ export default function createAppleMusicPlayer(
     QuickStart: (props) => QuickStart({ ...props, authenticate, i18n }),
 
     loadAndPlayTrack: async (track: Track) => {
+      if (music) {
+        (music as unknown as MusicKit.Player).volume = host.getMuted()
+          ? 0
+          : host.getVolume() / 100;
+      }
       await music?.setQueue({ song: track.uri });
       await music?.play();
     },
