@@ -182,7 +182,7 @@ export default function createTauriPlayer(
       const actualDuration = await webAudioBackend.loadPrimaryAudioFile(
         track.uri,
         file,
-        host.getVolume()
+        host.getMuted() ? 0 : host.getVolume()
       );
       if (actualDuration != null && actualDuration != track.duration) {
         host.updateTracks([{ ...track, duration: actualDuration }]);

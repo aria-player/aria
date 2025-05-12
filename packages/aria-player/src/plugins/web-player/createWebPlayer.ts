@@ -139,7 +139,7 @@ export default function createWebPlayer(
       const actualDuration = await webAudioBackend.loadPrimaryAudioFile(
         track.uri,
         URL.createObjectURL(file),
-        host.getVolume()
+        host.getMuted() ? 0 : host.getVolume()
       );
       if (actualDuration != null && actualDuration != track.duration) {
         host.updateTracks([{ ...track, duration: actualDuration }]);
