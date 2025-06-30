@@ -1,6 +1,6 @@
 import { useCallback, useContext } from "react";
 import { useAppDispatch } from "../app/hooks";
-import { handleMenuAction, selectMenuState } from "../app/menu";
+import { handleMenuAction, MenuItemState, selectMenuState } from "../app/menu";
 import { GridContext } from "../contexts/GridContext";
 import { store } from "../app/store";
 
@@ -11,9 +11,11 @@ export function useMenuActions() {
   const invokeMenuAction = useCallback(
     (action: string) => {
       if (
-        !selectMenuState(store.getState())[
-          action as keyof ReturnType<typeof selectMenuState>
-        ]?.disabled
+        !(
+          selectMenuState(store.getState())[
+            action as keyof ReturnType<typeof selectMenuState>
+          ] as MenuItemState
+        )?.disabled
       )
         handleMenuAction(action, dispatch, gridRef?.current);
     },

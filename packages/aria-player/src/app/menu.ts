@@ -51,6 +51,7 @@ import {
   selectVisibleSelectedTrackGroup
 } from "../features/visibleSelectors";
 import { setSearch } from "../features/search/searchSlice";
+import { t } from "i18next";
 
 export interface MenuItem {
   id: string;
@@ -63,6 +64,7 @@ export interface MenuItem {
 }
 
 export interface MenuItemState {
+  label?: string;
   disabled?: boolean;
   selected?: boolean;
 }
@@ -329,6 +331,7 @@ export function handleMenuAction(
 
 export const selectMenuState = createSelector(
   [
+    (state: RootState) => state.config.language,
     (state: RootState) => state.router.location,
     (state: RootState) => state.undoable.present.library,
     (state: RootState) => state.undoable.present.playlists.layout,
@@ -338,7 +341,8 @@ export const selectMenuState = createSelector(
     (state: RootState) => state.tracks.clipboard,
     (state: RootState) => state.player.status,
     (state: RootState) => state.player.queue,
-    (state: RootState) => state.player.queueIndex
+    (state: RootState) => state.player.queueIndex,
+    (state: RootState) => state.player.muted
   ],
   () => {
     const state = store.getState();
@@ -442,6 +446,11 @@ export const selectMenuState = createSelector(
       },
       ...columnVisibility,
       togglePlay: {
+        label:
+          state.player.status == Status.Playing ||
+          state.player.status == Status.Loading
+            ? t("menu.togglePlay.pause")
+            : t("menu.togglePlay.play"),
         disabled: state.player.status == Status.Stopped
       },
       next: {
@@ -449,6 +458,11 @@ export const selectMenuState = createSelector(
       },
       previous: {
         disabled: state.player.status == Status.Stopped
+      },
+      toggleMute: {
+        label: state.player.muted
+          ? t("menu.toggleMute.unmute")
+          : t("menu.toggleMute.mute")
       },
       goToCurrent: {
         disabled: !state.player.currentTrack

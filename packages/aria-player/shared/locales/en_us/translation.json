@@ -180,14 +180,20 @@
     "switchToSplitView": "Split View",
     "togglePlaylistLayout": "Use playlist-specific layout",
     "resetColumns": "Reset to default layout",
-    "togglePlay": "Play/Pause",
+    "togglePlay": {
+      "play": "Play",
+      "pause": "Pause"
+    },
     "next": "Next",
     "previous": "Previous",
     "toggleShuffle": "Toggle Shuffle",
     "toggleRepeat": "Toggle Repeat",
     "volumeUp": "Volume Up",
     "volumeDown": "Volume Down",
-    "toggleMute": "Mute/Unmute"
+    "toggleMute": {
+      "mute": "Mute",
+      "unmute": "Unmute"
+    }
   },
   "tray": {
     "show": "Show",

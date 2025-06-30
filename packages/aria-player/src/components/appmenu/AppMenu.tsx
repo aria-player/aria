@@ -49,8 +49,10 @@ export function AppMenu(props: {
         if (item.id === "separator") {
           return <Separator key={index} />;
         }
-        const label = item.id.includes(".") ? t(item.id) : t("menu." + item.id);
         const menuStateId = item.id as keyof typeof menuState;
+        const label =
+          menuState[menuStateId]?.label ??
+          t(item.id.includes(".") ? item.id : "menu." + item.id);
         if (item.submenu) {
           return (
             <Submenu

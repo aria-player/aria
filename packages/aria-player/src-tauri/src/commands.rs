@@ -10,6 +10,7 @@ use tauri_plugin_window_state::{AppHandleExt, StateFlags};
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct MenuItemState {
+    label: Option<String>,
     disabled: Option<bool>,
     selected: Option<bool>,
 }
@@ -116,12 +117,21 @@ pub fn update_menu_state(app_handle: tauri::AppHandle, menu_state: HashMap<Strin
                     if let Some(check_item) = item.as_check_menuitem() {
                         let _ = check_item.set_enabled(!value.disabled.unwrap_or(false));
                         let _ = check_item.set_checked(value.selected.unwrap_or(false));
+                        if let Some(label) = &value.label {
+                            let _ = check_item.set_text(label);
+                        }
                     }
                     if let Some(menu_item) = item.as_menuitem() {
                         let _ = menu_item.set_enabled(!value.disabled.unwrap_or(false));
+                        if let Some(label) = &value.label {
+                            let _ = menu_item.set_text(label);
+                        }
                     }
                     if let Some(menu_item) = item.as_submenu() {
                         let _ = menu_item.set_enabled(!value.disabled.unwrap_or(false));
+                        if let Some(label) = &value.label {
+                            let _ = menu_item.set_text(label);
+                        }
                     }
                 }
             }
