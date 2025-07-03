@@ -112,10 +112,17 @@ export function SidebarItemContextMenu() {
               t("sidebar.playlists.menu.confirmDelete")
             );
             if (confirmed) {
-              dispatch(deletePlaylistItem({ id: menuData.itemId }));
+              dispatch(
+                deletePlaylistItem({ id: menuData.itemId, isFolder: true })
+              );
             }
           } else {
-            dispatch(deletePlaylistItem({ id: menuData.itemId }));
+            dispatch(
+              deletePlaylistItem({
+                id: menuData.itemId,
+                isFolder: item?.children != undefined
+              })
+            );
           }
         }}
       >

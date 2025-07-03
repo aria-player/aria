@@ -110,6 +110,13 @@ export function Sidebar() {
     if (visibleViewType != View.Search) dispatch(push(BASEPATH + "search/"));
   }
 
+  const isFolder = (itemId: string) => {
+    return (
+      findTreeNode(selectPlaylistsLayout(store.getState()), itemId)
+        ?.children !== undefined
+    );
+  };
+
   return (
     <div className={`sidebar ${styles.sideBar}`}>
       {!isTauri() && (
@@ -184,7 +191,8 @@ export function Sidebar() {
             action({
               id: args.movedItemId,
               parentId: args.newParentId,
-              index: args.newIndex
+              index: args.newIndex,
+              isFolder: isFolder(args.movedItemId)
             })
           );
         }}
@@ -194,7 +202,11 @@ export function Sidebar() {
               ?.name != newName
           )
             dispatch(
-              updatePlaylistItem({ id: itemId, changes: { name: newName } })
+              updatePlaylistItem({
+                id: itemId,
+                changes: { name: newName },
+                isFolder: isFolder(itemId)
+              })
             );
         }}
         onOptionsMenuActiveChange={(section, button, event) => {

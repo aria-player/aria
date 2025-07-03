@@ -57,13 +57,18 @@ export const playlistsSlice = createSlice({
         id: string;
         parentId: string | null;
         index: number;
+        isFolder: boolean;
       }>
     ) => {
       state.layout = moveTreeNode(state.layout, action.payload);
     },
     updatePlaylistItem: (
       state,
-      action: PayloadAction<{ id: string; changes: Partial<Item> }>
+      action: PayloadAction<{
+        id: string;
+        changes: Partial<Item>;
+        isFolder: boolean;
+      }>
     ) => {
       state.layout = updateTreeNode(state.layout, action.payload);
     },
@@ -91,7 +96,10 @@ export const playlistsSlice = createSlice({
         });
       }
     },
-    deletePlaylistItem: (state, action: PayloadAction<{ id: string }>) => {
+    deletePlaylistItem: (
+      state,
+      action: PayloadAction<{ id: string; isFolder: boolean }>
+    ) => {
       const deletion = deleteTreeNode(state.layout, action.payload);
       state.layout = deletion.result;
       playlistsAdapter.removeMany(state.playlists, deletion.deletedIds);

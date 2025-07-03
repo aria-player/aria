@@ -106,7 +106,6 @@ export function getUndoActionLabel(): string {
 }
 
 function getActionLabel(action: Action): string | undefined {
-  // TODO: Detect whether playlist items are playlists or folders
   switch (action.type) {
     case "library/moveLibraryItem":
       return t("actions.moveLibraryItem");
@@ -118,13 +117,22 @@ function getActionLabel(action: Action): string | undefined {
     case "library/resetLibraryLayout":
       return t("actions.resetLibraryLayout");
     case "playlists/movePlaylistItem":
-      return t("actions.movePlaylistItem");
+      return (action as ReturnType<typeof movePlaylistItem>).payload.isFolder
+        ? t("actions.moveFolder")
+        : t("actions.movePlaylist");
     case "playlists/updatePlaylistItem":
-      return t("actions.renamePlaylistItem");
+      return (action as ReturnType<typeof updatePlaylistItem>).payload.isFolder
+        ? t("actions.renameFolder")
+        : t("actions.renamePlaylist");
     case "playlists/createPlaylistItem":
-      return t("actions.createPlaylistItem");
+      return (action as ReturnType<typeof createPlaylistItem>).payload.newData
+        .children != undefined
+        ? t("actions.createFolder")
+        : t("actions.createPlaylist");
     case "playlists/deletePlaylistItem":
-      return t("actions.deletePlaylistItem");
+      return (action as ReturnType<typeof deletePlaylistItem>).payload.isFolder
+        ? t("actions.deleteFolder")
+        : t("actions.deletePlaylist");
     case "playlists/addTracksToPlaylist":
       return t("actions.addToPlaylist", {
         count: (action as ReturnType<typeof addTracksToPlaylist>).payload
