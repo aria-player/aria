@@ -52,6 +52,7 @@ import {
 } from "../features/visibleSelectors";
 import { setSearch } from "../features/search/searchSlice";
 import { t } from "i18next";
+import { getRedoActionLabel, getUndoActionLabel } from "./undo";
 
 export interface MenuItem {
   id: string;
@@ -468,9 +469,11 @@ export const selectMenuState = createSelector(
         disabled: !state.player.currentTrack
       },
       undo: {
+        label: getUndoActionLabel(),
         disabled: !state.undoable.past.length
       },
       redo: {
+        label: getRedoActionLabel(),
         disabled: !state.undoable.future.length
       },
       delete: {

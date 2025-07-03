@@ -26,6 +26,23 @@
       "defaultFolder": "New Folder"
     }
   },
+  "actions": {
+    "undoAction": "Undo \"{{action}}\"",
+    "redoAction": "Redo \"{{action}}\"",
+    "moveLibraryItem": "Move library item",
+    "hideLibraryItem": "Hide library item",
+    "showLibraryItem": "Show library item",
+    "resetLibraryLayout": "Reset library layout",
+    "movePlaylistItem": "Move playlist/folder",
+    "renamePlaylistItem": "Rename playlist/folder",
+    "createPlaylistItem": "Create playlist/folder",
+    "deletePlaylistItem": "Delete playlist/folder",
+    "addToPlaylist_one": "Add track to playlist",
+    "addToPlaylist_other": "Add {{count}} tracks to playlist",
+    "removeFromPlaylist_one": "Remove track from playlist",
+    "removeFromPlaylist_other": "Remove {{count}} tracks from playlist",
+    "reorderPlaylist": "Reorder playlist"
+  },
   "tracks": {
     "selectedCount_one": "{{count}} track selected",
     "selectedCount_other": "{{count}} tracks selected",

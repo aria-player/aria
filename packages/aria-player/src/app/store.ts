@@ -22,7 +22,11 @@ import { createReduxHistoryContext } from "redux-first-history";
 import { createBrowserHistory } from "history";
 import { listenerMiddleware } from "./listener";
 import undoable, { includeAction } from "redux-undo";
-import { excludeStateFromUndo, undoableActions } from "./undo";
+import {
+  excludeStateFromUndo,
+  recordUndoableActions,
+  undoableActions
+} from "./undo";
 
 const storage = localforage;
 
@@ -79,7 +83,9 @@ const reducer = combineReducers({
     },
     searchReducer
   ),
-  undoable: excludeStateFromUndo(undoableSlices) as Reducer<UndoableSlices>
+  undoable: recordUndoableActions(
+    excludeStateFromUndo(undoableSlices)
+  ) as Reducer<UndoableSlices>
 });
 
 export const store = configureStore({
