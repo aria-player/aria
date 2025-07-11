@@ -14,6 +14,7 @@ import { useTranslation } from "react-i18next";
 import { setQueueToNewSource } from "../../features/player/playerSlice";
 import { selectSortedTrackList } from "../../features/genericSelectors";
 import { store } from "../../app/store";
+import { showToast } from "../../app/toasts";
 
 const id = "sidebaritem";
 
@@ -115,12 +116,22 @@ export function SidebarItemContextMenu() {
               dispatch(
                 deletePlaylistItem({ id: menuData.itemId, isFolder: true })
               );
+              showToast(
+                t("toasts.deletedPlaylistItem", {
+                  name: item?.name
+                })
+              );
             }
           } else {
             dispatch(
               deletePlaylistItem({
                 id: menuData.itemId,
                 isFolder: item?.children != undefined
+              })
+            );
+            showToast(
+              t("toasts.deletedPlaylistItem", {
+                name: item?.name
               })
             );
           }

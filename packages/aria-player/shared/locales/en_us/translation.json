@@ -49,7 +49,12 @@
   },
   "toasts": {
     "addedNamedTrackToPlaylist": "Added '{{title}}' to '{{playlist}}'",
-    "addedTracksToPlaylist": "Added {{count}} tracks to '{{playlist}}'"
+    "addedTracksToPlaylist": "Added {{count}} tracks to '{{playlist}}'",
+    "deletedPlaylistItem": "Deleted '{{name}}'",
+    "addedNamedTrackToQueue": "Added '{{title}}' to queue",
+    "addedTracksToQueue": "Added {{count}} tracks to queue",
+    "addedNamedTrackToQueueFront": "Added '{{title}}' to front of queue",
+    "addedTracksToQueueFront": "Added {{count}} tracks to front of queue"
   },
   "tracks": {
     "selectedCount_one": "{{count}} track selected",

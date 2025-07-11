@@ -25,6 +25,7 @@ import {
   setSelectedAlbum,
   updateLibrarySplitState
 } from "../../../features/library/librarySlice";
+import { showToast } from "../../../app/toasts";
 
 export function TrackMenuItems() {
   const dispatch = useAppDispatch();
@@ -133,7 +134,6 @@ export function TrackMenuItems() {
               })
             );
             addTracks(newPlaylistId);
-            // TODO: Some kind of visual feedback indicating the tracks have been added
           }}
         >
           {t("tracks.addToNewPlaylist")}
@@ -198,6 +198,19 @@ export function TrackMenuItems() {
               }))
             })
           );
+          if (tracksForActions.length == 1) {
+            showToast(
+              t("toasts.addedNamedTrackToQueueFront", {
+                title: menuData?.metadata?.title
+              })
+            );
+          } else {
+            showToast(
+              t("toasts.addedTracksToQueueFront", {
+                count: tracksForActions.length
+              })
+            );
+          }
         }}
       >
         {t("tracks.playNext")}
@@ -212,6 +225,19 @@ export function TrackMenuItems() {
               }))
             })
           );
+          if (tracksForActions.length == 1) {
+            showToast(
+              t("toasts.addedNamedTrackToQueue", {
+                title: menuData?.metadata?.title
+              })
+            );
+          } else {
+            showToast(
+              t("toasts.addedTracksToQueue", {
+                count: tracksForActions.length
+              })
+            );
+          }
         }}
       >
         {t("tracks.addToQueue")}
