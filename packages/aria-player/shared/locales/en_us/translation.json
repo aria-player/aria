@@ -47,6 +47,10 @@
     "removeFromPlaylist_other": "Remove {{count}} tracks from playlist",
     "reorderPlaylist": "Reorder playlist"
   },
+  "toasts": {
+    "addedNamedTrackToPlaylist": "Added '{{title}}' to '{{playlist}}'",
+    "addedTracksToPlaylist": "Added {{count}} tracks to '{{playlist}}'"
+  },
   "tracks": {
     "selectedCount_one": "{{count}} track selected",
     "selectedCount_other": "{{count}} tracks selected",

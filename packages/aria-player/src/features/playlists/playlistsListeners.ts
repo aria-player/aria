@@ -7,7 +7,12 @@ import { push } from "redux-first-history";
 import { BASEPATH } from "../../app/constants";
 
 import { isAnyOf } from "@reduxjs/toolkit";
-import { cleanupPlaylistConfigs, deletePlaylistItem } from "./playlistsSlice";
+import {
+  addTracksToPlaylist,
+  cleanupPlaylistConfigs,
+  deletePlaylistItem,
+  selectPlaylistsLayoutItemById
+} from "./playlistsSlice";
 import { ActionTypes } from "redux-undo";
 import { updateQueueAfterChange } from "../player/playerSlice";
 import {
@@ -20,8 +25,35 @@ import {
   selectVisibleViewType
 } from "../visibleSelectors";
 import { View } from "../../app/view";
+import { showToast } from "../../app/toasts";
+import { selectTrackById } from "../tracks/tracksSlice";
+import { t } from "i18next";
 
 export function setupPlaylistsListeners() {
+  listenForAction(isAnyOf(addTracksToPlaylist), (state, action) => {
+    const payload = (action as ReturnType<typeof addTracksToPlaylist>).payload;
+    const playlistName = selectPlaylistsLayoutItemById(
+      state,
+      payload.playlistId
+    )?.name;
+    if (payload.newTracks.length === 1) {
+      const track = selectTrackById(state, payload.newTracks[0].trackId);
+      showToast(
+        t("toasts.addedNamedTrackToPlaylist", {
+          title: track.title,
+          playlist: playlistName
+        })
+      );
+    } else {
+      showToast(
+        t("toasts.addedTracksToPlaylist", {
+          count: payload.newTracks.length,
+          playlist: playlistName
+        })
+      );
+    }
+  });
+
   listenForAction(
     isAnyOf(
       deletePlaylistItem,
