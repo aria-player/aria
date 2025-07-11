@@ -29,6 +29,8 @@ import { setSelectedTracks } from "../../features/tracks/tracksSlice";
 import { nanoid } from "@reduxjs/toolkit";
 import { QueueItem } from "../../features/player/playerTypes";
 import NoRowsOverlay from "./subviews/NoRowsOverlay";
+import { showToast } from "../../app/toasts";
+import { t } from "i18next";
 
 const ROW_HEIGHT = 48;
 
@@ -231,6 +233,19 @@ export const Queue = () => {
         }
       } else if (dropIndex <= upNextSeparatorIndex) {
         copyTracksToUpNext(movingTracks);
+        if (movingTracks.length == 1) {
+          showToast(
+            t("toasts.addedNamedTrackToQueue", {
+              title: movingTracks[0].title
+            })
+          );
+        } else {
+          showToast(
+            t("toasts.addedTracksToQueue", {
+              count: movingTracks.length
+            })
+          );
+        }
       } else if (dropIndex <= queueSourceSeparatorIndex) {
         copyTracksToUpNext(movingTracks, dropIndex - upNextSeparatorIndex - 1);
       } else {
