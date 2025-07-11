@@ -132,7 +132,7 @@ export function useTrackGrid() {
               title: trackTitle,
               playlist
             })
-          : t("tracks.addSelectedToPlaylist", {
+          : t("tracks.addTracksToPlaylist", {
               count: selectedRowsCount,
               playlist
             })
