@@ -26,6 +26,7 @@ import { PluginsPage } from "./components/pages/settings/PluginsPage";
 import ViewContainer from "./components/views/ViewContainer";
 import { selectVisiblePlaylist } from "./features/visibleSelectors";
 import SearchPage from "./components/pages/SearchPage";
+import { Toaster } from "sonner";
 
 function App() {
   const { platform, fullscreen } = useContext(PlatformContext);
@@ -46,6 +47,13 @@ function App() {
   return (
     <div className={styles.window}>
       <ContextMenuContainer />
+      <Toaster
+        visibleToasts={1}
+        position="bottom-center"
+        offset={{ bottom: "5.5rem" }}
+        style={{ zIndex: 99 }}
+        swipeDirections={[]}
+      />
       {platform == Platform.Mac && fullscreen === false && <MacTitleBar />}
       {platform == Platform.Windows && <WindowsMenuBar />}
       <Allotment

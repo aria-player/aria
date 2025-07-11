@@ -5,6 +5,7 @@
   border-top: 1px solid var(--primary-border);
   align-items: center;
   background-color: var(--footer-background);
+  z-index: 100;
 }
 
 .left {

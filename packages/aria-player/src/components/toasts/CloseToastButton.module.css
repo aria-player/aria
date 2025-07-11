@@ -1,0 +1,11 @@
+.close {
+  display: flex;
+  flex-shrink: 0;
+  width: 1.4rem;
+  height: 1.4rem;
+  padding: 0.1rem;
+
+  &:hover {
+    background-color: var(--button-background-hover);
+  }
+}
