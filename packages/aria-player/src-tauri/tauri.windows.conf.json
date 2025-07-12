@@ -4,7 +4,8 @@
       {
         "title": "Aria",
         "visible": false,
-        "decorations": false
+        "decorations": false,
+        "dragDropEnabled": false
       }
     ]
   },
