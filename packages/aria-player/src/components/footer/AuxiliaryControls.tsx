@@ -98,7 +98,7 @@ export function AuxiliaryControls() {
         onClick={() => {
           dispatch(setMuted(!muted));
         }}
-        title={t("menu.toggleMute")}
+        title={t(muted ? "menu.toggleMute.unmute" : "menu.toggleMute.mute")}
       >
         <VolumeIcon />
       </button>

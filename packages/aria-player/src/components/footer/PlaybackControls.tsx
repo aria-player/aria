@@ -82,7 +82,11 @@ export function PlaybackControls() {
                 dispatch(loadAndPlayTrack(state.player.currentTrack.trackId));
               }
             }}
-            title={t("menu.togglePlay")}
+            title={t(
+              status === Status.Playing || status === Status.Loading
+                ? "menu.togglePlay.pause"
+                : "menu.togglePlay.play"
+            )}
           >
             {status === Status.Playing || status === Status.Loading ? (
               <PauseIcon />
