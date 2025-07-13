@@ -89,51 +89,58 @@ export default function createAppleMusicPlayer(
   async function fetchUserLibrary() {
     const existingTracks = host.getTracks();
     const tracksInLibrary: string[] = [];
-    let url = "v1/me/library/songs?" as string | null;
     let progress = 0;
-    while (url) {
+
+    const totalTracksResponse = (await music?.api.music(
+      "v1/me/library/songs?limit=1&sort=-dateAdded&include=albums"
+    )) as { data: MusicKit.Relationship<MusicKit.Songs> };
+    const totalTracks = totalTracksResponse.data.meta?.total || 0;
+
+    host.setSyncProgress({
+      synced: 0,
+      total: totalTracks
+    });
+
+    const allTracks: TrackMetadata[] = [];
+    const tracksLimit = 100;
+    const maxConcurrentRequests = 5;
+    for (
+      let offset = 0;
+      offset < totalTracks;
+      offset += tracksLimit * maxConcurrentRequests
+    ) {
+      const remainingTracks = totalTracks - offset;
+      const requestsInBatch = Math.min(
+        maxConcurrentRequests,
+        Math.ceil(remainingTracks / tracksLimit)
+      );
+      const promises = [];
+      for (let i = 0; i < requestsInBatch; i++) {
+        const currentOffset = offset + i * tracksLimit;
+        const url = `v1/me/library/songs?limit=${tracksLimit}&offset=${currentOffset}&sort=-dateAdded&include=albums`;
+        promises.push(fetchTracks(url));
+      }
+
       try {
-        const tracksResponse = await music?.api.music(
-          url + "&sort=-dateAdded&include=albums"
-        );
-        const { data, meta, next } = (
-          tracksResponse as { data: MusicKit.Relationship<MusicKit.Songs> }
-        ).data;
-        const tracks: TrackMetadata[] = [];
-        progress += data.length;
-        host.setSyncProgress({
-          synced: progress,
-          total: meta?.total
-        });
-        data.forEach((track) => {
-          const albumData = track.relationships?.albums
-            .data[0] as unknown as MusicKit.LibraryAlbums;
-          const trackMetadata = {
-            uri: track.id,
-            title: track.attributes?.name,
-            artist: track.attributes?.artistName,
-            albumArtist: albumData.attributes?.artistName,
-            album: track.attributes?.albumName,
-            albumId: albumData.id,
-            genre: track.attributes?.genreNames,
-            duration: track.attributes?.durationInMillis,
-            artworkUri: track.attributes?.artwork?.url,
-            disc: track.attributes?.discNumber,
-            track: track.attributes?.trackNumber,
-            dateAdded:
-              albumData.attributes?.dateAdded &&
-              new Date(albumData.attributes?.dateAdded).getTime(),
-            year:
-              albumData?.attributes?.releaseDate &&
-              parseInt(albumData?.attributes?.releaseDate?.split("-")[0]),
-            metadataLoaded: true
-          } as TrackMetadata;
-          tracks.push(trackMetadata);
-          tracksInLibrary.push(track.id);
-        });
-        url = next || null;
+        const batchResults = await Promise.all(promises);
+        for (const result of batchResults) {
+          if (result) {
+            allTracks.push(...result);
+            tracksInLibrary.push(...result.map((track) => track.uri));
+            progress += result.length;
+
+            host.setSyncProgress({
+              synced: progress,
+              total: totalTracks
+            });
+          }
+        }
+
         if (!music?.isAuthorized) return;
-        host.updateTracks(tracks);
+
+        if (allTracks.length > 0) {
+          host.updateTracks([...allTracks]);
+        }
       } catch (error) {
         console.error("Error fetching user library:", error);
       }
@@ -143,6 +150,45 @@ export default function createAppleMusicPlayer(
     );
     if (removedTracks.length > 0) {
       host.removeTracks(removedTracks.map((track) => track.uri));
+    }
+  }
+
+  async function fetchTracks(url: string): Promise<TrackMetadata[] | null> {
+    try {
+      const tracksResponse = await music?.api.music(url);
+      const { data } = (
+        tracksResponse as { data: MusicKit.Relationship<MusicKit.Songs> }
+      ).data;
+      const tracks: TrackMetadata[] = [];
+      data.forEach((track) => {
+        const albumData = track.relationships?.albums
+          .data[0] as unknown as MusicKit.LibraryAlbums;
+        const trackMetadata = {
+          uri: track.id,
+          title: track.attributes?.name,
+          artist: track.attributes?.artistName,
+          albumArtist: albumData.attributes?.artistName,
+          album: track.attributes?.albumName,
+          albumId: albumData.id,
+          genre: track.attributes?.genreNames,
+          duration: track.attributes?.durationInMillis,
+          artworkUri: track.attributes?.artwork?.url,
+          disc: track.attributes?.discNumber,
+          track: track.attributes?.trackNumber,
+          dateAdded:
+            albumData.attributes?.dateAdded &&
+            new Date(albumData.attributes?.dateAdded).getTime(),
+          year:
+            albumData?.attributes?.releaseDate &&
+            parseInt(albumData?.attributes?.releaseDate?.split("-")[0]),
+          metadataLoaded: true
+        } as TrackMetadata;
+        tracks.push(trackMetadata);
+      });
+      return tracks;
+    } catch (error) {
+      console.error("Error fetching tracks:", error);
+      return null;
     }
   }
 

@@ -5,5 +5,5 @@
 }
 
 .percentage {
-  stroke-dashoffset: 0.5s ease;
+  transition: stroke-dashoffset 0.5s ease;
 }
