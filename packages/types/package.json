@@ -1,7 +1,7 @@
 {
   "name": "@aria-player/types",
   "private": false,
-  "version": "0.1.1",
+  "version": "0.1.2",
   "types": "./index.d.ts",
   "dependencies": {
     "@types/react": "^18.3.12"
