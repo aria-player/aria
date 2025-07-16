@@ -35,8 +35,11 @@ fn main() {
             utils::check_for_files(app, args);
         }))
         .plugin(tauri_plugin_store::Builder::default().build())
+        .plugin(tauri_plugin_opener::init())
         .setup(|app| {
-            let _ = app.handle().plugin(tauri_plugin_updater::Builder::new().build());
+            let _ = app
+                .handle()
+                .plugin(tauri_plugin_updater::Builder::new().build());
             let window = app.get_webview_window("main").unwrap();
             let _ = window.set_shadow(true);
 
@@ -125,6 +128,7 @@ fn main() {
             commands::set_initial_language,
             player::get_audio_files_from_directory,
             player::get_metadata,
+            player::show_file_in_manager,
             oauth::start_server
         ]);
     if OS != "windows" {

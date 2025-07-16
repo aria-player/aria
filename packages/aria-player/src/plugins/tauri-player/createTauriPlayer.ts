@@ -228,6 +228,17 @@ export default function createTauriPlayer(
       webAudioBackend.setTime(position);
     },
 
+    getCustomTrackActions: (track: Track) => {
+      return [
+        {
+          label: t("tauri-player:showInFileManager"),
+          onClick: () => {
+            invoke("show_file_in_manager", { uri: track.uri });
+          }
+        }
+      ];
+    },
+
     dispose() {
       i18n.removeResourceBundle("en-US", "tauri-player");
       webAudioBackend?.dispose();

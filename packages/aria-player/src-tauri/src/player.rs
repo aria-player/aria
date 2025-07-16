@@ -3,9 +3,11 @@ use lofty::probe::Probe;
 use sha2::{Digest, Sha256};
 use std::fs::metadata;
 use std::io::Write;
+use std::path::Path;
 use std::time::UNIX_EPOCH;
-use std::{collections::HashMap, fs, path::Path};
+use std::{collections::HashMap, fs};
 use tauri::{AppHandle, Manager};
+use tauri_plugin_opener::OpenerExt;
 
 #[tauri::command]
 pub fn get_audio_files_from_directory(
@@ -142,4 +144,9 @@ pub fn get_metadata(app: AppHandle, file_path: String) -> Result<HashMap<String,
         metadata.insert("artworkUri".to_string(), hash);
     }
     Ok(metadata)
+}
+
+#[tauri::command]
+pub fn show_file_in_manager(app: AppHandle, uri: String) {
+    let _ = app.opener().reveal_item_in_dir(Path::new(&uri));
 }
