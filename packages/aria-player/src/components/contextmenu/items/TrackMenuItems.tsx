@@ -26,6 +26,7 @@ import {
   updateLibrarySplitState
 } from "../../../features/library/librarySlice";
 import { showToast } from "../../../app/toasts";
+import { pluginHandles } from "../../../features/plugins/pluginsSlice";
 
 export function TrackMenuItems() {
   const dispatch = useAppDispatch();
@@ -144,6 +145,34 @@ export function TrackMenuItems() {
     );
   };
 
+  const renderCustomActions = () => {
+    if (!menuData?.metadata) return null;
+    const pluginHandle = pluginHandles[menuData.metadata.source];
+    if (!pluginHandle?.getCustomTrackActions) return null;
+    const customActions = pluginHandle.getCustomTrackActions(menuData.metadata);
+    if (!customActions.length) return null;
+
+    return (
+      <>
+        <Separator />
+        {customActions.map((action, index) => (
+          <Item
+            key={index}
+            disabled={action.disabled}
+            onClick={() => {
+              if (menuData?.metadata && !action.disabled) {
+                action.onClick(menuData.metadata);
+                hideAll();
+              }
+            }}
+          >
+            {action.label}
+          </Item>
+        ))}
+      </>
+    );
+  };
+
   return (
     <>
       {showGoToAlbum && (
@@ -246,6 +275,7 @@ export function TrackMenuItems() {
       <Submenu label={t("tracks.addToPlaylist")}>
         {renderItems(playlists)}
       </Submenu>
+      {renderCustomActions()}
     </>
   );
 }

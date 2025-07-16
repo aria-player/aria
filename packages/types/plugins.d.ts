@@ -159,6 +159,22 @@ export type AttributionProps = {
   id?: string;
 };
 
+export type TrackAction = {
+  /**
+   * Localized label for this action that will be displayed in the track context menu.
+   */
+  label: string;
+  /**
+   * Whether this action is currently disabled.
+   * If `true`, the action will be greyed out in the track context menu.
+   */
+  disabled?: boolean;
+  /**
+   * Called when this action is clicked.
+   */
+  onClick: (track: Track) => void;
+};
+
 /**
  * Handle for a plugin that provides an audio backend and can manage the user's music library.
  */
@@ -233,6 +249,10 @@ export interface SourceHandle extends BaseHandle {
    * Seek to a certain time in the currently playing track, in milliseconds.
    */
   setTime: (position: number) => void;
+  /**
+   * Return an array of custom actions that can be performed on a track.
+   */
+  getCustomTrackActions?: (track: Track) => TrackAction[];
 }
 
 export type SyncProgress = {
