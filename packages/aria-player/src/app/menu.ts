@@ -8,7 +8,6 @@ import {
   resetLibraryColumnState,
   selectLibraryColumnState,
   selectLibrarySplitViewStates,
-  setSelectedAlbum,
   updateLibrarySplitState
 } from "../features/library/librarySlice";
 import { defaultColumnDefinitions } from "../features/library/libraryColumns";
@@ -31,7 +30,6 @@ import {
   resetPlaylistColumnState,
   selectPlaylistConfigById,
   setPlaylistDisplayMode,
-  setPlaylistSelectedTrackGroup,
   togglePlaylistUsesCustomLayout,
   updatePlaylistSplitViewState
 } from "../features/playlists/playlistsSlice";
@@ -142,22 +140,10 @@ export function handleMenuAction(
         const currentPlaylist = selectCurrentPlaylist(state);
         const currentTrack = selectCurrentTrack(state);
         if (currentTrack) {
-          if (state.player.queueGrouping == TrackGrouping.AlbumId) {
-            if (
-              currentPlaylist?.id &&
-              selectPlaylistConfigById(state, currentPlaylist.id).displayMode ==
-                DisplayMode.AlbumGrid
-            ) {
-              dispatch(
-                setPlaylistSelectedTrackGroup({
-                  playlistId: currentPlaylist.id,
-                  selectedGroup: state.player.queueSelectedGroup
-                })
-              );
-            } else if (queueSource == LibraryView.Albums) {
-              dispatch(setSelectedAlbum(state.player.queueSelectedGroup));
-            }
-          } else if (state.player.queueGrouping) {
+          if (
+            state.player.queueGrouping &&
+            state.player.queueGrouping != TrackGrouping.AlbumId
+          ) {
             if (
               currentPlaylist?.id &&
               selectPlaylistConfigById(state, currentPlaylist.id).displayMode ==

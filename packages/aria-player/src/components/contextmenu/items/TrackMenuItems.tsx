@@ -22,7 +22,6 @@ import { BASEPATH } from "../../../app/constants";
 import { push } from "redux-first-history";
 import {
   selectLibrarySplitViewStates,
-  setSelectedAlbum,
   updateLibrarySplitState
 } from "../../../features/library/librarySlice";
 import { showToast } from "../../../app/toasts";
@@ -195,7 +194,6 @@ export function TrackMenuItems() {
                     `albums/${encodeURIComponent(menuData.metadata.albumId)}`
                 )
               );
-              dispatch(setSelectedAlbum(menuData.metadata.albumId));
               hideAll();
             }}
           >

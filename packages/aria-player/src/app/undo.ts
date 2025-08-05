@@ -53,7 +53,6 @@ export const excludeStateFromUndo =
             library: {
               ...newState.present.library,
               columnState: state.present.library.columnState,
-              selectedAlbum: state.present.library.selectedAlbum,
               splitViewStates: state.present.library.splitViewStates
             },
             playlists: {

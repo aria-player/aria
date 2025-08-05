@@ -110,7 +110,6 @@ export const selectVisibleGroupFilteredTracks = createSelector(
     (state: RootState) => state.tracks.tracks,
     (state: RootState) => state.router.location?.pathname,
     (state: RootState) => state.undoable.present.library.splitViewStates,
-    (state: RootState) => state.undoable.present.library.selectedAlbum,
     (state: RootState) => state.undoable.present.playlists.playlists,
     (state: RootState) => state.undoable.present.playlists.playlistsConfig
   ],

@@ -15,7 +15,6 @@ export interface PlaylistConfig {
   columnState: ColumnState[] | null;
   useCustomLayout: boolean;
   displayMode: DisplayMode;
-  selectedAlbum: string | null;
   splitViewState: SplitViewState;
 }
 

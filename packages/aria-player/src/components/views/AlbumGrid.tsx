@@ -6,8 +6,6 @@ import LeftArrow from "../../assets/arrow-left-solid.svg?react";
 import { DisplayMode } from "../../app/view";
 import { AlbumTrackList } from "./subviews/AlbumTrackList";
 import { useTranslation } from "react-i18next";
-import { setSelectedAlbum } from "../../features/library/librarySlice";
-import { setPlaylistSelectedTrackGroup } from "../../features/playlists/playlistsSlice";
 import {
   selectVisiblePlaylist,
   selectVisibleSelectedTrackGroup,
@@ -62,17 +60,6 @@ export default function AlbumGrid() {
       ? `playlist/${visiblePlaylist.id}/${albumId != null ? encodeURIComponent(albumId) : ""}`
       : `albums/${albumId != null ? encodeURIComponent(albumId) : ""}`;
     dispatch(push(BASEPATH + path));
-
-    if (visiblePlaylist?.id) {
-      dispatch(
-        setPlaylistSelectedTrackGroup({
-          playlistId: visiblePlaylist?.id,
-          selectedGroup: albumId ?? null
-        })
-      );
-    } else {
-      dispatch(setSelectedAlbum(albumId ?? null));
-    }
   }
 
   const itemRenderer = ({ index, style }: AlbumGridItemProps) => {

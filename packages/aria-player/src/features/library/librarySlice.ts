@@ -11,7 +11,6 @@ import { SplitViewState, TrackGrouping } from "../../app/view";
 interface LibraryState {
   columnState: ColumnState[] | null;
   layout: Item[];
-  selectedAlbum: string | null;
   splitViewStates: Record<string, SplitViewState>;
 }
 
@@ -26,7 +25,6 @@ const initialState: LibraryState = {
     { id: "years", name: "years", hidden: true },
     { id: "folders", name: "folders", hidden: true }
   ],
-  selectedAlbum: null,
   splitViewStates: {
     artists: { trackGrouping: TrackGrouping.Artist },
     genres: { trackGrouping: TrackGrouping.Genre },
@@ -65,9 +63,6 @@ const librarySlice = createSlice({
     resetLibraryLayout: (state) => {
       state.layout = initialState.layout;
     },
-    setSelectedAlbum: (state, action: PayloadAction<string | null>) => {
-      state.selectedAlbum = action.payload;
-    },
     updateLibrarySplitState: (
       state,
       action: PayloadAction<{
@@ -89,7 +84,6 @@ export const {
   moveLibraryItem,
   updateLibraryItem,
   resetLibraryLayout,
-  setSelectedAlbum,
   updateLibrarySplitState
 } = librarySlice.actions;
 
