@@ -27,13 +27,11 @@ export const selectVisibleViewType = (state: RootState) => {
     .replace(/\/$/, "");
   if (!path) {
     return LibraryView.Songs;
-  } else if (isLibraryView(path)) {
-    return path as LibraryView;
-  } else if (Object.values(View).includes(path as View)) {
-    return path as View;
   }
   const firstPath = path.split("/")[0];
-  if (firstPath == View.Playlist || firstPath == View.Settings) {
+  if (isLibraryView(firstPath)) {
+    return firstPath as LibraryView;
+  } else if (Object.values(View).includes(firstPath as View)) {
     return firstPath as View;
   }
   return View.Error;
@@ -184,19 +182,24 @@ export const selectVisibleTrackGrouping = (state: RootState) => {
 };
 
 export const selectVisibleSelectedTrackGroup = (state: RootState) => {
-  if (selectVisibleViewType(state) == LibraryView.Albums) {
-    return state.undoable.present.library.selectedAlbum;
-  } else if (selectVisiblePlaylist(state)) {
-    const playlistConfig = selectVisiblePlaylistConfig(state);
-    if (playlistConfig?.displayMode == DisplayMode.AlbumGrid) {
-      return playlistConfig.selectedAlbum;
-    } else {
-      return playlistConfig?.splitViewState.selectedGroup;
-    }
-  } else {
-    return selectLibrarySplitViewStates(state)[selectVisibleViewType(state)]
-      ?.selectedGroup;
+  const pathSegments = state.router.location?.pathname
+    .substring(BASEPATH.length)
+    .replace(/\/$/, "")
+    .split("/");
+  if (!pathSegments || pathSegments.length < 2) {
+    return null;
   }
+  const firstPath = pathSegments[0];
+  const secondPath = pathSegments[1];
+  if (firstPath === View.Playlist && pathSegments.length >= 3) {
+    return decodeURIComponent(pathSegments[2]);
+  }
+
+  if (isLibraryView(firstPath)) {
+    return secondPath ? decodeURIComponent(secondPath) : null;
+  }
+
+  return null;
 };
 
 export const selectVisibleTrackGroups = createSelector(

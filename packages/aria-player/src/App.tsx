@@ -75,11 +75,17 @@ function App() {
               <Route path="/songs" Component={() => <></>} />
               <Route path="/queue" Component={() => <></>} />
               <Route path="/albums" Component={() => <></>} />
+              <Route path="/albums/:albumId" Component={() => <></>} />
               <Route path="/artists" Component={() => <></>} />
+              <Route path="/artists/:artist" Component={() => <></>} />
               <Route path="/genres" Component={() => <></>} />
+              <Route path="/genres/:genre" Component={() => <></>} />
               <Route path="/composers" Component={() => <></>} />
+              <Route path="/composers/:composer" Component={() => <></>} />
               <Route path="/years" Component={() => <></>} />
+              <Route path="/years/:year" Component={() => <></>} />
               <Route path="/folders" Component={() => <></>} />
+              <Route path="/folders/:folder" Component={() => <></>} />
               <Route path="settings" Component={SettingsPage}>
                 <Route index Component={GeneralPage} />
                 <Route path="library" Component={LibraryPage} />
@@ -89,6 +95,10 @@ function App() {
               </Route>
               <Route
                 path="playlist/:id"
+                Component={() => (visiblePlaylist?.id ? <></> : <ErrorPage />)}
+              />
+              <Route
+                path="playlist/:id/:group"
                 Component={() => (visiblePlaylist?.id ? <></> : <ErrorPage />)}
               />
               <Route path="/search" Component={SearchPage} />

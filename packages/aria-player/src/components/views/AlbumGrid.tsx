@@ -19,6 +19,8 @@ import { getMostCommonArtworkUri, getScrollbarWidth } from "../../app/utils";
 import { getSourceHandle } from "../../features/plugins/pluginsSlice";
 import { FixedSizeGrid, GridChildComponentProps } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
+import { push } from "redux-first-history";
+import { BASEPATH } from "../../app/constants";
 
 type AlbumGridItemProps = GridChildComponentProps & {
   index: number;
@@ -56,6 +58,11 @@ export default function AlbumGrid() {
   }, []);
 
   function setSelectedItem(albumId?: string) {
+    const path = visiblePlaylist?.id
+      ? `playlist/${visiblePlaylist.id}/${albumId != null ? encodeURIComponent(albumId) : ""}`
+      : `albums/${albumId != null ? encodeURIComponent(albumId) : ""}`;
+    dispatch(push(BASEPATH + path));
+
     if (visiblePlaylist?.id) {
       dispatch(
         setPlaylistSelectedTrackGroup({

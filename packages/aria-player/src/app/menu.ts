@@ -183,15 +183,25 @@ export function handleMenuAction(
           }
           if (currentPlaylist) {
             dispatch(
-              push(BASEPATH + "playlist/" + currentPlaylist.id, {
-                focusCurrent: true
-              })
+              push(
+                BASEPATH +
+                  `playlist/${currentPlaylist.id}/${encodeURIComponent(state.player.queueSelectedGroup || "")}`,
+                {
+                  focusCurrent: true
+                }
+              )
             );
           } else if (queueSource?.startsWith(View.Search)) {
             dispatch(setSearch(queueSource.split("/")[1]));
             dispatch(push(BASEPATH + "search/", { focusCurrent: true }));
           } else {
-            dispatch(push(BASEPATH + queueSource, { focusCurrent: true }));
+            dispatch(
+              push(
+                BASEPATH +
+                  `${queueSource}/${encodeURIComponent(state.player.queueSelectedGroup || "")}`,
+                { focusCurrent: true }
+              )
+            );
           }
         }
       }

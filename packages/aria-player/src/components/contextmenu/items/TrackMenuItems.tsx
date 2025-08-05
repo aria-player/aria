@@ -107,7 +107,16 @@ export function TrackMenuItems() {
   );
 
   function goToArtist(artist?: string | string[]) {
-    dispatch(push(BASEPATH + "artists"));
+    dispatch(
+      push(
+        BASEPATH +
+          `artists/${
+            artist != null
+              ? encodeURIComponent(Array.isArray(artist) ? artist[0] : artist)
+              : ""
+          }`
+      )
+    );
     dispatch(
       updateLibrarySplitState({
         view: LibraryView.Artists,
@@ -180,7 +189,12 @@ export function TrackMenuItems() {
           <Item
             onClick={() => {
               if (menuData?.metadata?.albumId == undefined) return;
-              dispatch(push(BASEPATH + "albums"));
+              dispatch(
+                push(
+                  BASEPATH +
+                    `albums/${encodeURIComponent(menuData.metadata.albumId)}`
+                )
+              );
               dispatch(setSelectedAlbum(menuData.metadata.albumId));
               hideAll();
             }}
