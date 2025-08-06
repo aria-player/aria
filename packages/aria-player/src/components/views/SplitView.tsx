@@ -19,8 +19,10 @@ import {
 import { compareMetadata } from "../../app/sort";
 import { push, replace } from "redux-first-history";
 import { BASEPATH } from "../../app/constants";
+import { useLocation } from "react-router-dom";
 
 export function SplitView() {
+  const location = useLocation();
   const itemRefs = useRef<Record<string, HTMLButtonElement | null>>({});
   const [lastVisibleView, setLastVisibleView] = useState<string>("");
   const visibleItems = useAppSelector(selectVisibleTrackGroups)
@@ -144,7 +146,10 @@ export function SplitView() {
 
   useEffect(() => {
     const currentView = visiblePlaylist?.id || visibleViewType;
-    if (lastVisibleView !== currentView) {
+    if (
+      lastVisibleView !== currentView ||
+      (location?.state as { focusCurrent: boolean })?.focusCurrent
+    ) {
       setLastVisibleView(currentView);
       if (selectedItem && itemRefs.current[selectedItem]) {
         itemRefs.current[selectedItem]?.scrollIntoView({
@@ -157,7 +162,8 @@ export function SplitView() {
     visiblePlaylist?.id,
     selectedItem,
     lastVisibleView,
-    setLastVisibleView
+    setLastVisibleView,
+    location?.state
   ]);
 
   return (
