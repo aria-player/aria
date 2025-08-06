@@ -23,9 +23,9 @@ import { BASEPATH } from "../../app/constants";
 export function SplitView() {
   const itemRefs = useRef<Record<string, HTMLButtonElement | null>>({});
   const [lastVisibleView, setLastVisibleView] = useState<string>("");
-  const visibleItems = useAppSelector(selectVisibleTrackGroups).sort((a, b) =>
-    compareMetadata(a, b)
-  );
+  const visibleItems = useAppSelector(selectVisibleTrackGroups)
+    .sort((a, b) => compareMetadata(a, b))
+    .map((item) => String(item));
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
   const visibleViewType = useAppSelector(selectVisibleViewType);
   const visiblePlaylistSplitViewSizes = useAppSelector(
