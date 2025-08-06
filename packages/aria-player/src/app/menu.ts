@@ -28,7 +28,6 @@ import {
   addTracksToPlaylist,
   removeTracksFromPlaylist,
   resetPlaylistColumnState,
-  selectPlaylistConfigById,
   setPlaylistDisplayMode,
   togglePlaylistUsesCustomLayout,
   updatePlaylistSplitViewState
@@ -140,33 +139,6 @@ export function handleMenuAction(
         const currentPlaylist = selectCurrentPlaylist(state);
         const currentTrack = selectCurrentTrack(state);
         if (currentTrack) {
-          if (
-            state.player.queueGrouping &&
-            state.player.queueGrouping != TrackGrouping.AlbumId
-          ) {
-            if (
-              currentPlaylist?.id &&
-              selectPlaylistConfigById(state, currentPlaylist.id).displayMode ==
-                DisplayMode.SplitView
-            ) {
-              dispatch(
-                updatePlaylistSplitViewState({
-                  playlistId: currentPlaylist.id,
-                  splitState: { selectedGroup: state.player.queueSelectedGroup }
-                })
-              );
-            } else if (
-              queueSource &&
-              Object.values(LibraryView).includes(queueSource as LibraryView)
-            ) {
-              dispatch(
-                updateLibrarySplitState({
-                  view: queueSource,
-                  splitState: { selectedGroup: state.player.queueSelectedGroup }
-                })
-              );
-            }
-          }
           if (currentPlaylist) {
             dispatch(
               push(

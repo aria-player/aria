@@ -31,15 +31,34 @@ export function SplitView() {
   const visiblePlaylistSplitViewSizes = useAppSelector(
     selectVisiblePlaylistConfig
   )?.splitViewState.paneSizes;
-  const visibleLibrarySplitViewSizes = useAppSelector(
+  const visibleLibrarySplitViewConfig = useAppSelector(
     selectLibrarySplitViewStates
-  )[visibleViewType]?.paneSizes;
+  )[visibleViewType];
+  const visibleLibrarySplitViewSizes = visibleLibrarySplitViewConfig?.paneSizes;
   const selectedItem = useAppSelector(selectVisibleSelectedTrackGroup);
   const splitViewStates = useAppSelector(selectLibrarySplitViewStates);
   const visiblePlaylistConfig = useAppSelector(selectVisiblePlaylistConfig);
   const dispatch = useAppDispatch();
 
   useEffect(() => {
+    if (
+      visiblePlaylist?.id &&
+      visiblePlaylistConfig?.splitViewState.selectedGroup != selectedItem
+    ) {
+      dispatch(
+        updatePlaylistSplitViewState({
+          playlistId: visiblePlaylist?.id,
+          splitState: { selectedGroup: selectedItem }
+        })
+      );
+    } else if (visibleLibrarySplitViewConfig?.selectedGroup != selectedItem) {
+      dispatch(
+        updateLibrarySplitState({
+          view: visibleViewType,
+          splitState: { selectedGroup: selectedItem }
+        })
+      );
+    }
     if (selectedItem && visibleItems.includes(selectedItem)) {
       return;
     }
@@ -63,8 +82,9 @@ export function SplitView() {
     splitViewStates,
     visibleItems,
     selectedItem,
-    visiblePlaylist?.id,
-    visiblePlaylistConfig
+    visiblePlaylistConfig,
+    visibleLibrarySplitViewConfig?.selectedGroup,
+    visiblePlaylist
   ]);
 
   const setSelectedItem = useCallback(
@@ -82,22 +102,6 @@ export function SplitView() {
             BASEPATH +
               `${visibleViewType}/${group != null ? encodeURIComponent(group) : ""}`
           )
-        );
-      }
-
-      if (visiblePlaylist?.id) {
-        dispatch(
-          updatePlaylistSplitViewState({
-            playlistId: visiblePlaylist?.id,
-            splitState: { selectedGroup: group }
-          })
-        );
-      } else {
-        dispatch(
-          updateLibrarySplitState({
-            view: visibleViewType,
-            splitState: { selectedGroup: group }
-          })
         );
       }
     },
