@@ -47,7 +47,6 @@ import {
   selectVisibleDisplayMode,
   selectVisibleSelectedTrackGroup
 } from "../features/visibleSelectors";
-import { setSearch } from "../features/search/searchSlice";
 import { t } from "i18next";
 import { getRedoActionLabel, getUndoActionLabel } from "./undo";
 
@@ -150,8 +149,15 @@ export function handleMenuAction(
               )
             );
           } else if (queueSource?.startsWith(View.Search)) {
-            dispatch(setSearch(queueSource.split("/")[1]));
-            dispatch(push(BASEPATH + "search/", { focusCurrent: true }));
+            dispatch(
+              push(
+                BASEPATH +
+                  `search/${encodeURIComponent(queueSource.split("/")[1])}`,
+                {
+                  focusCurrent: true
+                }
+              )
+            );
           } else {
             dispatch(
               push(

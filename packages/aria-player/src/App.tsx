@@ -102,6 +102,7 @@ function App() {
                 Component={() => (visiblePlaylist?.id ? <></> : <ErrorPage />)}
               />
               <Route path="/search" Component={SearchPage} />
+              <Route path="/search/:query" Component={SearchPage} />
               <Route path="*" Component={ErrorPage} />
             </Routes>
           </div>

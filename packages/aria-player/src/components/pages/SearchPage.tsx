@@ -2,12 +2,13 @@ import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import {
   selectSearch,
   selectSearchHistory,
-  setSearch,
   removeFromSearchHistory
 } from "../../features/search/searchSlice";
 import styles from "./SearchPage.module.css";
 import ClearIcon from "../../assets/xmark-solid.svg?react";
 import { useTranslation } from "react-i18next";
+import { push } from "redux-first-history";
+import { BASEPATH } from "../../app/constants";
 
 export default function SearchPage() {
   const dispatch = useAppDispatch();
@@ -28,7 +29,9 @@ export default function SearchPage() {
             className={`search-history-item ${styles.historyItem}`}
           >
             <button
-              onClick={() => dispatch(setSearch(item))}
+              onClick={() => {
+                dispatch(push(BASEPATH + "search/" + encodeURIComponent(item)));
+              }}
               className={styles.searchLink}
             >
               {item}

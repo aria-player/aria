@@ -23,7 +23,7 @@ import { MenuContext } from "../../contexts/MenuContext";
 import { TreeContext } from "../../contexts/TreeContext";
 import { useMenuActions } from "../../hooks/useMenuActions";
 import { store } from "../../app/store";
-import { push } from "redux-first-history";
+import { push, replace } from "redux-first-history";
 import { BASEPATH } from "../../app/constants";
 import { useDragDropManager } from "react-dnd";
 import {
@@ -38,9 +38,11 @@ import FolderClosedIcon from "../../assets/chevron-right-solid.svg?react";
 import OptionsButtonIcon from "../../assets/ellipsis-solid.svg?react";
 import DoneButtonIcon from "../../assets/check-solid.svg?react";
 import ClearIcon from "../../assets/xmark-solid.svg?react";
+import { useLocation } from "react-router-dom";
 
 export function Sidebar() {
   const dispatch = useAppDispatch();
+  const location = useLocation();
   const { t } = useTranslation();
   const treeRef = useContext(TreeContext)?.treeRef;
   const libraryLayout = useAppSelector(selectLibraryLayout);
@@ -48,6 +50,17 @@ export function Sidebar() {
   const visibleViewType = useAppSelector(selectVisibleViewType);
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
   const search = useAppSelector(selectSearch);
+
+  useEffect(() => {
+    const pathParts = location.pathname.substring(BASEPATH.length).split("/");
+    const searchQueryFromRoute =
+      visibleViewType == View.Search && pathParts.length > 1
+        ? decodeURIComponent(pathParts[1])
+        : "";
+    if (search != searchQueryFromRoute && visibleViewType == View.Search) {
+      dispatch(setSearch(searchQueryFromRoute));
+    }
+  }, [dispatch, location, search, visibleViewType]);
 
   const { show, hideAll } = useContextMenu();
   const { visibility, setMenuData } = useContext(MenuContext);
@@ -107,7 +120,8 @@ export function Sidebar() {
   }, [syncSelectionWithRoute, treeRef, visiblePlaylist, visibleViewType]);
 
   function goToSearch() {
-    if (visibleViewType != View.Search) dispatch(push(BASEPATH + "search/"));
+    if (visibleViewType != View.Search)
+      dispatch(push(BASEPATH + `search/${encodeURIComponent(search)}`));
   }
 
   const isFolder = (itemId: string) => {
@@ -135,8 +149,13 @@ export function Sidebar() {
             if (e.key == "Enter") goToSearch();
           }}
           onChange={(e) => {
-            dispatch(setSearch((e.target as HTMLInputElement).value));
             goToSearch();
+            dispatch(
+              replace(
+                BASEPATH +
+                  `search/${encodeURIComponent((e.target as HTMLInputElement).value)}`
+              )
+            );
           }}
           onClick={() => {
             goToSearch();
@@ -158,7 +177,7 @@ export function Sidebar() {
           <button
             className={styles.searchClear}
             title={t("search.clear")}
-            onClick={() => dispatch(setSearch(""))}
+            onClick={() => dispatch(push(BASEPATH + "search"))}
           >
             <ClearIcon />
           </button>
