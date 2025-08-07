@@ -39,7 +39,8 @@ const tracksSlice = createSlice({
         state.tracks,
         action.payload.tracks?.map((track) => ({
           ...track,
-          albumId: track.albumId ?? (track.album ?? "") + track.albumArtist
+          albumId:
+            track.albumId ?? `${track.album ?? ""} ${track.albumArtist ?? ""}`
         })) ?? []
       );
     },
