@@ -1,5 +1,5 @@
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { selectAllTracks } from "../../features/tracks/tracksSlice";
+import { selectAllAlbums } from "../../features/tracks/tracksSlice";
 import { AlbumArt } from "./subviews/AlbumArt";
 import styles from "./AlbumGrid.module.css";
 import LeftArrow from "../../assets/arrow-left-solid.svg?react";
@@ -12,8 +12,8 @@ import {
   selectVisibleDisplayMode,
   selectVisibleTrackGroups
 } from "../../features/visibleSelectors";
-import { useEffect, useRef, useState } from "react";
-import { getMostCommonArtworkUri, getScrollbarWidth } from "../../app/utils";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { getScrollbarWidth } from "../../app/utils";
 import { getSourceHandle } from "../../features/plugins/pluginsSlice";
 import { FixedSizeGrid, GridChildComponentProps } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
@@ -29,26 +29,24 @@ export default function AlbumGrid() {
 
   const fixedSizeGridRef = useRef<FixedSizeGrid>(null);
   const { t } = useTranslation();
-  const libraryTracks = useAppSelector(selectAllTracks);
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
   const selectedItem = useAppSelector(selectVisibleSelectedTrackGroup);
   const visibleDisplayMode = useAppSelector(selectVisibleDisplayMode);
   const visibleTrackGroups = useAppSelector(selectVisibleTrackGroups);
-  const visibleAlbums = [
-    ...new Map(
-      libraryTracks
-        .filter((track) => track.albumId && track.album)
-        .map((track) => [track.albumId, track])
-    ).values()
-  ]
-    .filter((track) => visibleTrackGroups.includes(track.albumId))
-    .sort(
-      (a, b) =>
-        a.album?.localeCompare(b.album!, undefined, {
-          sensitivity: "base",
-          ignorePunctuation: true
-        }) ?? 0
-    );
+  const allAlbums = useAppSelector(selectAllAlbums);
+
+  const visibleAlbums = useMemo(() => {
+    return allAlbums
+      .filter((album) => visibleTrackGroups.includes(album.albumId))
+      .sort(
+        (a, b) =>
+          a.album?.localeCompare(b.album!, undefined, {
+            sensitivity: "base",
+            ignorePunctuation: true
+          }) ?? 0
+      );
+  }, [allAlbums, visibleTrackGroups]);
+
   const [overscanRowCount, setOverscanRowCount] = useState(0);
 
   useEffect(() => {
@@ -64,42 +62,35 @@ export default function AlbumGrid() {
 
   const itemRenderer = ({ index, style }: AlbumGridItemProps) => {
     if (index >= visibleAlbums.length) return null;
-    const track = visibleAlbums[index];
-    const pluginHandle = getSourceHandle(track.source);
+    const album = visibleAlbums[index];
+    const pluginHandle = getSourceHandle(album.firstTrack.source);
     return (
-      <div key={track.albumId ?? index} style={style}>
+      <div key={album.albumId ?? index} style={style}>
         <div className={`album-grid-item ${styles.gridItem}`}>
           <button
             className={styles.albumArt}
-            onClick={() => setSelectedItem(track.albumId)}
+            onClick={() => setSelectedItem(album.albumId)}
             disabled={
               selectedItem || visibleDisplayMode !== DisplayMode.AlbumGrid
                 ? true
                 : false
             }
           >
-            <AlbumArt
-              track={{
-                ...track,
-                artworkUri: getMostCommonArtworkUri(
-                  libraryTracks.filter((t) => t.albumId === track.albumId)
-                )
-              }}
-            />
+            <AlbumArt track={album.firstTrack} />
           </button>
           <div className={styles.albumInfo}>
             <div className={styles.albumTextContainer}>
               <div className={`${styles.albumText} ${styles.albumTitle}`}>
-                {track.album}
+                {album.album}
               </div>
               <div className={`${styles.albumText} ${styles.albumArtist}`}>
-                {track.albumArtist ?? track.artist}
+                {album.artist}
               </div>
             </div>
-            {track.albumId && pluginHandle?.Attribution && (
+            {album.albumId && pluginHandle?.Attribution && (
               <pluginHandle.Attribution
                 type="album"
-                id={track.albumId}
+                id={album.albumId}
                 compact={true}
               />
             )}
