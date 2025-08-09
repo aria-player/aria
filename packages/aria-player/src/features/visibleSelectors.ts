@@ -17,7 +17,7 @@ import {
 import { PlaylistItem } from "./playlists/playlistsTypes";
 import { selectGroupFilteredTracks } from "./genericSelectors";
 import { TrackListItem } from "./tracks/tracksTypes";
-import { selectAllTracks } from "./tracks/tracksSlice";
+import { selectAllTracks, selectAllAlbums } from "./tracks/tracksSlice";
 import { searchTracks } from "../app/search";
 import { selectSearch } from "./search/searchSlice";
 import { BASEPATH } from "../app/constants";
@@ -162,7 +162,10 @@ export const selectVisibleDisplayMode = (state: RootState) => {
       selectSearch(state) != "")
   )
     return DisplayMode.TrackList;
-  if (selectVisibleViewType(state) === LibraryView.Albums)
+  if (
+    selectVisibleViewType(state) === LibraryView.Albums ||
+    selectVisibleSearchCategory(state) == SearchCategory.Albums
+  )
     return DisplayMode.AlbumGrid;
 
   if (
@@ -223,14 +226,24 @@ export const selectVisibleTrackGroups = createSelector(
     (state: RootState) => state.router.location?.pathname,
     (state: RootState) => state.undoable.present.playlists,
     (state: RootState) => state.undoable.present.library,
-    (state: RootState) => state.tracks.tracks
+    (state: RootState) => state.tracks.tracks,
+    (state: RootState) => state.search.search
   ],
   () => {
     const state = store.getState();
     if (selectVisibleDisplayMode(state) == DisplayMode.AlbumGrid) {
-      return [
-        ...new Set(selectVisibleTracks(state).map((track) => track.albumId))
-      ];
+      const search = selectSearch(state);
+      if (selectVisibleSearchCategory(state) == SearchCategory.Albums) {
+        return selectAllAlbums(state)
+          .filter((album) =>
+            album.album.toLowerCase().includes(search.toLowerCase())
+          )
+          .map((album) => album.albumId);
+      } else {
+        return [
+          ...new Set(selectVisibleTracks(state).map((track) => track.albumId))
+        ];
+      }
     } else if (selectVisibleDisplayMode(state) == DisplayMode.SplitView) {
       const grouping = selectVisiblePlaylist(state)
         ? selectVisiblePlaylistConfig(state)?.splitViewState.trackGrouping
