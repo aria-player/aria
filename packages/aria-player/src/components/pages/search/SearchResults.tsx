@@ -4,7 +4,6 @@ import { push } from "redux-first-history";
 import { Track } from "../../../../../types";
 import { BASEPATH } from "../../../app/constants";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { formatStringArray } from "../../../app/utils";
 import { selectSearch } from "../../../features/search/searchSlice";
 import {
   selectAllArtists,
@@ -13,6 +12,7 @@ import {
 import { selectVisibleTracks } from "../../../features/visibleSelectors";
 import { useTrackGrid } from "../../../hooks/useTrackGrid";
 import { AlbumArt } from "../../views/subviews/AlbumArt";
+import { AlbumGridItem } from "../../views/subviews/AlbumGridItem";
 import { TrackSummaryRow } from "../../views/subviews/TrackSummaryRow";
 import styles from "./SearchResults.module.css";
 import { useTranslation } from "react-i18next";
@@ -42,10 +42,6 @@ export default function SearchResults() {
 
   const goToArtist = (artist: string) => {
     dispatch(push(BASEPATH + "artists/" + encodeURIComponent(artist)));
-  };
-
-  const goToAlbum = (albumId: string) => {
-    dispatch(push(BASEPATH + "albums/" + encodeURIComponent(albumId)));
   };
 
   const viewAllSongs = () => {
@@ -142,26 +138,8 @@ export default function SearchResults() {
           </div>
           <div className={styles.horizontalList}>
             {albumResults.map((album) => (
-              <div
-                key={album.albumId}
-                className={styles.albumItem}
-                onClick={() => goToAlbum(album.albumId)}
-              >
-                <button className={styles.albumArt}>
-                  <AlbumArt track={album.firstTrack} />
-                </button>
-                <div className={styles.albumInfo}>
-                  <div className={styles.albumTextContainer}>
-                    <div className={`${styles.albumText} ${styles.albumTitle}`}>
-                      {album.album}
-                    </div>
-                    <div
-                      className={`${styles.albumText} ${styles.albumArtist}`}
-                    >
-                      {formatStringArray(album.artist)}
-                    </div>
-                  </div>
-                </div>
+              <div key={album.albumId} className={styles.albumItem}>
+                <AlbumGridItem album={album} />
               </div>
             ))}
           </div>

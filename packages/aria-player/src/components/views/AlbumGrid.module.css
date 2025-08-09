@@ -8,50 +8,6 @@
   padding: 1rem;
 }
 
-.albumArt {
-  width: 100%;
-  padding: 0;
-  overflow: hidden;
-  border-radius: 0.5rem;
-  border-width: 1px;
-  border-color: var(--inset-background);
-  border-style: solid;
-
-  &:hover {
-    cursor: pointer;
-  }
-}
-
-.albumInfo {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.albumTextContainer {
-  flex-grow: 1;
-  min-width: 0;
-}
-
-.albumText {
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-}
-
-.albumTitle {
-  font-weight: 500;
-  margin-top: 0.4rem;
-  padding: 0 0.2rem;
-  font-size: 0.95rem;
-}
-
-.albumArtist {
-  margin-top: 0.1rem;
-  padding: 0 0.2rem;
-  font-size: 0.9rem;
-}
-
 .detailOuter {
   position: absolute;
   inset: 0;

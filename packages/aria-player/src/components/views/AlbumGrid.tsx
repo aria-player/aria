@@ -1,20 +1,17 @@
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { selectAllAlbums } from "../../features/tracks/tracksSlice";
-import { AlbumArt } from "./subviews/AlbumArt";
+import { AlbumGridItem } from "./subviews/AlbumGridItem";
 import styles from "./AlbumGrid.module.css";
 import LeftArrow from "../../assets/arrow-left-solid.svg?react";
-import { DisplayMode } from "../../app/view";
 import { AlbumTrackList } from "./subviews/AlbumTrackList";
 import { useTranslation } from "react-i18next";
 import {
   selectVisiblePlaylist,
   selectVisibleSelectedTrackGroup,
-  selectVisibleDisplayMode,
   selectVisibleTrackGroups
 } from "../../features/visibleSelectors";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { getScrollbarWidth } from "../../app/utils";
-import { getSourceHandle } from "../../features/plugins/pluginsSlice";
 import { FixedSizeGrid, GridChildComponentProps } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { push } from "redux-first-history";
@@ -31,7 +28,6 @@ export default function AlbumGrid() {
   const { t } = useTranslation();
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
   const selectedItem = useAppSelector(selectVisibleSelectedTrackGroup);
-  const visibleDisplayMode = useAppSelector(selectVisibleDisplayMode);
   const visibleTrackGroups = useAppSelector(selectVisibleTrackGroups);
   const allAlbums = useAppSelector(selectAllAlbums);
 
@@ -53,48 +49,20 @@ export default function AlbumGrid() {
     setOverscanRowCount(20);
   }, []);
 
-  function setSelectedItem(albumId?: string) {
+  function closeOverlay() {
     const path = visiblePlaylist?.id
-      ? `playlist/${visiblePlaylist.id}/${albumId != null ? encodeURIComponent(albumId) : ""}`
-      : `albums/${albumId != null ? encodeURIComponent(albumId) : ""}`;
+      ? `playlist/${visiblePlaylist?.id}`
+      : "albums";
     dispatch(push(BASEPATH + path));
   }
 
   const itemRenderer = ({ index, style }: AlbumGridItemProps) => {
     if (index >= visibleAlbums.length) return null;
     const album = visibleAlbums[index];
-    const pluginHandle = getSourceHandle(album.firstTrack.source);
     return (
       <div key={album.albumId ?? index} style={style}>
         <div className={`album-grid-item ${styles.gridItem}`}>
-          <button
-            className={styles.albumArt}
-            onClick={() => setSelectedItem(album.albumId)}
-            disabled={
-              selectedItem || visibleDisplayMode !== DisplayMode.AlbumGrid
-                ? true
-                : false
-            }
-          >
-            <AlbumArt track={album.firstTrack} />
-          </button>
-          <div className={styles.albumInfo}>
-            <div className={styles.albumTextContainer}>
-              <div className={`${styles.albumText} ${styles.albumTitle}`}>
-                {album.album}
-              </div>
-              <div className={`${styles.albumText} ${styles.albumArtist}`}>
-                {album.artist}
-              </div>
-            </div>
-            {album.albumId && pluginHandle?.Attribution && (
-              <pluginHandle.Attribution
-                type="album"
-                id={album.albumId}
-                compact={true}
-              />
-            )}
-          </div>
+          <AlbumGridItem album={album} />
         </div>
       </div>
     );
@@ -156,7 +124,7 @@ export default function AlbumGrid() {
           className={`album-grid-overlay-background ${styles.detailOuter}`}
           onClick={(e) => {
             if (e.currentTarget === e.target) {
-              setSelectedItem();
+              closeOverlay();
             }
           }}
         >
@@ -166,7 +134,7 @@ export default function AlbumGrid() {
             <button
               className={`album-grid-overlay-back-button ${styles.backButton}`}
               onClick={() => {
-                setSelectedItem();
+                closeOverlay();
               }}
             >
               <LeftArrow />

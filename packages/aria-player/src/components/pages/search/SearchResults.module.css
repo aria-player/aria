@@ -69,15 +69,11 @@
 .albumItem {
   min-width: 12rem;
   width: 12rem;
-  cursor: pointer;
-  padding: 1rem;
-  border-radius: 0.5rem;
-  display: flex;
-  flex-direction: column;
+  flex-shrink: 0;
+  padding: 0.5rem;
 }
 
-.artistItem:hover,
-.albumItem:hover {
+.artistItem:hover {
   background-color: var(--button-background-hover);
 }
 
@@ -90,18 +86,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
-}
-
-.albumArt {
-  width: 12rem;
-  height: 12rem;
-  padding: 0;
-  border-radius: 0.5rem;
-  border-width: 1px;
-  border-color: var(--inset-background);
-  border-style: solid;
-  cursor: pointer;
   overflow: hidden;
 }
 
@@ -119,34 +103,4 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.albumInfo {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.albumTextContainer {
-  flex-grow: 1;
-  min-width: 0;
-}
-
-.albumText {
-  white-space: nowrap;
-  text-overflow: ellipsis;
-  overflow: hidden;
-}
-
-.albumTitle {
-  font-weight: 500;
-  margin-top: 0.4rem;
-  padding: 0 0.2rem;
-  font-size: 0.95rem;
-}
-
-.albumArtist {
-  margin-top: 0.1rem;
-  padding: 0 0.2rem;
-  font-size: 0.9rem;
 }
