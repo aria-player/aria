@@ -23,7 +23,7 @@ export default function ArtistGridItem({ artist }: { artist: ArtistDetails }) {
   return (
     <div className={styles.artistGridItem}>
       <button className={styles.artistArt} onClick={goToArtist}>
-        <AlbumArt track={artist.firstTrack} />
+        <AlbumArt track={artist.firstTrack} altText={artist.artist} />
       </button>
       <div className={styles.artistName}>{artist.artist}</div>
     </div>

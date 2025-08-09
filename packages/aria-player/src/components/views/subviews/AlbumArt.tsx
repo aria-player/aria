@@ -5,7 +5,13 @@ import styles from "./AlbumArt.module.css";
 import { ArtworkContext } from "../../../contexts/ArtworkContext";
 import { getSourceHandle } from "../../../features/plugins/pluginsSlice";
 
-export const AlbumArt = ({ track }: { track: Track | null }) => {
+export const AlbumArt = ({
+  track,
+  altText
+}: {
+  track: Track | null;
+  altText?: string;
+}) => {
   const { artworkCache } = useContext(ArtworkContext);
   const [artwork, setArtwork] = useState<string | null>(null);
   useEffect(() => {
@@ -28,7 +34,7 @@ export const AlbumArt = ({ track }: { track: Track | null }) => {
     <img
       className={`album-art ${styles.artwork}`}
       src={displayedArtwork}
-      alt={track?.album}
+      alt={altText || track?.album}
     />
   ) : (
     <MusicIcon className={`album-art ${styles.artwork}`} title={track?.album} />
