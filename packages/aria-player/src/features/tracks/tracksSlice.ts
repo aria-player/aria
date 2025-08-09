@@ -104,7 +104,7 @@ export const selectAllArtists = createSelector(
       ).filter((artist): artist is string => Boolean(artist));
       artists.forEach((artist) => {
         if (!artistsMap.has(artist)) {
-          artistsMap.set(artist, { artist, artworkUri: track.artworkUri });
+          artistsMap.set(artist, { artist, firstTrack: track });
         }
       });
     });

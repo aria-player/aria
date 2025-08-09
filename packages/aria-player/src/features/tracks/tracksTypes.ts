@@ -12,7 +12,7 @@ export interface TrackListItem extends Track {
 
 export interface ArtistDetails {
   artist: string;
-  artworkUri?: string;
+  firstTrack: Track;
 }
 
 export interface AlbumDetails {
