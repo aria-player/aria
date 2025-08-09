@@ -1,5 +1,5 @@
 import { useAppSelector } from "../../app/hooks";
-import { DisplayMode, View } from "../../app/view";
+import { DisplayMode, SearchCategory, View } from "../../app/view";
 import AlbumGrid from "./AlbumGrid";
 import { TrackList } from "./TrackList";
 import styles from "./ViewContainer.module.css";
@@ -7,6 +7,7 @@ import { SplitView } from "./SplitView";
 import {
   selectVisibleDisplayMode,
   selectVisiblePlaylist,
+  selectVisibleSearchCategory,
   selectVisibleViewType
 } from "../../features/visibleSelectors";
 import { Queue } from "./Queue";
@@ -14,10 +15,12 @@ import { useTranslation } from "react-i18next";
 import { selectPlaylistsLayoutItemById } from "../../features/playlists/playlistsSlice";
 import { selectSearch } from "../../features/search/searchSlice";
 import PluginAlertDialog from "./subviews/PluginAlertDialog";
+import ArtistGrid from "./ArtistGrid";
 
 export default function ViewContainer() {
   const visibleDisplayMode = useAppSelector(selectVisibleDisplayMode);
   const visibleViewType = useAppSelector(selectVisibleViewType);
+  const visibleSearchCategory = useAppSelector(selectVisibleSearchCategory);
   const { t } = useTranslation();
   const currentPlaylistId = useAppSelector(selectVisiblePlaylist)?.id;
   const playlistName = useAppSelector((state) =>
@@ -58,6 +61,7 @@ export default function ViewContainer() {
         </div>
       )}
       {visibleDisplayMode == DisplayMode.SplitView && <SplitView />}
+      {visibleSearchCategory == SearchCategory.Artists && <ArtistGrid />}
     </>
   );
 }

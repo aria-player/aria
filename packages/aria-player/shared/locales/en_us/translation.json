@@ -271,6 +271,9 @@
     "composer": "Composer",
     "fileFolder": "Folder"
   },
+  "artistGrid": {
+    "empty": "No artists to display"
+  },
   "albumGrid": {
     "empty": "No albums to display"
   },

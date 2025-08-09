@@ -17,7 +17,11 @@ import {
 import { PlaylistItem } from "./playlists/playlistsTypes";
 import { selectGroupFilteredTracks } from "./genericSelectors";
 import { TrackListItem } from "./tracks/tracksTypes";
-import { selectAllTracks, selectAllAlbums } from "./tracks/tracksSlice";
+import {
+  selectAllTracks,
+  selectAllAlbums,
+  selectAllArtists
+} from "./tracks/tracksSlice";
 import { searchTracks } from "../app/search";
 import { selectSearch } from "./search/searchSlice";
 import { BASEPATH } from "../app/constants";
@@ -189,7 +193,10 @@ export const selectVisibleDisplayMode = (state: RootState) => {
 export const selectVisibleTrackGrouping = (state: RootState) => {
   if (selectVisibleDisplayMode(state) === DisplayMode.AlbumGrid)
     return TrackGrouping.AlbumId;
-
+  if (selectVisibleSearchCategory(state) == SearchCategory.Artists) {
+    return selectLibrarySplitViewStates(state)[LibraryView.Artists]
+      .trackGrouping;
+  }
   if (selectVisibleDisplayMode(state) == DisplayMode.SplitView) {
     const playlistGrouping =
       selectVisiblePlaylistConfig(state)?.splitViewState.trackGrouping;
@@ -244,22 +251,38 @@ export const selectVisibleTrackGroups = createSelector(
           ...new Set(selectVisibleTracks(state).map((track) => track.albumId))
         ];
       }
-    } else if (selectVisibleDisplayMode(state) == DisplayMode.SplitView) {
+    } else if (
+      selectVisibleDisplayMode(state) == DisplayMode.SplitView ||
+      selectVisibleSearchCategory(state) == SearchCategory.Artists
+    ) {
       const grouping = selectVisiblePlaylist(state)
         ? selectVisiblePlaylistConfig(state)?.splitViewState.trackGrouping
-        : selectLibrarySplitViewStates(state)[
-            selectVisibleViewType(state) as string
-          ].trackGrouping;
+        : selectVisibleSearchCategory(state) == SearchCategory.Artists
+          ? selectLibrarySplitViewStates(state)[LibraryView.Artists]
+              .trackGrouping
+          : selectLibrarySplitViewStates(state)[
+              selectVisibleViewType(state) as string
+            ].trackGrouping;
       if (grouping) {
-        return [
-          ...new Set(
-            selectVisibleTracks(state)
-              .flatMap((track) => track[grouping] as string | string[])
-              .filter(
-                (group) => group !== null && group !== undefined && group != ""
-              )
-          )
-        ];
+        if (selectVisibleSearchCategory(state) == SearchCategory.Artists) {
+          const search = selectSearch(state);
+          return selectAllArtists(state)
+            .filter((group) =>
+              group.artist.toLowerCase().includes(search.toLowerCase())
+            )
+            .map((group) => group.artist);
+        } else {
+          return [
+            ...new Set(
+              selectVisibleTracks(state)
+                .flatMap((track) => track[grouping] as string | string[])
+                .filter(
+                  (group) =>
+                    group !== null && group !== undefined && group != ""
+                )
+            )
+          ];
+        }
       }
     }
     return [];

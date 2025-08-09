@@ -1,7 +1,6 @@
 import { AgGridReact } from "@ag-grid-community/react";
 import { useMemo } from "react";
 import { push } from "redux-first-history";
-import { Track } from "../../../../../types";
 import { BASEPATH } from "../../../app/constants";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { selectSearch } from "../../../features/search/searchSlice";
@@ -11,11 +10,11 @@ import {
 } from "../../../features/tracks/tracksSlice";
 import { selectVisibleTracks } from "../../../features/visibleSelectors";
 import { useTrackGrid } from "../../../hooks/useTrackGrid";
-import { AlbumArt } from "../../views/subviews/AlbumArt";
 import { AlbumGridItem } from "../../views/subviews/AlbumGridItem";
 import { TrackSummaryRow } from "../../views/subviews/TrackSummaryRow";
 import styles from "./SearchResults.module.css";
 import { useTranslation } from "react-i18next";
+import ArtistGridItem from "../../views/subviews/ArtistGridItem";
 
 export default function SearchResults() {
   const dispatch = useAppDispatch();
@@ -39,10 +38,6 @@ export default function SearchResults() {
       album.album.toLowerCase().includes(search.toLowerCase())
     );
   }, [allAlbums, search]);
-
-  const goToArtist = (artist: string) => {
-    dispatch(push(BASEPATH + "artists/" + encodeURIComponent(artist)));
-  };
 
   const viewAllSongs = () => {
     dispatch(
@@ -108,19 +103,8 @@ export default function SearchResults() {
           </div>
           <div className={styles.horizontalList}>
             {artistResults.map((artist) => (
-              <div
-                key={artist.artist}
-                className={styles.artistItem}
-                onClick={() => goToArtist(artist.artist)}
-              >
-                <div className={styles.artistArt}>
-                  <AlbumArt
-                    track={{ artworkUri: artist.artworkUri } as Track}
-                  />
-                </div>
-                <div className={styles.artistInfo}>
-                  <div className={styles.artistName}>{artist.artist}</div>
-                </div>
+              <div key={artist.artist} className={styles.artistItem}>
+                <ArtistGridItem artist={artist} />
               </div>
             ))}
           </div>

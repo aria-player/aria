@@ -1,0 +1,23 @@
+.artistArt {
+  width: 100%;
+  aspect-ratio: 1/1;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--inset-background);
+  border-radius: 50%;
+
+  &:hover {
+    cursor: pointer;
+  }
+}
+
+.artistName {
+  margin-top: 0.5rem;
+  font-weight: 500;
+  padding: 0 0.2rem;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  text-align: center;
+}
