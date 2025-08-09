@@ -152,7 +152,7 @@ export function handleMenuAction(
             dispatch(
               push(
                 BASEPATH +
-                  `search/${encodeURIComponent(queueSource.split("/")[1])}`,
+                  `search/${encodeURIComponent(queueSource.split("/")[1])}/songs`,
                 {
                   focusCurrent: true
                 }

@@ -28,6 +28,10 @@ import {
 import { QueueListItem } from "../Queue";
 import { getSourceHandle } from "../../../features/plugins/pluginsSlice";
 import { AlbumArt } from "./AlbumArt";
+import {
+  addToSearchHistory,
+  selectSearch
+} from "../../../features/search/searchSlice";
 
 export const TrackSummaryRow = (props: ICellRendererParams) => {
   const { show: showCellContextMenu } = useContextMenu({
@@ -102,12 +106,17 @@ export const TrackSummaryRow = (props: ICellRendererParams) => {
     }
 
     const state = store.getState();
+    const search = selectSearch(state);
+    if (visibleView == View.Search) {
+      dispatch(addToSearchHistory(search));
+    }
     dispatch(
       setQueueToNewSource({
         queue,
         queueIndex:
           queue.findIndex((item) => rowProps.node.id == item.itemId) ?? 0,
-        queueSource: visibleView,
+        queueSource:
+          visibleView == View.Search ? visibleView + "/" + search : visibleView,
         queueGrouping: selectVisibleTrackGrouping(state) ?? null,
         queueSelectedGroup: selectVisibleSelectedTrackGroup(state) ?? null
       })
