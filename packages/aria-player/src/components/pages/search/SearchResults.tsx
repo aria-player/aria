@@ -1,5 +1,5 @@
 import { AgGridReact } from "@ag-grid-community/react";
-import { useMemo } from "react";
+import { useMemo, useEffect, useRef, useState } from "react";
 import { push } from "redux-first-history";
 import { BASEPATH } from "../../../app/constants";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
@@ -15,6 +15,7 @@ import { TrackSummaryRow } from "../../views/subviews/TrackSummaryRow";
 import styles from "./SearchResults.module.css";
 import { useTranslation } from "react-i18next";
 import ArtistGridItem from "../../views/subviews/ArtistGridItem";
+import { getScrollbarWidth } from "../../../app/utils";
 
 export default function SearchResults() {
   const dispatch = useAppDispatch();
@@ -24,6 +25,8 @@ export default function SearchResults() {
   const allArtists = useAppSelector(selectAllArtists);
   const allAlbums = useAppSelector(selectAllAlbums);
   const { gridRef, gridProps } = useTrackGrid();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [containerWidth, setContainerWidth] = useState(0);
 
   const artistResults = useMemo(() => {
     if (!search) return [];
@@ -38,6 +41,32 @@ export default function SearchResults() {
       album.album.toLowerCase().includes(search.toLowerCase())
     );
   }, [allAlbums, search]);
+
+  useEffect(() => {
+    const resizeObserver = new ResizeObserver(() => {
+      if (containerRef.current) {
+        setContainerWidth(containerRef.current.offsetWidth);
+      }
+    });
+
+    if (containerRef.current) {
+      resizeObserver.observe(containerRef.current);
+      setContainerWidth(containerRef.current.offsetWidth);
+    }
+
+    return () => resizeObserver.disconnect();
+  }, []);
+
+  const gridLayout = useMemo(() => {
+    if (!containerWidth) return { columnCount: 0, columnWidth: 0 };
+
+    const availableWidth = containerWidth - (getScrollbarWidth() ?? 0);
+    const minItemWidth = 200;
+    const columnCount = Math.max(1, Math.floor(availableWidth / minItemWidth));
+    const columnWidth = availableWidth / columnCount;
+
+    return { columnCount, columnWidth };
+  }, [containerWidth]);
 
   const viewAllSongs = () => {
     dispatch(
@@ -63,72 +92,94 @@ export default function SearchResults() {
 
   return (
     <div className={styles.searchResults}>
-      {songResults.length > 0 && (
-        <section className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>
-              {t("search.categories.songs")}
-            </h2>
-            <button className={styles.viewAll} onClick={viewAllSongs}>
-              {t("search.viewAll")}
-            </button>
-          </div>
-          <div
-            style={{ height: 48 * Math.min(5, songResults.length) + 8 }}
-            className="ag-theme-balham ag-overrides-track-summary-rows"
-          >
-            <AgGridReact
-              {...gridProps}
-              ref={gridRef}
-              rowData={songResults}
-              columnDefs={[]}
-              alwaysShowVerticalScroll={false}
-              fullWidthCellRenderer={TrackSummaryRow}
-              isFullWidthRow={() => true}
-              headerHeight={0}
-              rowHeight={48}
-            />
-          </div>
-        </section>
-      )}
-      {artistResults.length > 0 && (
-        <section className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>
-              {t("search.categories.artists")}
-            </h2>
-            <button className={styles.viewAll} onClick={viewAllArtists}>
-              {t("search.viewAll")}
-            </button>
-          </div>
-          <div className={styles.horizontalList}>
-            {artistResults.map((artist) => (
-              <div key={artist.artist} className={styles.artistItem}>
-                <ArtistGridItem artist={artist} />
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
-      {albumResults.length > 0 && (
-        <section className={styles.section}>
-          <div className={styles.sectionHeader}>
-            <h2 className={styles.sectionTitle}>
-              {t("search.categories.albums")}
-            </h2>
-            <button className={styles.viewAll} onClick={viewAllAlbums}>
-              {t("search.viewAll")}
-            </button>
-          </div>
-          <div className={styles.horizontalList}>
-            {albumResults.map((album) => (
-              <div key={album.albumId} className={styles.albumItem}>
-                <AlbumGridItem album={album} />
-              </div>
-            ))}
-          </div>
-        </section>
-      )}
+      <div ref={containerRef}>
+        {songResults.length > 0 && (
+          <section className={styles.section}>
+            <div className={styles.sectionHeader}>
+              <h2 className={styles.sectionTitle}>
+                {t("search.categories.songs")}
+              </h2>
+              <button className={styles.viewAll} onClick={viewAllSongs}>
+                {t("search.viewAll")}
+              </button>
+            </div>
+            <div
+              style={{ height: 48 * Math.min(5, songResults.length) + 8 }}
+              className="ag-theme-balham ag-overrides-track-summary-rows"
+            >
+              <AgGridReact
+                {...gridProps}
+                ref={gridRef}
+                rowData={songResults.slice(0, 5)}
+                columnDefs={[]}
+                alwaysShowVerticalScroll={false}
+                fullWidthCellRenderer={TrackSummaryRow}
+                isFullWidthRow={() => true}
+                headerHeight={0}
+                rowHeight={48}
+              />
+            </div>
+          </section>
+        )}
+        {artistResults.length > 0 && (
+          <section className={styles.section}>
+            <div className={styles.sectionHeader}>
+              <h2 className={styles.sectionTitle}>
+                {t("search.categories.artists")}
+              </h2>
+              <button className={styles.viewAll} onClick={viewAllArtists}>
+                {t("search.viewAll")}
+              </button>
+            </div>
+            <div
+              className={styles.gridRow}
+              style={{
+                gridTemplateColumns: `repeat(${gridLayout.columnCount}, 1fr)`,
+                height: gridLayout.columnWidth + 40
+              }}
+            >
+              {artistResults.slice(0, gridLayout.columnCount).map((artist) => (
+                <div
+                  key={artist.artist}
+                  className={styles.gridItem}
+                  style={{ width: gridLayout.columnWidth }}
+                >
+                  <ArtistGridItem artist={artist} />
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+        {albumResults.length > 0 && (
+          <section className={styles.section}>
+            <div className={styles.sectionHeader}>
+              <h2 className={styles.sectionTitle}>
+                {t("search.categories.albums")}
+              </h2>
+              <button className={styles.viewAll} onClick={viewAllAlbums}>
+                {t("search.viewAll")}
+              </button>
+            </div>
+            <div
+              className={styles.gridRow}
+              style={{
+                gridTemplateColumns: `repeat(${gridLayout.columnCount}, 1fr)`,
+                height: gridLayout.columnWidth + 40
+              }}
+            >
+              {albumResults.slice(0, gridLayout.columnCount).map((album) => (
+                <div
+                  key={album.albumId}
+                  className={styles.gridItem}
+                  style={{ width: gridLayout.columnWidth }}
+                >
+                  <AlbumGridItem album={album} />
+                </div>
+              ))}
+            </div>
+          </section>
+        )}
+      </div>
     </div>
   );
 }
