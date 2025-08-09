@@ -99,7 +99,12 @@
     "noResults": "No results",
     "previousSearches": "Previous searches",
     "clear": "Clear",
-    "remove": "Remove from list"
+    "remove": "Remove from list",
+    "categories": {
+      "songs": "Songs",
+      "artists": "Artists",
+      "albums": "Albums"
+    }
   },
   "settings": {
     "default": "(default)",

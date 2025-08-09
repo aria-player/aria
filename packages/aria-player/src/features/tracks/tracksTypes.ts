@@ -9,3 +9,15 @@ export interface TrackListItem extends Track {
    */
   itemId: string;
 }
+
+export interface ArtistDetails {
+  artist: string;
+  artworkUri?: string;
+}
+
+export interface AlbumDetails {
+  albumId: string;
+  album: string;
+  artist?: string;
+  firstTrack: Track;
+}

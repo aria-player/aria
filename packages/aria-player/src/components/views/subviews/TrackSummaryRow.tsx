@@ -129,10 +129,12 @@ export const TrackSummaryRow = (props: ICellRendererParams) => {
         handleCellDoubleClicked(e, props);
       }}
     >
-      <span className={`track-summary-row-number ${styles.trackNumber}`}>
-        {props.node.data.track}
-      </span>
-      {visibleView == View.Queue && (
+      {visibleView != View.Search && (
+        <span className={`track-summary-row-number ${styles.trackNumber}`}>
+          {props.node.data.track}
+        </span>
+      )}
+      {(visibleView == View.Queue || visibleView == View.Search) && (
         <span className={`track-summary-row-artwork ${styles.trackArtwork}`}>
           <AlbumArt track={props.node.data} />
         </span>

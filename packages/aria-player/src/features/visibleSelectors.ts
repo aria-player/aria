@@ -139,12 +139,8 @@ export const selectVisibleGroupFilteredTrackList = (
 };
 
 export const selectVisibleDisplayMode = (state: RootState) => {
-  if (
-    selectVisibleViewType(state) === LibraryView.Songs ||
-    (selectVisibleViewType(state) === View.Search && selectSearch(state) != "")
-  )
+  if (selectVisibleViewType(state) === LibraryView.Songs)
     return DisplayMode.TrackList;
-
   if (selectVisibleViewType(state) === LibraryView.Albums)
     return DisplayMode.AlbumGrid;
 
