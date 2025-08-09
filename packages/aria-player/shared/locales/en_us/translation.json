@@ -104,7 +104,8 @@
       "songs": "Songs",
       "artists": "Artists",
       "albums": "Albums"
-    }
+    },
+    "viewAll": "View all"
   },
   "settings": {
     "default": "(default)",

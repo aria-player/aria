@@ -24,10 +24,29 @@
   }
 }
 
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
 .sectionTitle {
   font-size: 1.25rem;
   font-weight: 500;
   margin-bottom: 1rem;
+}
+
+.viewAll {
+  color: var(--accent-color);
+  font-size: 0.9rem;
+  margin-right: 0.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  &:hover {
+    text-decoration: underline;
+    cursor: pointer;
+  }
 }
 
 .horizontalList {
@@ -48,6 +67,7 @@
 }
 
 .albumItem {
+  min-width: 12rem;
   width: 12rem;
   cursor: pointer;
   padding: 1rem;

@@ -28,7 +28,8 @@ import { BASEPATH } from "../../app/constants";
 import { useDragDropManager } from "react-dnd";
 import {
   selectVisibleViewType,
-  selectVisiblePlaylist
+  selectVisiblePlaylist,
+  selectVisibleSearchCategory
 } from "../../features/visibleSelectors";
 import { View } from "../../app/view";
 import { selectSearch, setSearch } from "../../features/search/searchSlice";
@@ -49,6 +50,7 @@ export function Sidebar() {
   const playlistsLayout = useAppSelector(selectPlaylistsLayout);
   const visibleViewType = useAppSelector(selectVisibleViewType);
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
+  const visibleSearchCategory = useAppSelector(selectVisibleSearchCategory);
   const search = useAppSelector(selectSearch);
 
   useEffect(() => {
@@ -120,7 +122,7 @@ export function Sidebar() {
   }, [syncSelectionWithRoute, treeRef, visiblePlaylist, visibleViewType]);
 
   function goToSearch() {
-    if (visibleViewType != View.Search)
+    if (visibleViewType != View.Search || visibleSearchCategory != null)
       dispatch(push(BASEPATH + `search/${encodeURIComponent(search)}`));
   }
 
@@ -140,7 +142,7 @@ export function Sidebar() {
       )}
       <div className={`search-bar ${styles.search}`}>
         <input
-          className={`${styles.searchInput} ${visibleViewType == View.Search ? styles.searchSelected : ""}`}
+          className={`${styles.searchInput} ${visibleViewType == View.Search && visibleSearchCategory == null ? styles.searchSelected : ""}`}
           type="text"
           value={search}
           placeholder={t("sidebar.search")}

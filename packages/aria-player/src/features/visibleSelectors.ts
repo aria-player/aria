@@ -6,7 +6,8 @@ import {
   View,
   DisplayMode,
   TrackGrouping,
-  SettingsSection
+  SettingsSection,
+  SearchCategory
 } from "../app/view";
 import { selectLibrarySplitViewStates } from "./library/librarySlice";
 import {
@@ -48,6 +49,21 @@ export const selectVisibleSettingsSection = (state: RootState) => {
       Object.values(SettingsSection).includes(secondPath as SettingsSection)
     ) {
       return secondPath as SettingsSection;
+    }
+  }
+};
+
+export const selectVisibleSearchCategory = (state: RootState) => {
+  if (selectVisibleViewType(state) == View.Search) {
+    const thirdPath = state.router.location?.pathname
+      .substring(BASEPATH.length)
+      .split("/")[2];
+    if (!thirdPath) {
+      return null;
+    } else if (
+      Object.values(SearchCategory).includes(thirdPath as SearchCategory)
+    ) {
+      return thirdPath as SearchCategory;
     }
   }
 };
@@ -139,7 +155,12 @@ export const selectVisibleGroupFilteredTrackList = (
 };
 
 export const selectVisibleDisplayMode = (state: RootState) => {
-  if (selectVisibleViewType(state) === LibraryView.Songs)
+  if (
+    selectVisibleViewType(state) === LibraryView.Songs ||
+    (selectVisibleViewType(state) === View.Search &&
+      selectVisibleSearchCategory(state) == SearchCategory.Songs &&
+      selectSearch(state) != "")
+  )
     return DisplayMode.TrackList;
   if (selectVisibleViewType(state) === LibraryView.Albums)
     return DisplayMode.AlbumGrid;

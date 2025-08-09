@@ -48,6 +48,24 @@ export default function SearchResults() {
     dispatch(push(BASEPATH + "albums/" + encodeURIComponent(albumId)));
   };
 
+  const viewAllSongs = () => {
+    dispatch(
+      push(BASEPATH + "search/" + encodeURIComponent(search) + "/songs")
+    );
+  };
+
+  const viewAllArtists = () => {
+    dispatch(
+      push(BASEPATH + "search/" + encodeURIComponent(search) + "/artists")
+    );
+  };
+
+  const viewAllAlbums = () => {
+    dispatch(
+      push(BASEPATH + "search/" + encodeURIComponent(search) + "/albums")
+    );
+  };
+
   if (songResults.length === 0) {
     return <div className={styles.noResults}>{t("search.noResults")}</div>;
   }
@@ -56,9 +74,14 @@ export default function SearchResults() {
     <div className={styles.searchResults}>
       {songResults.length > 0 && (
         <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>
-            {t("search.categories.songs")}
-          </h2>
+          <div className={styles.sectionHeader}>
+            <h2 className={styles.sectionTitle}>
+              {t("search.categories.songs")}
+            </h2>
+            <button className={styles.viewAll} onClick={viewAllSongs}>
+              {t("search.viewAll")}
+            </button>
+          </div>
           <div
             style={{ height: 48 * Math.min(5, songResults.length) + 8 }}
             className="ag-theme-balham ag-overrides-track-summary-rows"
@@ -79,9 +102,14 @@ export default function SearchResults() {
       )}
       {artistResults.length > 0 && (
         <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>
-            {t("search.categories.artists")}
-          </h2>
+          <div className={styles.sectionHeader}>
+            <h2 className={styles.sectionTitle}>
+              {t("search.categories.artists")}
+            </h2>
+            <button className={styles.viewAll} onClick={viewAllArtists}>
+              {t("search.viewAll")}
+            </button>
+          </div>
           <div className={styles.horizontalList}>
             {artistResults.map((artist) => (
               <div
@@ -104,9 +132,14 @@ export default function SearchResults() {
       )}
       {albumResults.length > 0 && (
         <section className={styles.section}>
-          <h2 className={styles.sectionTitle}>
-            {t("search.categories.albums")}
-          </h2>
+          <div className={styles.sectionHeader}>
+            <h2 className={styles.sectionTitle}>
+              {t("search.categories.albums")}
+            </h2>
+            <button className={styles.viewAll} onClick={viewAllAlbums}>
+              {t("search.viewAll")}
+            </button>
+          </div>
           <div className={styles.horizontalList}>
             {albumResults.map((album) => (
               <div

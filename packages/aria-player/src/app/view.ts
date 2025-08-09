@@ -40,6 +40,12 @@ export enum SettingsSection {
   About = "about"
 }
 
+export enum SearchCategory {
+  Songs = "songs",
+  Artists = "artists",
+  Albums = "albums"
+}
+
 export type SplitViewState = {
   paneSizes?: number[] | null;
   trackGrouping: TrackGrouping | null;

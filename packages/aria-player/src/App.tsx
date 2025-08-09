@@ -103,6 +103,9 @@ function App() {
               />
               <Route path="/search" Component={SearchPage} />
               <Route path="/search/:query" Component={SearchPage} />
+              <Route path="/search/:query/songs" Component={() => <></>} />
+              <Route path="/search/:query/artists" Component={() => <></>} />
+              <Route path="/search/:query/albums" Component={() => <></>} />
               <Route path="*" Component={ErrorPage} />
             </Routes>
           </div>
