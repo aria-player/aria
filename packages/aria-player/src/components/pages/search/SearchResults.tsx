@@ -30,16 +30,32 @@ export default function SearchResults() {
 
   const artistResults = useMemo(() => {
     if (!search) return [];
-    return allArtists.filter((artist) =>
-      artist.artist.toLowerCase().includes(search.toLowerCase())
-    );
+    return allArtists
+      .filter((artist) =>
+        artist.artist.toLowerCase().includes(search.toLowerCase())
+      )
+      .sort(
+        (a, b) =>
+          a.artist?.localeCompare(b.artist!, undefined, {
+            sensitivity: "base",
+            ignorePunctuation: true
+          }) ?? 0
+      );
   }, [allArtists, search]);
 
   const albumResults = useMemo(() => {
     if (!search) return [];
-    return allAlbums.filter((album) =>
-      album.album.toLowerCase().includes(search.toLowerCase())
-    );
+    return allAlbums
+      .filter((album) =>
+        album.album.toLowerCase().includes(search.toLowerCase())
+      )
+      .sort(
+        (a, b) =>
+          a.album?.localeCompare(b.album!, undefined, {
+            sensitivity: "base",
+            ignorePunctuation: true
+          }) ?? 0
+      );
   }, [allAlbums, search]);
 
   useEffect(() => {
