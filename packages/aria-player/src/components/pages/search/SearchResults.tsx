@@ -102,12 +102,11 @@ export default function SearchResults() {
     );
   };
 
-  if (songResults.length === 0) {
-    return <div className={styles.noResults}>{t("search.noResults")}</div>;
-  }
-
   return (
     <div className={styles.searchResults}>
+      {songResults.length === 0 && (
+        <div className={styles.noResults}>{t("search.noResults")}</div>
+      )}
       <div ref={containerRef}>
         {songResults.length > 0 && (
           <section className={styles.section}>
