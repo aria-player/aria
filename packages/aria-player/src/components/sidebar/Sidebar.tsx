@@ -3,7 +3,7 @@ import { isTauri } from "../../app/utils";
 import { MenuButton } from "../appmenu/MenuButton";
 import { useTranslation } from "react-i18next";
 import { SectionTree, findTreeNode } from "soprano-ui";
-import { useCallback, useContext, useEffect } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   moveLibraryItem,
@@ -20,7 +20,6 @@ import {
 } from "../../features/playlists/playlistsSlice";
 import { useContextMenu } from "react-contexify";
 import { MenuContext } from "../../contexts/MenuContext";
-import { TreeContext } from "../../contexts/TreeContext";
 import { useMenuActions } from "../../hooks/useMenuActions";
 import { store } from "../../app/store";
 import { push, replace } from "redux-first-history";
@@ -40,6 +39,7 @@ import OptionsButtonIcon from "../../assets/ellipsis-solid.svg?react";
 import DoneButtonIcon from "../../assets/check-solid.svg?react";
 import ClearIcon from "../../assets/xmark-solid.svg?react";
 import { useLocation } from "react-router-dom";
+import { TreeContext } from "../../contexts/TreeContext";
 
 export function Sidebar() {
   const dispatch = useAppDispatch();
@@ -52,6 +52,8 @@ export function Sidebar() {
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
   const visibleSearchCategory = useAppSelector(selectVisibleSearchCategory);
   const search = useAppSelector(selectSearch);
+  const [isComposing, setIsComposing] = useState(false);
+  const [localSearch, setLocalSearch] = useState(search);
 
   useEffect(() => {
     const pathParts = location.pathname.substring(BASEPATH.length).split("/");
@@ -121,9 +123,13 @@ export function Sidebar() {
     syncSelectionWithRoute(true);
   }, [syncSelectionWithRoute, treeRef, visiblePlaylist, visibleViewType]);
 
+  useEffect(() => {
+    setLocalSearch(search);
+  }, [search]);
+
   function goToSearch() {
     if (visibleViewType != View.Search || visibleSearchCategory != null)
-      dispatch(push(BASEPATH + `search/${encodeURIComponent(search)}`));
+      dispatch(push(BASEPATH + `search/${encodeURIComponent(localSearch)}`));
   }
 
   const isFolder = (itemId: string) => {
@@ -144,13 +150,17 @@ export function Sidebar() {
         <input
           className={`${styles.searchInput} ${visibleViewType == View.Search && visibleSearchCategory == null ? styles.searchSelected : ""}`}
           type="text"
-          value={search}
+          value={localSearch}
           placeholder={t("sidebar.search")}
           onKeyDown={(e) => {
             e.stopPropagation();
-            if (e.key == "Enter") goToSearch();
+            if (e.key == "Enter" && !isComposing) goToSearch();
           }}
-          onChange={(e) => {
+          onCompositionStart={() => {
+            setIsComposing(true);
+          }}
+          onCompositionEnd={(e) => {
+            setIsComposing(false);
             goToSearch();
             dispatch(
               replace(
@@ -158,6 +168,18 @@ export function Sidebar() {
                   `search/${encodeURIComponent((e.target as HTMLInputElement).value)}`
               )
             );
+          }}
+          onChange={(e) => {
+            setLocalSearch((e.target as HTMLInputElement).value);
+            if (!isComposing) {
+              goToSearch();
+              dispatch(
+                replace(
+                  BASEPATH +
+                    `search/${encodeURIComponent((e.target as HTMLInputElement).value)}`
+                )
+              );
+            }
           }}
           onClick={() => {
             goToSearch();
@@ -179,7 +201,10 @@ export function Sidebar() {
           <button
             className={styles.searchClear}
             title={t("search.clear")}
-            onClick={() => dispatch(push(BASEPATH + "search"))}
+            onClick={() => {
+              setLocalSearch("");
+              dispatch(push(BASEPATH + "search"));
+            }}
           >
             <ClearIcon />
           </button>
