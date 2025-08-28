@@ -105,7 +105,12 @@
       "artists": "Artists",
       "albums": "Albums"
     },
-    "viewAll": "View all"
+    "viewAll": "View all",
+    "viewAllTooltips": {
+      "songs": "View all song results",
+      "artists": "View all artist results",
+      "albums": "View all album results"
+    }
   },
   "settings": {
     "default": "(default)",

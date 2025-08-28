@@ -114,7 +114,11 @@ export default function SearchResults() {
               <h2 className={styles.sectionTitle}>
                 {t("search.categories.songs")}
               </h2>
-              <button className={styles.viewAll} onClick={viewAllSongs}>
+              <button
+                className={styles.viewAll}
+                onClick={viewAllSongs}
+                title={t("search.viewAllTooltips.songs")}
+              >
                 {t("search.viewAll")}
               </button>
             </div>
@@ -142,7 +146,11 @@ export default function SearchResults() {
               <h2 className={styles.sectionTitle}>
                 {t("search.categories.artists")}
               </h2>
-              <button className={styles.viewAll} onClick={viewAllArtists}>
+              <button
+                className={styles.viewAll}
+                onClick={viewAllArtists}
+                title={t("search.viewAllTooltips.artists")}
+              >
                 {t("search.viewAll")}
               </button>
             </div>
@@ -171,7 +179,11 @@ export default function SearchResults() {
               <h2 className={styles.sectionTitle}>
                 {t("search.categories.albums")}
               </h2>
-              <button className={styles.viewAll} onClick={viewAllAlbums}>
+              <button
+                className={styles.viewAll}
+                onClick={viewAllAlbums}
+                title={t("search.viewAllTooltips.albums")}
+              >
                 {t("search.viewAll")}
               </button>
             </div>
