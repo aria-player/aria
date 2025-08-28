@@ -1,4 +1,4 @@
-import { useAppSelector } from "../../app/hooks";
+import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import { DisplayMode, SearchCategory, View } from "../../app/view";
 import AlbumGrid from "./AlbumGrid";
 import { TrackList } from "./TrackList";
@@ -16,8 +16,12 @@ import { selectPlaylistsLayoutItemById } from "../../features/playlists/playlist
 import { selectSearch } from "../../features/search/searchSlice";
 import PluginAlertDialog from "./subviews/PluginAlertDialog";
 import ArtistGrid from "./ArtistGrid";
+import { push } from "redux-first-history";
+import { BASEPATH } from "../../app/constants";
+import ChevronRightIcon from "../../assets/chevron-right-solid.svg?react";
 
 export default function ViewContainer() {
+  const dispatch = useAppDispatch();
   const visibleDisplayMode = useAppSelector(selectVisibleDisplayMode);
   const visibleViewType = useAppSelector(selectVisibleViewType);
   const visibleSearchCategory = useAppSelector(selectVisibleSearchCategory);
@@ -34,14 +38,34 @@ export default function ViewContainer() {
       <header
         className={`header ${styles.header} ${visibleDisplayMode != DisplayMode.TrackList ? styles.border : ""}`}
       >
-        <h1>
-          {visibleViewType == View.Search
-            ? search == ""
-              ? t("views.search")
-              : t("search.resultsFor", { search })
-            : playlistName ||
-              t(`views.${visibleViewType}`, { defaultValue: t("views.error") })}
-        </h1>
+        {visibleSearchCategory ? (
+          <div className={styles.breadcrumbContainer}>
+            <button
+              className={styles.breadcrumbLink}
+              onClick={() =>
+                dispatch(
+                  push(BASEPATH + `search/${encodeURIComponent(search)}`)
+                )
+              }
+              title={t("search.resultsFor", { search })}
+            >
+              {t("search.resultsFor", { search })}
+            </button>
+            <ChevronRightIcon className={styles.breadcrumbIcon} />
+            <h1>{t(`search.categories.${visibleSearchCategory}`)}</h1>
+          </div>
+        ) : (
+          <h1>
+            {visibleViewType == View.Search
+              ? search == ""
+                ? t("views.search")
+                : t("search.resultsFor", { search })
+              : playlistName ||
+                t(`views.${visibleViewType}`, {
+                  defaultValue: t("views.error")
+                })}
+          </h1>
+        )}
       </header>
       {visibleViewType == View.Queue && <Queue />}
       {visibleDisplayMode == DisplayMode.TrackList && (
