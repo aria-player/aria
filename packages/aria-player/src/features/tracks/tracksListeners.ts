@@ -5,6 +5,7 @@ import { PluginId } from "../../../../types/plugins";
 import { addTracks, removeTracks, selectAllTracks } from "./tracksSlice";
 import { Track, TrackId } from "../../../../types/tracks";
 import { compareMetadata } from "../../app/sort";
+import { invalidateSearchCache } from "../../app/search";
 
 export function setupTracksListeners() {
   listenForAction(isAnyOf(addTracks, removeTracks), (state, action) => {
@@ -25,6 +26,13 @@ export function setupTracksListeners() {
           compareMetadata(trackA.title, trackB.title)
         );
       }
+    }
+  );
+
+  listenForChange(
+    (state) => state.tracks.tracks,
+    () => {
+      invalidateSearchCache();
     }
   );
 }

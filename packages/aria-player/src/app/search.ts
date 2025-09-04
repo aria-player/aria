@@ -10,21 +10,33 @@ const fuseOptions = {
   ignoreLocation: true
 };
 
+let tracksFuse: Fuse<Track> | null = null;
+let artistsFuse: Fuse<ArtistDetails> | null = null;
+let albumsFuse: Fuse<AlbumDetails> | null = null;
+
+export function invalidateSearchCache() {
+  tracksFuse = null;
+  artistsFuse = null;
+  albumsFuse = null;
+}
+
 export const searchTracks = (tracks: Track[], search: string): Track[] => {
   if (!search.trim()) return [];
-  const fuse = new Fuse(tracks, {
-    keys: [
-      { name: "title", weight: 5 },
-      "artist",
-      "albumArtist",
-      "album",
-      "genre",
-      "composer",
-      "comments"
-    ],
-    ...fuseOptions
-  });
-  const results = fuse.search(search);
+  if (!tracksFuse) {
+    tracksFuse = new Fuse(tracks, {
+      keys: [
+        { name: "title", weight: 5 },
+        "artist",
+        "albumArtist",
+        "album",
+        "genre",
+        "composer",
+        "comments"
+      ],
+      ...fuseOptions
+    });
+  }
+  const results = tracksFuse.search(search);
   return results.map((result) => result.item);
 };
 
@@ -33,13 +45,13 @@ export const searchArtists = (
   search: string
 ): ArtistDetails[] => {
   if (!search.trim()) return [];
-
-  const fuse = new Fuse(artists, {
-    keys: ["artist"],
-    ...fuseOptions
-  });
-
-  return fuse.search(search).map((result) => result.item);
+  if (!artistsFuse) {
+    artistsFuse = new Fuse(artists, {
+      keys: ["artist"],
+      ...fuseOptions
+    });
+  }
+  return artistsFuse.search(search).map((result) => result.item);
 };
 
 export const searchAlbums = (
@@ -47,11 +59,11 @@ export const searchAlbums = (
   search: string
 ): AlbumDetails[] => {
   if (!search.trim()) return [];
-
-  const fuse = new Fuse(albums, {
-    keys: [{ name: "album", weight: 2 }, "artist"],
-    ...fuseOptions
-  });
-
-  return fuse.search(search).map((result) => result.item);
+  if (!albumsFuse) {
+    albumsFuse = new Fuse(albums, {
+      keys: [{ name: "album", weight: 2 }, "artist"],
+      ...fuseOptions
+    });
+  }
+  return albumsFuse.search(search).map((result) => result.item);
 };
