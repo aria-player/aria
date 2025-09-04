@@ -1,5 +1,4 @@
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { selectAllAlbums } from "../../features/tracks/tracksSlice";
 import { AlbumGridItem } from "./subviews/AlbumGridItem";
 import styles from "./AlbumGrid.module.css";
 import LeftArrow from "../../assets/arrow-left-solid.svg?react";
@@ -8,9 +7,9 @@ import { useTranslation } from "react-i18next";
 import {
   selectVisiblePlaylist,
   selectVisibleSelectedTrackGroup,
-  selectVisibleTrackGroups
+  selectVisibleAlbums
 } from "../../features/visibleSelectors";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getScrollbarWidth } from "../../app/utils";
 import { FixedSizeGrid, GridChildComponentProps } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
@@ -28,20 +27,7 @@ export default function AlbumGrid() {
   const { t } = useTranslation();
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
   const selectedItem = useAppSelector(selectVisibleSelectedTrackGroup);
-  const visibleTrackGroups = useAppSelector(selectVisibleTrackGroups);
-  const allAlbums = useAppSelector(selectAllAlbums);
-
-  const visibleAlbums = useMemo(() => {
-    return allAlbums
-      .filter((album) => visibleTrackGroups.includes(album.albumId))
-      .sort(
-        (a, b) =>
-          a.album?.localeCompare(b.album!, undefined, {
-            sensitivity: "base",
-            ignorePunctuation: true
-          }) ?? 0
-      );
-  }, [allAlbums, visibleTrackGroups]);
+  const visibleAlbums = useAppSelector(selectVisibleAlbums);
 
   const [overscanRowCount, setOverscanRowCount] = useState(0);
 

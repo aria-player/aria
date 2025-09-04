@@ -1,9 +1,8 @@
 import { useAppSelector } from "../../app/hooks";
-import { selectAllArtists } from "../../features/tracks/tracksSlice";
 import styles from "./ArtistGrid.module.css";
 import { useTranslation } from "react-i18next";
-import { selectVisibleTrackGroups } from "../../features/visibleSelectors";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { selectVisibleArtists } from "../../features/visibleSelectors";
+import { useEffect, useRef, useState } from "react";
 import { getScrollbarWidth } from "../../app/utils";
 import { FixedSizeGrid, GridChildComponentProps } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
@@ -16,21 +15,8 @@ type ArtistGridItemProps = GridChildComponentProps & {
 export default function ArtistGrid() {
   const fixedSizeGridRef = useRef<FixedSizeGrid>(null);
   const { t } = useTranslation();
-  const allArtists = useAppSelector(selectAllArtists);
-  const visibleTrackGroups = useAppSelector(selectVisibleTrackGroups);
+  const visibleArtists = useAppSelector(selectVisibleArtists);
   const [overscanRowCount, setOverscanRowCount] = useState(0);
-
-  const visibleArtists = useMemo(() => {
-    return allArtists
-      .filter((artist) => visibleTrackGroups.includes(artist.artist))
-      .sort(
-        (a, b) =>
-          a.artist?.localeCompare(b.artist!, undefined, {
-            sensitivity: "base",
-            ignorePunctuation: true
-          }) ?? 0
-      );
-  }, [allArtists, visibleTrackGroups]);
 
   useEffect(() => {
     setOverscanRowCount(20);

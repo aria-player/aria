@@ -5,10 +5,10 @@ import { BASEPATH } from "../../../app/constants";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { selectSearch } from "../../../features/search/searchSlice";
 import {
-  selectAllArtists,
-  selectAllAlbums
-} from "../../../features/tracks/tracksSlice";
-import { selectVisibleTracks } from "../../../features/visibleSelectors";
+  selectVisibleAlbums,
+  selectVisibleArtists,
+  selectVisibleTracks
+} from "../../../features/visibleSelectors";
 import { useTrackGrid } from "../../../hooks/useTrackGrid";
 import { AlbumGridItem } from "../../views/subviews/AlbumGridItem";
 import { TrackSummaryRow } from "../../views/subviews/TrackSummaryRow";
@@ -22,41 +22,11 @@ export default function SearchResults() {
   const { t } = useTranslation();
   const search = useAppSelector(selectSearch);
   const songResults = useAppSelector(selectVisibleTracks);
-  const allArtists = useAppSelector(selectAllArtists);
-  const allAlbums = useAppSelector(selectAllAlbums);
+  const artistResults = useAppSelector(selectVisibleArtists);
+  const albumResults = useAppSelector(selectVisibleAlbums);
   const { gridRef, gridProps } = useTrackGrid();
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(0);
-
-  const artistResults = useMemo(() => {
-    if (!search) return [];
-    return allArtists
-      .filter((artist) =>
-        artist.artist.toLowerCase().includes(search.toLowerCase())
-      )
-      .sort(
-        (a, b) =>
-          a.artist?.localeCompare(b.artist!, undefined, {
-            sensitivity: "base",
-            ignorePunctuation: true
-          }) ?? 0
-      );
-  }, [allArtists, search]);
-
-  const albumResults = useMemo(() => {
-    if (!search) return [];
-    return allAlbums
-      .filter((album) =>
-        album.album.toLowerCase().includes(search.toLowerCase())
-      )
-      .sort(
-        (a, b) =>
-          a.album?.localeCompare(b.album!, undefined, {
-            sensitivity: "base",
-            ignorePunctuation: true
-          }) ?? 0
-      );
-  }, [allAlbums, search]);
 
   useEffect(() => {
     const resizeObserver = new ResizeObserver(() => {

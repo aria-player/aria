@@ -22,7 +22,7 @@ import {
   selectAllAlbums,
   selectAllArtists
 } from "./tracks/tracksSlice";
-import { searchTracks } from "../app/search";
+import { searchTracks, searchArtists, searchAlbums } from "../app/search";
 import { selectSearch } from "./search/searchSlice";
 import { BASEPATH } from "../app/constants";
 
@@ -241,11 +241,9 @@ export const selectVisibleTrackGroups = createSelector(
     if (selectVisibleDisplayMode(state) == DisplayMode.AlbumGrid) {
       const search = selectSearch(state);
       if (selectVisibleSearchCategory(state) == SearchCategory.Albums) {
-        return selectAllAlbums(state)
-          .filter((album) =>
-            album.album.toLowerCase().includes(search.toLowerCase())
-          )
-          .map((album) => album.albumId);
+        return searchAlbums(selectAllAlbums(state), search).map(
+          (album) => album.albumId
+        );
       } else {
         return [
           ...new Set(selectVisibleTracks(state).map((track) => track.albumId))
@@ -266,11 +264,9 @@ export const selectVisibleTrackGroups = createSelector(
       if (grouping) {
         if (selectVisibleSearchCategory(state) == SearchCategory.Artists) {
           const search = selectSearch(state);
-          return selectAllArtists(state)
-            .filter((group) =>
-              group.artist.toLowerCase().includes(search.toLowerCase())
-            )
-            .map((group) => group.artist);
+          return searchArtists(selectAllArtists(state), search).map(
+            (group) => group.artist
+          );
         } else {
           return [
             ...new Set(
@@ -286,5 +282,65 @@ export const selectVisibleTrackGroups = createSelector(
       }
     }
     return [];
+  }
+);
+
+export const selectVisibleAlbums = createSelector(
+  [
+    (state: RootState) => state.router.location?.pathname,
+    (state: RootState) => state.undoable.present.playlists,
+    (state: RootState) => state.undoable.present.library,
+    (state: RootState) => state.tracks.tracks,
+    (state: RootState) => state.search.search
+  ],
+  () => {
+    const state = store.getState();
+    const allAlbums = selectAllAlbums(state);
+    const search = selectSearch(state);
+    if (search) {
+      return searchAlbums(allAlbums, search);
+    } else {
+      return allAlbums
+        .filter((album) =>
+          selectVisibleTrackGroups(state).includes(album.albumId)
+        )
+        .sort(
+          (a, b) =>
+            a.album?.localeCompare(b.album!, undefined, {
+              sensitivity: "base",
+              ignorePunctuation: true
+            }) ?? 0
+        );
+    }
+  }
+);
+
+export const selectVisibleArtists = createSelector(
+  [
+    (state: RootState) => state.router.location?.pathname,
+    (state: RootState) => state.undoable.present.playlists,
+    (state: RootState) => state.undoable.present.library,
+    (state: RootState) => state.tracks.tracks,
+    (state: RootState) => state.search.search
+  ],
+  () => {
+    const state = store.getState();
+    const allArtists = selectAllArtists(state);
+    const search = selectSearch(state);
+    if (search) {
+      return searchArtists(allArtists, search);
+    } else {
+      return allArtists
+        .filter((artist) =>
+          selectVisibleTrackGroups(state).includes(artist.artist)
+        )
+        .sort(
+          (a, b) =>
+            a.artist?.localeCompare(b.artist!, undefined, {
+              sensitivity: "base",
+              ignorePunctuation: true
+            }) ?? 0
+        );
+    }
   }
 );
