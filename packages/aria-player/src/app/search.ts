@@ -3,7 +3,7 @@ import { Track } from "../../../types/tracks";
 import { ArtistDetails, AlbumDetails } from "../features/tracks/tracksTypes";
 
 const fuseOptions = {
-  threshold: 0.4,
+  threshold: 0.3,
   includeScore: true,
   shouldSort: true,
   useExtendedSearch: true,
