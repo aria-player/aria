@@ -86,16 +86,25 @@ export const TrackSummaryRow = (props: ICellRendererParams) => {
     _: React.MouseEvent<HTMLDivElement, MouseEvent>,
     rowProps: ICellRendererParams
   ) => {
+    const state = store.getState();
     const queue = [] as PlaylistItem[];
-    props.api.forEachNodeAfterFilterAndSort((node) => {
-      if (!node.data.separator) {
+    if (visibleView == View.Search) {
+      selectVisibleTracks(state).forEach((track) => {
         queue.push({
-          itemId: node.data.itemId,
-          trackId: node.data.trackId
+          itemId: track.itemId,
+          trackId: track.trackId
         });
-      }
-    });
-
+      });
+    } else {
+      props.api.forEachNodeAfterFilterAndSort((node) => {
+        if (!node.data.separator) {
+          queue.push({
+            itemId: node.data.itemId,
+            trackId: node.data.trackId
+          });
+        }
+      });
+    }
     if (visibleView == View.Queue) {
       dispatch(
         skipQueueIndexes(
@@ -105,7 +114,6 @@ export const TrackSummaryRow = (props: ICellRendererParams) => {
       return;
     }
 
-    const state = store.getState();
     const search = selectSearch(state);
     if (visibleView == View.Search) {
       dispatch(addToSearchHistory(search));
