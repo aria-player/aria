@@ -101,6 +101,7 @@ export const selectVisibleTracks = createSelector(
     const state = store.getState();
     const tracksById = state.tracks.tracks.entities;
     const visiblePlaylist = selectVisiblePlaylist(state)?.tracks;
+    const visibleViewType = selectVisibleViewType(state);
     const search = selectSearch(state);
     return visiblePlaylist
       ? visiblePlaylist.map((playlistTrack) => {
@@ -114,12 +115,12 @@ export const selectVisibleTracks = createSelector(
           )
         ? (selectAllTracks(state).map((track) => ({
             ...track,
-            itemId: track?.trackId
+            itemId: visibleViewType + "/" + track?.trackId
           })) as TrackListItem[])
         : selectVisibleViewType(state) == View.Search
           ? (searchTracks(selectAllTracks(state), search).map((track) => ({
               ...track,
-              itemId: track?.trackId
+              itemId: search + "/" + track?.trackId
             })) as TrackListItem[])
           : [];
   }
