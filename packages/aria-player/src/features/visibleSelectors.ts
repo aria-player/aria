@@ -304,7 +304,7 @@ export const selectVisibleAlbums = createSelector(
     const state = store.getState();
     const allAlbums = selectAllAlbums(state);
     const search = selectSearch(state);
-    if (search) {
+    if (search && selectVisibleViewType(state) == View.Search) {
       return searchAlbums(allAlbums, search);
     } else {
       return allAlbums
@@ -334,7 +334,7 @@ export const selectVisibleArtists = createSelector(
     const state = store.getState();
     const allArtists = selectAllArtists(state);
     const search = selectSearch(state);
-    if (search) {
+    if (search && selectVisibleViewType(state) == View.Search) {
       return searchArtists(allArtists, search);
     } else {
       return allArtists
