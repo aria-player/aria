@@ -20,6 +20,7 @@ import { useContext } from "react";
 import { MenuContext } from "../../../contexts/MenuContext";
 import { SearchResult } from "../../../app/search";
 import { useTranslation } from "react-i18next";
+import { getSourceHandle } from "../../../features/plugins/pluginsSlice";
 
 interface TopResultItemProps {
   result: SearchResult;
@@ -114,7 +115,10 @@ export default function TopResultItem({ result }: TopResultItemProps) {
 
   const itemData = getItemData();
   if (!itemData) return null;
-
+  const pluginHandle = getSourceHandle(itemData.track.source);
+  console.log(
+    result.type === "track" ? itemData.track.uri : itemData.track.albumId
+  );
   return (
     <button
       className={styles.topResultItem}
@@ -142,6 +146,20 @@ export default function TopResultItem({ result }: TopResultItemProps) {
         )}
         <div className={styles.type}>{itemData.label}</div>
       </div>
+      {(result.type === "track" || result.type === "album") &&
+        pluginHandle?.Attribution && (
+          <div className={styles.attribution}>
+            <pluginHandle.Attribution
+              type={result.type}
+              id={
+                result.type === "track"
+                  ? itemData.track.uri
+                  : itemData.track.albumId
+              }
+              compact={true}
+            />
+          </div>
+        )}
     </button>
   );
 }

@@ -162,13 +162,14 @@ export const TrackSummaryRow = (props: ICellRendererParams) => {
           {formatStringArray(props.node.data.artist)}
         </span>
       </div>
-      {visibleViewType == View.Queue && pluginHandle?.Attribution && (
-        <pluginHandle.Attribution
-          type="track"
-          id={props.data.uri}
-          compact={true}
-        />
-      )}
+      {(visibleViewType == View.Queue || visibleViewType == View.Search) &&
+        pluginHandle?.Attribution && (
+          <pluginHandle.Attribution
+            type="track"
+            id={props.data.uri}
+            compact={true}
+          />
+        )}
       <span className={`track-summary-row-duration ${styles.trackDuration}`}>
         {props.node.data.duration == undefined
           ? "-"
