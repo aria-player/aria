@@ -4,11 +4,7 @@ import { push } from "redux-first-history";
 import { BASEPATH } from "../../../app/constants";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { selectSearch } from "../../../features/search/searchSlice";
-import {
-  selectVisibleAlbums,
-  selectVisibleArtists,
-  selectVisibleTracks
-} from "../../../features/visibleSelectors";
+import { selectVisibleSearchResults } from "../../../features/visibleSelectors";
 import { useTrackGrid } from "../../../hooks/useTrackGrid";
 import { AlbumGridItem } from "../../views/subviews/AlbumGridItem";
 import { TrackSummaryRow } from "../../views/subviews/TrackSummaryRow";
@@ -16,17 +12,40 @@ import styles from "./SearchResults.module.css";
 import { useTranslation } from "react-i18next";
 import ArtistGridItem from "../../views/subviews/ArtistGridItem";
 import { getScrollbarWidth } from "../../../app/utils";
+import {
+  ArtistDetails,
+  AlbumDetails,
+  TrackListItem
+} from "../../../features/tracks/tracksTypes";
+import TopResultItem from "./TopResultItem";
 
 export default function SearchResults() {
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
   const search = useAppSelector(selectSearch);
-  const songResults = useAppSelector(selectVisibleTracks);
-  const artistResults = useAppSelector(selectVisibleArtists);
-  const albumResults = useAppSelector(selectVisibleAlbums);
+  const searchResults = useAppSelector(selectVisibleSearchResults);
   const { gridRef, gridProps } = useTrackGrid();
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(0);
+
+  const topResults = useMemo(() => {
+    if (!search.trim() || !searchResults) return [];
+
+    const allResults = [
+      ...searchResults.tracks,
+      ...searchResults.artists,
+      ...searchResults.albums
+    ];
+
+    return allResults.sort((a, b) => a.score - b.score);
+  }, [search, searchResults]);
+
+  const songResults = (searchResults?.tracks.map((result) => result.item) ||
+    []) as TrackListItem[];
+  const artistResults = (searchResults?.artists.map((result) => result.item) ||
+    []) as ArtistDetails[];
+  const albumResults = (searchResults?.albums.map((result) => result.item) ||
+    []) as AlbumDetails[];
 
   useEffect(() => {
     const resizeObserver = new ResizeObserver(() => {
@@ -78,6 +97,23 @@ export default function SearchResults() {
         <div className={styles.noResults}>{t("search.noResults")}</div>
       )}
       <div ref={containerRef}>
+        {topResults.length > 0 && (
+          <section className={styles.section}>
+            <div className={styles.sectionHeader}>
+              <h2 className={styles.sectionTitle}>
+                {t("search.categories.topResults")}
+              </h2>
+            </div>
+            <div className={styles.topResultsGrid}>
+              {topResults.slice(0, 6).map((result, index) => (
+                <TopResultItem
+                  key={`${result.type}-${index}`}
+                  result={result}
+                />
+              ))}
+            </div>
+          </section>
+        )}
         {songResults.length > 0 && (
           <section className={styles.section}>
             <div className={styles.sectionHeader}>

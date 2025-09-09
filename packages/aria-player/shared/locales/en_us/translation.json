@@ -103,7 +103,13 @@
     "categories": {
       "songs": "Songs",
       "artists": "Artists",
-      "albums": "Albums"
+      "albums": "Albums",
+      "topResults": "Top results"
+    },
+    "resultLabels": {
+      "song": "Song",
+      "artist": "Artist",
+      "album": "Album"
     },
     "viewAll": "View all",
     "viewAllTooltips": {

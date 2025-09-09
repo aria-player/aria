@@ -76,3 +76,10 @@
   flex-shrink: 0;
   padding: 0.5rem;
 }
+
+.topResultsGrid {
+  display: grid;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  grid-template-columns: repeat(auto-fit, minmax(min(500px, 100%), 1fr));
+}

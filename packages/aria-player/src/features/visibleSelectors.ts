@@ -17,12 +17,18 @@ import {
 import { PlaylistItem } from "./playlists/playlistsTypes";
 import { selectGroupFilteredTracks } from "./genericSelectors";
 import { TrackListItem } from "./tracks/tracksTypes";
+import { Track } from "../../../types/tracks";
 import {
   selectAllTracks,
   selectAllAlbums,
   selectAllArtists
 } from "./tracks/tracksSlice";
-import { searchTracks, searchArtists, searchAlbums } from "../app/search";
+import {
+  searchTracks,
+  searchArtists,
+  searchAlbums,
+  searchAllCategories
+} from "../app/search";
 import { selectSearch } from "./search/searchSlice";
 import { BASEPATH } from "../app/constants";
 
@@ -343,5 +349,40 @@ export const selectVisibleArtists = createSelector(
             }) ?? 0
         );
     }
+  }
+);
+
+export const selectVisibleSearchResults = createSelector(
+  [
+    (state: RootState) => state.tracks.tracks,
+    (state: RootState) => state.router.location?.pathname,
+    (state: RootState) => state.search.search
+  ],
+  () => {
+    const state = store.getState();
+    const search = selectSearch(state);
+    if (!search.trim()) {
+      return null;
+    }
+    const searchResults = searchAllCategories(
+      selectAllTracks(state),
+      selectAllArtists(state),
+      selectAllAlbums(state),
+      search
+    );
+    if (!searchResults) return null;
+
+    return {
+      tracks: searchResults.tracks.map((result) => ({
+        type: result.type,
+        item: {
+          ...result.item,
+          itemId: search + "/" + (result.item as Track).trackId
+        } as TrackListItem,
+        score: result.score
+      })),
+      artists: searchResults.artists,
+      albums: searchResults.albums
+    };
   }
 );
