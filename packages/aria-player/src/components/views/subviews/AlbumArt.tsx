@@ -37,6 +37,9 @@ export const AlbumArt = ({
       alt={altText || track?.album}
     />
   ) : (
-    <MusicIcon className={`album-art ${styles.artwork}`} title={track?.album} />
+    <MusicIcon
+      className={`album-art ${styles.artwork}`}
+      title={altText || track?.album}
+    />
   );
 };
