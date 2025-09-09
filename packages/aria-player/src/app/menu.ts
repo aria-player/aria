@@ -144,7 +144,7 @@ export function handleMenuAction(
                 BASEPATH +
                   `playlist/${currentPlaylist.id}/${encodeURIComponent(state.player.queueSelectedGroup || "")}`,
                 {
-                  focusCurrent: true
+                  focusItemId: currentTrack.itemId
                 }
               )
             );
@@ -154,7 +154,7 @@ export function handleMenuAction(
                 BASEPATH +
                   `search/${encodeURIComponent(queueSource.split("/")[1])}/songs`,
                 {
-                  focusCurrent: true
+                  focusItemId: currentTrack.itemId
                 }
               )
             );
@@ -163,7 +163,7 @@ export function handleMenuAction(
               push(
                 BASEPATH +
                   `${queueSource}/${encodeURIComponent(state.player.queueSelectedGroup || "")}`,
-                { focusCurrent: true }
+                { focusItemId: currentTrack.itemId }
               )
             );
           }

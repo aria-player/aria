@@ -22,7 +22,6 @@ import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { GridContext } from "../contexts/GridContext";
 import { useLocation } from "react-router-dom";
 import { AgGridReactProps } from "@ag-grid-community/react";
-import { selectCurrentTrack } from "../features/currentSelectors";
 import { selectVisibleSelectedTrackGroup } from "../features/visibleSelectors";
 import { BASEPATH } from "../app/constants";
 import { QueueListItem } from "../components/views/Queue";
@@ -70,8 +69,8 @@ export function useTrackGrid() {
     let timeout: number;
     if (
       gridRef?.current?.api &&
-      !(store.getState().router.location?.state as { focusCurrent: boolean })
-        ?.focusCurrent
+      !(store.getState().router.location?.state as { focusItemId?: string })
+        ?.focusItemId
     ) {
       timeout = window.setTimeout(resetScrollPosition, 0);
     }
@@ -79,14 +78,10 @@ export function useTrackGrid() {
   }, [dispatch, gridRef, location.pathname, selectedTrackGroup]);
 
   useEffect(() => {
-    const currentTrack = selectCurrentTrack(store.getState());
-    if (
-      isGridReady &&
-      location.state?.focusCurrent &&
-      gridRef?.current?.api &&
-      currentTrack
-    ) {
-      const row = gridRef.current.api.getRowNode(currentTrack.itemId);
+    const focusItemId = location.state?.focusItemId;
+
+    if (isGridReady && gridRef?.current?.api && focusItemId) {
+      const row = gridRef.current.api.getRowNode(focusItemId);
       if (row != null && row.rowIndex != null) {
         gridRef.current.api.ensureIndexVisible(row.rowIndex, "middle");
         gridRef.current.api.deselectAll();
@@ -99,7 +94,7 @@ export function useTrackGrid() {
     gridRef,
     isGridReady,
     location.pathname,
-    location.state?.focusCurrent
+    location.state?.focusItemId
   ]);
 
   const handleGridReady = (params: GridReadyEvent) => {

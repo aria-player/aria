@@ -148,7 +148,7 @@ export function SplitView() {
     const currentView = visiblePlaylist?.id || visibleViewType;
     if (
       lastVisibleView !== currentView ||
-      (location?.state as { focusCurrent: boolean })?.focusCurrent
+      (location?.state as { focusItemId?: string })?.focusItemId
     ) {
       setLastVisibleView(currentView);
       if (selectedItem && itemRefs.current[selectedItem]) {
