@@ -79,7 +79,8 @@
 
 .topResultsGrid {
   display: grid;
-  gap: 0.5rem;
+  padding: 0 0.25rem;
+  gap: 0.25rem;
   margin-bottom: 1rem;
   grid-template-columns: repeat(auto-fit, minmax(min(500px, 100%), 1fr));
 }
