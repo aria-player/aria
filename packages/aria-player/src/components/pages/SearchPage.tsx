@@ -24,7 +24,7 @@ export default function SearchPage() {
     return null;
   }
   return (
-    <>
+    <div className={styles.search}>
       <h2 className={`search-history-header ${styles.historyHeader}`}>
         {t("search.previousSearches")}
       </h2>
@@ -52,6 +52,6 @@ export default function SearchPage() {
           </li>
         ))}
       </ul>
-    </>
+    </div>
   );
 }
