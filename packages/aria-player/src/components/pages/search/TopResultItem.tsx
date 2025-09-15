@@ -116,9 +116,7 @@ export default function TopResultItem({ result }: TopResultItemProps) {
   const itemData = getItemData();
   if (!itemData) return null;
   const pluginHandle = getSourceHandle(itemData.track.source);
-  console.log(
-    result.type === "track" ? itemData.track.uri : itemData.track.albumId
-  );
+
   return (
     <button
       className={styles.topResultItem}
