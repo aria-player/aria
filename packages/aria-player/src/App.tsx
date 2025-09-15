@@ -24,9 +24,11 @@ import { GeneralPage } from "./components/pages/settings/GeneralPage";
 import { LibraryPage } from "./components/pages/settings/LibraryPage";
 import { PluginsPage } from "./components/pages/settings/PluginsPage";
 import ViewContainer from "./components/views/ViewContainer";
-import { selectVisiblePlaylist } from "./features/visibleSelectors";
 import SearchPage from "./components/pages/SearchPage";
 import { Toaster } from "sonner";
+import { Queue } from "./components/views/Queue";
+import Header from "./components/header/Header";
+import PluginAlertDialog from "./components/views/subviews/PluginAlertDialog";
 
 function App() {
   const { platform, fullscreen } = useContext(PlatformContext);
@@ -36,7 +38,6 @@ function App() {
   const dispatch = useAppDispatch();
   const sidebarWidth = useAppSelector(selectSidebarWidth);
   const sidebarCollapsed = useAppSelector(selectSidebarCollapsed);
-  const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
   const handleDragEnd = (sizes: number[]) => {
     dispatch(setSidebarConfig({ width: sizes[0], collapsed: sizes[0] === 0 }));
   };
@@ -69,23 +70,24 @@ function App() {
         </Allotment.Pane>
         <Allotment.Pane>
           <div className={`main-view ${styles.outlet}`}>
-            <ViewContainer />
+            <Header />
+            <PluginAlertDialog />
             <Routes>
               <Route path="/" Component={() => <></>} />
-              <Route path="/songs" Component={() => <></>} />
-              <Route path="/queue" Component={() => <></>} />
-              <Route path="/albums" Component={() => <></>} />
-              <Route path="/albums/:albumId" Component={() => <></>} />
-              <Route path="/artists" Component={() => <></>} />
-              <Route path="/artists/:artist" Component={() => <></>} />
-              <Route path="/genres" Component={() => <></>} />
-              <Route path="/genres/:genre" Component={() => <></>} />
-              <Route path="/composers" Component={() => <></>} />
-              <Route path="/composers/:composer" Component={() => <></>} />
-              <Route path="/years" Component={() => <></>} />
-              <Route path="/years/:year" Component={() => <></>} />
-              <Route path="/folders" Component={() => <></>} />
-              <Route path="/folders/:folder" Component={() => <></>} />
+              <Route path="/songs" Component={ViewContainer} />
+              <Route path="/albums" Component={ViewContainer} />
+              <Route path="/albums/:albumId" Component={ViewContainer} />
+              <Route path="/artists" Component={ViewContainer} />
+              <Route path="/artists/:artist" Component={ViewContainer} />
+              <Route path="/genres" Component={ViewContainer} />
+              <Route path="/genres/:genre" Component={ViewContainer} />
+              <Route path="/composers" Component={ViewContainer} />
+              <Route path="/composers/:composer" Component={ViewContainer} />
+              <Route path="/years" Component={ViewContainer} />
+              <Route path="/years/:year" Component={ViewContainer} />
+              <Route path="/folders" Component={ViewContainer} />
+              <Route path="/folders/:folder" Component={ViewContainer} />
+              <Route path="/queue" Component={Queue} />
               <Route path="settings" Component={SettingsPage}>
                 <Route index Component={GeneralPage} />
                 <Route path="library" Component={LibraryPage} />
@@ -93,19 +95,13 @@ function App() {
                 <Route path="plugins" Component={PluginsPage} />
                 <Route path="about" Component={AboutPage} />
               </Route>
-              <Route
-                path="playlist/:id"
-                Component={() => (visiblePlaylist?.id ? <></> : <ErrorPage />)}
-              />
-              <Route
-                path="playlist/:id/:group"
-                Component={() => (visiblePlaylist?.id ? <></> : <ErrorPage />)}
-              />
+              <Route path="playlist/:id" Component={ViewContainer} />
+              <Route path="playlist/:id/:group" Component={ViewContainer} />
               <Route path="/search" Component={SearchPage} />
               <Route path="/search/:query" Component={SearchPage} />
-              <Route path="/search/:query/songs" Component={() => <></>} />
-              <Route path="/search/:query/artists" Component={() => <></>} />
-              <Route path="/search/:query/albums" Component={() => <></>} />
+              <Route path="/search/:query/songs" Component={ViewContainer} />
+              <Route path="/search/:query/artists" Component={ViewContainer} />
+              <Route path="/search/:query/albums" Component={ViewContainer} />
               <Route path="*" Component={ErrorPage} />
             </Routes>
           </div>
