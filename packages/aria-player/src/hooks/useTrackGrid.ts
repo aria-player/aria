@@ -24,8 +24,8 @@ import { useLocation } from "react-router-dom";
 import { AgGridReactProps } from "@ag-grid-community/react";
 import { selectVisibleSelectedTrackGroup } from "../features/visibleSelectors";
 import { BASEPATH } from "../app/constants";
-import { QueueListItem } from "../components/views/Queue";
 import { AlbumTrackListItem } from "../components/views/subviews/AlbumTrackList";
+import { QueueListItem } from "../components/pages/QueuePage";
 
 const ROW_ANIMATION_DURATION_MS = 400;
 

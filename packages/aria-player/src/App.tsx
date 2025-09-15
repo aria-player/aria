@@ -26,9 +26,9 @@ import { PluginsPage } from "./components/pages/settings/PluginsPage";
 import ViewContainer from "./components/views/ViewContainer";
 import SearchPage from "./components/pages/SearchPage";
 import { Toaster } from "sonner";
-import { Queue } from "./components/views/Queue";
 import Header from "./components/header/Header";
 import PluginAlertDialog from "./components/views/subviews/PluginAlertDialog";
+import { QueuePage } from "./components/pages/QueuePage";
 
 function App() {
   const { platform, fullscreen } = useContext(PlatformContext);
@@ -87,7 +87,7 @@ function App() {
               <Route path="/years/:year" Component={ViewContainer} />
               <Route path="/folders" Component={ViewContainer} />
               <Route path="/folders/:folder" Component={ViewContainer} />
-              <Route path="/queue" Component={Queue} />
+              <Route path="/queue" Component={QueuePage} />
               <Route path="settings" Component={SettingsPage}>
                 <Route index Component={GeneralPage} />
                 <Route path="library" Component={LibraryPage} />

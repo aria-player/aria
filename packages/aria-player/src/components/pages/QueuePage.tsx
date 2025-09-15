@@ -12,7 +12,6 @@ import {
 import { AgGridReact } from "@ag-grid-community/react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useTrackGrid } from "../../hooks/useTrackGrid";
-import { TrackSummaryRow } from "./subviews/TrackSummaryRow";
 import { selectCurrentQueueTracks } from "../../features/currentSelectors";
 import { useCallback } from "react";
 import {
@@ -24,13 +23,14 @@ import {
 } from "../../features/player/playerSlice";
 import { TrackListItem } from "../../features/tracks/tracksTypes";
 import { store } from "../../app/store";
-import QueueSeparator from "./subviews/QueueSeparator";
 import { setSelectedTracks } from "../../features/tracks/tracksSlice";
 import { nanoid } from "@reduxjs/toolkit";
 import { QueueItem } from "../../features/player/playerTypes";
-import NoRowsOverlay from "./subviews/NoRowsOverlay";
 import { showToast } from "../../app/toasts";
 import { t } from "i18next";
+import NoRowsOverlay from "../views/subviews/NoRowsOverlay";
+import QueueSeparator from "../views/subviews/QueueSeparator";
+import { TrackSummaryRow } from "../views/subviews/TrackSummaryRow";
 
 const ROW_HEIGHT = 48;
 
@@ -110,7 +110,7 @@ const handleRowDragMove = (event: RowDragMoveEvent) => {
   )?.setHighlighted(highlight);
 };
 
-export const Queue = () => {
+export const QueuePage = () => {
   const dispatch = useAppDispatch();
   const { gridRef, gridProps } = useTrackGrid();
   const upNext = useAppSelector(selectUpNext).map((track) => track.itemId);

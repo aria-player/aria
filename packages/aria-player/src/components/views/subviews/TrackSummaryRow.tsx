@@ -25,13 +25,13 @@ import {
   selectVisibleSelectedTrackGroup,
   selectVisibleTracks
 } from "../../../features/visibleSelectors";
-import { QueueListItem } from "../Queue";
 import { getSourceHandle } from "../../../features/plugins/pluginsSlice";
 import { AlbumArt } from "./AlbumArt";
 import {
   addToSearchHistory,
   selectSearch
 } from "../../../features/search/searchSlice";
+import { QueueListItem } from "../../pages/QueuePage";
 
 export const TrackSummaryRow = (props: ICellRendererParams) => {
   const { show: showCellContextMenu } = useContextMenu({
