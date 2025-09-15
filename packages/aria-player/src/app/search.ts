@@ -12,8 +12,7 @@ const fuseOptions = {
   threshold: 0.3,
   includeScore: true,
   shouldSort: true,
-  useExtendedSearch: true,
-  ignoreLocation: true
+  useExtendedSearch: true
 };
 
 const tracksOptions = {
