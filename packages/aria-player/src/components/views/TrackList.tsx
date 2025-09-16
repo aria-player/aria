@@ -1,6 +1,7 @@
-import { useContext, useEffect, useMemo } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import { AgGridReact } from "@ag-grid-community/react";
 import {
+  BodyScrollEvent,
   CellContextMenuEvent,
   CellDoubleClickedEvent,
   ColDef,
@@ -79,7 +80,7 @@ export const TrackList = () => {
     id: "tracklistitem"
   });
   const visibleView = visiblePlaylist?.id ?? visibleViewType;
-
+  const [scrollY, setScrollY] = useState(0);
   const { t } = useTranslation();
   const libraryColumnState = useAppSelector(selectLibraryColumnState);
   const playlistConfig = useAppSelector(selectVisiblePlaylistConfig);
@@ -442,12 +443,19 @@ export const TrackList = () => {
     return params.nextHeaderPosition || null;
   };
 
+  const handleBodyScroll = (event: BodyScrollEvent) => {
+    setScrollY(event.top);
+  };
+
   return (
     <div
-      className="track-list ag-theme-balham"
+      className="track-list ag-theme-balham ag-overrides-track-list"
       style={{ width: "100%", height: "100%" }}
     >
-      <div style={{ display: isGridReady ? "block" : "none", height: "100%" }}>
+      <div
+        className={`${scrollY <= 1 ? "ag-overrides-scroll-top" : ""}`}
+        style={{ display: isGridReady ? "block" : "none", height: "100%" }}
+      >
         <AgGridReact
           {...gridProps}
           ref={gridRef}
@@ -464,6 +472,7 @@ export const TrackList = () => {
           focusGridInnerElement={handleFocusGridInnerElement}
           tabToNextHeader={handleTabToNextHeader}
           navigateToNextHeader={handleNavigateToNextHeader}
+          onBodyScroll={handleBodyScroll}
           rowHeight={33}
           headerHeight={37}
           rowDragManaged={visibleViewType == View.Playlist}

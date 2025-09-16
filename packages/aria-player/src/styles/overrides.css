@@ -243,6 +243,12 @@ body {
     }
   }
 
+  .ag-overrides-track-list {
+    .ag-overrides-scroll-top .ag-header {
+      border-bottom: none;
+    }
+  }
+
   .ag-header-cell.ag-column-last[col-id^="attribution"] {
     display: none;
   }
