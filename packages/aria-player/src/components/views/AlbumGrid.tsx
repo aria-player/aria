@@ -9,13 +9,13 @@ import {
   selectVisibleSelectedTrackGroup,
   selectVisibleAlbums
 } from "../../features/visibleSelectors";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getScrollbarWidth } from "../../app/utils";
 import { FixedSizeGrid, GridChildComponentProps } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { push } from "redux-first-history";
 import { BASEPATH } from "../../app/constants";
-import { ScrollContext } from "../../contexts/ScrollContext";
+import { useScrollDetection } from "../../hooks/useScrollDetection";
 
 type AlbumGridItemProps = GridChildComponentProps & {
   index: number;
@@ -23,7 +23,7 @@ type AlbumGridItemProps = GridChildComponentProps & {
 
 export default function AlbumGrid() {
   const dispatch = useAppDispatch();
-  const { setScrollY } = useContext(ScrollContext);
+  const { onScroll } = useScrollDetection();
 
   const fixedSizeGridRef = useRef<FixedSizeGrid>(null);
   const { t } = useTranslation();
@@ -90,7 +90,7 @@ export default function AlbumGrid() {
                 initialScrollTop={initialScrollTop}
                 style={{ overflowX: "hidden" }}
                 overscanRowCount={overscanRowCount}
-                onScroll={({ scrollTop }) => setScrollY(scrollTop)}
+                onScroll={({ scrollTop }) => onScroll(scrollTop)}
               >
                 {({ columnIndex, rowIndex, style, data }) =>
                   itemRenderer({

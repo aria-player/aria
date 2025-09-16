@@ -2,12 +2,12 @@ import { useAppSelector } from "../../app/hooks";
 import styles from "./ArtistGrid.module.css";
 import { useTranslation } from "react-i18next";
 import { selectVisibleArtists } from "../../features/visibleSelectors";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { getScrollbarWidth } from "../../app/utils";
 import { FixedSizeGrid, GridChildComponentProps } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 import ArtistGridItem from "./subviews/ArtistGridItem";
-import { ScrollContext } from "../../contexts/ScrollContext";
+import { useScrollDetection } from "../../hooks/useScrollDetection";
 
 type ArtistGridItemProps = GridChildComponentProps & {
   index: number;
@@ -18,7 +18,7 @@ export default function ArtistGrid() {
   const { t } = useTranslation();
   const visibleArtists = useAppSelector(selectVisibleArtists);
   const [overscanRowCount, setOverscanRowCount] = useState(0);
-  const { setScrollY } = useContext(ScrollContext);
+  const { onScroll } = useScrollDetection();
 
   useEffect(() => {
     setOverscanRowCount(20);
@@ -62,7 +62,7 @@ export default function ArtistGrid() {
                 rowHeight={rowHeight}
                 style={{ overflowX: "hidden" }}
                 overscanRowCount={overscanRowCount}
-                onScroll={({ scrollTop }) => setScrollY(scrollTop)}
+                onScroll={({ scrollTop }) => onScroll(scrollTop)}
               >
                 {({ columnIndex, rowIndex, style, data }) =>
                   itemRenderer({

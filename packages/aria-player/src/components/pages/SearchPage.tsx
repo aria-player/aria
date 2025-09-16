@@ -10,15 +10,14 @@ import { useTranslation } from "react-i18next";
 import { push } from "redux-first-history";
 import { BASEPATH } from "../../app/constants";
 import SearchResults from "./search/SearchResults";
-import { useContext } from "react";
-import { ScrollContext } from "../../contexts/ScrollContext";
+import { useScrollDetection } from "../../hooks/useScrollDetection";
 
 export default function SearchPage() {
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
   const searchHistory = useAppSelector(selectSearchHistory);
   const search = useAppSelector(selectSearch);
-  const { setScrollY } = useContext(ScrollContext);
+  const { onScroll } = useScrollDetection();
 
   if (search != "") return <SearchResults />;
 
@@ -29,7 +28,7 @@ export default function SearchPage() {
   return (
     <div
       className={styles.search}
-      onScroll={(e) => setScrollY(e.currentTarget.scrollTop)}
+      onScroll={(e) => onScroll(e.currentTarget.scrollTop)}
     >
       <h2 className={`search-history-header ${styles.historyHeader}`}>
         {t("search.previousSearches")}
