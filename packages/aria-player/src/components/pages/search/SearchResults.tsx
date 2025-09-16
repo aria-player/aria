@@ -1,5 +1,5 @@
 import { AgGridReact } from "@ag-grid-community/react";
-import { useMemo, useEffect, useRef, useState } from "react";
+import { useMemo, useEffect, useRef, useState, useContext } from "react";
 import { push } from "redux-first-history";
 import { BASEPATH } from "../../../app/constants";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
@@ -18,6 +18,7 @@ import {
   TrackListItem
 } from "../../../features/tracks/tracksTypes";
 import TopResultItem from "./TopResultItem";
+import { ScrollContext } from "../../../contexts/ScrollContext";
 
 export default function SearchResults() {
   const dispatch = useAppDispatch();
@@ -27,7 +28,7 @@ export default function SearchResults() {
   const { gridRef, gridProps } = useTrackGrid();
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(0);
-
+  const { setScrollY } = useContext(ScrollContext);
   const topResults = useMemo(() => {
     if (!search.trim() || !searchResults) return [];
 
@@ -92,7 +93,10 @@ export default function SearchResults() {
   };
 
   return (
-    <div className={styles.searchResults}>
+    <div
+      className={styles.searchResults}
+      onScroll={(e) => setScrollY(e.currentTarget.scrollTop)}
+    >
       {songResults.length === 0 && (
         <div className={styles.noResults}>{t("search.noResults")}</div>
       )}

@@ -13,6 +13,8 @@ import { selectSearch } from "../../features/search/searchSlice";
 import { push } from "redux-first-history";
 import { BASEPATH } from "../../app/constants";
 import ChevronRightIcon from "../../assets/chevron-right-solid.svg?react";
+import { ScrollContext } from "../../contexts/ScrollContext";
+import { useContext } from "react";
 
 export default function Header() {
   const dispatch = useAppDispatch();
@@ -25,10 +27,17 @@ export default function Header() {
     selectPlaylistsLayoutItemById(state, currentPlaylistId ?? "")
   )?.name;
   const search = useAppSelector(selectSearch);
+  const scrollContext = useContext(ScrollContext);
 
   return (
     <header
-      className={`header ${styles.header} ${visibleDisplayMode != DisplayMode.TrackList ? styles.border : ""}`}
+      className={`header ${styles.header} ${
+        visibleDisplayMode == DisplayMode.TrackList ||
+        (visibleDisplayMode != DisplayMode.SplitView &&
+          scrollContext?.scrollY <= 1)
+          ? ""
+          : styles.border
+      }`}
     >
       {visibleSearchCategory ? (
         <div className={styles.breadcrumbContainer}>

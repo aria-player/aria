@@ -6,14 +6,20 @@ import { push } from "redux-first-history";
 import { BASEPATH } from "../../app/constants";
 import { selectVisibleSettingsSection } from "../../features/visibleSelectors";
 import { SettingsSection } from "../../app/view";
+import { useContext } from "react";
+import { ScrollContext } from "../../contexts/ScrollContext";
 
 export default function SettingsPage() {
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
   const visibleSettingsSection = useAppSelector(selectVisibleSettingsSection);
+  const { setScrollY } = useContext(ScrollContext);
 
   return (
-    <div className={styles.settings}>
+    <div
+      className={styles.settings}
+      onScroll={(e) => setScrollY(e.currentTarget.scrollTop)}
+    >
       <div className={styles.links}>
         {Object.values(SettingsSection).map((section) => (
           <button

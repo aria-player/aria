@@ -1,4 +1,5 @@
 import {
+  BodyScrollEvent,
   GridApi,
   ICellRendererParams,
   IRowNode,
@@ -13,7 +14,7 @@ import { AgGridReact } from "@ag-grid-community/react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useTrackGrid } from "../../hooks/useTrackGrid";
 import { selectCurrentQueueTracks } from "../../features/currentSelectors";
-import { useCallback } from "react";
+import { useCallback, useContext } from "react";
 import {
   addStrayTracksToQueue,
   addTracksToUpNext,
@@ -31,6 +32,7 @@ import { t } from "i18next";
 import NoRowsOverlay from "../views/subviews/NoRowsOverlay";
 import QueueSeparator from "../views/subviews/QueueSeparator";
 import { TrackSummaryRow } from "../views/subviews/TrackSummaryRow";
+import { ScrollContext } from "../../contexts/ScrollContext";
 
 const ROW_HEIGHT = 48;
 
@@ -113,6 +115,7 @@ const handleRowDragMove = (event: RowDragMoveEvent) => {
 export const QueuePage = () => {
   const dispatch = useAppDispatch();
   const { gridRef, gridProps } = useTrackGrid();
+  const { setScrollY } = useContext(ScrollContext);
   const upNext = useAppSelector(selectUpNext).map((track) => track.itemId);
 
   const upNextSeparatorIndex = 2;
@@ -138,6 +141,10 @@ export const QueuePage = () => {
       };
     }
   ) as QueueListItem[];
+
+  const handleBodyScroll = (event: BodyScrollEvent) => {
+    setScrollY(event.top);
+  };
 
   const handleRowDragEnd = useCallback(
     (event: RowDragEndEvent) => {
@@ -303,6 +310,7 @@ export const QueuePage = () => {
         onRowDragMove={handleRowDragMove}
         onRowDragEnd={handleRowDragEnd}
         onRowDragLeave={handleRowDragLeave}
+        onBodyScroll={handleBodyScroll}
         isFullWidthRow={() => true}
         headerHeight={0}
         rowHeight={ROW_HEIGHT}

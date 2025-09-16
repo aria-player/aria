@@ -34,6 +34,7 @@ import "react-color-palette/css";
 
 import "./styles/base.css";
 import "./styles/overrides.css";
+import { ScrollProvider } from "./contexts/ScrollContext";
 
 ModuleRegistry.registerModules([ClientSideRowModelModule]);
 
@@ -50,7 +51,9 @@ createRoot(document.getElementById("root") as HTMLElement).render(
                     <ArtworkProvider>
                       <DndProvider options={HTML5toTouch}>
                         <ErrorBoundary FallbackComponent={CrashPage}>
-                          <App />
+                          <ScrollProvider>
+                            <App />
+                          </ScrollProvider>
                         </ErrorBoundary>
                       </DndProvider>
                     </ArtworkProvider>

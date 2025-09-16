@@ -2,6 +2,7 @@
   display: flex;
   padding: 0.5rem 0.75rem;
   overflow: none;
+  border-bottom: 1px solid transparent;
 
   h1 {
     margin: 0;
@@ -11,7 +12,7 @@
 }
 
 .border {
-  border-bottom: 1px solid var(--primary-border);
+  border-bottom-color: var(--primary-border);
 }
 
 .breadcrumbContainer {
