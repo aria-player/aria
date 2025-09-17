@@ -104,9 +104,7 @@ export default function SearchResults() {
         {topResults.length > 0 && (
           <section className={styles.section}>
             <div className={styles.sectionHeader}>
-              <h2 className={styles.sectionTitle}>
-                {t("search.categories.topResults")}
-              </h2>
+              <h2 className={styles.sectionTitle}>{t("search.topResults")}</h2>
             </div>
             <div className={styles.topResultsGrid}>
               {topResults.slice(0, 6).map((result, index) => (
@@ -122,12 +120,12 @@ export default function SearchResults() {
           <section className={styles.section}>
             <div className={styles.sectionHeader}>
               <h2 className={styles.sectionTitle}>
-                {t("search.categories.songs")}
+                {t("search.categories.songs.other")}
               </h2>
               <button
                 className={styles.viewAll}
                 onClick={viewAllSongs}
-                title={t("search.viewAllTooltips.songs")}
+                title={t("search.categories.songs.viewAll")}
               >
                 {t("search.viewAll")}
               </button>
@@ -154,12 +152,12 @@ export default function SearchResults() {
           <section className={styles.section}>
             <div className={styles.sectionHeader}>
               <h2 className={styles.sectionTitle}>
-                {t("search.categories.artists")}
+                {t("search.categories.artists.other")}
               </h2>
               <button
                 className={styles.viewAll}
                 onClick={viewAllArtists}
-                title={t("search.viewAllTooltips.artists")}
+                title={t("search.categories.artists.viewAll")}
               >
                 {t("search.viewAll")}
               </button>
@@ -187,12 +185,12 @@ export default function SearchResults() {
           <section className={styles.section}>
             <div className={styles.sectionHeader}>
               <h2 className={styles.sectionTitle}>
-                {t("search.categories.albums")}
+                {t("search.categories.albums.other")}
               </h2>
               <button
                 className={styles.viewAll}
                 onClick={viewAllAlbums}
-                title={t("search.viewAllTooltips.albums")}
+                title={t("search.categories.albums.viewAll")}
               >
                 {t("search.viewAll")}
               </button>

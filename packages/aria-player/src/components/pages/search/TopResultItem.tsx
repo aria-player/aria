@@ -83,7 +83,7 @@ export default function TopResultItem({ result }: TopResultItemProps) {
           subtitle: Array.isArray(track.artist)
             ? track.artist.join("/")
             : track.artist,
-          label: t("search.resultLabels.song"),
+          label: t("search.categories.songs.one"),
           artworkClass: styles.artwork
         };
       }
@@ -92,7 +92,7 @@ export default function TopResultItem({ result }: TopResultItemProps) {
         return {
           track: artist.firstTrack,
           title: artist.artist,
-          label: t("search.resultLabels.artist"),
+          label: t("search.categories.artists.one"),
           artworkClass: `${styles.artwork} ${styles.artist}`,
           artworkAltText: artist.artist
         };
@@ -103,7 +103,7 @@ export default function TopResultItem({ result }: TopResultItemProps) {
           track: album.firstTrack,
           title: album.album,
           subtitle: album.artist,
-          label: t("search.resultLabels.album"),
+          label: t("search.categories.albums.one"),
           artworkClass: styles.artwork,
           artworkAltText: album.album
         };

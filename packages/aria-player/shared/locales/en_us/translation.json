@@ -100,23 +100,25 @@
     "previousSearches": "Previous searches",
     "clear": "Clear",
     "remove": "Remove from list",
+    "topResults": "Top results",
     "categories": {
-      "songs": "Songs",
-      "artists": "Artists",
-      "albums": "Albums",
-      "topResults": "Top results"
+      "songs": {
+        "one": "Song",
+        "other": "Songs",
+        "viewAll": "View all song results"
+      },
+      "artists": {
+        "one": "Artist",
+        "other": "Artists",
+        "viewAll": "View all artist results"
+      },
+      "albums": {
+        "one": "Album",
+        "other": "Albums",
+        "viewAll": "View all album results"
+      }
     },
-    "resultLabels": {
-      "song": "Song",
-      "artist": "Artist",
-      "album": "Album"
-    },
-    "viewAll": "View all",
-    "viewAllTooltips": {
-      "songs": "View all song results",
-      "artists": "View all artist results",
-      "albums": "View all album results"
-    }
+    "viewAll": "View all"
   },
   "settings": {
     "default": "(default)",

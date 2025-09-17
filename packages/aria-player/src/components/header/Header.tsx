@@ -77,7 +77,7 @@ export default function Header() {
             {t("search.resultsFor", { search })}
           </button>
           <ChevronRightIcon className={styles.breadcrumbIcon} />
-          <h1>{t(`search.categories.${visibleSearchCategory}`)}</h1>
+          <h1>{t(`search.categories.${visibleSearchCategory}.other`)}</h1>
         </div>
       ) : visibleViewType == View.Album ? (
         <h1
