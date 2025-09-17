@@ -122,19 +122,19 @@ export const selectVisibleTracks = createSelector(
           )
         ? (selectAllTracks(state).map((track) => ({
             ...track,
-            itemId: visibleViewType + "/" + track?.trackId
+            itemId: track?.trackId
           })) as TrackListItem[])
         : selectVisibleViewType(state) == View.Search
           ? (searchTracks(selectAllTracks(state), search).map((track) => ({
               ...track,
-              itemId: search + "/" + track?.trackId
+              itemId: track?.trackId
             })) as TrackListItem[])
           : visibleViewType == View.Album && visibleSelectedTrackGroup
             ? (selectAllTracks(state)
                 .filter((track) => track.albumId === visibleSelectedTrackGroup)
                 .map((track) => ({
                   ...track,
-                  itemId: visibleViewType + "/" + track?.trackId
+                  itemId: track?.trackId
                 })) as TrackListItem[])
             : [];
   }
@@ -391,7 +391,7 @@ export const selectVisibleSearchResults = createSelector(
         type: result.type,
         item: {
           ...result.item,
-          itemId: search + "/" + (result.item as Track).trackId
+          itemId: (result.item as Track).trackId
         } as TrackListItem,
         score: result.score
       })),

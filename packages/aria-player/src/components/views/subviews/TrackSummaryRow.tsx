@@ -6,7 +6,8 @@ import { View } from "../../../app/view";
 import { MenuContext } from "../../../contexts/MenuContext";
 import {
   skipQueueIndexes,
-  setQueueToNewSource
+  setQueueToNewSource,
+  selectQueueSource
 } from "../../../features/player/playerSlice";
 import { PlaylistItem } from "../../../features/playlists/playlistsTypes";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
@@ -19,11 +20,11 @@ import {
 } from "../../../features/currentSelectors";
 import {
   selectVisiblePlaylist,
-  selectVisibleGroupFilteredTrackList,
   selectVisibleViewType,
   selectVisibleTrackGrouping,
   selectVisibleSelectedTrackGroup,
-  selectVisibleTracks
+  selectVisibleTracks,
+  selectVisibleGroupFilteredTrackList
 } from "../../../features/visibleSelectors";
 import { getSourceHandle } from "../../../features/plugins/pluginsSlice";
 import { AlbumArt } from "./AlbumArt";
@@ -42,6 +43,8 @@ export const TrackSummaryRow = (props: ICellRendererParams) => {
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
   const visibleViewType = useAppSelector(selectVisibleViewType);
   const currentTrack = useAppSelector(selectCurrentTrack);
+  const queueSource = useAppSelector(selectQueueSource);
+  const search = useAppSelector(selectSearch);
   const visibleView = visiblePlaylist?.id ?? visibleViewType;
   const pluginHandle = getSourceHandle(props.data.source);
 
@@ -133,7 +136,12 @@ export const TrackSummaryRow = (props: ICellRendererParams) => {
   return (
     <div
       className={`track-summary-row ${styles.trackSummaryRow} ${
-        props.data.itemId === currentTrack?.itemId ? styles.highlighted : ""
+        props.data.itemId === currentTrack?.itemId &&
+        (queueSource == visibleView ||
+          visibleView == View.Queue ||
+          (visibleView == View.Search && search == queueSource?.split("/")[1]))
+          ? styles.highlighted
+          : ""
       }`}
       onContextMenu={(e) => {
         handleCellContextMenu(e, props);
