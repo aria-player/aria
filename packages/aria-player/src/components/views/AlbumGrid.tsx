@@ -1,11 +1,8 @@
-import { useAppDispatch, useAppSelector } from "../../app/hooks";
+import { useAppSelector } from "../../app/hooks";
 import { AlbumGridItem } from "./subviews/AlbumGridItem";
 import styles from "./AlbumGrid.module.css";
-import LeftArrow from "../../assets/arrow-left-solid.svg?react";
-import { AlbumTrackList } from "./subviews/AlbumTrackList";
 import { useTranslation } from "react-i18next";
 import {
-  selectVisiblePlaylist,
   selectVisibleSelectedTrackGroup,
   selectVisibleAlbums
 } from "../../features/visibleSelectors";
@@ -13,21 +10,18 @@ import { useEffect, useRef, useState } from "react";
 import { getScrollbarWidth } from "../../app/utils";
 import { FixedSizeGrid, GridChildComponentProps } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
-import { push } from "redux-first-history";
-import { BASEPATH } from "../../app/constants";
 import { useScrollDetection } from "../../hooks/useScrollDetection";
+import AlbumGridOverlay from "./subviews/AlbumGridOverlay";
 
 type AlbumGridItemProps = GridChildComponentProps & {
   index: number;
 };
 
 export default function AlbumGrid() {
-  const dispatch = useAppDispatch();
   const { onScroll } = useScrollDetection();
 
   const fixedSizeGridRef = useRef<FixedSizeGrid>(null);
   const { t } = useTranslation();
-  const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
   const selectedItem = useAppSelector(selectVisibleSelectedTrackGroup);
   const visibleAlbums = useAppSelector(selectVisibleAlbums);
 
@@ -36,13 +30,6 @@ export default function AlbumGrid() {
   useEffect(() => {
     setOverscanRowCount(20);
   }, []);
-
-  function closeOverlay() {
-    const path = visiblePlaylist?.id
-      ? `playlist/${visiblePlaylist?.id}`
-      : "albums";
-    dispatch(push(BASEPATH + path));
-  }
 
   const itemRenderer = ({ index, style }: AlbumGridItemProps) => {
     if (index >= visibleAlbums.length) return null;
@@ -108,34 +95,7 @@ export default function AlbumGrid() {
       ) : (
         <div className={styles.empty}>{t("albumGrid.empty")}</div>
       )}
-      {selectedItem && (
-        <div
-          className={`album-grid-overlay-background ${styles.detailOuter}`}
-          onClick={(e) => {
-            if (e.currentTarget === e.target) {
-              closeOverlay();
-            }
-          }}
-        >
-          <div
-            className={`album-grid-overlay-foreground ${styles.detailInner}`}
-          >
-            <button
-              className={`album-grid-overlay-back-button ${styles.backButton}`}
-              onClick={() => {
-                closeOverlay();
-              }}
-            >
-              <LeftArrow />
-            </button>
-            <div
-              className={`album-grid-album-track-list ${styles.albumTrackList}`}
-            >
-              <AlbumTrackList />
-            </div>
-          </div>
-        </div>
-      )}
+      {selectedItem && <AlbumGridOverlay />}
     </div>
   );
 }

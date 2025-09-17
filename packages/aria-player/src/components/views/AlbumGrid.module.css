@@ -8,45 +8,6 @@
   padding: 1rem;
 }
 
-.detailOuter {
-  position: absolute;
-  inset: 0;
-  z-index: 5;
-  backdrop-filter: blur(4px);
-  padding: 3rem 3.5rem;
-  cursor: pointer;
-}
-
-.detailInner {
-  background-color: var(--primary-background);
-  border-radius: 1rem;
-  height: 100%;
-  box-shadow: 0 5px 5px rgb(0 0 0 / 20%);
-  cursor: default;
-}
-
-.backButton {
-  position: absolute;
-  width: 2rem;
-  height: 2rem;
-  margin: 1rem;
-  transition: transform 0.1s ease;
-  cursor: pointer;
-
-  &:hover {
-    background-color: var(--button-background-hover);
-  }
-
-  &:active svg {
-    transform: scale(0.9);
-  }
-}
-
-.albumTrackList {
-  height: 100%;
-  margin: 0 1rem 0 4rem;
-}
-
 .empty {
   display: flex;
   height: 100%;
