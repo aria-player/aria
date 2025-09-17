@@ -1,4 +1,8 @@
-import { ICellRendererParams, RowHeightParams } from "@ag-grid-community/core";
+import {
+  BodyScrollEvent,
+  ICellRendererParams,
+  RowHeightParams
+} from "@ag-grid-community/core";
 import { AgGridReact } from "@ag-grid-community/react";
 import { useMemo, useEffect } from "react";
 import { Track } from "../../../../../types/tracks";
@@ -10,6 +14,7 @@ import AlbumTrackListSeparator from "./AlbumTrackListSeparator";
 import { useTrackGrid } from "../../../hooks/useTrackGrid";
 import { selectVisibleGroupFilteredTracks } from "../../../features/visibleSelectors";
 import NoRowsOverlay from "./NoRowsOverlay";
+import { useScrollDetection } from "../../../hooks/useScrollDetection";
 
 export interface AlbumTrackListItem {
   itemId: string;
@@ -48,6 +53,7 @@ const getRowHeight = (params: RowHeightParams) => {
 export const AlbumTrackList = () => {
   const { gridRef, gridProps } = useTrackGrid();
   const visibleTracks = useAppSelector(selectVisibleGroupFilteredTracks);
+  const { onScroll } = useScrollDetection();
 
   const rowData = useMemo(() => {
     const processTracks = (tracks: Track[]) => {
@@ -121,6 +127,10 @@ export const AlbumTrackList = () => {
     gridRef?.current?.api?.resetRowHeights();
   }, [gridRef, visibleTracks]);
 
+  const handleBodyScroll = (event: BodyScrollEvent) => {
+    onScroll(event.top);
+  };
+
   return (
     <div
       style={{ height: "100%" }}
@@ -139,6 +149,7 @@ export const AlbumTrackList = () => {
         headerHeight={0}
         rowHeight={48}
         noRowsOverlayComponent={NoRowsOverlay}
+        onBodyScroll={handleBodyScroll}
         suppressHeaderFocus
       />
     </div>

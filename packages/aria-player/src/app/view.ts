@@ -9,7 +9,8 @@ export enum View {
   Playlist = "playlist",
   Queue = "queue",
   Settings = "settings",
-  Error = "error"
+  Error = "error",
+  Album = "album"
 }
 
 export enum LibraryView {

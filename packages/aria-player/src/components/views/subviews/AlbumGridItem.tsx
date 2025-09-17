@@ -6,17 +6,22 @@ import styles from "./AlbumGridItem.module.css";
 import { push } from "redux-first-history";
 import { BASEPATH } from "../../../app/constants";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { selectVisiblePlaylist } from "../../../features/visibleSelectors";
+import {
+  selectVisiblePlaylist,
+  selectVisibleViewType
+} from "../../../features/visibleSelectors";
+import { LibraryView } from "../../../app/view";
 
 export function AlbumGridItem({ album }: { album: AlbumDetails }) {
   const dispatch = useAppDispatch();
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
   const pluginHandle = getSourceHandle(album.firstTrack.source);
+  const visibleViewType = useAppSelector(selectVisibleViewType);
 
   function goToAlbum() {
     const path = visiblePlaylist?.id
       ? `playlist/${visiblePlaylist.id}/${encodeURIComponent(album.albumId)}`
-      : `albums/${encodeURIComponent(album.albumId)}`;
+      : `${visibleViewType == LibraryView.Albums ? "albums" : "album"}/${encodeURIComponent(album.albumId)}`;
     dispatch(push(BASEPATH + path));
   }
 

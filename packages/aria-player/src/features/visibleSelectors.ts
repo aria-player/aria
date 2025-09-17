@@ -108,6 +108,7 @@ export const selectVisibleTracks = createSelector(
     const tracksById = state.tracks.tracks.entities;
     const visiblePlaylist = selectVisiblePlaylist(state)?.tracks;
     const visibleViewType = selectVisibleViewType(state);
+    const visibleSelectedTrackGroup = selectVisibleSelectedTrackGroup(state);
     const search = selectSearch(state);
     return visiblePlaylist
       ? visiblePlaylist.map((playlistTrack) => {
@@ -128,7 +129,14 @@ export const selectVisibleTracks = createSelector(
               ...track,
               itemId: search + "/" + track?.trackId
             })) as TrackListItem[])
-          : [];
+          : visibleViewType == View.Album && visibleSelectedTrackGroup
+            ? (selectAllTracks(state)
+                .filter((track) => track.albumId === visibleSelectedTrackGroup)
+                .map((track) => ({
+                  ...track,
+                  itemId: visibleViewType + "/" + track?.trackId
+                })) as TrackListItem[])
+            : [];
   }
 );
 
@@ -200,6 +208,7 @@ export const selectVisibleDisplayMode = (state: RootState) => {
 export const selectVisibleTrackGrouping = (state: RootState) => {
   if (selectVisibleDisplayMode(state) === DisplayMode.AlbumGrid)
     return TrackGrouping.AlbumId;
+  if (selectVisibleViewType(state) === View.Album) return TrackGrouping.AlbumId;
   if (selectVisibleSearchCategory(state) == SearchCategory.Artists) {
     return selectLibrarySplitViewStates(state)[LibraryView.Artists]
       .trackGrouping;
@@ -224,6 +233,11 @@ export const selectVisibleSelectedTrackGroup = (state: RootState) => {
   }
   const firstPath = pathSegments[0];
   const secondPath = pathSegments[1];
+
+  if (firstPath === View.Album) {
+    return decodeURIComponent(secondPath);
+  }
+
   if (firstPath === View.Playlist && pathSegments.length >= 3) {
     return decodeURIComponent(pathSegments[2]);
   }

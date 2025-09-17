@@ -42,7 +42,7 @@ export default function TopResultItem({ result }: TopResultItemProps) {
         const track = result.item as Track;
         if (track.albumId) {
           dispatch(
-            push(BASEPATH + `albums/${encodeURIComponent(track.albumId)}`, {
+            push(BASEPATH + `album/${encodeURIComponent(track.albumId)}`, {
               focusItemId: track.trackId
             })
           );
@@ -64,7 +64,7 @@ export default function TopResultItem({ result }: TopResultItemProps) {
         {
           const album = result.item as AlbumDetails;
           dispatch(
-            push(BASEPATH + `albums/${encodeURIComponent(album.albumId)}`)
+            push(BASEPATH + `album/${encodeURIComponent(album.albumId)}`)
           );
         }
         break;

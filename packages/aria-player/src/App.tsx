@@ -75,6 +75,7 @@ function App() {
             <Routes>
               <Route path="/" Component={() => <></>} />
               <Route path="/songs" Component={ViewContainer} />
+              <Route path="/album/:albumId" Component={ViewContainer} />
               <Route path="/albums" Component={ViewContainer} />
               <Route path="/albums/:albumId" Component={ViewContainer} />
               <Route path="/artists" Component={ViewContainer} />

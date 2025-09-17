@@ -11,6 +11,7 @@ import {
 } from "../../features/visibleSelectors";
 import ArtistGrid from "./ArtistGrid";
 import ErrorPage from "../pages/ErrorPage";
+import { AlbumTrackList } from "./subviews/AlbumTrackList";
 
 export default function ViewContainer() {
   const visibleDisplayMode = useAppSelector(selectVisibleDisplayMode);
@@ -40,6 +41,14 @@ export default function ViewContainer() {
         </div>
       )}
       {visibleDisplayMode == DisplayMode.SplitView && <SplitView />}
+      {visibleViewType == View.Album && (
+        <div
+          className="ag-overrides-album-view"
+          style={{ height: "100%", width: "100%" }}
+        >
+          <AlbumTrackList />
+        </div>
+      )}
       {visibleSearchCategory == SearchCategory.Artists && <ArtistGrid />}
     </>
   );

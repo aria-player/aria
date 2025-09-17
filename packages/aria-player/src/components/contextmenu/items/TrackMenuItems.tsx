@@ -12,7 +12,7 @@ import { Item as TreeItem } from "soprano-ui";
 import { nanoid } from "@reduxjs/toolkit";
 import { PlaylistItem } from "../../../features/playlists/playlistsTypes";
 import { selectSelectedTracks } from "../../../features/tracks/tracksSlice";
-import { LibraryView, TrackGrouping } from "../../../app/view";
+import { LibraryView, TrackGrouping, View } from "../../../app/view";
 import { addTracksToUpNext } from "../../../features/player/playerSlice";
 import {
   selectVisibleViewType,
@@ -81,7 +81,7 @@ export function TrackMenuItems() {
   };
 
   const showGoTo = (
-    view: LibraryView,
+    view: View | LibraryView,
     group?: string | string[],
     grouping?: TrackGrouping
   ) =>
@@ -90,10 +90,7 @@ export function TrackMenuItems() {
     (grouping === undefined ||
       librarySplitViewStates[view].trackGrouping == grouping);
 
-  const showGoToAlbum = showGoTo(
-    LibraryView.Albums,
-    menuData?.metadata?.albumId
-  );
+  const showGoToAlbum = showGoTo(View.Album, menuData?.metadata?.albumId);
   const showGoToAlbumArtist = showGoTo(
     LibraryView.Artists,
     menuData?.metadata?.albumArtist,
@@ -191,7 +188,7 @@ export function TrackMenuItems() {
               dispatch(
                 push(
                   BASEPATH +
-                    `albums/${encodeURIComponent(menuData.metadata.albumId)}`
+                    `album/${encodeURIComponent(menuData.metadata.albumId)}`
                 )
               );
               hideAll();

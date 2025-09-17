@@ -40,3 +40,25 @@
   fill: var(--secondary-text);
   flex-shrink: 0;
 }
+
+.backButton {
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 0.25rem;
+  margin-right: 0.5rem;
+  transition: transform 0.1s ease;
+  cursor: pointer;
+
+  &:disabled {
+    color: var(--menubar-button-icon-disabled);
+    cursor: default;
+  }
+
+  &:hover:not(:disabled) {
+    background-color: var(--button-background-hover);
+  }
+
+  &:active svg {
+    transform: scale(0.9);
+  }
+}

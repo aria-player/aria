@@ -233,6 +233,13 @@ body {
     }
   }
 
+  .ag-overrides-album-view {
+    .ag-full-width-container {
+      margin-top: 0;
+      margin-left: 25.5rem;
+    }
+  }
+
   .ag-overrides-queue {
     .ag-full-width-container {
       margin: 0.5rem;
