@@ -12,12 +12,14 @@ import {
 import ArtistGrid from "./ArtistGrid";
 import ErrorPage from "../pages/ErrorPage";
 import { AlbumTrackList } from "./subviews/AlbumTrackList";
+import { useScrollDetection } from "../../hooks/useScrollDetection";
 
 export default function ViewContainer() {
   const visibleDisplayMode = useAppSelector(selectVisibleDisplayMode);
   const visibleSearchCategory = useAppSelector(selectVisibleSearchCategory);
   const visibleViewType = useAppSelector(selectVisibleViewType);
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
+  const { onScroll } = useScrollDetection();
 
   return (
     <>
@@ -46,7 +48,11 @@ export default function ViewContainer() {
           className="ag-overrides-album-view"
           style={{ height: "100%", width: "100%" }}
         >
-          <AlbumTrackList />
+          <AlbumTrackList
+            onBodyScroll={(e) => {
+              onScroll(e.top);
+            }}
+          />
         </div>
       )}
       {visibleSearchCategory == SearchCategory.Artists && <ArtistGrid />}

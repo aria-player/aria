@@ -183,7 +183,7 @@ export function SplitView() {
         </Allotment.Pane>
         <Allotment.Pane minSize={600}>
           <div
-            className={`split-view-album-track-list ${styles.albumTrackList}`}
+            className={`split-view-album-track-list ag-overrides-split-view ${styles.albumTrackList}`}
           >
             <AlbumTrackList />
           </div>

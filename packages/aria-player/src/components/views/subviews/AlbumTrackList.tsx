@@ -14,7 +14,6 @@ import AlbumTrackListSeparator from "./AlbumTrackListSeparator";
 import { useTrackGrid } from "../../../hooks/useTrackGrid";
 import { selectVisibleGroupFilteredTracks } from "../../../features/visibleSelectors";
 import NoRowsOverlay from "./NoRowsOverlay";
-import { useScrollDetection } from "../../../hooks/useScrollDetection";
 
 export interface AlbumTrackListItem {
   itemId: string;
@@ -50,10 +49,11 @@ const getRowHeight = (params: RowHeightParams) => {
   }
 };
 
-export const AlbumTrackList = () => {
+export const AlbumTrackList = (props: {
+  onBodyScroll?: (event: BodyScrollEvent) => void;
+}) => {
   const { gridRef, gridProps } = useTrackGrid();
   const visibleTracks = useAppSelector(selectVisibleGroupFilteredTracks);
-  const { onScroll } = useScrollDetection();
 
   const rowData = useMemo(() => {
     const processTracks = (tracks: Track[]) => {
@@ -127,15 +127,11 @@ export const AlbumTrackList = () => {
     gridRef?.current?.api?.resetRowHeights();
   }, [gridRef, visibleTracks]);
 
-  const handleBodyScroll = (event: BodyScrollEvent) => {
-    onScroll(event.top);
-  };
-
   return (
     <div
       style={{ height: "100%" }}
       className={
-        "album-track-list ag-theme-balham ag-overrides-track-summary-rows ag-overrides-album-track-list"
+        "album-track-list ag-theme-balham ag-overrides-track-summary-rows"
       }
     >
       <AgGridReact
@@ -149,7 +145,7 @@ export const AlbumTrackList = () => {
         headerHeight={0}
         rowHeight={48}
         noRowsOverlayComponent={NoRowsOverlay}
-        onBodyScroll={handleBodyScroll}
+        onBodyScroll={props.onBodyScroll}
         suppressHeaderFocus
       />
     </div>
