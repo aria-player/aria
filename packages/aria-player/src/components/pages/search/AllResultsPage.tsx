@@ -8,7 +8,7 @@ import { selectVisibleSearchResults } from "../../../features/visibleSelectors";
 import { useTrackGrid } from "../../../hooks/useTrackGrid";
 import { AlbumGridItem } from "../../views/subviews/AlbumGridItem";
 import { TrackSummaryRow } from "../../views/subviews/TrackSummaryRow";
-import styles from "./SearchResults.module.css";
+import styles from "./AllResultsPage.module.css";
 import { useTranslation } from "react-i18next";
 import ArtistGridItem from "../../views/subviews/ArtistGridItem";
 import { getScrollbarWidth } from "../../../app/utils";

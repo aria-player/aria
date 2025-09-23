@@ -102,6 +102,7 @@
     "remove": "Remove from list",
     "topResults": "Top results",
     "categories": {
+      "all": "All",
       "songs": {
         "one": "Song",
         "other": "Songs",

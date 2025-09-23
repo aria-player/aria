@@ -1,25 +1,20 @@
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import {
   selectSearchHistory,
-  removeFromSearchHistory,
-  selectSearch
+  removeFromSearchHistory
 } from "../../features/search/searchSlice";
 import styles from "./SearchPage.module.css";
 import ClearIcon from "../../assets/xmark-solid.svg?react";
 import { useTranslation } from "react-i18next";
 import { push } from "redux-first-history";
 import { BASEPATH } from "../../app/constants";
-import SearchResults from "./search/SearchResults";
 import { useScrollDetection } from "../../hooks/useScrollDetection";
 
 export default function SearchPage() {
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
   const searchHistory = useAppSelector(selectSearchHistory);
-  const search = useAppSelector(selectSearch);
   const { onScroll } = useScrollDetection();
-
-  if (search != "") return <SearchResults />;
 
   if (searchHistory.length === 0) {
     // TODO: Display 'Start typing to search' message

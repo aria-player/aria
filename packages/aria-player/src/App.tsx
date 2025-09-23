@@ -29,6 +29,8 @@ import { Toaster } from "sonner";
 import Header from "./components/header/Header";
 import PluginAlertDialog from "./components/views/subviews/PluginAlertDialog";
 import { QueuePage } from "./components/pages/QueuePage";
+import SearchResultsPage from "./components/pages/SearchResultsPage";
+import AllResultsPage from "./components/pages/search/AllResultsPage";
 
 function App() {
   const { platform, fullscreen } = useContext(PlatformContext);
@@ -99,10 +101,12 @@ function App() {
               <Route path="playlist/:id" Component={ViewContainer} />
               <Route path="playlist/:id/:group" Component={ViewContainer} />
               <Route path="/search" Component={SearchPage} />
-              <Route path="/search/:query" Component={SearchPage} />
-              <Route path="/search/:query/songs" Component={ViewContainer} />
-              <Route path="/search/:query/artists" Component={ViewContainer} />
-              <Route path="/search/:query/albums" Component={ViewContainer} />
+              <Route path="/search/:query" Component={SearchResultsPage}>
+                <Route index Component={AllResultsPage} />
+                <Route path="songs" Component={ViewContainer} />
+                <Route path="artists" Component={ViewContainer} />
+                <Route path="albums" Component={ViewContainer} />
+              </Route>
               <Route path="*" Component={ErrorPage} />
             </Routes>
           </div>

@@ -148,7 +148,7 @@ export function Sidebar() {
       )}
       <div className={`search-bar ${styles.search}`}>
         <input
-          className={`${styles.searchInput} ${visibleViewType == View.Search && visibleSearchCategory == null ? styles.searchSelected : ""}`}
+          className={`${styles.searchInput} ${visibleViewType == View.Search ? styles.searchSelected : ""}`}
           type="text"
           value={localSearch}
           placeholder={t("sidebar.search")}
