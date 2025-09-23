@@ -128,8 +128,16 @@ export function Sidebar() {
   }, [search]);
 
   function goToSearch() {
-    if (visibleViewType != View.Search || visibleSearchCategory != null)
-      dispatch(push(BASEPATH + `search/${encodeURIComponent(localSearch)}`));
+    if (visibleViewType != View.Search || visibleSearchCategory != null) {
+      dispatch(push(BASEPATH + getSearchRoute(localSearch)));
+    }
+  }
+
+  function getSearchRoute(search: string) {
+    if (!search.trim()) {
+      return "search";
+    }
+    return `search/${encodeURIComponent(search)}${visibleSearchCategory ? `/${visibleSearchCategory}` : ""}`;
   }
 
   const isFolder = (itemId: string) => {
@@ -164,8 +172,7 @@ export function Sidebar() {
             goToSearch();
             dispatch(
               replace(
-                BASEPATH +
-                  `search/${encodeURIComponent((e.target as HTMLInputElement).value)}`
+                BASEPATH + getSearchRoute((e.target as HTMLInputElement).value)
               )
             );
           }}
@@ -176,7 +183,7 @@ export function Sidebar() {
               dispatch(
                 replace(
                   BASEPATH +
-                    `search/${encodeURIComponent((e.target as HTMLInputElement).value)}`
+                    getSearchRoute((e.target as HTMLInputElement).value)
                 )
               );
             }
