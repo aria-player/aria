@@ -169,14 +169,17 @@ export const TrackList = () => {
       cellStyle: (params: RowClassParams) => {
         return {
           fontWeight:
-            params.data.itemId === selectCurrentTrack(store.getState())?.itemId
+            params.data.itemId ===
+              selectCurrentTrack(store.getState())?.itemId &&
+            (visibleView !== View.Search ||
+              selectSearch(store.getState()) === queueSource?.split("/")[1])
               ? 700
               : 400,
           fontStyle: !params.data.metadataLoaded ? "italic" : "normal"
         };
       }
     }),
-    []
+    [queueSource, visibleView]
   );
 
   const updateColumnState = (api: GridApi, alwaysCopyToPlaylist: boolean) => {
