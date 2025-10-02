@@ -133,6 +133,7 @@ export const TrackList = () => {
           sortIndex,
           sortable:
             visibleViewType != View.Search &&
+            visibleViewType != View.Artist &&
             colDef.field != "art" &&
             colDef.field != "attribution",
           headerName:
