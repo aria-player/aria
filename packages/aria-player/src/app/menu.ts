@@ -158,6 +158,16 @@ export function handleMenuAction(
                 }
               )
             );
+          } else if (queueSource?.startsWith(View.Artist)) {
+            dispatch(
+              push(
+                BASEPATH +
+                  `artist/${encodeURIComponent(queueSource.split("/")[1])}/songs`,
+                {
+                  focusItemId: currentTrack.itemId
+                }
+              )
+            );
           } else {
             dispatch(
               push(

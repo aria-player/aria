@@ -117,6 +117,7 @@ export const TrackSummaryRow = (props: ICellRendererParams) => {
     }
 
     const search = selectSearch(state);
+    const artist = selectVisibleSelectedTrackGroup(state);
     if (visibleView == View.Search) {
       dispatch(addToSearchHistory(search));
     }
@@ -126,7 +127,11 @@ export const TrackSummaryRow = (props: ICellRendererParams) => {
         queueIndex:
           queue.findIndex((item) => rowProps.node.id == item.itemId) ?? 0,
         queueSource:
-          visibleView == View.Search ? visibleView + "/" + search : visibleView,
+          visibleView == View.Search
+            ? visibleView + "/" + search
+            : visibleView == View.Artist
+              ? visibleView + "/" + artist
+              : visibleView,
         queueGrouping: selectVisibleTrackGrouping(state) ?? null,
         queueSelectedGroup: selectVisibleSelectedTrackGroup(state) ?? null
       })

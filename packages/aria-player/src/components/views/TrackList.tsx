@@ -53,7 +53,8 @@ import {
   selectVisibleTracks,
   selectVisiblePlaylist,
   selectVisibleViewType,
-  selectVisiblePlaylistConfig
+  selectVisiblePlaylistConfig,
+  selectVisibleSelectedTrackGroup
 } from "../../features/visibleSelectors";
 import { compareMetadata } from "../../app/sort";
 import {
@@ -231,7 +232,9 @@ export const TrackList = () => {
   const handleCellDoubleClicked = (event: CellDoubleClickedEvent) => {
     // We could use selectSortedTrackList here instead,
     // but then we'd be re-calculating the same sorted tracks that are already displayed
-    const search = selectSearch(store.getState());
+    const state = store.getState();
+    const search = selectSearch(state);
+    const artist = selectVisibleSelectedTrackGroup(state);
     const queue = [] as PlaylistItem[];
     event.api.forEachNodeAfterFilterAndSort((node) => {
       queue.push({
@@ -247,7 +250,11 @@ export const TrackList = () => {
         queue,
         queueIndex: event.rowIndex ?? 0,
         queueSource:
-          visibleView == View.Search ? visibleView + "/" + search : visibleView,
+          visibleView == View.Search
+            ? visibleView + "/" + search
+            : visibleView == View.Artist
+              ? visibleView + "/" + artist
+              : visibleView,
         queueGrouping: null,
         queueSelectedGroup: null
       })
