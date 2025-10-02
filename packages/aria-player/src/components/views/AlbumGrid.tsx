@@ -4,7 +4,8 @@ import styles from "./AlbumGrid.module.css";
 import { useTranslation } from "react-i18next";
 import {
   selectVisibleSelectedTrackGroup,
-  selectVisibleAlbums
+  selectVisibleAlbums,
+  selectVisibleViewType
 } from "../../features/visibleSelectors";
 import { useEffect, useRef, useState } from "react";
 import { getScrollbarWidth } from "../../app/utils";
@@ -12,6 +13,7 @@ import { FixedSizeGrid, GridChildComponentProps } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { useScrollDetection } from "../../hooks/useScrollDetection";
 import AlbumGridOverlay from "./subviews/AlbumGridOverlay";
+import { View } from "../../app/view";
 
 type AlbumGridItemProps = GridChildComponentProps & {
   index: number;
@@ -23,6 +25,7 @@ export default function AlbumGrid() {
   const fixedSizeGridRef = useRef<FixedSizeGrid>(null);
   const { t } = useTranslation();
   const selectedItem = useAppSelector(selectVisibleSelectedTrackGroup);
+  const visibleViewType = useAppSelector(selectVisibleViewType);
   const visibleAlbums = useAppSelector(selectVisibleAlbums);
 
   const [overscanRowCount, setOverscanRowCount] = useState(0);
@@ -95,7 +98,7 @@ export default function AlbumGrid() {
       ) : (
         <div className={styles.empty}>{t("albumGrid.empty")}</div>
       )}
-      {selectedItem && <AlbumGridOverlay />}
+      {selectedItem && visibleViewType != View.Artist && <AlbumGridOverlay />}
     </div>
   );
 }

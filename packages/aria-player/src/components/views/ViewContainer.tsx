@@ -4,6 +4,7 @@ import AlbumGrid from "./AlbumGrid";
 import { TrackList } from "./TrackList";
 import { SplitView } from "./SplitView";
 import {
+  selectVisibleArtistSection,
   selectVisibleDisplayMode,
   selectVisiblePlaylist,
   selectVisibleSearchCategory,
@@ -13,9 +14,11 @@ import ArtistGrid from "./ArtistGrid";
 import ErrorPage from "../pages/ErrorPage";
 import { AlbumTrackList } from "./subviews/AlbumTrackList";
 import { useScrollDetection } from "../../hooks/useScrollDetection";
+import ArtistView from "./ArtistView";
 
 export default function ViewContainer() {
   const visibleDisplayMode = useAppSelector(selectVisibleDisplayMode);
+  const visibleArtistSection = useAppSelector(selectVisibleArtistSection);
   const visibleSearchCategory = useAppSelector(selectVisibleSearchCategory);
   const visibleViewType = useAppSelector(selectVisibleViewType);
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
@@ -54,6 +57,9 @@ export default function ViewContainer() {
             }}
           />
         </div>
+      )}
+      {visibleViewType == View.Artist && !visibleArtistSection && (
+        <ArtistView />
       )}
       {visibleSearchCategory == SearchCategory.Artists && <ArtistGrid />}
     </>

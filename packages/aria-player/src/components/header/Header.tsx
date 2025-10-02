@@ -2,6 +2,7 @@ import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import { DisplayMode, View } from "../../app/view";
 import styles from "./Header.module.css";
 import {
+  selectVisibleArtistSection,
   selectVisibleDisplayMode,
   selectVisiblePlaylist,
   selectVisibleSelectedTrackGroup,
@@ -16,7 +17,10 @@ import { ScrollContext } from "../../contexts/ScrollContext";
 import { useContext } from "react";
 import { useTrackGrid } from "../../hooks/useTrackGrid";
 import { selectMenuState } from "../../app/menu";
-import { selectAllAlbums } from "../../features/tracks/tracksSlice";
+import {
+  selectAllAlbums,
+  selectAllArtists
+} from "../../features/tracks/tracksSlice";
 
 export default function Header() {
   const dispatch = useAppDispatch();
@@ -35,6 +39,10 @@ export default function Header() {
   const visibleAlbum = useAppSelector(selectAllAlbums).find(
     (a) => a.albumId === visibleSelectedTrackGroup
   );
+  const visibleArtist = useAppSelector(selectAllArtists).find(
+    (a) => a.artist === visibleSelectedTrackGroup
+  );
+  const visibleArtistSection = useAppSelector(selectVisibleArtistSection);
   const { gridRef } = useTrackGrid();
   const menuState = useAppSelector(selectMenuState);
   const backEnabled = !menuState.back?.disabled;
@@ -50,7 +58,7 @@ export default function Header() {
           : styles.border
       }`}
     >
-      {visibleViewType == View.Album && (
+      {(visibleViewType == View.Album || visibleViewType == View.Artist) && (
         <button
           title={t("labels.back")}
           className={styles.backButton}
@@ -62,16 +70,18 @@ export default function Header() {
           <ChevronLeftIcon />
         </button>
       )}
-      {visibleViewType == View.Album ? (
+      {visibleViewType == View.Album || visibleViewType == View.Artist ? (
         <h1
           style={{
             visibility:
-              scrollContext?.scrollY <= 0 || !gridRef?.current?.api
-                ? "hidden"
-                : "visible"
+              visibleArtistSection != undefined
+                ? "visible"
+                : scrollContext?.scrollY <= 0 || !gridRef?.current?.api
+                  ? "hidden"
+                  : "visible"
           }}
         >
-          {visibleAlbum?.album}
+          {visibleAlbum?.album || visibleArtist?.artist}
         </h1>
       ) : (
         <h1>

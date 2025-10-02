@@ -10,7 +10,8 @@ export enum View {
   Queue = "queue",
   Settings = "settings",
   Error = "error",
-  Album = "album"
+  Album = "album",
+  Artist = "artist"
 }
 
 export enum LibraryView {
@@ -39,6 +40,11 @@ export enum SettingsSection {
   Library = "library",
   Plugins = "plugins",
   About = "about"
+}
+
+export enum ArtistSection {
+  Songs = "songs",
+  Albums = "albums"
 }
 
 export enum SearchCategory {

@@ -1,0 +1,85 @@
+.artistView {
+  padding: 0 1.5rem;
+  height: 100%;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.artistHeader {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 0 1.5rem 1.5rem;
+}
+
+.artistArt {
+  width: 8rem;
+  height: 8rem;
+  flex-shrink: 0;
+  border-radius: 50%;
+  overflow: hidden;
+}
+
+.artistInfo {
+  flex: 1;
+}
+
+.artistName {
+  font-size: 2rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+.section {
+  margin-bottom: 1rem;
+}
+
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.sectionTitle {
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin: 0.5rem 0;
+}
+
+.viewAll {
+  color: var(--accent-color);
+  font-size: 0.9rem;
+  margin-right: 0.5rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  &:hover {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+}
+
+.gridRow {
+  display: grid;
+  width: 100%;
+  gap: 0;
+}
+
+.gridItem {
+  padding: 0.5rem;
+  box-sizing: border-box;
+  min-width: 12rem;
+  width: 12rem;
+  flex-shrink: 0;
+}
+
+.notFound {
+  display: flex;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+  color: var(--empty-list-text);
+  font-style: italic;
+}

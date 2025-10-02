@@ -288,6 +288,20 @@
   "artistGrid": {
     "empty": "No artists to display"
   },
+  "artist": {
+    "notFound": "Artist not found",
+    "viewAll": "View all",
+    "sections": {
+      "songs": {
+        "title": "Songs",
+        "viewAll": "View all songs"
+      },
+      "albums": {
+        "title": "Albums",
+        "viewAll": "View all albums"
+      }
+    }
+  },
   "albumGrid": {
     "empty": "No albums to display"
   },

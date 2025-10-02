@@ -7,7 +7,8 @@ import {
   DisplayMode,
   TrackGrouping,
   SettingsSection,
-  SearchCategory
+  SearchCategory,
+  ArtistSection
 } from "../app/view";
 import { selectLibrarySplitViewStates } from "./library/librarySlice";
 import {
@@ -78,6 +79,15 @@ export const selectVisibleSearchCategory = (state: RootState) => {
   }
 };
 
+export const selectVisibleArtistSection = (state: RootState) => {
+  const pathParts = state.router.location?.pathname
+    .substring(BASEPATH.length)
+    .split("/");
+  if (pathParts && pathParts.length > 2 && pathParts[0] === View.Artist) {
+    return pathParts[2] as ArtistSection;
+  }
+};
+
 export const selectVisiblePlaylist = (state: RootState) => {
   const pathParts = state.router.location?.pathname
     .substring(BASEPATH.length)
@@ -110,6 +120,11 @@ export const selectVisibleTracks = createSelector(
     const visibleViewType = selectVisibleViewType(state);
     const visibleSelectedTrackGroup = selectVisibleSelectedTrackGroup(state);
     const search = selectSearch(state);
+
+    if (visibleViewType === View.Artist && visibleSelectedTrackGroup) {
+      return selectVisibleArtistTracks(state);
+    }
+
     return visiblePlaylist
       ? visiblePlaylist.map((playlistTrack) => {
           return {
@@ -178,12 +193,14 @@ export const selectVisibleDisplayMode = (state: RootState) => {
     selectVisibleViewType(state) === LibraryView.Songs ||
     (selectVisibleViewType(state) === View.Search &&
       selectVisibleSearchCategory(state) == SearchCategory.Songs &&
-      selectSearch(state) != "")
+      selectSearch(state) != "") ||
+    selectVisibleArtistSection(state) === ArtistSection.Songs
   )
     return DisplayMode.TrackList;
   if (
     selectVisibleViewType(state) === LibraryView.Albums ||
-    selectVisibleSearchCategory(state) == SearchCategory.Albums
+    selectVisibleSearchCategory(state) == SearchCategory.Albums ||
+    selectVisibleArtistSection(state) === ArtistSection.Albums
   )
     return DisplayMode.AlbumGrid;
 
@@ -234,7 +251,7 @@ export const selectVisibleSelectedTrackGroup = (state: RootState) => {
   const firstPath = pathSegments[0];
   const secondPath = pathSegments[1];
 
-  if (firstPath === View.Album) {
+  if (firstPath === View.Album || firstPath === View.Artist) {
     return decodeURIComponent(secondPath);
   }
 
@@ -318,7 +335,11 @@ export const selectVisibleAlbums = createSelector(
     const state = store.getState();
     const allAlbums = selectAllAlbums(state);
     const search = selectSearch(state);
-    if (search && selectVisibleViewType(state) == View.Search) {
+    const visibleViewType = selectVisibleViewType(state);
+
+    if (visibleViewType === View.Artist) {
+      return selectVisibleArtistAlbums(state);
+    } else if (search && visibleViewType == View.Search) {
       return searchAlbums(allAlbums, search);
     } else {
       return allAlbums
@@ -363,6 +384,49 @@ export const selectVisibleArtists = createSelector(
             }) ?? 0
         );
     }
+  }
+);
+
+export const selectVisibleArtistTracks = createSelector(
+  [
+    (state: RootState) => state.tracks.tracks,
+    (state: RootState) => state.router.location?.pathname
+  ],
+  () => {
+    const state = store.getState();
+    const visibleViewType = selectVisibleViewType(state);
+    const visibleSelectedTrackGroup = selectVisibleSelectedTrackGroup(state);
+    if (visibleViewType === View.Artist && visibleSelectedTrackGroup) {
+      return selectAllTracks(state)
+        .filter(
+          (track) =>
+            track.artist?.includes(visibleSelectedTrackGroup) ||
+            track.albumArtist?.includes(visibleSelectedTrackGroup)
+        )
+        .map((track) => ({
+          ...track,
+          itemId: track.trackId
+        })) as TrackListItem[];
+    }
+    return [];
+  }
+);
+
+export const selectVisibleArtistAlbums = createSelector(
+  [
+    (state: RootState) => state.tracks.tracks,
+    (state: RootState) => state.router.location?.pathname
+  ],
+  () => {
+    const state = store.getState();
+    const visibleViewType = selectVisibleViewType(state);
+    const visibleSelectedTrackGroup = selectVisibleSelectedTrackGroup(state);
+    if (visibleViewType === View.Artist && visibleSelectedTrackGroup) {
+      return selectAllAlbums(state).filter(
+        (album) => album.artist === visibleSelectedTrackGroup
+      );
+    }
+    return [];
   }
 );
 
