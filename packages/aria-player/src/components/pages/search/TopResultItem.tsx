@@ -1,8 +1,6 @@
 import { push } from "redux-first-history";
 import { BASEPATH } from "../../../app/constants";
 import { useAppDispatch } from "../../../app/hooks";
-import { LibraryView } from "../../../app/view";
-import { updateLibrarySplitState } from "../../../features/library/librarySlice";
 import {
   ArtistDetails,
   AlbumDetails
@@ -52,12 +50,8 @@ export default function TopResultItem({ result }: TopResultItemProps) {
       case "artist": {
         const artist = result.item as ArtistDetails;
         dispatch(
-          updateLibrarySplitState({
-            view: LibraryView.Artists,
-            splitState: { selectedGroup: artist.artist }
-          })
+          push(BASEPATH + `artist/${encodeURIComponent(artist.artist)}`)
         );
-        dispatch(push(BASEPATH + "artists"));
         break;
       }
       case "album":

@@ -92,21 +92,16 @@ export function TrackMenuItems() {
 
   const showGoToAlbum = showGoTo(View.Album, menuData?.metadata?.albumId);
   const showGoToAlbumArtist = showGoTo(
-    LibraryView.Artists,
-    menuData?.metadata?.albumArtist,
-    TrackGrouping.AlbumArtist
+    View.Artist,
+    menuData?.metadata?.albumArtist
   );
-  const showGoToArtist = showGoTo(
-    LibraryView.Artists,
-    menuData?.metadata?.artist,
-    TrackGrouping.Artist
-  );
+  const showGoToArtist = showGoTo(View.Artist, menuData?.metadata?.artist);
 
   function goToArtist(artist?: string | string[]) {
     dispatch(
       push(
         BASEPATH +
-          `artists/${
+          `artist/${
             artist != null
               ? encodeURIComponent(Array.isArray(artist) ? artist[0] : artist)
               : ""
