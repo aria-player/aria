@@ -29,6 +29,8 @@ export default function NoRowsOverlay() {
     .sort(sortPlugins);
 
   switch (visibleViewType) {
+    case View.Artist:
+      return <div className={styles.empty}>{t("artist.notFound")}</div>;
     case View.Search:
       return <div className={styles.empty}>{t("search.noResults")}</div>;
     case View.Queue:
