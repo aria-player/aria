@@ -45,7 +45,9 @@ import {
   selectVisiblePlaylistConfig,
   selectVisibleViewType,
   selectVisibleDisplayMode,
-  selectVisibleSelectedTrackGroup
+  selectVisibleSelectedTrackGroup,
+  selectVisibleArtistSection,
+  selectVisibleSearchCategory
 } from "../features/visibleSelectors";
 import { t } from "i18next";
 import { getRedoActionLabel, getUndoActionLabel } from "./undo";
@@ -384,6 +386,11 @@ export const selectMenuState = createSelector(
     // TODO: Should also be false if the visible list of tracks is empty
     const selectableTracksVisible =
       selectVisibleViewType(state) == View.Queue ||
+      selectVisibleViewType(state) == View.Album ||
+      (selectVisibleViewType(state) == View.Artist &&
+        !selectVisibleArtistSection(state)) ||
+      (selectVisibleViewType(state) == View.Search &&
+        !selectVisibleSearchCategory(state)) ||
       selectVisibleDisplayMode(state) == DisplayMode.TrackList ||
       ((selectVisibleDisplayMode(state) == DisplayMode.AlbumGrid ||
         selectVisibleDisplayMode(state) == DisplayMode.SplitView) &&
@@ -413,6 +420,10 @@ export const selectMenuState = createSelector(
       selectAll: {
         disabled:
           !selectableTracksVisible ||
+          (selectVisibleViewType(state) == View.Artist &&
+            !selectVisibleArtistSection(state)) ||
+          (selectVisibleViewType(state) == View.Search &&
+            !selectVisibleSearchCategory(state)) ||
           selectVisibleViewType(state) == View.Queue ||
           (selectVisibleDisplayMode(state) == DisplayMode.AlbumGrid &&
             !selectVisibleSelectedTrackGroup(state))
