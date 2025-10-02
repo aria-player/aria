@@ -45,6 +45,9 @@ export const TrackSummaryRow = (props: ICellRendererParams) => {
   const currentTrack = useAppSelector(selectCurrentTrack);
   const queueSource = useAppSelector(selectQueueSource);
   const search = useAppSelector(selectSearch);
+  const visibleSelectedTrackGroup = useAppSelector(
+    selectVisibleSelectedTrackGroup
+  );
   const visibleView = visiblePlaylist?.id ?? visibleViewType;
   const pluginHandle = getSourceHandle(props.data.source);
 
@@ -144,7 +147,10 @@ export const TrackSummaryRow = (props: ICellRendererParams) => {
         props.data.itemId === currentTrack?.itemId &&
         (queueSource == visibleView ||
           visibleView == View.Queue ||
-          (visibleView == View.Search && search == queueSource?.split("/")[1]))
+          (visibleView == View.Search &&
+            search == queueSource?.split("/")[1]) ||
+          (visibleView == View.Artist &&
+            visibleSelectedTrackGroup == queueSource?.split("/")[1]))
           ? styles.highlighted
           : ""
       }`}
