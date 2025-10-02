@@ -150,12 +150,14 @@ export const TrackSummaryRow = (props: ICellRendererParams) => {
         handleCellDoubleClicked(e, props);
       }}
     >
-      {visibleView != View.Search && (
+      {visibleView != View.Search && visibleView != View.Artist && (
         <span className={`track-summary-row-number ${styles.trackNumber}`}>
           {props.node.data.track}
         </span>
       )}
-      {(visibleView == View.Queue || visibleView == View.Search) && (
+      {[View.Queue, View.Search, View.Artist].includes(
+        visibleViewType as View
+      ) && (
         <span className={`track-summary-row-artwork ${styles.trackArtwork}`}>
           <AlbumArt track={props.node.data} />
         </span>
@@ -170,7 +172,9 @@ export const TrackSummaryRow = (props: ICellRendererParams) => {
           {formatStringArray(props.node.data.artist)}
         </span>
       </div>
-      {(visibleViewType == View.Queue || visibleViewType == View.Search) &&
+      {[View.Queue, View.Search, View.Artist].includes(
+        visibleViewType as View
+      ) &&
         pluginHandle?.Attribution && (
           <pluginHandle.Attribution
             type="track"
