@@ -9,7 +9,7 @@ import styles from "./QueueSeparator.module.css";
 import { selectCurrentPlaylist } from "../../../features/currentSelectors";
 import { selectPlaylistsLayoutItemById } from "../../../features/playlists/playlistsSlice";
 import { useTranslation } from "react-i18next";
-import { isLibraryView, TrackGrouping } from "../../../app/view";
+import { isLibraryView, TrackGrouping, View } from "../../../app/view";
 import { selectAlbumTitle } from "../../../features/genericSelectors";
 
 export default function QueueSeparator(props: ICellRendererParams) {
@@ -26,6 +26,9 @@ export default function QueueSeparator(props: ICellRendererParams) {
   );
   const formattedGroup =
     queueGrouping == TrackGrouping.AlbumId ? albumTitle : queueSelectedGroup;
+  const artistName = queueSource?.startsWith(View.Artist)
+    ? queueSource.split("/")[1]
+    : null;
 
   return (
     <div className={`queue-separator ${styles.separator}`}>
@@ -39,6 +42,7 @@ export default function QueueSeparator(props: ICellRendererParams) {
           <span className={styles.source}>
             {playlistName ||
               formattedGroup ||
+              artistName ||
               (queueSource && isLibraryView(queueSource)
                 ? t(`views.${queueSource}`)
                 : queueSource && queueSource.startsWith("search")
