@@ -11,6 +11,17 @@
   }
 }
 
+.headerLink {
+  display: flex;
+  align-items: baseline;
+  padding: 0;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
 .border {
   border-bottom-color: var(--primary-border);
 }

@@ -11,7 +11,7 @@ import {
 import { useTranslation } from "react-i18next";
 import { selectPlaylistsLayoutItemById } from "../../features/playlists/playlistsSlice";
 import { selectSearch } from "../../features/search/searchSlice";
-import { goBack } from "redux-first-history";
+import { goBack, push } from "redux-first-history";
 import ChevronLeftIcon from "../../assets/chevron-left-solid.svg?react";
 import { ScrollContext } from "../../contexts/ScrollContext";
 import { useContext } from "react";
@@ -21,6 +21,7 @@ import {
   selectAllAlbums,
   selectAllArtists
 } from "../../features/tracks/tracksSlice";
+import { BASEPATH } from "../../app/constants";
 
 export default function Header() {
   const dispatch = useAppDispatch();
@@ -70,7 +71,24 @@ export default function Header() {
           <ChevronLeftIcon />
         </button>
       )}
-      {visibleViewType == View.Album || visibleViewType == View.Artist ? (
+      {visibleArtistSection != undefined ? (
+        <button
+          className={styles.headerLink}
+          onClick={() => {
+            if (visibleArtist) {
+              dispatch(
+                push(
+                  BASEPATH +
+                    "artist/" +
+                    encodeURIComponent(visibleArtist?.artist)
+                )
+              );
+            }
+          }}
+        >
+          <h1>{visibleArtist?.artist}</h1>
+        </button>
+      ) : visibleViewType == View.Album || visibleViewType == View.Artist ? (
         <h1
           style={{
             visibility:
