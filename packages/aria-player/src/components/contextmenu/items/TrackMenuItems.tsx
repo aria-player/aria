@@ -20,10 +20,7 @@ import {
 } from "../../../features/visibleSelectors";
 import { BASEPATH } from "../../../app/constants";
 import { push } from "redux-first-history";
-import {
-  selectLibrarySplitViewStates,
-  updateLibrarySplitState
-} from "../../../features/library/librarySlice";
+import { selectLibrarySplitViewStates } from "../../../features/library/librarySlice";
 import { showToast } from "../../../app/toasts";
 import { pluginHandles } from "../../../features/plugins/pluginsSlice";
 
@@ -107,14 +104,6 @@ export function TrackMenuItems() {
               : ""
           }`
       )
-    );
-    dispatch(
-      updateLibrarySplitState({
-        view: LibraryView.Artists,
-        splitState: {
-          selectedGroup: Array.isArray(artist) ? artist[0] : artist
-        }
-      })
     );
     hideAll();
   }
