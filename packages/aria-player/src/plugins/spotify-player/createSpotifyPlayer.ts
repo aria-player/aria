@@ -178,7 +178,7 @@ export default function createSpotifyPlayer(
 
   async function loadTracks() {
     const existingTracks = host.getTracks();
-    const albumArtistMapping: Record<string, string> = {};
+    const albumArtistMapping: Record<string, string[]> = {};
     const tracksInLibrary: string[] = [];
     const tracksLimit = 50;
     let tracksOffset = 0;
@@ -203,7 +203,7 @@ export default function createSpotifyPlayer(
         total:
           totalTracks +
           totalAlbums +
-          new Set(Object.values(albumArtistMapping)).size
+          new Set(Object.values(albumArtistMapping).flat()).size
       });
     };
 
@@ -228,9 +228,7 @@ export default function createSpotifyPlayer(
             dateAdded: new Date(track.added_at).getTime(),
             duration: track.track.duration_ms,
             artist: track.track.artists.map((artist) => artist.name),
-            albumArtist: track.track.album.artists
-              .map((artist) => artist.name)
-              .join("/"),
+            albumArtist: track.track.album.artists.map((artist) => artist.name),
             album: track.track.album.name,
             albumId: track.track.album.id,
             genre: genres,
@@ -240,7 +238,7 @@ export default function createSpotifyPlayer(
             artworkUri: track.track.album.images[0].url
           };
           albumArtistMapping[track.track.album.id] =
-            track.track.album.artists[0].id;
+            track.track.album.artists.map((artist) => artist.id);
           tracksToAdd.push(newTrack);
         }
         if (!getConfig().accessToken) return;
@@ -283,9 +281,7 @@ export default function createSpotifyPlayer(
                 dateAdded: new Date(album.added_at).getTime(),
                 duration: track.duration_ms,
                 artist: track.artists.map((artist) => artist.name),
-                albumArtist: album.album.artists
-                  .map((artist) => artist.name)
-                  .join("/"),
+                albumArtist: album.album.artists.map((artist) => artist.name),
                 album: album.album.name,
                 albumId: album.album.id,
                 genre: genres,
@@ -295,7 +291,9 @@ export default function createSpotifyPlayer(
                 artworkUri: album.album.images[0].url
               };
             });
-          albumArtistMapping[album.album.id] = album.album.artists[0].id;
+          albumArtistMapping[album.album.id] = album.album.artists.map(
+            (artist) => artist.id
+          );
           tracksToAdd.push(...tracksFromResponse);
         }
         if (!getConfig().accessToken) return;
@@ -317,7 +315,9 @@ export default function createSpotifyPlayer(
       host.removeTracks(removedTracks.map((track) => track.uri));
     }
     const tracks = host.getTracks();
-    const artists = Array.from(new Set(Object.values(albumArtistMapping)));
+    const artists = Array.from(
+      new Set(Object.values(albumArtistMapping).flat())
+    );
     const artistGenreMapping: Record<string, string[]> = {};
     for (let i = 0; i < artists.length; i += 50) {
       const batchIds = artists.slice(i, i + 50).join(",");
@@ -335,8 +335,12 @@ export default function createSpotifyPlayer(
       if (!track.albumId) {
         return track;
       }
-      const artist = albumArtistMapping[track.albumId];
-      const formattedGenres = artistGenreMapping[artist].map((genre) =>
+      const artistIds = albumArtistMapping[track.albumId];
+      const allGenres = artistIds.flatMap(
+        (artistId) => artistGenreMapping[artistId] || []
+      );
+      const uniqueGenres = Array.from(new Set(allGenres));
+      const formattedGenres = uniqueGenres.map((genre) =>
         genre
           .split(" ")
           .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
