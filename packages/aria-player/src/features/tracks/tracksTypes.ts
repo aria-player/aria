@@ -18,6 +18,6 @@ export interface ArtistDetails {
 export interface AlbumDetails {
   albumId: string;
   album: string;
-  artist?: string;
+  artist?: string | string[];
   firstTrack: Track;
 }

@@ -44,7 +44,12 @@ const tracksSlice = createSlice({
         action.payload.tracks?.map((track) => ({
           ...track,
           albumId:
-            track.albumId ?? `${track.album ?? ""} ${track.albumArtist ?? ""}`
+            track.albumId ??
+            `${track.album ?? ""} ${
+              Array.isArray(track.albumArtist)
+                ? track.albumArtist.join(" ")
+                : (track.albumArtist ?? "")
+            }`
         })) ?? []
       );
     },
@@ -97,7 +102,9 @@ export const selectAllArtists = createSelector(
       if (!track) return;
       const artists = (
         artistGrouping == TrackGrouping.AlbumArtist
-          ? [track.albumArtist]
+          ? Array.isArray(track.albumArtist)
+            ? track.albumArtist
+            : [track.albumArtist]
           : Array.isArray(track.artist)
             ? track.artist
             : [track.artist]

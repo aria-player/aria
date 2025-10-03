@@ -400,8 +400,12 @@ export const selectVisibleArtistTracks = createSelector(
       return selectAllTracks(state)
         .filter(
           (track) =>
-            track.artist?.includes(visibleSelectedTrackGroup) ||
-            track.albumArtist?.includes(visibleSelectedTrackGroup)
+            (Array.isArray(track.artist)
+              ? track.artist.includes(visibleSelectedTrackGroup)
+              : track.artist === visibleSelectedTrackGroup) ||
+            (Array.isArray(track.albumArtist)
+              ? track.albumArtist.includes(visibleSelectedTrackGroup)
+              : track.albumArtist === visibleSelectedTrackGroup)
         )
         .map((track) => ({
           ...track,

@@ -76,7 +76,8 @@ export const AlbumTrackList = (props: {
           }
           processedTracks.push({
             artist:
-              (track.albumArtist ?? formatStringArray(track.artist)) ||
+              formatStringArray(track.albumArtist) ||
+              formatStringArray(track.artist) ||
               t("tracks.unknownArtist"),
             album: track.album || t("tracks.unknownAlbum"),
             albumId: track.albumId,

@@ -41,9 +41,9 @@ export interface TrackMetadata {
    */
   artist?: string | string[];
   /**
-   * The artist of the album this track is part of.
+   * The artist(s) of the album this track is part of.
    */
-  albumArtist?: string;
+  albumArtist?: string | string[];
   /**
    * The name of the album this track is part of.
    */

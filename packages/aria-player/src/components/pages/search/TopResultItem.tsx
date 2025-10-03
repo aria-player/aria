@@ -19,6 +19,7 @@ import { MenuContext } from "../../../contexts/MenuContext";
 import { SearchResult } from "../../../app/search";
 import { useTranslation } from "react-i18next";
 import { getSourceHandle } from "../../../features/plugins/pluginsSlice";
+import { formatStringArray } from "../../../app/utils";
 
 interface TopResultItemProps {
   result: SearchResult;
@@ -96,7 +97,7 @@ export default function TopResultItem({ result }: TopResultItemProps) {
         return {
           track: album.firstTrack,
           title: album.album,
-          subtitle: album.artist,
+          subtitle: formatStringArray(album.artist),
           label: t("search.categories.albums.one"),
           artworkClass: styles.artwork,
           artworkAltText: album.album
