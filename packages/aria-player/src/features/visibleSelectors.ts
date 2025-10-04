@@ -417,8 +417,10 @@ export const selectVisibleArtistAlbums = createSelector(
     const visibleViewType = selectVisibleViewType(state);
     const visibleSelectedTrackGroup = selectVisibleSelectedTrackGroup(state);
     if (visibleViewType === View.Artist && visibleSelectedTrackGroup) {
-      return selectAllAlbums(state).filter(
-        (album) => album.artist === visibleSelectedTrackGroup
+      return selectAllAlbums(state).filter((album) =>
+        Array.isArray(album.artist)
+          ? album.artist.includes(visibleSelectedTrackGroup)
+          : album.artist === visibleSelectedTrackGroup
       );
     }
     return [];

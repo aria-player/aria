@@ -121,9 +121,7 @@ export const selectAllAlbums = createSelector(
         albumsMap.set(track.albumId, {
           albumId: track.albumId,
           album: track.album,
-          artist:
-            track.albumArtist ||
-            (Array.isArray(track.artist) ? track.artist[0] : track.artist),
+          artist: track.albumArtist || track.artist,
           firstTrack: {
             ...track,
             artworkUri: getMostCommonArtworkUri(albumTracks)
