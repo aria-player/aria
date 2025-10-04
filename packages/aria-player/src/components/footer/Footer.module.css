@@ -52,21 +52,39 @@
   cursor: pointer;
 
   &:hover {
-    background-color: var(--button-background-hover);
+    text-decoration: underline;
   }
 }
 
-.artist {
+.artistButtons {
   font-size: 0.9rem;
   padding: 0 0.1rem;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  min-width: 0;
+  flex: 1;
+}
+
+.artistButtonContainer {
+  display: inline;
+  white-space: nowrap;
+}
+
+.artist {
+  font-size: 0.9rem;
+  padding: 0;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 .metadata.compact {
   .title,
-  .artist {
+  .artist,
+  .artistButtons {
     line-height: 1.2;
   }
 
@@ -74,8 +92,12 @@
     font-size: 0.9rem;
   }
 
-  .artist {
+  .artist,
+  .artistButtons {
     font-size: 0.8rem;
+  }
+
+  .artistButtons {
     padding-bottom: 0.25rem;
   }
 }

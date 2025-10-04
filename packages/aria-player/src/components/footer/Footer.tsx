@@ -1,19 +1,22 @@
 import styles from "./Footer.module.css";
 import { PlaybackControls } from "./PlaybackControls";
-import { useAppSelector } from "../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { AuxiliaryControls } from "./AuxiliaryControls";
 import { AlbumArt } from "../views/subviews/AlbumArt";
 import { useMenuActions } from "../../hooks/useMenuActions";
-import { formatStringArray } from "../../app/utils";
+import { getAsArray } from "../../app/utils";
 import { selectCurrentTrack } from "../../features/currentSelectors";
 import { useTranslation } from "react-i18next";
 import { TriggerEvent, useContextMenu } from "react-contexify";
 import { useContext } from "react";
 import { MenuContext } from "../../contexts/MenuContext";
 import { getSourceHandle } from "../../features/plugins/pluginsSlice";
+import { push } from "redux-first-history";
+import { BASEPATH } from "../../app/constants";
 
 export function Footer() {
   const { t } = useTranslation();
+  const dispatch = useAppDispatch();
   const metadata = useAppSelector(selectCurrentTrack);
   const currentTrack = useAppSelector(selectCurrentTrack);
   const { invokeMenuAction } = useMenuActions();
@@ -23,6 +26,12 @@ export function Footer() {
   });
   const pluginHandle = metadata && getSourceHandle(metadata?.source);
   const displayAttribution = pluginHandle?.Attribution != null;
+
+  function goToArtist(artist: string) {
+    dispatch(push(BASEPATH + `artist/${encodeURIComponent(artist)}`));
+  }
+
+  const artists = getAsArray(metadata?.artist);
 
   return (
     <footer className={`footer ${styles.footer}`}>
@@ -58,8 +67,18 @@ export function Footer() {
             )}
           </div>
           <div className={styles.metadataRow}>
-            <div className={`footer-artist ${styles.artist}`}>
-              {formatStringArray(metadata?.artist)}
+            <div className={`footer-artist ${styles.artistButtons}`}>
+              {artists.map((artist, index) => (
+                <span key={index} className={styles.artistButtonContainer}>
+                  <button
+                    className={styles.artist}
+                    onClick={() => goToArtist(artist)}
+                  >
+                    {artist}
+                  </button>
+                  {index < artists.length - 1 && "/"}
+                </span>
+              ))}
             </div>
           </div>
           {metadata && pluginHandle?.Attribution && (
