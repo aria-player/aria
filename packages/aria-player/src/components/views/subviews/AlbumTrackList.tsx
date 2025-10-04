@@ -9,7 +9,7 @@ import { Track } from "../../../../../types/tracks";
 import { useAppSelector } from "../../../app/hooks";
 import { TrackSummaryRow } from "./TrackSummaryRow";
 import { t } from "i18next";
-import { formatStringArray, getMostCommonArtworkUri } from "../../../app/utils";
+import { getMostCommonArtworkUri } from "../../../app/utils";
 import AlbumTrackListSeparator from "./AlbumTrackListSeparator";
 import { useTrackGrid } from "../../../hooks/useTrackGrid";
 import { selectVisibleGroupFilteredTracks } from "../../../features/visibleSelectors";
@@ -76,9 +76,7 @@ export const AlbumTrackList = (props: {
           }
           processedTracks.push({
             artist:
-              formatStringArray(track.albumArtist) ||
-              formatStringArray(track.artist) ||
-              t("tracks.unknownArtist"),
+              track.albumArtist || track.artist || t("tracks.unknownArtist"),
             album: track.album || t("tracks.unknownAlbum"),
             albumId: track.albumId,
             year: track.year || undefined,

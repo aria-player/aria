@@ -2,10 +2,22 @@ import { ICellRendererParams } from "@ag-grid-community/core";
 import styles from "./AlbumTrackListSeparator.module.css";
 import { AlbumArt } from "./AlbumArt";
 import { getSourceHandle } from "../../../features/plugins/pluginsSlice";
+import { useAppDispatch } from "../../../app/hooks";
+import { push } from "redux-first-history";
+import { BASEPATH } from "../../../app/constants";
+import { getAsArray } from "../../../app/utils";
 
 export default function AlbumTrackListSeparator(props: ICellRendererParams) {
+  const dispatch = useAppDispatch();
+
+  function goToArtist(artist: string) {
+    dispatch(push(BASEPATH + `artist/${encodeURIComponent(artist)}`));
+  }
+
   if (props.node.data.album) {
     const pluginHandle = getSourceHandle(props.node.data.source);
+    const artists = getAsArray(props.node.data.artist);
+
     return (
       <>
         <div className={`album-track-list-art ${styles.artwork}`}>
@@ -26,7 +38,19 @@ export default function AlbumTrackListSeparator(props: ICellRendererParams) {
         <h3
           className={`album-track-list-subtitle ${styles.albumDetails} ${styles.albumText}`}
         >
-          {props.node.data.artist}
+          <div className={styles.artistButtons}>
+            {artists.map((artist, index) => (
+              <span key={index} className={styles.artistButtonContainer}>
+                <button
+                  className={styles.artist}
+                  onClick={() => goToArtist(artist)}
+                >
+                  {artist}
+                </button>
+                {index < artists.length - 1 && "/"}
+              </span>
+            ))}
+          </div>
           {props.node.data.year && ` - ${props.node.data.year}`}
         </h3>
       </>

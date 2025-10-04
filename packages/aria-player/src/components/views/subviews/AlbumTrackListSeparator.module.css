@@ -28,6 +28,37 @@
   margin: 0;
   font-size: 1.2rem;
   font-weight: 400;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.artistButtons {
+  font-size: 1.2rem;
+  padding: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  min-width: 0;
+}
+
+.artistButtonContainer {
+  display: inline;
+  white-space: nowrap;
+}
+
+.artist {
+  font-size: 1.2rem;
+  font-weight: 400;
+  padding: 0;
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 .albumText {
