@@ -176,3 +176,8 @@ export function checkCompatibility(formatVersion: string, version?: string) {
     majorVersion == formatMajorVersion && minorVersion <= formatMinorVersion
   );
 }
+
+export function getAsArray(value: string | string[] | undefined | null) {
+  if (value == null || value == undefined) return [];
+  return Array.isArray(value) ? value : [value];
+}

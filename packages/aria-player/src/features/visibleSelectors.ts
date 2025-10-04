@@ -227,8 +227,8 @@ export const selectVisibleTrackGrouping = (state: RootState) => {
     return TrackGrouping.AlbumId;
   if (selectVisibleViewType(state) === View.Album) return TrackGrouping.AlbumId;
   if (selectVisibleSearchCategory(state) == SearchCategory.Artists) {
-    return selectLibrarySplitViewStates(state)[LibraryView.Artists]
-      .trackGrouping;
+    // Technically both Artist and AlbumArtist, but this shouldn't cause problems for the ArtistGrid
+    return TrackGrouping.Artist;
   }
   if (selectVisibleDisplayMode(state) == DisplayMode.SplitView) {
     const playlistGrouping =
@@ -287,36 +287,27 @@ export const selectVisibleTrackGroups = createSelector(
           ...new Set(selectVisibleTracks(state).map((track) => track.albumId))
         ];
       }
-    } else if (
-      selectVisibleDisplayMode(state) == DisplayMode.SplitView ||
-      selectVisibleSearchCategory(state) == SearchCategory.Artists
-    ) {
+    } else if (selectVisibleSearchCategory(state) == SearchCategory.Artists) {
+      const search = selectSearch(state);
+      return searchArtists(selectAllArtists(state), search).map(
+        (group) => group.artist
+      );
+    } else if (selectVisibleDisplayMode(state) == DisplayMode.SplitView) {
       const grouping = selectVisiblePlaylist(state)
         ? selectVisiblePlaylistConfig(state)?.splitViewState.trackGrouping
-        : selectVisibleSearchCategory(state) == SearchCategory.Artists
-          ? selectLibrarySplitViewStates(state)[LibraryView.Artists]
-              .trackGrouping
-          : selectLibrarySplitViewStates(state)[
-              selectVisibleViewType(state) as string
-            ].trackGrouping;
+        : selectLibrarySplitViewStates(state)[
+            selectVisibleViewType(state) as string
+          ].trackGrouping;
       if (grouping) {
-        if (selectVisibleSearchCategory(state) == SearchCategory.Artists) {
-          const search = selectSearch(state);
-          return searchArtists(selectAllArtists(state), search).map(
-            (group) => group.artist
-          );
-        } else {
-          return [
-            ...new Set(
-              selectVisibleTracks(state)
-                .flatMap((track) => track[grouping] as string | string[])
-                .filter(
-                  (group) =>
-                    group !== null && group !== undefined && group != ""
-                )
-            )
-          ];
-        }
+        return [
+          ...new Set(
+            selectVisibleTracks(state)
+              .flatMap((track) => track[grouping] as string | string[])
+              .filter(
+                (group) => group !== null && group !== undefined && group != ""
+              )
+          )
+        ];
       }
     }
     return [];

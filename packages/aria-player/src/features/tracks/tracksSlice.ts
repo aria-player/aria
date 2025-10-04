@@ -11,8 +11,7 @@ import { Track, TrackId } from "../../../../types/tracks";
 import { PluginId } from "../../../../types/plugins";
 import { PlaylistItem } from "../playlists/playlistsTypes";
 import { ArtistDetails, AlbumDetails } from "./tracksTypes";
-import { LibraryView, TrackGrouping } from "../../app/view";
-import { getMostCommonArtworkUri } from "../../app/utils";
+import { getMostCommonArtworkUri, getAsArray } from "../../app/utils";
 
 const tracksAdapter = createEntityAdapter<Track, TrackId>({
   selectId: (track) => track.trackId,
@@ -90,26 +89,14 @@ export const selectSelectedTracks = (state: RootState) =>
 export const selectClipboard = (state: RootState) => state.tracks.clipboard;
 
 export const selectAllArtists = createSelector(
-  [
-    (state: RootState) => state.tracks.tracks.entities,
-    (state: RootState) => state.undoable.present.library.splitViewStates
-  ],
-  (tracksById, librarySplitViewStates) => {
-    const artistGrouping =
-      librarySplitViewStates[LibraryView.Artists].trackGrouping;
+  [(state: RootState) => state.tracks.tracks.entities],
+  (tracksById) => {
     const artistsMap = new Map<string, ArtistDetails>();
     Object.values(tracksById).forEach((track) => {
       if (!track) return;
-      const artists = (
-        artistGrouping == TrackGrouping.AlbumArtist
-          ? Array.isArray(track.albumArtist)
-            ? track.albumArtist
-            : [track.albumArtist]
-          : Array.isArray(track.artist)
-            ? track.artist
-            : [track.artist]
-      ).filter((artist): artist is string => Boolean(artist));
-      artists.forEach((artist) => {
+      const artists = getAsArray(track.artist).filter(Boolean);
+      const albumArtists = getAsArray(track.albumArtist).filter(Boolean);
+      [...artists, ...albumArtists].forEach((artist) => {
         if (!artistsMap.has(artist)) {
           artistsMap.set(artist, { artist, firstTrack: track });
         }
