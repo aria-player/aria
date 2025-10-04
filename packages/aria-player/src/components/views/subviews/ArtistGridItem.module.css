@@ -1,3 +1,9 @@
+.artistGridItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
 .artistArt {
   width: 100%;
   aspect-ratio: 1/1;
@@ -5,10 +11,7 @@
   overflow: hidden;
   border: 1px solid var(--inset-background);
   border-radius: 50%;
-
-  &:hover {
-    cursor: pointer;
-  }
+  cursor: pointer;
 }
 
 .artistName {
@@ -19,5 +22,10 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
-  text-align: center;
+  cursor: pointer;
+  max-width: 100%;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }

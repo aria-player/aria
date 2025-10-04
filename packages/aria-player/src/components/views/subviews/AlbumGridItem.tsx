@@ -25,6 +25,10 @@ export function AlbumGridItem({ album }: { album: AlbumDetails }) {
     dispatch(push(BASEPATH + path));
   }
 
+  function goToArtist(artist: string) {
+    dispatch(push(BASEPATH + `artist/${encodeURIComponent(artist)}`));
+  }
+
   return (
     <div className={styles.albumGridItem}>
       <button className={styles.albumArt} onClick={goToAlbum}>
@@ -32,12 +36,25 @@ export function AlbumGridItem({ album }: { album: AlbumDetails }) {
       </button>
       <div className={styles.albumInfo}>
         <div className={styles.albumTextContainer}>
-          <div className={`${styles.albumText} ${styles.albumTitle}`}>
+          <button
+            className={`${styles.albumText} ${styles.albumTitle}`}
+            onClick={goToAlbum}
+          >
             {album.album}
-          </div>
-          <div className={`${styles.albumText} ${styles.albumArtist}`}>
+          </button>
+          <button
+            className={`${styles.albumText} ${styles.albumArtist}`}
+            onClick={() => {
+              if (album.artist) {
+                // TODO: Use separate buttons for multiple album artists
+                goToArtist(
+                  Array.isArray(album.artist) ? album.artist[0] : album.artist
+                );
+              }
+            }}
+          >
             {formatStringArray(album.artist)}
-          </div>
+          </button>
         </div>
         {album.albumId && pluginHandle?.Attribution && (
           <pluginHandle.Attribution

@@ -1,4 +1,3 @@
-
 .albumArt {
   width: 100%;
   aspect-ratio: 1/1;
@@ -29,6 +28,14 @@
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
+  cursor: pointer;
+  text-align: left;
+  display: block;
+  max-width: 100%;
+
+  &:hover {
+    text-decoration: underline;
+  }
 }
 
 .albumTitle {
