@@ -1,5 +1,4 @@
 import { AlbumDetails } from "../../../features/tracks/tracksTypes";
-import { formatStringArray } from "../../../app/utils";
 import { getSourceHandle } from "../../../features/plugins/pluginsSlice";
 import { AlbumArt } from "./AlbumArt";
 import styles from "./AlbumGridItem.module.css";
@@ -11,6 +10,7 @@ import {
   selectVisibleViewType
 } from "../../../features/visibleSelectors";
 import { LibraryView } from "../../../app/view";
+import { getAsArray } from "../../../app/utils";
 
 export function AlbumGridItem({ album }: { album: AlbumDetails }) {
   const dispatch = useAppDispatch();
@@ -29,6 +29,8 @@ export function AlbumGridItem({ album }: { album: AlbumDetails }) {
     dispatch(push(BASEPATH + `artist/${encodeURIComponent(artist)}`));
   }
 
+  const albumArtists = getAsArray(album.artist);
+
   return (
     <div className={styles.albumGridItem}>
       <button className={styles.albumArt} onClick={goToAlbum}>
@@ -42,19 +44,19 @@ export function AlbumGridItem({ album }: { album: AlbumDetails }) {
           >
             {album.album}
           </button>
-          <button
-            className={`${styles.albumText} ${styles.albumArtist}`}
-            onClick={() => {
-              if (album.artist) {
-                // TODO: Use separate buttons for multiple album artists
-                goToArtist(
-                  Array.isArray(album.artist) ? album.artist[0] : album.artist
-                );
-              }
-            }}
-          >
-            {formatStringArray(album.artist)}
-          </button>
+          <div className={styles.artistButtons}>
+            {albumArtists.map((artist, index) => (
+              <span key={index} className={styles.artistButtonContainer}>
+                <button
+                  className={`${styles.albumText} ${styles.albumArtist}`}
+                  onClick={() => goToArtist(artist)}
+                >
+                  {artist}
+                </button>
+                {index < albumArtists.length - 1 && "/"}
+              </span>
+            ))}
+          </div>
         </div>
         {album.albumId && pluginHandle?.Attribution && (
           <pluginHandle.Attribution

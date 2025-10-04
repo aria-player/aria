@@ -46,7 +46,25 @@
 }
 
 .albumArtist {
+  margin: 0;
+  padding: 0;
+  font-size: 0.9rem;
+  display: inline;
+  white-space: nowrap;
+}
+
+.artistButtons {
   margin-top: 0.1rem;
   padding: 0 0.2rem;
-  font-size: 0.9rem;
+  line-height: 1.4;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  height: 1.4em;
+  text-overflow: ellipsis;
+}
+
+.artistButtonContainer {
+  display: inline;
+  white-space: nowrap;
 }
