@@ -41,9 +41,21 @@ export interface TrackMetadata {
    */
   artist?: string | string[];
   /**
+   * Optional identifier(s) for this track's artist(s).
+   *
+   * Providing `artistUri` values will allow the player to distinguish artists with the same name.
+   */
+  artistUri?: string | string[];
+  /**
    * The artist(s) of the album this track is part of.
    */
   albumArtist?: string | string[];
+  /**
+   * Optional identifier(s) for this track's album artist(s).
+   *
+   * Providing `albumArtistUri` values will allow the player to distinguish artists with the same name.
+   */
+  albumArtistUri?: string | string[];
   /**
    * The name of the album this track is part of.
    */

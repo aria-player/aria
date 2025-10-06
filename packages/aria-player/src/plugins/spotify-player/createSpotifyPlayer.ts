@@ -228,7 +228,11 @@ export default function createSpotifyPlayer(
             dateAdded: new Date(track.added_at).getTime(),
             duration: track.track.duration_ms,
             artist: track.track.artists.map((artist) => artist.name),
+            artistUri: track.track.artists.map((artist) => artist.uri),
             albumArtist: track.track.album.artists.map((artist) => artist.name),
+            albumArtistUri: track.track.album.artists.map(
+              (artist) => artist.uri
+            ),
             album: track.track.album.name,
             albumId: track.track.album.id,
             genre: genres,
@@ -281,7 +285,9 @@ export default function createSpotifyPlayer(
                 dateAdded: new Date(album.added_at).getTime(),
                 duration: track.duration_ms,
                 artist: track.artists.map((artist) => artist.name),
+                artistUri: track.artists.map((artist) => artist.uri),
                 albumArtist: album.album.artists.map((artist) => artist.name),
+                albumArtistUri: album.album.artists.map((artist) => artist.uri),
                 album: album.album.name,
                 albumId: album.album.id,
                 genre: genres,

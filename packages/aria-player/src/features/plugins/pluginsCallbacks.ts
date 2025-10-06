@@ -1,5 +1,5 @@
 import { store } from "../../app/store";
-import { getTrackId } from "../../app/utils";
+import { getAsArray, getTrackId } from "../../app/utils";
 import {
   Track,
   TrackId,
@@ -32,6 +32,27 @@ import {
 } from "../player/playerTime";
 import { showAlert } from "./pluginsAlerts";
 
+function validateTrackMetadata(track: TrackMetadata): void {
+  const artists = getAsArray(track.artist);
+  const artistUris = getAsArray(track.artistUri);
+  const albumArtists = getAsArray(track.albumArtist);
+  const albumArtistUris = getAsArray(track.albumArtistUri);
+  // TODO: Consider allowing artist/albumArtist to be empty when URIs are provided so tracks do not always need to fetch artist names
+  if (artistUris.length > 0 && artists.length !== artistUris.length) {
+    throw new Error(
+      `Track "${track.title}" (${track.uri}) has ${artists.length} artists but ${artistUris.length} artistUri(s). The number of artists must match the number of artistUris.`
+    );
+  }
+  if (
+    albumArtistUris.length > 0 &&
+    albumArtists.length !== albumArtistUris.length
+  ) {
+    throw new Error(
+      `Track "${track.title}" (${track.uri}) has ${albumArtists.length} albumArtist(s) but ${albumArtistUris.length} albumArtistUri(s). The number of albumArtists must match the number of albumArtistUris.`
+    );
+  }
+}
+
 function isPluginActive(pluginId: PluginId): boolean {
   const activePlugins = selectActivePlugins(store.getState());
   return activePlugins.includes(pluginId);
@@ -43,6 +64,7 @@ function handleUpdateData(pluginId: PluginId, data: object) {
 
 function handleAddTracks(source: PluginId, metadata: TrackMetadata[]) {
   if (!isPluginActive(source)) return;
+  metadata.forEach(validateTrackMetadata);
   const libraryTrackIds = selectTrackIds(store.getState());
   const newTracks = metadata
     .filter(
@@ -60,6 +82,7 @@ function handleAddTracks(source: PluginId, metadata: TrackMetadata[]) {
 
 function handleUpdateTracks(source: PluginId, metadata: TrackMetadata[]) {
   if (!isPluginActive(source)) return;
+  metadata.forEach(validateTrackMetadata);
   const newTracks = metadata.map((track: TrackMetadata) => ({
     ...track,
     trackId: getTrackId(source, track.uri),
