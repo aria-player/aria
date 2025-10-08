@@ -378,6 +378,27 @@ export const selectVisibleArtists = createSelector(
   }
 );
 
+export const selectVisibleArtist = createSelector(
+  [
+    (state: RootState) => state.tracks.tracks,
+    (state: RootState) => state.router.location?.pathname
+  ],
+  () => {
+    const state = store.getState();
+    const visibleSelectedTrackGroup = selectVisibleSelectedTrackGroup(state);
+    if (
+      selectVisibleViewType(state) === View.Artist &&
+      visibleSelectedTrackGroup
+    ) {
+      return selectAllArtists(state).find(
+        (a) =>
+          a.artistId === visibleSelectedTrackGroup ||
+          (a.artist === visibleSelectedTrackGroup && !a.artistId)
+      );
+    }
+  }
+);
+
 export const selectVisibleArtistTracks = createSelector(
   [
     (state: RootState) => state.tracks.tracks,
@@ -387,16 +408,29 @@ export const selectVisibleArtistTracks = createSelector(
     const state = store.getState();
     const visibleViewType = selectVisibleViewType(state);
     const visibleSelectedTrackGroup = selectVisibleSelectedTrackGroup(state);
-    if (visibleViewType === View.Artist && visibleSelectedTrackGroup) {
+    const visibleArtist = selectVisibleArtist(state);
+    if (
+      visibleViewType === View.Artist &&
+      visibleSelectedTrackGroup &&
+      visibleArtist
+    ) {
+      const name = visibleArtist.name;
+      const uri = visibleArtist?.uri;
       return selectAllTracks(state)
-        .filter(
-          (track) =>
-            (Array.isArray(track.artist)
-              ? track.artist.includes(visibleSelectedTrackGroup)
-              : track.artist === visibleSelectedTrackGroup) ||
-            (Array.isArray(track.albumArtist)
-              ? track.albumArtist.includes(visibleSelectedTrackGroup)
-              : track.albumArtist === visibleSelectedTrackGroup)
+        .filter((track) =>
+          uri
+            ? (Array.isArray(track.artistUri)
+                ? track.artistUri.includes(uri)
+                : track.artistUri === uri) ||
+              (Array.isArray(track.albumArtistUri)
+                ? track.albumArtistUri.includes(uri)
+                : track.albumArtistUri === uri)
+            : (Array.isArray(track.artist)
+                ? track.artist.includes(name) && !track.artistUri
+                : track.artist === name && !track.artistUri) ||
+              (Array.isArray(track.albumArtist)
+                ? track.albumArtist.includes(name) && !track.albumArtistUri
+                : track.albumArtist === name && !track.albumArtistUri)
         )
         .map((track) => ({
           ...track,
@@ -416,11 +450,22 @@ export const selectVisibleArtistAlbums = createSelector(
     const state = store.getState();
     const visibleViewType = selectVisibleViewType(state);
     const visibleSelectedTrackGroup = selectVisibleSelectedTrackGroup(state);
-    if (visibleViewType === View.Artist && visibleSelectedTrackGroup) {
+    const visibleArtist = selectVisibleArtist(state);
+    if (
+      visibleViewType === View.Artist &&
+      visibleSelectedTrackGroup &&
+      visibleArtist
+    ) {
+      const name = visibleArtist.name;
+      const uri = visibleArtist?.uri;
       return selectAllAlbums(state).filter((album) =>
-        Array.isArray(album.artist)
-          ? album.artist.includes(visibleSelectedTrackGroup)
-          : album.artist === visibleSelectedTrackGroup
+        uri
+          ? Array.isArray(album.artistUri)
+            ? album.artistUri.includes(uri)
+            : album.artistUri === uri
+          : Array.isArray(album.artist)
+            ? album.artist.includes(name) && !album.artistUri
+            : album.artist === name && !album.artistUri
       );
     }
     return [];

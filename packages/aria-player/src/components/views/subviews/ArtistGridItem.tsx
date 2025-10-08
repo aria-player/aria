@@ -9,7 +9,7 @@ export default function ArtistGridItem({ artist }: { artist: ArtistDetails }) {
   const dispatch = useAppDispatch();
 
   function goToArtist() {
-    dispatch(push(BASEPATH + "artist/" + encodeURIComponent(artist.artist)));
+    dispatch(push(BASEPATH + "artist/" + encodeURIComponent(artist.artistId)));
   }
 
   return (

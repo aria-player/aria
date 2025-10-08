@@ -6,7 +6,6 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { BASEPATH } from "../../app/constants";
 import { getScrollbarWidth } from "../../app/utils";
 import { useTrackGrid } from "../../hooks/useTrackGrid";
-import { selectAllArtists } from "../../features/tracks/tracksSlice";
 import { TrackSummaryRow } from "./subviews/TrackSummaryRow";
 import { AlbumGridItem } from "./subviews/AlbumGridItem";
 import { AlbumArt } from "./subviews/AlbumArt";
@@ -14,7 +13,8 @@ import styles from "./ArtistView.module.css";
 import {
   selectVisibleSelectedTrackGroup,
   selectVisibleArtistTracks,
-  selectVisibleArtistAlbums
+  selectVisibleArtistAlbums,
+  selectVisibleArtist
 } from "../../features/visibleSelectors";
 import { useScrollDetection } from "../../hooks/useScrollDetection";
 
@@ -24,12 +24,10 @@ export default function ArtistView() {
   const { gridRef, gridProps } = useTrackGrid();
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(0);
-  const artistName = useAppSelector(selectVisibleSelectedTrackGroup);
+  const artistId = useAppSelector(selectVisibleSelectedTrackGroup);
   const artistTracks = useAppSelector(selectVisibleArtistTracks);
   const artistAlbums = useAppSelector(selectVisibleArtistAlbums);
-  const visibleArtist = useAppSelector(selectAllArtists).find(
-    (a) => a.artist === artistName
-  );
+  const visibleArtist = useAppSelector(selectVisibleArtist);
   const { onScroll } = useScrollDetection();
 
   useEffect(() => {
@@ -59,20 +57,20 @@ export default function ArtistView() {
   }, [containerWidth]);
 
   const viewAllSongs = () => {
-    if (!artistName) return;
+    if (!artistId) return;
     dispatch(
-      push(BASEPATH + "artist/" + encodeURIComponent(artistName) + "/songs")
+      push(BASEPATH + "artist/" + encodeURIComponent(artistId) + "/songs")
     );
   };
 
   const viewAllAlbums = () => {
-    if (!artistName) return;
+    if (!artistId) return;
     dispatch(
-      push(BASEPATH + "artist/" + encodeURIComponent(artistName) + "/albums")
+      push(BASEPATH + "artist/" + encodeURIComponent(artistId) + "/albums")
     );
   };
 
-  if (!artistName || !visibleArtist) {
+  if (!artistId || !visibleArtist) {
     return <div className={styles.notFound}>{t("artist.notFound")}</div>;
   }
 
@@ -85,12 +83,12 @@ export default function ArtistView() {
         <div className={styles.artistArt}>
           <AlbumArt
             track={visibleArtist.firstTrack}
-            altText={artistName}
+            altText={visibleArtist.artist}
             artistId={visibleArtist.artistId}
           />
         </div>
         <div className={styles.artistInfo}>
-          <h1 className={styles.artistName}>{artistName}</h1>
+          <h1 className={styles.artistName}>{visibleArtist.artist}</h1>
         </div>
       </section>
       <div ref={containerRef}>

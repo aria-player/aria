@@ -91,9 +91,9 @@ function App() {
               <Route path="/folders" Component={ViewContainer} />
               <Route path="/folders/:folder" Component={ViewContainer} />
               <Route path="/queue" Component={QueuePage} />
-              <Route path="/artist/:artist" Component={ViewContainer} />
-              <Route path="/artist/:artist/songs" Component={ViewContainer} />
-              <Route path="/artist/:artist/albums" Component={ViewContainer} />
+              <Route path="/artist/:id" Component={ViewContainer} />
+              <Route path="/artist/:id/songs" Component={ViewContainer} />
+              <Route path="/artist/:id/albums" Component={ViewContainer} />
               <Route path="settings" Component={SettingsPage}>
                 <Route index Component={GeneralPage} />
                 <Route path="library" Component={LibraryPage} />

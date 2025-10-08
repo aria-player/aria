@@ -171,7 +171,7 @@ export default function SearchResults() {
             >
               {artistResults.slice(0, gridLayout.columnCount).map((artist) => (
                 <div
-                  key={artist.artist}
+                  key={artist.artistId}
                   className={styles.gridItem}
                   style={{ width: gridLayout.columnWidth }}
                 >

@@ -5,7 +5,7 @@ import {
   createSelector,
   createSlice
 } from "@reduxjs/toolkit";
-import { RootState } from "../../app/store";
+import { RootState, store } from "../../app/store";
 import { setupTracksListeners } from "./tracksListeners";
 import { Track, TrackId, Artist, ArtistId } from "../../../../types/tracks";
 import { PluginId } from "../../../../types/plugins";
@@ -128,6 +128,7 @@ export const selectAllArtists = createSelector(
     (state: RootState) => state.tracks.artists
   ],
   (tracksById) => {
+    const state = store.getState();
     const artistsMap = new Map<string, ArtistDetails>();
     Object.values(tracksById).forEach((track) => {
       if (!track) return;
@@ -149,9 +150,12 @@ export const selectAllArtists = createSelector(
             : undefined
         }))
       ].forEach(({ name, id }) => {
-        if (!artistsMap.has(name)) {
-          artistsMap.set(name, {
-            artistId: id,
+        const key = id || name;
+        if (!artistsMap.has(key)) {
+          artistsMap.set(key, {
+            ...(id ? selectArtistInfo(state, id) : {}),
+            artistId: id || name,
+            name,
             artist: name,
             firstTrack: track
           });
@@ -178,6 +182,7 @@ export const selectAllAlbums = createSelector(
           albumId: track.albumId,
           album: track.album,
           artist: track.albumArtist || track.artist,
+          artistUri: track.albumArtistUri || track.artistUri,
           firstTrack: {
             ...track,
             artworkUri: getMostCommonArtworkUri(albumTracks)

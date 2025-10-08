@@ -1,4 +1,4 @@
-import { Track } from "../../../../types/tracks";
+import { Artist, Track } from "../../../../types/tracks";
 
 /**
  * An instance of a track in a list where the same track can appear twice, e.g. a playlist or the queue.
@@ -10,15 +10,17 @@ export interface TrackListItem extends Track {
   itemId: string;
 }
 
-export interface ArtistDetails {
-  artistId?: string;
-  artist: string;
+export type ArtistDetails = Partial<Artist> & {
+  artistId: string;
+  name: string;
+  artist: string; // TODO: Remove and just use name
   firstTrack: Track;
-}
+};
 
 export interface AlbumDetails {
   albumId: string;
   album: string;
   artist?: string | string[];
+  artistUri?: string | string[];
   firstTrack: Track;
 }

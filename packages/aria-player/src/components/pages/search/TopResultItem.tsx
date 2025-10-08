@@ -51,7 +51,7 @@ export default function TopResultItem({ result }: TopResultItemProps) {
       case "artist": {
         const artist = result.item as ArtistDetails;
         dispatch(
-          push(BASEPATH + `artist/${encodeURIComponent(artist.artist)}`)
+          push(BASEPATH + `artist/${encodeURIComponent(artist.artistId)}`)
         );
         break;
       }

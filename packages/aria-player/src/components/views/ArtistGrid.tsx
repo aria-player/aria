@@ -28,7 +28,7 @@ export default function ArtistGrid() {
     const artist = visibleArtists[index];
     if (!artist) return null;
     return (
-      <div key={artist.artist} style={style}>
+      <div key={artist.artistId} style={style}>
         <div className={`artist-grid-item ${styles.gridItem}`}>
           <ArtistGridItem artist={artist} />
         </div>
