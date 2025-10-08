@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { AuxiliaryControls } from "./AuxiliaryControls";
 import { AlbumArt } from "../views/subviews/AlbumArt";
 import { useMenuActions } from "../../hooks/useMenuActions";
-import { getAsArray } from "../../app/utils";
+import { getArtistId, getAsArray } from "../../app/utils";
 import { selectCurrentTrack } from "../../features/currentSelectors";
 import { useTranslation } from "react-i18next";
 import { TriggerEvent, useContextMenu } from "react-contexify";
@@ -27,11 +27,12 @@ export function Footer() {
   const pluginHandle = metadata && getSourceHandle(metadata?.source);
   const displayAttribution = pluginHandle?.Attribution != null;
 
-  function goToArtist(artist: string) {
-    dispatch(push(BASEPATH + `artist/${encodeURIComponent(artist)}`));
+  function goToArtist(id: string) {
+    dispatch(push(BASEPATH + `artist/${encodeURIComponent(id)}`));
   }
 
   const artists = getAsArray(metadata?.artist);
+  const artistUris = getAsArray(metadata?.artistUri);
 
   return (
     <footer className={`footer ${styles.footer}`}>
@@ -68,13 +69,19 @@ export function Footer() {
           </div>
           <div className={styles.metadataRow}>
             <div className={`footer-artist ${styles.artistButtons}`}>
-              {artists.map((artist, index) => (
+              {(artistUris.length ? artistUris : artists).map((id, index) => (
                 <span key={index} className={styles.artistButtonContainer}>
                   <button
                     className={styles.artist}
-                    onClick={() => goToArtist(artist)}
+                    onClick={() => {
+                      if (metadata && artistUris.length) {
+                        goToArtist(getArtistId(metadata.source, id));
+                      } else {
+                        goToArtist(id);
+                      }
+                    }}
                   >
-                    {artist}
+                    {artists[index]}
                   </button>
                   {index < artists.length - 1 && "/"}
                 </span>

@@ -2,6 +2,7 @@ import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import { DisplayMode, View } from "../../app/view";
 import styles from "./Header.module.css";
 import {
+  selectVisibleArtist,
   selectVisibleArtistSection,
   selectVisibleDisplayMode,
   selectVisiblePlaylist,
@@ -17,10 +18,7 @@ import { ScrollContext } from "../../contexts/ScrollContext";
 import { useContext } from "react";
 import { useTrackGrid } from "../../hooks/useTrackGrid";
 import { selectMenuState } from "../../app/menu";
-import {
-  selectAllAlbums,
-  selectAllArtists
-} from "../../features/tracks/tracksSlice";
+import { selectAllAlbums } from "../../features/tracks/tracksSlice";
 import { BASEPATH } from "../../app/constants";
 
 export default function Header() {
@@ -40,9 +38,7 @@ export default function Header() {
   const visibleAlbum = useAppSelector(selectAllAlbums).find(
     (a) => a.albumId === visibleSelectedTrackGroup
   );
-  const visibleArtist = useAppSelector(selectAllArtists).find(
-    (a) => a.artist === visibleSelectedTrackGroup
-  );
+  const visibleArtist = useAppSelector(selectVisibleArtist);
   const visibleArtistSection = useAppSelector(selectVisibleArtistSection);
   const { gridRef } = useTrackGrid();
   const menuState = useAppSelector(selectMenuState);
@@ -80,13 +76,13 @@ export default function Header() {
                 push(
                   BASEPATH +
                     "artist/" +
-                    encodeURIComponent(visibleArtist?.artist)
+                    encodeURIComponent(visibleArtist?.artistId)
                 )
               );
             }
           }}
         >
-          <h1>{visibleArtist?.artist}</h1>
+          <h1>{visibleArtist?.name}</h1>
         </button>
       ) : visibleViewType == View.Album || visibleViewType == View.Artist ? (
         <h1

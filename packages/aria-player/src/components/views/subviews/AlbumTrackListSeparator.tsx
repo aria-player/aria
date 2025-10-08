@@ -5,18 +5,19 @@ import { getSourceHandle } from "../../../features/plugins/pluginsSlice";
 import { useAppDispatch } from "../../../app/hooks";
 import { push } from "redux-first-history";
 import { BASEPATH } from "../../../app/constants";
-import { getAsArray } from "../../../app/utils";
+import { getArtistId, getAsArray } from "../../../app/utils";
 
 export default function AlbumTrackListSeparator(props: ICellRendererParams) {
   const dispatch = useAppDispatch();
 
-  function goToArtist(artist: string) {
-    dispatch(push(BASEPATH + `artist/${encodeURIComponent(artist)}`));
+  function goToArtist(id: string) {
+    dispatch(push(BASEPATH + `artist/${encodeURIComponent(id)}`));
   }
 
   if (props.node.data.album) {
     const pluginHandle = getSourceHandle(props.node.data.source);
     const artists = getAsArray(props.node.data.artist);
+    const artistUris = getAsArray(props.node.data.artistUri);
 
     return (
       <>
@@ -39,13 +40,19 @@ export default function AlbumTrackListSeparator(props: ICellRendererParams) {
           className={`album-track-list-subtitle ${styles.albumDetails} ${styles.albumText}`}
         >
           <div className={styles.artistButtons}>
-            {artists.map((artist, index) => (
+            {(artistUris.length ? artistUris : artists).map((id, index) => (
               <span key={index} className={styles.artistButtonContainer}>
                 <button
                   className={styles.artist}
-                  onClick={() => goToArtist(artist)}
+                  onClick={() => {
+                    if (artistUris.length) {
+                      goToArtist(getArtistId(props.node.data.source, id));
+                    } else {
+                      goToArtist(id);
+                    }
+                  }}
                 >
-                  {artist}
+                  {artists[index]}
                 </button>
                 {index < artists.length - 1 && "/"}
               </span>

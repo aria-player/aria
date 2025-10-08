@@ -22,7 +22,7 @@ import { BASEPATH } from "../../../app/constants";
 import { push } from "redux-first-history";
 import { showToast } from "../../../app/toasts";
 import { pluginHandles } from "../../../features/plugins/pluginsSlice";
-import { getAsArray } from "../../../app/utils";
+import { getArtistId, getAsArray } from "../../../app/utils";
 
 export function TrackMenuItems() {
   const dispatch = useAppDispatch();
@@ -80,8 +80,28 @@ export function TrackMenuItems() {
     ...getAsArray(menuData?.metadata?.artist),
     ...getAsArray(menuData?.metadata?.albumArtist)
   ];
-  const goToArtists = [...new Set(artists.filter(Boolean))].filter(
-    (artist) => !(visibleView == View.Artist && artist == visibleSelectedGroup)
+  const artistUris = [
+    ...getAsArray(menuData?.metadata?.artistUri),
+    ...getAsArray(menuData?.metadata?.albumArtistUri)
+  ];
+  const uniqueArtists = Array.from(
+    new Map(
+      (artistUris.length
+        ? artistUris.map((uri, index) => ({
+            id: menuData?.metadata?.source
+              ? getArtistId(menuData.metadata.source, uri)
+              : uri,
+            name: artists[index]
+          }))
+        : artists.map((name) => ({ id: name, name }))
+      )
+        .filter((artist) => artist.id)
+        .map((artist) => [artist.id, artist])
+    ).values()
+  );
+  const goToArtists = uniqueArtists.filter(
+    (artist) =>
+      !(visibleView == View.Artist && artist.id == visibleSelectedGroup)
   );
 
   const showGoToAlbum =
@@ -89,8 +109,8 @@ export function TrackMenuItems() {
     visibleSelectedGroup != menuData?.metadata?.albumId;
   const showGoToArtist = goToArtists.length > 0;
 
-  function goToArtist(artist: string) {
-    dispatch(push(BASEPATH + `artist/${encodeURIComponent(artist)}`));
+  function goToArtist(id: string) {
+    dispatch(push(BASEPATH + `artist/${encodeURIComponent(id)}`));
     hideAll();
   }
 
@@ -169,19 +189,16 @@ export function TrackMenuItems() {
         </>
       )}
       {showGoToArtist ? (
-        goToArtists.length > 1 ||
-        (visibleView == View.Artist &&
-          visibleSelectedGroup != null &&
-          artists.includes(visibleSelectedGroup)) ? (
+        uniqueArtists.length > 1 ? (
           <Submenu label={t("tracks.goToArtist")}>
             {goToArtists.map((artist) => (
-              <Item onClick={() => goToArtist(artist)} key={artist}>
-                {artist}
+              <Item onClick={() => goToArtist(artist.id)} key={artist.id}>
+                {artist.name}
               </Item>
             ))}
           </Submenu>
         ) : (
-          <Item onClick={() => goToArtist(goToArtists[0])}>
+          <Item onClick={() => goToArtist(goToArtists[0].id)}>
             {t("tracks.goToArtist")}
           </Item>
         )

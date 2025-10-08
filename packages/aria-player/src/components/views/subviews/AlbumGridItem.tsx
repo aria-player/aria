@@ -10,7 +10,7 @@ import {
   selectVisibleViewType
 } from "../../../features/visibleSelectors";
 import { LibraryView } from "../../../app/view";
-import { getAsArray } from "../../../app/utils";
+import { getArtistId, getAsArray } from "../../../app/utils";
 
 export function AlbumGridItem({ album }: { album: AlbumDetails }) {
   const dispatch = useAppDispatch();
@@ -25,11 +25,12 @@ export function AlbumGridItem({ album }: { album: AlbumDetails }) {
     dispatch(push(BASEPATH + path));
   }
 
-  function goToArtist(artist: string) {
-    dispatch(push(BASEPATH + `artist/${encodeURIComponent(artist)}`));
+  function goToArtist(id: string) {
+    dispatch(push(BASEPATH + `artist/${encodeURIComponent(id)}`));
   }
 
   const albumArtists = getAsArray(album.artist);
+  const albumArtistUris = getAsArray(album.artistUri);
 
   return (
     <div className={styles.albumGridItem}>
@@ -45,17 +46,25 @@ export function AlbumGridItem({ album }: { album: AlbumDetails }) {
             {album.album}
           </button>
           <div className={styles.artistButtons}>
-            {albumArtists.map((artist, index) => (
-              <span key={index} className={styles.artistButtonContainer}>
-                <button
-                  className={`${styles.albumText} ${styles.albumArtist}`}
-                  onClick={() => goToArtist(artist)}
-                >
-                  {artist}
-                </button>
-                {index < albumArtists.length - 1 && "/"}
-              </span>
-            ))}
+            {(albumArtistUris.length ? albumArtistUris : albumArtists).map(
+              (id, index) => (
+                <span key={index} className={styles.artistButtonContainer}>
+                  <button
+                    className={`${styles.albumText} ${styles.albumArtist}`}
+                    onClick={() => {
+                      if (albumArtistUris.length) {
+                        goToArtist(getArtistId(album.firstTrack.source, id));
+                      } else {
+                        goToArtist(id);
+                      }
+                    }}
+                  >
+                    {albumArtists[index]}
+                  </button>
+                  {index < albumArtists.length - 1 && "/"}
+                </span>
+              )
+            )}
           </div>
         </div>
         {album.albumId && pluginHandle?.Attribution && (

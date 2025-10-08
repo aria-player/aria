@@ -20,6 +20,7 @@ export interface AlbumTrackListItem {
   separator?: boolean;
   title?: string;
   artist?: string | string[];
+  artistUri?: string | string[];
   album?: string;
   albumId?: string;
   year?: number;
@@ -77,6 +78,7 @@ export const AlbumTrackList = (props: {
           processedTracks.push({
             artist:
               track.albumArtist || track.artist || t("tracks.unknownArtist"),
+            artistUri: track.albumArtistUri || track.artistUri || undefined,
             album: track.album || t("tracks.unknownAlbum"),
             albumId: track.albumId,
             year: track.year || undefined,
