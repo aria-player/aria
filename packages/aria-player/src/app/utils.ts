@@ -1,4 +1,10 @@
-import { TrackUri, TrackId, Track } from "../../../types/tracks";
+import {
+  TrackUri,
+  TrackId,
+  Track,
+  ArtistUri,
+  ArtistId
+} from "../../../types/tracks";
 import { PluginId } from "../../../types/plugins";
 import { ColumnState } from "@ag-grid-community/core";
 import { defaultColumnDefinitions } from "../features/library/libraryColumns";
@@ -52,6 +58,10 @@ export function formatDate(date: number) {
 }
 
 export function getTrackId(source: PluginId, uri: TrackUri): TrackId {
+  return source + ":" + uri;
+}
+
+export function getArtistId(source: PluginId, uri: ArtistUri): ArtistId {
   return source + ":" + uri;
 }
 

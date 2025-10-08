@@ -7,7 +7,7 @@ import {
 } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 import { setupTracksListeners } from "./tracksListeners";
-import { Track, TrackId } from "../../../../types/tracks";
+import { Track, TrackId, Artist, ArtistId } from "../../../../types/tracks";
 import { PluginId } from "../../../../types/plugins";
 import { PlaylistItem } from "../playlists/playlistsTypes";
 import { ArtistDetails, AlbumDetails } from "./tracksTypes";
@@ -20,12 +20,14 @@ const tracksAdapter = createEntityAdapter<Track, TrackId>({
 
 interface TracksState {
   tracks: EntityState<Track, TrackId>;
+  artists: Record<ArtistId, Artist>;
   selectedTracks: PlaylistItem[];
   clipboard: PlaylistItem[];
 }
 
 const initialState: TracksState = {
   tracks: tracksAdapter.getInitialState(),
+  artists: {},
   selectedTracks: [],
   clipboard: []
 };
@@ -63,6 +65,29 @@ const tracksSlice = createSlice({
       );
       tracksAdapter.removeMany(state.tracks, tracksToRemove);
     },
+    addArtists: (
+      state,
+      action: PayloadAction<{ source: PluginId; artists: Artist[] }>
+    ) => {
+      action.payload.artists.forEach((artist) => {
+        state.artists[artist.artistId] = artist;
+      });
+    },
+    removeArtists: (
+      state,
+      action: PayloadAction<{ source: PluginId; artists?: ArtistId[] }>
+    ) => {
+      const { artists } = action.payload;
+      if (artists) {
+        artists.forEach((id) => delete state.artists[id]);
+      } else {
+        Object.keys(state.artists).forEach((id) => {
+          if (state.artists[id].source === action.payload.source) {
+            delete state.artists[id];
+          }
+        });
+      }
+    },
     setSelectedTracks: (state, action: PayloadAction<PlaylistItem[]>) => {
       state.selectedTracks = action.payload;
     },
@@ -75,6 +100,8 @@ const tracksSlice = createSlice({
 export const {
   addTracks,
   removeTracks,
+  addArtists,
+  removeArtists,
   setSelectedTracks,
   copySelectedTracks
 } = tracksSlice.actions;
@@ -87,6 +114,9 @@ export const {
 export const selectSelectedTracks = (state: RootState) =>
   state.tracks.selectedTracks;
 export const selectClipboard = (state: RootState) => state.tracks.clipboard;
+export const selectArtistsInfo = (state: RootState) => state.tracks.artists;
+export const selectArtistInfo = (state: RootState, artistId: ArtistId) =>
+  state.tracks.artists[artistId];
 
 export const selectAllArtists = createSelector(
   [(state: RootState) => state.tracks.tracks.entities],

@@ -1,5 +1,5 @@
 import * as React from "react";
-import { Track, TrackMetadata, TrackUri } from "./tracks";
+import { Track, TrackMetadata, TrackUri, ArtistId, ArtistMetadata, Artist, ArtistUri } from "./tracks";
 
 export type PluginId = string;
 
@@ -287,6 +287,16 @@ export interface SourceCallbacks extends BaseCallbacks {
    */
   updateTracks: (metadata: TrackMetadata[]) => void;
   /**
+   * Add or update information about artists for this source.
+   */
+  updateArtists: (metadata: ArtistMetadata[]) => void;
+  /**
+   * Remove artists with the specified URIs from the library.
+   *
+   * If `uris` is null, all artists for this source are removed from the library.
+   */
+  removeArtists: (uris?: ArtistUri[]) => void;
+  /**
    * Set the current progress while synchronizing the user's library to be up to date with an external source.
    *
    * A progress indicator will appear if `status` indicates that there are still tracks left to synchronize.
@@ -302,6 +312,10 @@ export interface SourceCallbacks extends BaseCallbacks {
    * Returns all tracks for this source in the library.
    */
   getTracks: () => Track[];
+  /**
+   * Returns all artists for this source in the library.
+   */
+  getArtists: () => Artist[];
   /**
    * Returns metadata for the track with the specified URI.
    */

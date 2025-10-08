@@ -1,4 +1,4 @@
-import { TrackMetadata } from "../../../../types/tracks";
+import { TrackMetadata, ArtistMetadata } from "../../../../types/tracks";
 import { SourceCallbacks, SourceHandle } from "../../../../types/plugins";
 import LibraryConfig from "./LibraryConfig";
 import QuickStart from "./QuickStart";
@@ -179,6 +179,7 @@ export default function createSpotifyPlayer(
   async function loadTracks() {
     const existingTracks = host.getTracks();
     const albumArtistMapping: Record<string, string[]> = {};
+    const artistIds = new Set<string>();
     const tracksInLibrary: string[] = [];
     const tracksLimit = 50;
     let tracksOffset = 0;
@@ -200,10 +201,7 @@ export default function createSpotifyPlayer(
       progress += amount;
       host.setSyncProgress({
         synced: progress,
-        total:
-          totalTracks +
-          totalAlbums +
-          new Set(Object.values(albumArtistMapping).flat()).size
+        total: totalTracks + totalAlbums + artistIds.size
       });
     };
 
@@ -243,6 +241,10 @@ export default function createSpotifyPlayer(
           };
           albumArtistMapping[track.track.album.id] =
             track.track.album.artists.map((artist) => artist.id);
+          track.track.artists.forEach((artist) => artistIds.add(artist.id));
+          track.track.album.artists.forEach((artist) =>
+            artistIds.add(artist.id)
+          );
           tracksToAdd.push(newTrack);
         }
         if (!getConfig().accessToken) return;
@@ -300,6 +302,10 @@ export default function createSpotifyPlayer(
           albumArtistMapping[album.album.id] = album.album.artists.map(
             (artist) => artist.id
           );
+          album.album.tracks.items.forEach((track) =>
+            track.artists.forEach((artist) => artistIds.add(artist.id))
+          );
+          album.album.artists.forEach((artist) => artistIds.add(artist.id));
           tracksToAdd.push(...tracksFromResponse);
         }
         if (!getConfig().accessToken) return;
@@ -321,10 +327,10 @@ export default function createSpotifyPlayer(
       host.removeTracks(removedTracks.map((track) => track.uri));
     }
     const tracks = host.getTracks();
-    const artists = Array.from(
-      new Set(Object.values(albumArtistMapping).flat())
-    );
+    const existingArtists = host.getArtists();
+    const artists = Array.from(artistIds);
     const artistGenreMapping: Record<string, string[]> = {};
+    const artistMetadata: ArtistMetadata[] = [];
     for (let i = 0; i < artists.length; i += 50) {
       const batchIds = artists.slice(i, i + 50).join(",");
       const artistResponse = (await spotifyRequest(
@@ -333,9 +339,22 @@ export default function createSpotifyPlayer(
       if (artistResponse && artistResponse.artists) {
         for (const artist of artistResponse.artists) {
           artistGenreMapping[artist.id] = artist.genres;
+          artistMetadata.push({
+            uri: artist.uri,
+            name: artist.name,
+            artworkUri: artist.images?.[0]?.url
+          });
         }
         incrementProgress(artistResponse.artists.length);
       }
+    }
+    host.updateArtists(artistMetadata);
+    const currentArtistUris = new Set(artistMetadata.map((a) => a.uri));
+    const removedArtists = existingArtists
+      .filter((artist) => !currentArtistUris.has(artist.uri))
+      .map((artist) => artist.uri);
+    if (removedArtists.length > 0) {
+      host.removeArtists(removedArtists);
     }
     const updatedTracks = tracks.map((track) => {
       if (!track.albumId) {
@@ -460,6 +479,7 @@ export default function createSpotifyPlayer(
     }
     host.setSyncProgress({ synced: 0, total: 0 });
     host.removeTracks();
+    host.removeArtists();
     const config = getConfig();
     host.updateData({
       accessToken: undefined,

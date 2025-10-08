@@ -1,17 +1,22 @@
 import { store } from "../../app/store";
-import { getAsArray, getTrackId } from "../../app/utils";
+import { getArtistId, getAsArray, getTrackId } from "../../app/utils";
 import {
   Track,
   TrackId,
   TrackMetadata,
-  TrackUri
+  TrackUri,
+  Artist,
+  ArtistMetadata,
+  ArtistUri
 } from "../../../../types/tracks";
 import {
   addTracks,
   removeTracks,
+  addArtists,
   selectAllTracks,
   selectTrackById,
-  selectTrackIds
+  selectTrackIds,
+  removeArtists
 } from "../tracks/tracksSlice";
 import {
   selectActivePlugins,
@@ -104,6 +109,21 @@ function handleRemoveTracks(source: PluginId, uris?: TrackUri[]) {
   }
 }
 
+function handleUpdateArtists(source: PluginId, metadata: ArtistMetadata[]) {
+  if (!isPluginActive(source)) return;
+  const artists: Artist[] = metadata.map((artist) => ({
+    ...artist,
+    source,
+    artistId: getArtistId(source, artist.uri)
+  }));
+  store.dispatch(addArtists({ source, artists }));
+}
+
+function handleRemoveArtists(source: PluginId, artists?: ArtistUri[]) {
+  if (!isPluginActive(source)) return;
+  store.dispatch(removeArtists({ source, artists }));
+}
+
 export const getBaseCallbacks = (pluginId: PluginId): BaseCallbacks => {
   return {
     updateData: (data: object) => handleUpdateData(pluginId, data),
@@ -135,6 +155,10 @@ export const getSourceCallbacks = (pluginId: PluginId): SourceCallbacks => {
     removeTracks: (uris?: TrackUri[]) => handleRemoveTracks(pluginId, uris),
     updateTracks: (metadata: TrackMetadata[]) =>
       handleUpdateTracks(pluginId, metadata),
+    updateArtists: (metadata: ArtistMetadata[]) =>
+      handleUpdateArtists(pluginId, metadata),
+    removeArtists: (artists?: ArtistUri[]) =>
+      handleRemoveArtists(pluginId, artists),
     setSyncProgress(syncProgress: SyncProgress) {
       store.dispatch(setSourceSyncProgress({ pluginId, syncProgress }));
     },
@@ -144,6 +168,12 @@ export const getSourceCallbacks = (pluginId: PluginId): SourceCallbacks => {
     getTracks: () => {
       const libraryTracks = selectAllTracks(store.getState());
       return libraryTracks.filter((track: Track) => track.source === pluginId);
+    },
+    getArtists: () => {
+      const allArtists = store.getState().tracks.artists;
+      return Object.values(allArtists).filter(
+        (artist) => artist.source === pluginId
+      );
     },
     getTrackByUri: (uri: TrackUri) => {
       return selectTrackById(store.getState(), getTrackId(pluginId, uri));
