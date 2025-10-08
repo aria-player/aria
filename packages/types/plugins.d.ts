@@ -1,5 +1,12 @@
 import * as React from "react";
-import { Track, TrackMetadata, TrackUri, ArtistId, ArtistMetadata, Artist, ArtistUri } from "./tracks";
+import {
+  Track,
+  TrackMetadata,
+  TrackUri,
+  ArtistId,
+  ArtistMetadata,
+  Artist, ArtistUri,
+} from "./tracks";
 
 export type PluginId = string;
 
@@ -225,6 +232,12 @@ export interface SourceHandle extends BaseHandle {
    * If the track's `artworkUri` is already an image URL, this method can simply return `track.artworkUri`.
    */
   getTrackArtwork?: (track: Track) => Promise<string | undefined>;
+  /**
+   * Return an image URL for the specified artist's artwork.
+   *
+   * If the artist's `artworkUri` is already an image URL, this method can simply `artist.artworkUri`.
+   */
+  getArtistArtwork?: (artist: Artist) => Promise<string | undefined>;
   /**
    * Called after every update to this source's tracks.
    */

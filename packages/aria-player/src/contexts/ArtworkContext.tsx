@@ -1,6 +1,9 @@
 import { createContext, useState, ReactNode, useEffect } from "react";
 import { useAppSelector } from "../app/hooks";
-import { selectAllTracks } from "../features/tracks/tracksSlice";
+import {
+  selectAllTracks,
+  selectArtistsInfo
+} from "../features/tracks/tracksSlice";
 import {
   getSourceHandle,
   selectActivePlugins
@@ -11,8 +14,10 @@ import { store } from "../app/store";
 
 export const ArtworkContext = createContext<{
   artworkCache: Record<string, string>;
+  artistArtworkCache: Record<string, string>;
 }>({
-  artworkCache: {}
+  artworkCache: {},
+  artistArtworkCache: {}
 });
 
 function filterByUniqueArtwork(array: Track[]) {
@@ -30,7 +35,9 @@ function filterByUniqueArtwork(array: Track[]) {
 }
 
 const loadAllArtwork = async () => {
-  const cache: Record<string, string> = {};
+  const trackCache: Record<string, string> = {};
+  const artistCache: Record<string, string> = {};
+
   for (const track of filterByUniqueArtwork(
     selectAllTracks(store.getState())
   )) {
@@ -38,35 +45,51 @@ const loadAllArtwork = async () => {
       const artwork = await (getSourceHandle(track.source)?.getTrackArtwork?.(
         track
       ) ?? Promise.resolve());
-      if (artwork) cache[track.artworkUri] = artwork;
+      if (artwork) trackCache[track.artworkUri] = artwork;
     }
   }
-  return cache;
+  for (const artist of Object.values(selectArtistsInfo(store.getState()))) {
+    if (artist.artworkUri) {
+      const pluginHandle = getSourceHandle(artist.source);
+      if (pluginHandle?.getArtistArtwork) {
+        const artwork = await (pluginHandle.getArtistArtwork(artist) ??
+          Promise.resolve());
+        if (artwork) artistCache[artist.artworkUri] = artwork;
+      }
+    }
+  }
+  return { trackCache, artistCache };
 };
 
 export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
   const [artworkCache, setArtworkCache] = useState<Record<string, string>>({});
+  const [artistArtworkCache, setArtistArtworkCache] = useState<
+    Record<string, string>
+  >({});
   const allTracks = useAppSelector(selectAllTracks);
+  const artistsInfo = useAppSelector(selectArtistsInfo);
   const activePlugins = useAppSelector(selectActivePlugins);
 
   useDebounce(
     () => {
       loadAllArtwork().then((result) => {
-        setArtworkCache(result);
+        setArtworkCache(result.trackCache);
+        setArtistArtworkCache(result.artistCache);
       });
     },
     10000,
-    [allTracks]
+    [allTracks, artistsInfo]
   );
 
   useEffect(() => {
     loadAllArtwork().then((result) => {
-      setArtworkCache(result);
+      setArtworkCache(result.trackCache);
+      setArtistArtworkCache(result.artistCache);
     });
   }, [activePlugins]);
 
   return (
-    <ArtworkContext.Provider value={{ artworkCache }}>
+    <ArtworkContext.Provider value={{ artworkCache, artistArtworkCache }}>
       {children}
     </ArtworkContext.Provider>
   );

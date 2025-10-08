@@ -73,6 +73,7 @@ export default function TopResultItem({ result }: TopResultItemProps) {
       case "track": {
         const track = result.item as Track;
         return {
+          id: track.trackId,
           track,
           title: track.title,
           subtitle: Array.isArray(track.artist)
@@ -85,6 +86,7 @@ export default function TopResultItem({ result }: TopResultItemProps) {
       case "artist": {
         const artist = result.item as ArtistDetails;
         return {
+          id: artist.artistId,
           track: artist.firstTrack,
           title: artist.artist,
           label: t("search.categories.artists.one"),
@@ -95,6 +97,7 @@ export default function TopResultItem({ result }: TopResultItemProps) {
       case "album": {
         const album = result.item as AlbumDetails;
         return {
+          id: album.albumId,
           track: album.firstTrack,
           title: album.album,
           subtitle: formatStringArray(album.artist),
@@ -130,7 +133,11 @@ export default function TopResultItem({ result }: TopResultItemProps) {
       }}
     >
       <div className={itemData.artworkClass}>
-        <AlbumArt track={itemData.track} altText={itemData.artworkAltText} />
+        <AlbumArt
+          track={itemData.track}
+          altText={itemData.artworkAltText}
+          artistId={result.type === "artist" ? itemData.id : undefined}
+        />
       </div>
       <div className={styles.info}>
         <div className={styles.title}>{itemData.title}</div>

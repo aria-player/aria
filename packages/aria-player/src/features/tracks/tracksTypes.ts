@@ -11,6 +11,7 @@ export interface TrackListItem extends Track {
 }
 
 export interface ArtistDetails {
+  artistId?: string;
   artist: string;
   firstTrack: Track;
 }

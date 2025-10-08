@@ -11,7 +11,11 @@ import { Track, TrackId, Artist, ArtistId } from "../../../../types/tracks";
 import { PluginId } from "../../../../types/plugins";
 import { PlaylistItem } from "../playlists/playlistsTypes";
 import { ArtistDetails, AlbumDetails } from "./tracksTypes";
-import { getMostCommonArtworkUri, getAsArray } from "../../app/utils";
+import {
+  getMostCommonArtworkUri,
+  getAsArray,
+  getArtistId
+} from "../../app/utils";
 
 const tracksAdapter = createEntityAdapter<Track, TrackId>({
   selectId: (track) => track.trackId,
@@ -119,16 +123,38 @@ export const selectArtistInfo = (state: RootState, artistId: ArtistId) =>
   state.tracks.artists[artistId];
 
 export const selectAllArtists = createSelector(
-  [(state: RootState) => state.tracks.tracks.entities],
+  [
+    (state: RootState) => state.tracks.tracks.entities,
+    (state: RootState) => state.tracks.artists
+  ],
   (tracksById) => {
     const artistsMap = new Map<string, ArtistDetails>();
     Object.values(tracksById).forEach((track) => {
       if (!track) return;
-      const artists = getAsArray(track.artist).filter(Boolean);
-      const albumArtists = getAsArray(track.albumArtist).filter(Boolean);
-      [...artists, ...albumArtists].forEach((artist) => {
-        if (!artistsMap.has(artist)) {
-          artistsMap.set(artist, { artist, firstTrack: track });
+      const artists = getAsArray(track.artist);
+      const artistUris = getAsArray(track.artistUri);
+      const albumArtists = getAsArray(track.albumArtist);
+      const albumArtistUris = getAsArray(track.albumArtistUri);
+      [
+        ...artists.map((name, index) => ({
+          name,
+          id: artistUris[index]
+            ? getArtistId(track.source, artistUris[index])
+            : undefined
+        })),
+        ...albumArtists.map((name, index) => ({
+          name,
+          id: albumArtistUris[index]
+            ? getArtistId(track.source, albumArtistUris[index])
+            : undefined
+        }))
+      ].forEach(({ name, id }) => {
+        if (!artistsMap.has(name)) {
+          artistsMap.set(name, {
+            artistId: id,
+            artist: name,
+            firstTrack: track
+          });
         }
       });
     });

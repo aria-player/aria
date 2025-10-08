@@ -549,6 +549,10 @@ export default function createSpotifyPlayer(
       return track.artworkUri;
     },
 
+    async getArtistArtwork(artist) {
+      return artist.artworkUri;
+    },
+
     pause() {
       player?.pause();
     },
