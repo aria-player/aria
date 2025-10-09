@@ -160,9 +160,19 @@ export default function createAppleMusicPlayer(
         tracksResponse as { data: MusicKit.Relationship<MusicKit.Songs> }
       ).data;
       const tracks: TrackMetadata[] = [];
+      const libraryToCatalogMap: Record<string, string> = {};
       data.forEach((track) => {
         const albumData = track.relationships?.albums
           .data[0] as unknown as MusicKit.LibraryAlbums;
+        /* We only want to fetch catalog IDs for songs from Apple Music, and songs from 
+        the user's iCloud Music library don't seem to have the releaseDate attribute,
+        so that is being used to identify them here. */
+        if (
+          albumData.attributes?.releaseDate &&
+          track.attributes?.playParams?.catalogId
+        ) {
+          libraryToCatalogMap[track.id] = track.attributes.playParams.catalogId;
+        }
         const trackMetadata = {
           uri: track.id,
           title: track.attributes?.name,
@@ -185,11 +195,124 @@ export default function createAppleMusicPlayer(
         } as TrackMetadata;
         tracks.push(trackMetadata);
       });
+
+      if (Object.keys(libraryToCatalogMap).length > 0) {
+        const artistData = await fetchCatalogArtists(
+          Object.values(libraryToCatalogMap)
+        );
+        tracks.forEach((track) => {
+          const data = artistData[libraryToCatalogMap[track.uri]];
+          if (data?.artist?.length) {
+            track.artist = data.artist;
+            track.artistUri = data.artistUri;
+          }
+          if (data?.albumArtist?.length) {
+            track.albumArtist = data.albumArtist;
+            track.albumArtistUri = data.albumArtistUri;
+          }
+        });
+      }
+
       return tracks;
     } catch (error) {
       console.error("Error fetching tracks:", error);
       return null;
     }
+  }
+
+  /* Apple Music doesn't seem to include artist arrays in library responses, so 
+  we need to fetch them separately in case songs have multiple artists. */
+  async function fetchCatalogArtists(
+    catalogIds: string[]
+  ): Promise<Record<string, Partial<TrackMetadata>>> {
+    const songBatches = await batchFetch<MusicKit.Songs>(
+      catalogIds,
+      300,
+      `v1/catalog/${music?.storefrontId}/songs`
+    );
+
+    const songToArtistIds: Record<string, string[]> = {};
+    const albumIds: string[] = [];
+    songBatches.forEach((song) => {
+      songToArtistIds[song.id] =
+        song.relationships?.artists?.data.map((artist) => artist.id) ?? [];
+      const albumId = song.relationships?.albums?.data?.[0]?.id;
+      if (albumId && !albumIds.includes(albumId)) albumIds.push(albumId);
+    });
+
+    const albumBatches = await batchFetch<MusicKit.Albums>(
+      albumIds,
+      100,
+      `v1/catalog/${music?.storefrontId}/albums`
+    );
+    const albumToArtistIds: Record<string, string[]> = {};
+    albumBatches.forEach((album) => {
+      albumToArtistIds[album.id] =
+        album.relationships?.artists?.data.map((artist) => artist.id) ?? [];
+    });
+
+    const allArtistIds = new Set([
+      ...Object.values(songToArtistIds).flat(),
+      ...Object.values(albumToArtistIds).flat()
+    ]);
+
+    /* The artists included in the songs/albums responses don't include the artist names,
+    so they are fetched based on the artist IDs here. */
+    const artistBatches = await batchFetch<MusicKit.Artists>(
+      Array.from(allArtistIds),
+      25,
+      `v1/catalog/${music?.storefrontId}/artists`
+    );
+    const artistMap: Record<string, string> = {};
+    artistBatches.forEach((artist) => {
+      if (artist.attributes?.name)
+        artistMap[artist.id] = artist.attributes.name;
+    });
+
+    const result: Record<string, Partial<TrackMetadata>> = {};
+    songBatches.forEach((song) => {
+      const artistUri = songToArtistIds[song.id];
+      const albumId = song.relationships?.albums?.data?.[0]?.id;
+      const albumArtistUri = albumId ? (albumToArtistIds[albumId] ?? []) : [];
+
+      result[song.id] = {
+        artist: artistUri.map((id) => artistMap[id]).filter(Boolean),
+        artistUri,
+        albumArtist: albumArtistUri.map((id) => artistMap[id]).filter(Boolean),
+        albumArtistUri
+      };
+    });
+
+    return result;
+  }
+
+  async function batchFetch<T>(
+    ids: string[],
+    batchSize: number,
+    endpoint: string
+  ): Promise<T[]> {
+    const maxConcurrentRequests = 5;
+    const urls: string[] = [];
+    for (let i = 0; i < ids.length; i += batchSize) {
+      const batch = ids.slice(i, i + batchSize).join(",");
+      urls.push(`${endpoint}?ids=${batch}`);
+    }
+
+    const results: { data: MusicKit.Relationship<T> }[] = [];
+    for (let i = 0; i < urls.length; i += maxConcurrentRequests) {
+      const batch = urls.slice(i, i + maxConcurrentRequests);
+      const promises = batch.map((url) => music?.api.music(url));
+      try {
+        const responses = await Promise.all(promises);
+        results.push(
+          ...(responses.filter(Boolean) as { data: MusicKit.Relationship<T> }[])
+        );
+      } catch (error) {
+        console.error("Error in batch fetch:", error);
+      }
+    }
+
+    return results.flatMap((response) => response.data?.data ?? []);
   }
 
   async function authenticate() {
