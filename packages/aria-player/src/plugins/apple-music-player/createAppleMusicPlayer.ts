@@ -1,6 +1,6 @@
 import { i18n } from "i18next";
 import { SourceCallbacks, SourceHandle } from "../../../../types/plugins";
-import { Track, TrackMetadata } from "../../../../types/tracks";
+import { Track, TrackMetadata, ArtistMetadata } from "../../../../types/tracks";
 import LibraryConfig from "./LibraryConfig";
 import QuickStart from "./QuickStart";
 import en_us from "./locales/en_us/translation.json";
@@ -88,7 +88,9 @@ export default function createAppleMusicPlayer(
 
   async function fetchUserLibrary() {
     const existingTracks = host.getTracks();
+    const existingArtists = host.getArtists();
     const tracksInLibrary: string[] = [];
+    const artistsInLibrary: string[] = [];
     let progress = 0;
 
     const totalTracksResponse = (await music?.api.music(
@@ -125,9 +127,10 @@ export default function createAppleMusicPlayer(
         const batchResults = await Promise.all(promises);
         for (const result of batchResults) {
           if (result) {
-            allTracks.push(...result);
-            tracksInLibrary.push(...result.map((track) => track.uri));
-            progress += result.length;
+            allTracks.push(...result.tracks);
+            tracksInLibrary.push(...result.tracks.map((track) => track.uri));
+            artistsInLibrary.push(...result.artists);
+            progress += result.tracks.length;
 
             host.setSyncProgress({
               synced: progress,
@@ -151,9 +154,19 @@ export default function createAppleMusicPlayer(
     if (removedTracks.length > 0) {
       host.removeTracks(removedTracks.map((track) => track.uri));
     }
+
+    if (!music?.isAuthorized) return;
+    const removedArtists = existingArtists
+      .filter((artist) => !artistsInLibrary.includes(artist.uri))
+      .map((artist) => artist.uri);
+    if (removedArtists.length > 0) {
+      host.removeArtists(removedArtists);
+    }
   }
 
-  async function fetchTracks(url: string): Promise<TrackMetadata[] | null> {
+  async function fetchTracks(
+    url: string
+  ): Promise<{ tracks: TrackMetadata[]; artists: string[] } | null> {
     try {
       const tracksResponse = await music?.api.music(url);
       const { data } = (
@@ -196,24 +209,22 @@ export default function createAppleMusicPlayer(
         tracks.push(trackMetadata);
       });
 
-      if (Object.keys(libraryToCatalogMap).length > 0) {
-        const artistData = await fetchCatalogArtists(
-          Object.values(libraryToCatalogMap)
-        );
-        tracks.forEach((track) => {
-          const data = artistData[libraryToCatalogMap[track.uri]];
-          if (data?.artist?.length) {
-            track.artist = data.artist;
-            track.artistUri = data.artistUri;
-          }
-          if (data?.albumArtist?.length) {
-            track.albumArtist = data.albumArtist;
-            track.albumArtistUri = data.albumArtistUri;
-          }
-        });
-      }
+      const artistData = await fetchCatalogArtists(
+        Object.values(libraryToCatalogMap)
+      );
+      tracks.forEach((track) => {
+        const data = artistData[libraryToCatalogMap[track.uri]];
+        if (data?.artist?.length) {
+          track.artist = data.artist;
+          track.artistUri = data.artistUri;
+        }
+        if (data?.albumArtist?.length) {
+          track.albumArtist = data.albumArtist;
+          track.albumArtistUri = data.albumArtistUri;
+        }
+      });
 
-      return tracks;
+      return { tracks, artists: Object.keys(artistData) };
     } catch (error) {
       console.error("Error fetching tracks:", error);
       return null;
@@ -264,10 +275,24 @@ export default function createAppleMusicPlayer(
       `v1/catalog/${music?.storefrontId}/artists`
     );
     const artistMap: Record<string, string> = {};
+    const artistsToUpdate: ArtistMetadata[] = [];
     artistBatches.forEach((artist) => {
-      if (artist.attributes?.name)
+      if (artist.attributes?.name) {
         artistMap[artist.id] = artist.attributes.name;
+        artistsToUpdate.push({
+          uri: artist.id,
+          name: artist.attributes.name,
+          artworkUri: (
+            artist.attributes as MusicKit.Artists["attributes"] & {
+              artwork?: MusicKit.Artwork;
+            }
+          ).artwork?.url
+        });
+      }
     });
+    if (artistsToUpdate.length > 0) {
+      host.updateArtists(artistsToUpdate);
+    }
 
     const result: Record<string, Partial<TrackMetadata>> = {};
     songBatches.forEach((song) => {
@@ -360,6 +385,7 @@ export default function createAppleMusicPlayer(
     host.updateData({ ...getConfig(), loggedIn: false });
     host.setSyncProgress({ synced: 0, total: 0 });
     host.removeTracks();
+    host.removeArtists();
   }
 
   return {
@@ -384,6 +410,10 @@ export default function createAppleMusicPlayer(
 
     getTrackArtwork: async (track: Track) => {
       return track.artworkUri?.replace("{w}", "1000").replace("{h}", "1000");
+    },
+
+    getArtistArtwork: async (artist) => {
+      return artist.artworkUri?.replace("{w}", "1000").replace("{h}", "1000");
     },
 
     pause: () => {
