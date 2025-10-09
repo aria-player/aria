@@ -139,22 +139,21 @@ export const selectAllArtists = createSelector(
       [
         ...artists.map((name, index) => ({
           name,
-          id: artistUris[index]
-            ? getArtistId(track.source, artistUris[index])
-            : undefined
+          source: track.source,
+          uri: artistUris[index] ? artistUris[index] : undefined
         })),
         ...albumArtists.map((name, index) => ({
           name,
-          id: albumArtistUris[index]
-            ? getArtistId(track.source, albumArtistUris[index])
-            : undefined
+          source: track.source,
+          uri: albumArtistUris[index] ? albumArtistUris[index] : undefined
         }))
-      ].forEach(({ name, id }) => {
-        const key = id || name;
-        if (!artistsMap.has(key)) {
-          artistsMap.set(key, {
-            ...(id ? selectArtistInfo(state, id) : {}),
-            artistId: id || name,
+      ].forEach(({ name, source, uri }) => {
+        const artistId = uri ? getArtistId(source, uri) : name;
+        if (!artistsMap.has(artistId)) {
+          artistsMap.set(artistId, {
+            ...(selectArtistInfo(state, artistId) || {}),
+            artistId,
+            uri,
             name,
             firstTrack: track
           });
