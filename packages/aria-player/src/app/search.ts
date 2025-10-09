@@ -29,7 +29,7 @@ const tracksOptions = {
 };
 
 const artistsOptions = {
-  keys: [{ name: "artist", weight: 5 }],
+  keys: [{ name: "name", weight: 5 }],
   ...fuseOptions
 };
 

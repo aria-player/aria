@@ -156,7 +156,6 @@ export const selectAllArtists = createSelector(
             ...(id ? selectArtistInfo(state, id) : {}),
             artistId: id || name,
             name,
-            artist: name,
             firstTrack: track
           });
         }
@@ -164,7 +163,7 @@ export const selectAllArtists = createSelector(
     });
 
     return Array.from(artistsMap.values()).sort((a, b) =>
-      a.artist.localeCompare(b.artist)
+      a.name.localeCompare(b.name)
     );
   }
 );

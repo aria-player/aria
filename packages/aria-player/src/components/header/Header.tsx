@@ -95,7 +95,7 @@ export default function Header() {
                   : "visible"
           }}
         >
-          {visibleAlbum?.album || visibleArtist?.artist}
+          {visibleAlbum?.album || visibleArtist?.name}
         </h1>
       ) : (
         <h1>

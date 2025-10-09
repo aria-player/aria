@@ -83,12 +83,12 @@ export default function ArtistView() {
         <div className={styles.artistArt}>
           <AlbumArt
             track={visibleArtist.firstTrack}
-            altText={visibleArtist.artist}
+            altText={visibleArtist.name}
             artistId={visibleArtist.artistId}
           />
         </div>
         <div className={styles.artistInfo}>
-          <h1 className={styles.artistName}>{visibleArtist.artist}</h1>
+          <h1 className={styles.artistName}>{visibleArtist.name}</h1>
         </div>
       </section>
       <div ref={containerRef}>

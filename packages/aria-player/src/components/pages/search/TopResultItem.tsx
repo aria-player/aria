@@ -88,10 +88,10 @@ export default function TopResultItem({ result }: TopResultItemProps) {
         return {
           id: artist.artistId,
           track: artist.firstTrack,
-          title: artist.artist,
+          title: artist.name,
           label: t("search.categories.artists.one"),
           artworkClass: `${styles.artwork} ${styles.artist}`,
-          artworkAltText: artist.artist
+          artworkAltText: artist.name
         };
       }
       case "album": {

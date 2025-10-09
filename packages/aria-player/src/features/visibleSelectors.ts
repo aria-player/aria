@@ -290,7 +290,7 @@ export const selectVisibleTrackGroups = createSelector(
     } else if (selectVisibleSearchCategory(state) == SearchCategory.Artists) {
       const search = selectSearch(state);
       return searchArtists(selectAllArtists(state), search).map(
-        (group) => group.artist
+        (group) => group.name
       );
     } else if (selectVisibleDisplayMode(state) == DisplayMode.SplitView) {
       const grouping = selectVisiblePlaylist(state)
@@ -365,11 +365,11 @@ export const selectVisibleArtists = createSelector(
     } else {
       return allArtists
         .filter((artist) =>
-          selectVisibleTrackGroups(state).includes(artist.artist)
+          selectVisibleTrackGroups(state).includes(artist.name)
         )
         .sort(
           (a, b) =>
-            a.artist?.localeCompare(b.artist!, undefined, {
+            a.name?.localeCompare(b.name!, undefined, {
               sensitivity: "base",
               ignorePunctuation: true
             }) ?? 0
@@ -393,7 +393,7 @@ export const selectVisibleArtist = createSelector(
       return selectAllArtists(state).find(
         (a) =>
           a.artistId === visibleSelectedTrackGroup ||
-          (a.artist === visibleSelectedTrackGroup && !a.artistId)
+          (a.name === visibleSelectedTrackGroup && !a.artistId)
       );
     }
   }

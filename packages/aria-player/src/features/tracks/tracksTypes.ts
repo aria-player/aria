@@ -13,7 +13,6 @@ export interface TrackListItem extends Track {
 export type ArtistDetails = Partial<Artist> & {
   artistId: string;
   name: string;
-  artist: string; // TODO: Remove and just use name
   firstTrack: Track;
 };
 
