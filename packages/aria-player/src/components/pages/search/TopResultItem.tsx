@@ -20,6 +20,7 @@ import { SearchResult } from "../../../app/search";
 import { useTranslation } from "react-i18next";
 import { getSourceHandle } from "../../../features/plugins/pluginsSlice";
 import { formatStringArray } from "../../../app/utils";
+import { ArtistArt } from "../../views/subviews/ArtistArt";
 
 interface TopResultItemProps {
   result: SearchResult;
@@ -133,11 +134,15 @@ export default function TopResultItem({ result }: TopResultItemProps) {
       }}
     >
       <div className={itemData.artworkClass}>
-        <AlbumArt
-          track={itemData.track}
-          altText={itemData.artworkAltText}
-          artistId={result.type === "artist" ? itemData.id : undefined}
-        />
+        {result.type === "artist" ? (
+          <ArtistArt
+            track={itemData.track}
+            altText={itemData.artworkAltText}
+            artistId={itemData.id}
+          />
+        ) : (
+          <AlbumArt track={itemData.track} altText={itemData.artworkAltText} />
+        )}
       </div>
       <div className={styles.info}>
         <div className={styles.title}>{itemData.title}</div>

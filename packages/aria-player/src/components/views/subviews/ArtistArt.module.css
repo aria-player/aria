@@ -1,0 +1,9 @@
+.artwork {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+  aspect-ratio: 1/1;
+  color: var(--missing-artwork-foreground);
+  background-color: var(--missing-artwork-background);
+}

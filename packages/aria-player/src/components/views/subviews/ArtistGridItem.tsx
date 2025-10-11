@@ -1,9 +1,9 @@
 import { push } from "redux-first-history";
 import { BASEPATH } from "../../../app/constants";
 import { useAppDispatch } from "../../../app/hooks";
-import { AlbumArt } from "./AlbumArt";
 import styles from "./ArtistGridItem.module.css";
 import { ArtistDetails } from "../../../features/tracks/tracksTypes";
+import { ArtistArt } from "./ArtistArt";
 
 export default function ArtistGridItem({ artist }: { artist: ArtistDetails }) {
   const dispatch = useAppDispatch();
@@ -15,7 +15,7 @@ export default function ArtistGridItem({ artist }: { artist: ArtistDetails }) {
   return (
     <div className={styles.artistGridItem}>
       <button className={styles.artistArt} onClick={goToArtist}>
-        <AlbumArt
+        <ArtistArt
           track={artist.firstTrack}
           altText={artist.name}
           artistId={artist.artistId}

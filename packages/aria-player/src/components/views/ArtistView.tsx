@@ -8,7 +8,6 @@ import { getScrollbarWidth } from "../../app/utils";
 import { useTrackGrid } from "../../hooks/useTrackGrid";
 import { TrackSummaryRow } from "./subviews/TrackSummaryRow";
 import { AlbumGridItem } from "./subviews/AlbumGridItem";
-import { AlbumArt } from "./subviews/AlbumArt";
 import styles from "./ArtistView.module.css";
 import {
   selectVisibleSelectedTrackGroup,
@@ -17,6 +16,7 @@ import {
   selectVisibleArtist
 } from "../../features/visibleSelectors";
 import { useScrollDetection } from "../../hooks/useScrollDetection";
+import { ArtistArt } from "./subviews/ArtistArt";
 
 export default function ArtistView() {
   const dispatch = useAppDispatch();
@@ -81,7 +81,7 @@ export default function ArtistView() {
     >
       <section className={styles.artistHeader}>
         <div className={styles.artistArt}>
-          <AlbumArt
+          <ArtistArt
             track={visibleArtist.firstTrack}
             altText={visibleArtist.name}
             artistId={visibleArtist.artistId}
