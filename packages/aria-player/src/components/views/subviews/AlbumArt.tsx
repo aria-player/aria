@@ -19,9 +19,13 @@ export const AlbumArt = ({
       setArtwork(artworkCache[track.artworkUri]);
       return;
     }
-    if (track && getSourceHandle(track.source)?.getTrackArtwork != undefined) {
+    if (
+      track &&
+      track.artworkUri &&
+      getSourceHandle(track.source)?.getTrackArtwork != undefined
+    ) {
       getSourceHandle(track.source)
-        ?.getTrackArtwork?.(track)
+        ?.getTrackArtwork?.(track.artworkUri)
         .then((coverArtData) => {
           setArtwork(coverArtData ?? null);
         });

@@ -23,20 +23,19 @@ export const ArtistArt = ({
       const pluginHandle = getSourceHandle(track.source);
       if (pluginHandle?.getArtistArtwork) {
         const artistInfo = selectArtistInfo(store.getState(), artistId);
-        if (artistInfo) {
-          if (
-            artistInfo.artworkUri &&
-            artistArtworkCache[artistInfo.artworkUri]
-          ) {
+        if (artistInfo && artistInfo.artworkUri) {
+          if (artistArtworkCache[artistInfo.artworkUri]) {
             setArtwork(artistArtworkCache[artistInfo.artworkUri]);
             return;
           }
-          pluginHandle.getArtistArtwork(artistInfo).then((artistArtwork) => {
-            if (artistArtwork) {
-              setArtwork(artistArtwork);
-              return;
-            }
-          });
+          pluginHandle
+            .getArtistArtwork(artistInfo.artworkUri)
+            .then((artistArtwork) => {
+              if (artistArtwork) {
+                setArtwork(artistArtwork);
+                return;
+              }
+            });
         }
       }
     }
@@ -45,9 +44,13 @@ export const ArtistArt = ({
       setArtwork(artworkCache[track.artworkUri]);
       return;
     }
-    if (track && getSourceHandle(track.source)?.getTrackArtwork != undefined) {
+    if (
+      track &&
+      track.artworkUri &&
+      getSourceHandle(track.source)?.getTrackArtwork != undefined
+    ) {
       getSourceHandle(track.source)
-        ?.getTrackArtwork?.(track)
+        ?.getTrackArtwork?.(track.artworkUri)
         .then((coverArtData) => {
           setArtwork(coverArtData ?? null);
         });

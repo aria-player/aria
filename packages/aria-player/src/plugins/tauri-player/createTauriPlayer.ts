@@ -199,11 +199,11 @@ export default function createTauriPlayer(
       webAudioBackend.loadSecondaryAudioFile(track.uri, file);
     },
 
-    async getTrackArtwork(track: Track) {
-      if (track.artworkUri) {
+    async getTrackArtwork(artworkUri) {
+      if (artworkUri) {
         const directory = await appDataDir();
         return await convertFileSrc(
-          directory + "/.artwork-cache/" + track.artworkUri
+          directory + "/.artwork-cache/" + artworkUri
         );
       }
     },

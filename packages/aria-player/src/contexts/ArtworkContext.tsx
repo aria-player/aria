@@ -43,7 +43,7 @@ const loadAllArtwork = async () => {
   )) {
     if (track.artworkUri) {
       const artwork = await (getSourceHandle(track.source)?.getTrackArtwork?.(
-        track
+        track.artworkUri
       ) ?? Promise.resolve());
       if (artwork) trackCache[track.artworkUri] = artwork;
     }
@@ -52,8 +52,9 @@ const loadAllArtwork = async () => {
     if (artist.artworkUri) {
       const pluginHandle = getSourceHandle(artist.source);
       if (pluginHandle?.getArtistArtwork) {
-        const artwork = await (pluginHandle.getArtistArtwork(artist) ??
-          Promise.resolve());
+        const artwork = await (pluginHandle.getArtistArtwork(
+          artist.artworkUri
+        ) ?? Promise.resolve());
         if (artwork) artistCache[artist.artworkUri] = artwork;
       }
     }

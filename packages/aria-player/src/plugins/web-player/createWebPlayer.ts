@@ -159,8 +159,8 @@ export default function createWebPlayer(
       );
     },
 
-    async getTrackArtwork(track: Track) {
-      if (track.artworkUri) return await fetchCoverArt(track.artworkUri);
+    async getTrackArtwork(artworkUri) {
+      if (artworkUri) return await fetchCoverArt(artworkUri);
     },
 
     pause() {

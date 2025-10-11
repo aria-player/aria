@@ -545,12 +545,12 @@ export default function createSpotifyPlayer(
       }
     },
 
-    async getTrackArtwork(track) {
-      return track.artworkUri;
+    async getTrackArtwork(artworkUri) {
+      return artworkUri;
     },
 
-    async getArtistArtwork(artist) {
-      return artist.artworkUri;
+    async getArtistArtwork(artworkUri) {
+      return artworkUri;
     },
 
     pause() {

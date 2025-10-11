@@ -53,8 +53,11 @@ export function setupPlayerListeners() {
       const currentTrack = selectCurrentTrack(state);
       if (!currentTrack) return;
       const plugins = selectPluginInfo(state);
-      const artwork =
-        await getCurrentSource(state)?.getTrackArtwork?.(currentTrack);
+      const artwork = currentTrack.artworkUri
+        ? await getCurrentSource(state)?.getTrackArtwork?.(
+            currentTrack.artworkUri
+          )
+        : undefined;
       for (const plugin of activePlugins) {
         if (plugins[plugin].capabilities?.includes("integration")) {
           try {

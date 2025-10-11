@@ -5,7 +5,8 @@ import {
   TrackUri,
   ArtistId,
   ArtistMetadata,
-  Artist, ArtistUri,
+  Artist,
+  ArtistUri,
 } from "./tracks";
 
 export type PluginId = string;
@@ -227,17 +228,17 @@ export interface SourceHandle extends BaseHandle {
    */
   setTrackToPreload?: (track: Track | null) => void;
   /**
-   * Return an image URL for the specified track's album artwork.
+   * Return an image URL for the specified track's artwork.
    *
-   * If the track's `artworkUri` is already an image URL, this method can simply return `track.artworkUri`.
+   * If the track's `artworkUri` is already an image URL, this method can simply return `artworkUri`.
    */
-  getTrackArtwork?: (track: Track) => Promise<string | undefined>;
+  getTrackArtwork?: (artworkUri: string) => Promise<string | undefined>;
   /**
    * Return an image URL for the specified artist's artwork.
    *
-   * If the artist's `artworkUri` is already an image URL, this method can simply `artist.artworkUri`.
+   * If the artist's `artworkUri` is already an image URL, this method can simply return `artworkUri`.
    */
-  getArtistArtwork?: (artist: Artist) => Promise<string | undefined>;
+  getArtistArtwork?: (artworkUri: string) => Promise<string | undefined>;
   /**
    * Called after every update to this source's tracks.
    */

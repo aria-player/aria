@@ -408,12 +408,12 @@ export default function createAppleMusicPlayer(
       await music?.play();
     },
 
-    getTrackArtwork: async (track: Track) => {
-      return track.artworkUri?.replace("{w}", "1000").replace("{h}", "1000");
+    getTrackArtwork: async (artworkUri) => {
+      return artworkUri?.replace("{w}", "1000").replace("{h}", "1000");
     },
 
-    getArtistArtwork: async (artist) => {
-      return artist.artworkUri?.replace("{w}", "1000").replace("{h}", "1000");
+    getArtistArtwork: async (artworkUri) => {
+      return artworkUri?.replace("{w}", "1000").replace("{h}", "1000");
     },
 
     pause: () => {
