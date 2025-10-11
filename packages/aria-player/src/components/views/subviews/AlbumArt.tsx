@@ -34,9 +34,9 @@ export const AlbumArt = ({
           pluginHandle.getArtistArtwork(artistInfo).then((artistArtwork) => {
             if (artistArtwork) {
               setArtwork(artistArtwork);
+              return;
             }
           });
-          return;
         }
       }
     }
