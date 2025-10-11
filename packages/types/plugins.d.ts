@@ -156,13 +156,13 @@ export type AttributionProps = {
   /**
    * The type of content that is being attributed.
    */
-  type: "track" | "album";
+  type: "track" | "album" | "artist";
   /**
    * Whether to display a compact attribution. If `true`, the attribution should be an icon no larger than 30x30px.
    */
   compact: boolean;
   /**
-   * Identifier for the attributed content (the track `uri` if the attribution type is `'track'`, or the `albumId` if the type is `'album'`).
+   * Identifier for the attributed content, e.g. the track `uri` if the attribution type is `'track'`, or the `albumId` if the type is `'album'`.
    */
   id?: string;
 };

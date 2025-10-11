@@ -14,16 +14,24 @@
   cursor: pointer;
 }
 
-.artistName {
+.artistInfo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   margin-top: 0.5rem;
-  font-weight: 500;
   padding: 0 0.2rem;
+  position: relative;
+  min-height: 1.4em;
+  max-width: 100%;
+}
+
+.artistName {
+  font-weight: 500;
   font-size: 0.9rem;
   white-space: nowrap;
   text-overflow: ellipsis;
   overflow: hidden;
   cursor: pointer;
-  max-width: 100%;
 
   &:hover {
     text-decoration: underline;

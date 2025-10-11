@@ -17,6 +17,7 @@ import {
 } from "../../features/visibleSelectors";
 import { useScrollDetection } from "../../hooks/useScrollDetection";
 import { ArtistArt } from "./subviews/ArtistArt";
+import { getSourceHandle } from "../../features/plugins/pluginsSlice";
 
 export default function ArtistView() {
   const dispatch = useAppDispatch();
@@ -29,6 +30,9 @@ export default function ArtistView() {
   const artistAlbums = useAppSelector(selectVisibleArtistAlbums);
   const visibleArtist = useAppSelector(selectVisibleArtist);
   const { onScroll } = useScrollDetection();
+  const pluginHandle = visibleArtist
+    ? getSourceHandle(visibleArtist.source)
+    : null;
 
   useEffect(() => {
     const resizeObserver = new ResizeObserver(() => {
@@ -85,6 +89,13 @@ export default function ArtistView() {
         </div>
         <div className={styles.artistInfo}>
           <h1 className={styles.artistName}>{visibleArtist.name}</h1>
+          {visibleArtist.uri && pluginHandle?.Attribution && (
+            <pluginHandle.Attribution
+              type="artist"
+              id={visibleArtist.uri}
+              compact={false}
+            />
+          )}
         </div>
       </section>
       <div ref={containerRef}>

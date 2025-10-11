@@ -88,7 +88,8 @@ export default function TopResultItem({ result }: TopResultItemProps) {
         return {
           id: artist.artistId,
           title: artist.name,
-          label: t("search.categories.artists.one")
+          label: t("search.categories.artists.one"),
+          attributionId: artist.uri
         };
       }
       case "album": {
@@ -147,16 +148,15 @@ export default function TopResultItem({ result }: TopResultItemProps) {
         )}
         <div className={styles.type}>{itemData.label}</div>
       </div>
-      {(result.type === "track" || result.type === "album") &&
-        pluginHandle?.Attribution && (
-          <div className={styles.attribution}>
-            <pluginHandle.Attribution
-              type={result.type}
-              id={itemData.attributionId}
-              compact={true}
-            />
-          </div>
-        )}
+      {pluginHandle?.Attribution && (
+        <div className={styles.attribution}>
+          <pluginHandle.Attribution
+            type={result.type}
+            id={itemData.attributionId}
+            compact={true}
+          />
+        </div>
+      )}
     </button>
   );
 }
