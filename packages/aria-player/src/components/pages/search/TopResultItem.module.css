@@ -1,13 +1,8 @@
 .topResultItem {
   display: flex;
-  align-items: center;
   width: 100%;
-  padding: 0.5rem;
-  background: none;
-  border: none;
   border-radius: 0.5rem;
-  text-align: left;
-  cursor: pointer;
+  position: relative;
 
   &:hover {
     background-color: var(--button-background-hover);
@@ -16,6 +11,17 @@
   &:active {
     background-color: var(--button-background-active);
   }
+}
+
+.topResultButton {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 0.5rem;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
 }
 
 .artwork {

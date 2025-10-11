@@ -112,42 +112,44 @@ export default function TopResultItem({ result }: TopResultItemProps) {
   const pluginHandle = getSourceHandle(result.item.source);
 
   return (
-    <button
-      className={styles.topResultItem}
-      onClick={handleClick}
-      onContextMenu={(event) => {
-        if (result.type !== "track") return;
-        const track = result.item as Track;
-        setMenuData({
-          itemId: track.trackId,
-          itemSource: undefined,
-          itemIndex: undefined,
-          metadata: track,
-          type: "track"
-        });
-        showTrackContextMenu({ event: event as TriggerEvent });
-      }}
-    >
-      {result.type === "artist" ? (
-        <div className={`${styles.artwork} ${styles.artist}`}>
-          <ArtistArt artist={result.item as ArtistDetails} />
-        </div>
-      ) : result.type === "album" ? (
-        <div className={styles.artwork}>
-          <AlbumArt album={result.item as AlbumDetails} />
-        </div>
-      ) : (
-        <div className={styles.artwork}>
-          <AlbumArt track={result.item as Track} />
-        </div>
-      )}
-      <div className={styles.info}>
-        <div className={styles.title}>{itemData.title}</div>
-        {itemData.subtitle && (
-          <div className={styles.subtitle}>{itemData.subtitle}</div>
+    <div className={styles.topResultItem}>
+      <button
+        className={styles.topResultButton}
+        onClick={handleClick}
+        onContextMenu={(event) => {
+          if (result.type !== "track") return;
+          const track = result.item as Track;
+          setMenuData({
+            itemId: track.trackId,
+            itemSource: undefined,
+            itemIndex: undefined,
+            metadata: track,
+            type: "track"
+          });
+          showTrackContextMenu({ event: event as TriggerEvent });
+        }}
+      >
+        {result.type === "artist" ? (
+          <div className={`${styles.artwork} ${styles.artist}`}>
+            <ArtistArt artist={result.item as ArtistDetails} />
+          </div>
+        ) : result.type === "album" ? (
+          <div className={styles.artwork}>
+            <AlbumArt album={result.item as AlbumDetails} />
+          </div>
+        ) : (
+          <div className={styles.artwork}>
+            <AlbumArt track={result.item as Track} />
+          </div>
         )}
-        <div className={styles.type}>{itemData.label}</div>
-      </div>
+        <div className={styles.info}>
+          <div className={styles.title}>{itemData.title}</div>
+          {itemData.subtitle && (
+            <div className={styles.subtitle}>{itemData.subtitle}</div>
+          )}
+          <div className={styles.type}>{itemData.label}</div>
+        </div>
+      </button>
       {pluginHandle?.Attribution && (
         <div className={styles.attribution}>
           <pluginHandle.Attribution
@@ -157,6 +159,6 @@ export default function TopResultItem({ result }: TopResultItemProps) {
           />
         </div>
       )}
-    </button>
+    </div>
   );
 }
