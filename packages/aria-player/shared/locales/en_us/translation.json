@@ -306,6 +306,7 @@
     "empty": "No albums to display"
   },
   "albumTrackList": {
+    "notFound": "Album not found",
     "disc": "Disc {{number}}",
     "empty": "No tracks to display"
   },
