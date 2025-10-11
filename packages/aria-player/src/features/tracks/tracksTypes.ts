@@ -13,7 +13,9 @@ export interface TrackListItem extends Track {
 export type ArtistDetails = Partial<Artist> & {
   artistId: string;
   name: string;
-  firstTrack: Track;
+  source: string;
+  artworkUri?: string;
+  firstTrackArtworkUri?: string;
 };
 
 export interface AlbumDetails {
@@ -21,5 +23,6 @@ export interface AlbumDetails {
   album: string;
   artist?: string | string[];
   artistUri?: string | string[];
-  firstTrack: Track;
+  source: string;
+  artworkUri?: string;
 }

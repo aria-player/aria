@@ -38,7 +38,7 @@ export function Footer() {
     <footer className={`footer ${styles.footer}`}>
       <section className={styles.left}>
         <div className={`footer-art ${styles.art}`}>
-          <AlbumArt track={currentTrack} />
+          <AlbumArt track={currentTrack ?? undefined} />
         </div>
         <div
           className={`${styles.metadata} ${displayAttribution ? styles.compact : ""}`}

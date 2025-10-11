@@ -75,36 +75,30 @@ export default function TopResultItem({ result }: TopResultItemProps) {
         const track = result.item as Track;
         return {
           id: track.trackId,
-          track,
           title: track.title,
           subtitle: Array.isArray(track.artist)
             ? track.artist.join("/")
             : track.artist,
           label: t("search.categories.songs.one"),
-          artworkClass: styles.artwork
+          attributionId: track.uri
         };
       }
       case "artist": {
         const artist = result.item as ArtistDetails;
         return {
           id: artist.artistId,
-          track: artist.firstTrack,
           title: artist.name,
-          label: t("search.categories.artists.one"),
-          artworkClass: `${styles.artwork} ${styles.artist}`,
-          artworkAltText: artist.name
+          label: t("search.categories.artists.one")
         };
       }
       case "album": {
         const album = result.item as AlbumDetails;
         return {
           id: album.albumId,
-          track: album.firstTrack,
           title: album.album,
           subtitle: formatStringArray(album.artist),
           label: t("search.categories.albums.one"),
-          artworkClass: styles.artwork,
-          artworkAltText: album.album
+          attributionId: album.albumId
         };
       }
       default:
@@ -114,7 +108,7 @@ export default function TopResultItem({ result }: TopResultItemProps) {
 
   const itemData = getItemData();
   if (!itemData) return null;
-  const pluginHandle = getSourceHandle(itemData.track.source);
+  const pluginHandle = getSourceHandle(result.item.source);
 
   return (
     <button
@@ -133,17 +127,19 @@ export default function TopResultItem({ result }: TopResultItemProps) {
         showTrackContextMenu({ event: event as TriggerEvent });
       }}
     >
-      <div className={itemData.artworkClass}>
-        {result.type === "artist" ? (
-          <ArtistArt
-            track={itemData.track}
-            altText={itemData.artworkAltText}
-            artistId={itemData.id}
-          />
-        ) : (
-          <AlbumArt track={itemData.track} altText={itemData.artworkAltText} />
-        )}
-      </div>
+      {result.type === "artist" ? (
+        <div className={`${styles.artwork} ${styles.artist}`}>
+          <ArtistArt artist={result.item as ArtistDetails} />
+        </div>
+      ) : result.type === "album" ? (
+        <div className={styles.artwork}>
+          <AlbumArt album={result.item as AlbumDetails} />
+        </div>
+      ) : (
+        <div className={styles.artwork}>
+          <AlbumArt track={result.item as Track} />
+        </div>
+      )}
       <div className={styles.info}>
         <div className={styles.title}>{itemData.title}</div>
         {itemData.subtitle && (
@@ -156,11 +152,7 @@ export default function TopResultItem({ result }: TopResultItemProps) {
           <div className={styles.attribution}>
             <pluginHandle.Attribution
               type={result.type}
-              id={
-                result.type === "track"
-                  ? itemData.track.uri
-                  : itemData.track.albumId
-              }
+              id={itemData.attributionId}
               compact={true}
             />
           </div>

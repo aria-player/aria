@@ -15,7 +15,7 @@ import { getArtistId, getAsArray } from "../../../app/utils";
 export function AlbumGridItem({ album }: { album: AlbumDetails }) {
   const dispatch = useAppDispatch();
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
-  const pluginHandle = getSourceHandle(album.firstTrack.source);
+  const pluginHandle = getSourceHandle(album.source);
   const visibleViewType = useAppSelector(selectVisibleViewType);
 
   function goToAlbum() {
@@ -35,7 +35,7 @@ export function AlbumGridItem({ album }: { album: AlbumDetails }) {
   return (
     <div className={styles.albumGridItem}>
       <button className={styles.albumArt} onClick={goToAlbum}>
-        <AlbumArt track={album.firstTrack} />
+        <AlbumArt album={album} />
       </button>
       <div className={styles.albumInfo}>
         <div className={styles.albumTextContainer}>
@@ -53,7 +53,7 @@ export function AlbumGridItem({ album }: { album: AlbumDetails }) {
                     className={`${styles.albumText} ${styles.albumArtist}`}
                     onClick={() => {
                       if (albumArtistUris.length) {
-                        goToArtist(getArtistId(album.firstTrack.source, id));
+                        goToArtist(getArtistId(album.source, id));
                       } else {
                         goToArtist(id);
                       }

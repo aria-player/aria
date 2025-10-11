@@ -155,7 +155,8 @@ export const selectAllArtists = createSelector(
             artistId,
             uri,
             name,
-            firstTrack: track
+            source,
+            firstTrackArtworkUri: track.artworkUri
           });
         }
       });
@@ -181,10 +182,8 @@ export const selectAllAlbums = createSelector(
           album: track.album,
           artist: track.albumArtist || track.artist,
           artistUri: track.albumArtistUri || track.artistUri,
-          firstTrack: {
-            ...track,
-            artworkUri: getMostCommonArtworkUri(albumTracks)
-          }
+          source: track.source,
+          artworkUri: getMostCommonArtworkUri(albumTracks)
         });
       }
     });

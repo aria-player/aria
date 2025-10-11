@@ -4,46 +4,50 @@ import { Track } from "../../../../../types/tracks";
 import styles from "./AlbumArt.module.css";
 import { ArtworkContext } from "../../../contexts/ArtworkContext";
 import { getSourceHandle } from "../../../features/plugins/pluginsSlice";
+import { AlbumDetails } from "../../../features/tracks/tracksTypes";
 
 export const AlbumArt = ({
   track,
-  altText
+  album
 }: {
-  track: Track | null;
-  altText?: string;
+  track?: Track;
+  album?: AlbumDetails;
 }) => {
   const { artworkCache } = useContext(ArtworkContext);
   const [artwork, setArtwork] = useState<string | null>(null);
+
   useEffect(() => {
-    if (track && track.artworkUri && artworkCache[track.artworkUri]) {
-      setArtwork(artworkCache[track.artworkUri]);
-      return;
+    const item = track ?? album;
+    if (item != undefined) {
+      if (item.artworkUri && artworkCache[item.artworkUri]) {
+        setArtwork(artworkCache[item.artworkUri]);
+        return;
+      }
+      if (
+        item.artworkUri &&
+        getSourceHandle(item.source)?.getTrackArtwork != undefined
+      ) {
+        getSourceHandle(item.source)
+          ?.getTrackArtwork?.(item.artworkUri)
+          .then((coverArtData) => {
+            setArtwork(coverArtData ?? null);
+            return;
+          });
+      }
     }
-    if (
-      track &&
-      track.artworkUri &&
-      getSourceHandle(track.source)?.getTrackArtwork != undefined
-    ) {
-      getSourceHandle(track.source)
-        ?.getTrackArtwork?.(track.artworkUri)
-        .then((coverArtData) => {
-          setArtwork(coverArtData ?? null);
-        });
-    } else {
-      setArtwork(null);
-    }
-  }, [artworkCache, track]);
+    setArtwork(null);
+  }, [artworkCache, track, album]);
 
   return artwork ? (
     <img
       className={`album-art ${styles.artwork}`}
       src={artwork}
-      alt={altText || track?.album}
+      alt={track?.album ?? album?.album}
     />
   ) : (
     <MusicIcon
       className={`album-art ${styles.artwork}`}
-      title={altText || track?.album}
+      title={track?.album ?? album?.album}
     />
   );
 };

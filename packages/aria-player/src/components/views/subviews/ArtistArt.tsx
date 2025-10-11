@@ -1,74 +1,58 @@
 import { useContext, useEffect, useState } from "react";
 import MusicIcon from "../../../assets/music.svg?react";
-import { Track } from "../../../../../types/tracks";
 import styles from "./ArtistArt.module.css";
 import { ArtworkContext } from "../../../contexts/ArtworkContext";
 import { getSourceHandle } from "../../../features/plugins/pluginsSlice";
-import { selectArtistInfo } from "../../../features/tracks/tracksSlice";
-import { store } from "../../../app/store";
+import { ArtistDetails } from "../../../features/tracks/tracksTypes";
 
-export const ArtistArt = ({
-  track,
-  altText,
-  artistId
-}: {
-  track: Track | null;
-  altText?: string;
-  artistId?: string;
-}) => {
+export const ArtistArt = ({ artist }: { artist: ArtistDetails }) => {
   const { artworkCache, artistArtworkCache } = useContext(ArtworkContext);
   const [artwork, setArtwork] = useState<string | null>(null);
+
   useEffect(() => {
-    if (track && artistId) {
-      const pluginHandle = getSourceHandle(track.source);
+    if (artist.artworkUri && artistArtworkCache[artist.artworkUri]) {
+      setArtwork(artistArtworkCache[artist.artworkUri]);
+      return;
+    }
+    if (artist.artworkUri) {
+      const pluginHandle = getSourceHandle(artist.source);
       if (pluginHandle?.getArtistArtwork) {
-        const artistInfo = selectArtistInfo(store.getState(), artistId);
-        if (artistInfo && artistInfo.artworkUri) {
-          if (artistArtworkCache[artistInfo.artworkUri]) {
-            setArtwork(artistArtworkCache[artistInfo.artworkUri]);
+        pluginHandle
+          .getArtistArtwork(artist.artworkUri)
+          .then((artistArtwork) => {
+            setArtwork(artistArtwork ?? null);
             return;
-          }
-          pluginHandle
-            .getArtistArtwork(artistInfo.artworkUri)
-            .then((artistArtwork) => {
-              if (artistArtwork) {
-                setArtwork(artistArtwork);
-                return;
-              }
-            });
-        }
+          });
       }
     }
-
-    if (track && track.artworkUri && artworkCache[track.artworkUri]) {
-      setArtwork(artworkCache[track.artworkUri]);
+    if (
+      artist.firstTrackArtworkUri &&
+      artworkCache[artist.firstTrackArtworkUri]
+    ) {
+      setArtwork(artworkCache[artist.firstTrackArtworkUri]);
       return;
     }
     if (
-      track &&
-      track.artworkUri &&
-      getSourceHandle(track.source)?.getTrackArtwork != undefined
+      artist.firstTrackArtworkUri &&
+      getSourceHandle(artist.source)?.getTrackArtwork != undefined
     ) {
-      getSourceHandle(track.source)
-        ?.getTrackArtwork?.(track.artworkUri)
+      getSourceHandle(artist.source)
+        ?.getTrackArtwork?.(artist.firstTrackArtworkUri)
         .then((coverArtData) => {
           setArtwork(coverArtData ?? null);
+          return;
         });
-    } else {
-      setArtwork(null);
     }
-  }, [artworkCache, artistArtworkCache, track, artistId]);
+    setArtwork(null);
+  }, [artworkCache, artistArtworkCache, artist]);
 
   return artwork ? (
     <img
       className={`album-art ${styles.artwork}`}
       src={artwork}
-      alt={altText || track?.album}
+      alt={artist?.name}
     />
   ) : (
-    <MusicIcon
-      className={`album-art ${styles.artwork}`}
-      title={altText || track?.album}
-    />
+    <MusicIcon className={`album-art ${styles.artwork}`} title={artist?.name} />
   );
 };
