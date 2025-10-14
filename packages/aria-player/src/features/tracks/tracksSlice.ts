@@ -44,12 +44,13 @@ const tracksSlice = createSlice({
           ...track,
           trackId: getTrackId(action.payload.source, track.uri),
           albumId:
-            track.albumUri ??
-            `${track.album ?? ""} ${
-              Array.isArray(track.albumArtist)
-                ? track.albumArtist.join(" ")
-                : (track.albumArtist ?? "")
-            }`,
+            (track.albumUri ?? track.album)
+              ? `${track.album ?? ""} ${
+                  Array.isArray(track.albumArtist)
+                    ? track.albumArtist.join(" ")
+                    : (track.albumArtist ?? "")
+                }`
+              : undefined,
           source: action.payload.source
         })) ?? []
       );
