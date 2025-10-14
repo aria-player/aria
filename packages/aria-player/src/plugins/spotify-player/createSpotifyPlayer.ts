@@ -220,7 +220,7 @@ export default function createSpotifyPlayer(
             continue;
           }
           const genres = existingTracks.find(
-            (existingTrack) => existingTrack.albumId == track.track.album.id
+            (existingTrack) => existingTrack.albumUri == track.track.album.uri
           )?.genre;
           tracksInLibrary.push(track.track.uri);
           const newTrack = {
@@ -236,7 +236,7 @@ export default function createSpotifyPlayer(
               (artist) => artist.uri
             ),
             album: track.track.album.name,
-            albumId: track.track.album.id,
+            albumUri: track.track.album.uri,
             genre: genres,
             year: parseInt(track.track.album.release_date.split("-")[0]),
             track: track.track.track_number,
@@ -274,7 +274,7 @@ export default function createSpotifyPlayer(
         const tracksToAdd = [];
         for (const album of albumsResponse.items) {
           const genres = existingTracks.find(
-            (track) => track.albumId == album.album.id
+            (track) => track.albumUri == album.album.uri
           )?.genre;
           const tracksFromResponse = album.album.tracks.items
             .filter(
@@ -295,7 +295,7 @@ export default function createSpotifyPlayer(
                 albumArtist: album.album.artists.map((artist) => artist.name),
                 albumArtistUri: album.album.artists.map((artist) => artist.uri),
                 album: album.album.name,
-                albumId: album.album.id,
+                albumUri: album.album.uri,
                 genre: genres,
                 year: parseInt(album.album.release_date.split("-")[0]),
                 track: track.track_number,
@@ -361,10 +361,10 @@ export default function createSpotifyPlayer(
       host.removeArtists(removedArtists);
     }
     const updatedTracks = tracks.map((track) => {
-      if (!track.albumId) {
+      if (!track.albumUri) {
         return track;
       }
-      const artistIds = albumArtistMapping[track.albumId];
+      const artistIds = albumArtistMapping[track.albumUri];
       const allGenres = artistIds.flatMap(
         (artistId) => artistGenreMapping[artistId] || []
       );

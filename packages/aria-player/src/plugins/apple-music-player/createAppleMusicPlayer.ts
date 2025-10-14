@@ -197,7 +197,7 @@ export default function createAppleMusicPlayer(
           artist: track.attributes?.artistName,
           albumArtist: albumData.attributes?.artistName,
           album: track.attributes?.albumName,
-          albumId: albumData.id,
+          albumUri: albumData.id,
           genre: track.attributes?.genreNames,
           duration: track.attributes?.durationInMillis,
           artworkUri: track.attributes?.artwork?.url,

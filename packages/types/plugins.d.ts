@@ -162,7 +162,7 @@ export type AttributionProps = {
    */
   compact: boolean;
   /**
-   * Identifier for the attributed content, e.g. the track `uri` if the attribution type is `'track'`, or the `albumId` if the type is `'album'`.
+   * Identifier for the attributed content, e.g. the track `uri` if the attribution type is `'track'`, or the `albumUri` if the type is `'album'`.
    */
   id?: string;
 };

@@ -68,16 +68,10 @@ function handleAddTracks(source: PluginId, metadata: TrackMetadata[]) {
   if (!isPluginActive(source)) return;
   metadata.forEach(validateTrackMetadata);
   const libraryTrackIds = selectTrackIds(store.getState());
-  const newTracks = metadata
-    .filter(
-      (track: TrackMetadata) =>
-        !libraryTrackIds.includes(getTrackId(source, track.uri))
-    )
-    .map((track: TrackMetadata) => ({
-      ...track,
-      trackId: getTrackId(source, track.uri),
-      source: source
-    }));
+  const newTracks = metadata.filter(
+    (track: TrackMetadata) =>
+      !libraryTrackIds.includes(getTrackId(source, track.uri))
+  );
 
   store.dispatch(addTracks({ source, tracks: newTracks }));
 }

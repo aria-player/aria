@@ -3,6 +3,7 @@ import { PluginId } from "./plugins";
 export type TrackId = string;
 export type AlbumId = string;
 export type TrackUri = string;
+export type AlbumUri = string;
 
 /**
  * Metadata describing a track that can be provided by the track source.
@@ -63,9 +64,9 @@ export interface TrackMetadata {
   /**
    * Optional identifier for this track's album. If not provided, albums will be distinguished by a combination of the `album` and `albumArtist` fields.
    *
-   * Providing a unique `albumId` allows the player to always distinguish albums, e.g. if an artist has multiple albums with the same name.
+   * Providing a unique `albumUri` allows the player to always distinguish albums, e.g. if an artist has multiple albums with the same name.
    */
-  albumId?: string;
+  albumUri?: AlbumUri;
   /**
    * The genre(s) associated with this track.
    */
@@ -128,6 +129,10 @@ export interface Track extends TrackMetadata {
    * Unique identifier for this track.
    */
   trackId: TrackId;
+  /**
+   * Unique identifier for the album this track is part of, if available.
+   */
+  albumId?: AlbumId;
   /**
    * The ID of the source plugin that provides this track.
    */

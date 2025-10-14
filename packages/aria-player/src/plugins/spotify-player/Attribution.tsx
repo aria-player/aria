@@ -11,10 +11,9 @@ export default function Attribution(props: AttributionProps & { i18n: i18n }) {
     <button
       className={styles.attribution}
       onClick={() => {
-        const spotifyUrl = `https://open.spotify.com/${
-          (props.type == "album" ? "album/" : "") +
-          props.id?.replace("spotify:", "").replace(":", "/")
-        }`;
+        const spotifyUrl = `https://open.spotify.com/${props.id
+          ?.replace("spotify:", "")
+          .replace(":", "/")}`;
         window.open(spotifyUrl, "_blank");
       }}
     >

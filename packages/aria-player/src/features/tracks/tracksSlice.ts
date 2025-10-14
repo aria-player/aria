@@ -7,11 +7,11 @@ import {
 } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 import { setupTracksListeners } from "./tracksListeners";
-import { Track, TrackId } from "../../../../types/tracks";
+import { Track, TrackId, TrackMetadata } from "../../../../types/tracks";
 import { PluginId } from "../../../../types/plugins";
 import { PlaylistItem } from "../playlists/playlistsTypes";
 import { AlbumDetails } from "./tracksTypes";
-import { getMostCommonArtworkUri } from "../../app/utils";
+import { getMostCommonArtworkUri, getTrackId } from "../../app/utils";
 
 const tracksAdapter = createEntityAdapter<Track, TrackId>({
   selectId: (track) => track.trackId,
@@ -36,19 +36,21 @@ const tracksSlice = createSlice({
   reducers: {
     addTracks: (
       state,
-      action: PayloadAction<{ source: PluginId; tracks?: Track[] }>
+      action: PayloadAction<{ source: PluginId; tracks?: TrackMetadata[] }>
     ) => {
       tracksAdapter.upsertMany(
         state.tracks,
         action.payload.tracks?.map((track) => ({
           ...track,
+          trackId: getTrackId(action.payload.source, track.uri),
           albumId:
-            track.albumId ??
+            track.albumUri ??
             `${track.album ?? ""} ${
               Array.isArray(track.albumArtist)
                 ? track.albumArtist.join(" ")
                 : (track.albumArtist ?? "")
-            }`
+            }`,
+          source: action.payload.source
         })) ?? []
       );
     },
