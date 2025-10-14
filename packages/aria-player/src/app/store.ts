@@ -5,6 +5,7 @@ import libraryReducer from "../features/library/librarySlice";
 import pluginsReducer from "../features/plugins/pluginsSlice";
 import playlistsReducer from "../features/playlists/playlistsSlice";
 import tracksReducer from "../features/tracks/tracksSlice";
+import artistsReducer from "../features/artists/artistsSlice";
 import searchReducer from "../features/search/searchSlice";
 import localforage from "localforage";
 import {
@@ -74,6 +75,13 @@ const reducer = combineReducers({
       blacklist: ["selectedTracks", "clipboard"]
     },
     tracksReducer
+  ),
+  artists: persistReducer(
+    {
+      key: "artists",
+      storage
+    },
+    artistsReducer
   ),
   search: persistReducer(
     {

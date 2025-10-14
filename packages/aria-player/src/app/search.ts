@@ -1,6 +1,7 @@
 import Fuse from "fuse.js";
 import { Track } from "../../../types/tracks";
-import { ArtistDetails, AlbumDetails } from "../features/tracks/tracksTypes";
+import { AlbumDetails } from "../features/tracks/tracksTypes";
+import { ArtistDetails } from "../features/artists/artistsTypes";
 
 export interface SearchResult {
   type: "track" | "artist" | "album";

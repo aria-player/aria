@@ -12,11 +12,9 @@ import {
 import {
   addTracks,
   removeTracks,
-  addArtists,
   selectAllTracks,
   selectTrackById,
-  selectTrackIds,
-  removeArtists
+  selectTrackIds
 } from "../tracks/tracksSlice";
 import {
   selectActivePlugins,
@@ -36,6 +34,7 @@ import {
   restartOrPreviousTrack
 } from "../player/playerTime";
 import { showAlert } from "./pluginsAlerts";
+import { addArtists, removeArtists } from "../artists/artistsSlice";
 
 function validateTrackMetadata(track: TrackMetadata): void {
   const artists = getAsArray(track.artist);
@@ -170,7 +169,7 @@ export const getSourceCallbacks = (pluginId: PluginId): SourceCallbacks => {
       return libraryTracks.filter((track: Track) => track.source === pluginId);
     },
     getArtists: () => {
-      const allArtists = store.getState().tracks.artists;
+      const allArtists = store.getState().artists.artists;
       return Object.values(allArtists).filter(
         (artist) => artist.source === pluginId
       );

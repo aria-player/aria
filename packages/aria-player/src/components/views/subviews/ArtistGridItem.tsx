@@ -2,9 +2,9 @@ import { push } from "redux-first-history";
 import { BASEPATH } from "../../../app/constants";
 import { useAppDispatch } from "../../../app/hooks";
 import styles from "./ArtistGridItem.module.css";
-import { ArtistDetails } from "../../../features/tracks/tracksTypes";
 import { ArtistArt } from "./ArtistArt";
 import { getSourceHandle } from "../../../features/plugins/pluginsSlice";
+import { ArtistDetails } from "../../../features/artists/artistsTypes";
 
 export default function ArtistGridItem({ artist }: { artist: ArtistDetails }) {
   const dispatch = useAppDispatch();

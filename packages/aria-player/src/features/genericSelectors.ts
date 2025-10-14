@@ -1,4 +1,4 @@
-import { RootState } from "../app/store";
+import { RootState, store } from "../app/store";
 import {
   selectPlaylistById,
   selectPlaylistConfigById
@@ -7,9 +7,12 @@ import { TrackListItem } from "./tracks/tracksTypes";
 import { TrackGrouping } from "../app/view";
 import { PlaylistId, PlaylistItem } from "./playlists/playlistsTypes";
 import { selectLibraryColumnState } from "./library/librarySlice";
-import { overrideColumnStateSort } from "../app/utils";
+import { getArtistId, getAsArray, overrideColumnStateSort } from "../app/utils";
 import { compareMetadata } from "../app/sort";
 import { selectAllTracks } from "./tracks/tracksSlice";
+import { createSelector } from "@reduxjs/toolkit";
+import { selectArtistInfoById } from "./artists/artistsSlice";
+import { ArtistDetails } from "./artists/artistsTypes";
 
 export const selectTrackListMetadata = (
   state: RootState,
@@ -105,3 +108,49 @@ export const selectAlbumTitle = (state: RootState, albumId: string | null) => {
   return selectAllTracks(state).find((track) => track.albumId === albumId)
     ?.album;
 };
+
+export const selectAllArtists = createSelector(
+  [
+    (state: RootState) => state.tracks.tracks.entities,
+    (state: RootState) => state.artists.artists
+  ],
+  (tracksById) => {
+    const state = store.getState();
+    const artistsMap = new Map<string, ArtistDetails>();
+    Object.values(tracksById).forEach((track) => {
+      if (!track) return;
+      const artists = getAsArray(track.artist);
+      const artistUris = getAsArray(track.artistUri);
+      const albumArtists = getAsArray(track.albumArtist);
+      const albumArtistUris = getAsArray(track.albumArtistUri);
+      [
+        ...artists.map((name, index) => ({
+          name,
+          source: track.source,
+          uri: artistUris[index] ? artistUris[index] : undefined
+        })),
+        ...albumArtists.map((name, index) => ({
+          name,
+          source: track.source,
+          uri: albumArtistUris[index] ? albumArtistUris[index] : undefined
+        }))
+      ].forEach(({ name, source, uri }) => {
+        const artistId = uri ? getArtistId(source, uri) : name;
+        if (!artistsMap.has(artistId)) {
+          artistsMap.set(artistId, {
+            ...(selectArtistInfoById(state, artistId) || {}),
+            artistId,
+            uri,
+            name,
+            source,
+            firstTrackArtworkUri: track.artworkUri
+          });
+        }
+      });
+    });
+
+    return Array.from(artistsMap.values()).sort((a, b) =>
+      a.name.localeCompare(b.name)
+    );
+  }
+);

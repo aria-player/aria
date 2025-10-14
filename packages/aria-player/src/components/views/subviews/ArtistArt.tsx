@@ -3,7 +3,7 @@ import MusicIcon from "../../../assets/music.svg?react";
 import styles from "./ArtistArt.module.css";
 import { ArtworkContext } from "../../../contexts/ArtworkContext";
 import { getSourceHandle } from "../../../features/plugins/pluginsSlice";
-import { ArtistDetails } from "../../../features/tracks/tracksTypes";
+import { ArtistDetails } from "../../../features/artists/artistsTypes";
 
 export const ArtistArt = ({ artist }: { artist: ArtistDetails }) => {
   const { artworkCache, artistArtworkCache } = useContext(ArtworkContext);

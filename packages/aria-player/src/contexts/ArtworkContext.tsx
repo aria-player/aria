@@ -1,9 +1,6 @@
 import { createContext, useState, ReactNode, useEffect } from "react";
 import { useAppSelector } from "../app/hooks";
-import {
-  selectAllTracks,
-  selectArtistsInfo
-} from "../features/tracks/tracksSlice";
+import { selectAllTracks } from "../features/tracks/tracksSlice";
 import {
   getSourceHandle,
   selectActivePlugins
@@ -11,6 +8,7 @@ import {
 import { Track } from "../../../types/tracks";
 import { useDebounce } from "react-use";
 import { store } from "../app/store";
+import { selectArtistsInfo } from "../features/artists/artistsSlice";
 
 export const ArtworkContext = createContext<{
   artworkCache: Record<string, string>;

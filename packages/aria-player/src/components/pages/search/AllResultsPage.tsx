@@ -13,12 +13,12 @@ import { useTranslation } from "react-i18next";
 import ArtistGridItem from "../../views/subviews/ArtistGridItem";
 import { getScrollbarWidth } from "../../../app/utils";
 import {
-  ArtistDetails,
   AlbumDetails,
   TrackListItem
 } from "../../../features/tracks/tracksTypes";
 import TopResultItem from "./TopResultItem";
 import { useScrollDetection } from "../../../hooks/useScrollDetection";
+import { ArtistDetails } from "../../../features/artists/artistsTypes";
 
 export default function SearchResults() {
   const dispatch = useAppDispatch();

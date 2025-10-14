@@ -16,14 +16,13 @@ import {
   selectPlaylistConfigById
 } from "./playlists/playlistsSlice";
 import { PlaylistItem } from "./playlists/playlistsTypes";
-import { selectGroupFilteredTracks } from "./genericSelectors";
+import {
+  selectAllArtists,
+  selectGroupFilteredTracks
+} from "./genericSelectors";
 import { TrackListItem } from "./tracks/tracksTypes";
 import { Track } from "../../../types/tracks";
-import {
-  selectAllTracks,
-  selectAllAlbums,
-  selectAllArtists
-} from "./tracks/tracksSlice";
+import { selectAllTracks, selectAllAlbums } from "./tracks/tracksSlice";
 import {
   searchTracks,
   searchArtists,

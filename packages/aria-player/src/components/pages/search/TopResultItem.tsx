@@ -1,10 +1,7 @@
 import { push } from "redux-first-history";
 import { BASEPATH } from "../../../app/constants";
 import { useAppDispatch } from "../../../app/hooks";
-import {
-  ArtistDetails,
-  AlbumDetails
-} from "../../../features/tracks/tracksTypes";
+import { AlbumDetails } from "../../../features/tracks/tracksTypes";
 import { Track } from "../../../../../types/tracks";
 import {
   addToSearchHistory,
@@ -21,6 +18,7 @@ import { useTranslation } from "react-i18next";
 import { getSourceHandle } from "../../../features/plugins/pluginsSlice";
 import { formatStringArray } from "../../../app/utils";
 import { ArtistArt } from "../../views/subviews/ArtistArt";
+import { ArtistDetails } from "../../../features/artists/artistsTypes";
 
 interface TopResultItemProps {
   result: SearchResult;
