@@ -5,8 +5,7 @@ import {
   createSlice
 } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
-import { Artist, ArtistId } from "../../../../types/tracks";
-import { PluginId } from "../../../../types/plugins";
+import { Artist, ArtistId, PluginId } from "../../../../types";
 
 const artistsAdapter = createEntityAdapter<Artist, ArtistId>({
   selectId: (artist) => artist.artistId,

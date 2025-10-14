@@ -1,15 +1,6 @@
 import { store } from "../../app/store";
 import { getArtistId, getAsArray, getTrackId } from "../../app/utils";
 import {
-  Track,
-  TrackId,
-  TrackMetadata,
-  TrackUri,
-  Artist,
-  ArtistMetadata,
-  ArtistUri
-} from "../../../../types/tracks";
-import {
   addTracks,
   removeTracks,
   selectAllTracks,
@@ -21,13 +12,6 @@ import {
   setPluginData,
   setSourceSyncProgress
 } from "./pluginsSlice";
-import {
-  PluginId,
-  BaseCallbacks,
-  SourceCallbacks,
-  IntegrationCallbacks,
-  SyncProgress
-} from "../../../../types/plugins";
 import { nextTrack, pause, resume, stop } from "../player/playerSlice";
 import {
   restartOrNextTrack,
@@ -35,6 +19,20 @@ import {
 } from "../player/playerTime";
 import { showAlert } from "./pluginsAlerts";
 import { addArtists, removeArtists } from "../artists/artistsSlice";
+import {
+  ArtistMetadata,
+  Artist,
+  ArtistUri,
+  Track,
+  TrackId,
+  TrackMetadata,
+  TrackUri,
+  BaseCallbacks,
+  IntegrationCallbacks,
+  PluginId,
+  SourceCallbacks,
+  SyncProgress
+} from "../../../../types";
 
 function validateTrackMetadata(track: TrackMetadata): void {
   const artists = getAsArray(track.artist);

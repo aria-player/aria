@@ -1,15 +1,9 @@
-import {
-  TrackUri,
-  TrackId,
-  Track,
-  ArtistUri,
-  ArtistId
-} from "../../../types/tracks";
 import { PluginId } from "../../../types/plugins";
 import { ColumnState } from "@ag-grid-community/core";
 import { defaultColumnDefinitions } from "../features/library/libraryColumns";
 import i18n from "../i18n";
 import { defaultPluginInfo } from "../plugins/plugins";
+import { ArtistUri, ArtistId, Track, TrackId, TrackUri } from "../../../types";
 
 interface Window {
   __TAURI_INTERNALS__?: unknown;

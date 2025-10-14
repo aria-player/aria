@@ -1,5 +1,3 @@
-import { TrackMetadata, ArtistMetadata } from "../../../../types/tracks";
-import { SourceCallbacks, SourceHandle } from "../../../../types/plugins";
 import LibraryConfig from "./LibraryConfig";
 import QuickStart from "./QuickStart";
 import { createElement } from "react";
@@ -10,6 +8,12 @@ import { Trans } from "react-i18next";
 import { BASEPATH } from "../../app/constants";
 import { isTauri } from "../../app/utils";
 import styles from "./spotify.module.css";
+import {
+  ArtistMetadata,
+  SourceCallbacks,
+  SourceHandle,
+  TrackMetadata
+} from "../../../../types";
 
 export type SpotifyConfig = {
   accessToken?: string;

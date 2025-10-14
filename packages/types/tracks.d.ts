@@ -2,9 +2,7 @@ import { PluginId } from "./plugins";
 
 export type TrackId = string;
 export type AlbumId = string;
-export type ArtistId = string;
 export type TrackUri = string;
-export type ArtistUri = string;
 
 /**
  * Metadata describing a track that can be provided by the track source.
@@ -132,38 +130,6 @@ export interface Track extends TrackMetadata {
   trackId: TrackId;
   /**
    * The ID of the source plugin that provides this track.
-   */
-  source: PluginId;
-}
-
-/**
- * Metadata describing an artist that can be provided by a source.
- */
-export interface ArtistMetadata {
-  /**
-   * Unique identifier for this artist within its source.
-   */
-  uri: ArtistUri;
-  /**
-   * The name of this artist.
-   */
-  name: string;
-  /**
-   * A unique identifier for the artwork associated with this artist.
-   */
-  artworkUri?: string;
-}
-
-/**
- * A complete artist object including data assigned by the player.
- */
-export interface Artist extends ArtistMetadata {
-  /**
-   * Unique identifier for this artist.
-   */
-  artistId: ArtistId;
-  /**
-   * The ID of the source plugin that provides this artist.
    */
   source: PluginId;
 }

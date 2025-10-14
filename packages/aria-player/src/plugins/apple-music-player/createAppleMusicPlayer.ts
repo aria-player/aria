@@ -1,9 +1,14 @@
 import { i18n } from "i18next";
-import { SourceCallbacks, SourceHandle } from "../../../../types/plugins";
-import { Track, TrackMetadata, ArtistMetadata } from "../../../../types/tracks";
 import LibraryConfig from "./LibraryConfig";
 import QuickStart from "./QuickStart";
 import en_us from "./locales/en_us/translation.json";
+import {
+  ArtistMetadata,
+  SourceCallbacks,
+  SourceHandle,
+  Track,
+  TrackMetadata
+} from "../../../../types";
 
 export type AppleMusicConfig = {
   loggedIn?: boolean;
