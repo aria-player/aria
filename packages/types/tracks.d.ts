@@ -1,3 +1,4 @@
+import { ArtistUri } from "./artists";
 import { PluginId } from "./plugins";
 
 export type TrackId = string;
@@ -46,7 +47,7 @@ export interface TrackMetadata {
    *
    * Providing `artistUri` values will allow the player to distinguish artists with the same name.
    */
-  artistUri?: string | string[];
+  artistUri?: ArtistUri | ArtistUri[];
   /**
    * The artist(s) of the album this track is part of.
    */
@@ -56,7 +57,7 @@ export interface TrackMetadata {
    *
    * Providing `albumArtistUri` values will allow the player to distinguish artists with the same name.
    */
-  albumArtistUri?: string | string[];
+  albumArtistUri?: ArtistUri | ArtistUri[];
   /**
    * The name of the album this track is part of.
    */
