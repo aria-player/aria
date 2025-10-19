@@ -185,3 +185,18 @@ export function getAsArray(value: string | string[] | undefined | null) {
   if (value == null || value == undefined) return [];
   return Array.isArray(value) ? value : [value];
 }
+
+export function normalizeArtists(
+  names: string | string[] | undefined | null,
+  uris: string | string[] | undefined | null,
+  source: PluginId | undefined
+): { id: ArtistId; name: string; uri?: ArtistUri }[] {
+  const nameArray = getAsArray(names);
+  const uriArray = getAsArray(uris);
+
+  return nameArray.map((name, index) => {
+    const uri = uriArray[index];
+    const id = uri && source ? getArtistId(source, uri) : name;
+    return { id, name, uri };
+  });
+}

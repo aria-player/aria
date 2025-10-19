@@ -4,7 +4,7 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { AuxiliaryControls } from "./AuxiliaryControls";
 import { AlbumArt } from "../views/subviews/AlbumArt";
 import { useMenuActions } from "../../hooks/useMenuActions";
-import { getArtistId, getAsArray } from "../../app/utils";
+import { normalizeArtists } from "../../app/utils";
 import { selectCurrentTrack } from "../../features/currentSelectors";
 import { useTranslation } from "react-i18next";
 import { TriggerEvent, useContextMenu } from "react-contexify";
@@ -31,8 +31,11 @@ export function Footer() {
     dispatch(push(BASEPATH + `artist/${encodeURIComponent(id)}`));
   }
 
-  const artists = getAsArray(metadata?.artist);
-  const artistUris = getAsArray(metadata?.artistUri);
+  const artists = normalizeArtists(
+    metadata?.artist,
+    metadata?.artistUri,
+    metadata?.source
+  );
 
   return (
     <footer className={`footer ${styles.footer}`}>
@@ -69,19 +72,13 @@ export function Footer() {
           </div>
           <div className={styles.metadataRow}>
             <div className={`footer-artist ${styles.artistButtons}`}>
-              {(artistUris.length ? artistUris : artists).map((id, index) => (
+              {artists.map((artist, index) => (
                 <span key={index} className={styles.artistButtonContainer}>
                   <button
                     className={styles.artist}
-                    onClick={() => {
-                      if (metadata && artistUris.length) {
-                        goToArtist(getArtistId(metadata.source, id));
-                      } else {
-                        goToArtist(id);
-                      }
-                    }}
+                    onClick={() => goToArtist(artist.id)}
                   >
-                    {artists[index]}
+                    {artists[index].name}
                   </button>
                   {index < artists.length - 1 && "/"}
                 </span>

@@ -22,7 +22,7 @@ import { BASEPATH } from "../../../app/constants";
 import { push } from "redux-first-history";
 import { showToast } from "../../../app/toasts";
 import { pluginHandles } from "../../../features/plugins/pluginsSlice";
-import { getArtistId, getAsArray } from "../../../app/utils";
+import { normalizeArtists } from "../../../app/utils";
 
 export function TrackMenuItems() {
   const dispatch = useAppDispatch();
@@ -77,27 +77,19 @@ export function TrackMenuItems() {
   };
 
   const artists = [
-    ...getAsArray(menuData?.metadata?.artist),
-    ...getAsArray(menuData?.metadata?.albumArtist)
-  ];
-  const artistUris = [
-    ...getAsArray(menuData?.metadata?.artistUri),
-    ...getAsArray(menuData?.metadata?.albumArtistUri)
+    ...normalizeArtists(
+      menuData?.metadata?.artist,
+      menuData?.metadata?.artistUri,
+      menuData?.metadata?.source
+    ),
+    ...normalizeArtists(
+      menuData?.metadata?.albumArtist,
+      menuData?.metadata?.albumArtistUri,
+      menuData?.metadata?.source
+    )
   ];
   const uniqueArtists = Array.from(
-    new Map(
-      (artistUris.length
-        ? artistUris.map((uri, index) => ({
-            id: menuData?.metadata?.source
-              ? getArtistId(menuData.metadata.source, uri)
-              : uri,
-            name: artists[index]
-          }))
-        : artists.map((name) => ({ id: name, name }))
-      )
-        .filter((artist) => artist.id)
-        .map((artist) => [artist.id, artist])
-    ).values()
+    new Map(artists.map((artist) => [artist.id, artist])).values()
   );
   const goToArtists = uniqueArtists.filter(
     (artist) =>

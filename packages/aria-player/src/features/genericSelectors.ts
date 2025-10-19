@@ -7,7 +7,7 @@ import { TrackListItem } from "./tracks/tracksTypes";
 import { TrackGrouping } from "../app/view";
 import { PlaylistId, PlaylistItem } from "./playlists/playlistsTypes";
 import { selectLibraryColumnState } from "./library/librarySlice";
-import { getArtistId, getAsArray, overrideColumnStateSort } from "../app/utils";
+import { normalizeArtists, overrideColumnStateSort } from "../app/utils";
 import { compareMetadata } from "../app/sort";
 import { selectAllTracks } from "./tracks/tracksSlice";
 import { createSelector } from "@reduxjs/toolkit";
@@ -119,30 +119,21 @@ export const selectAllArtists = createSelector(
     const artistsMap = new Map<string, ArtistDetails>();
     Object.values(tracksById).forEach((track) => {
       if (!track) return;
-      const artists = getAsArray(track.artist);
-      const artistUris = getAsArray(track.artistUri);
-      const albumArtists = getAsArray(track.albumArtist);
-      const albumArtistUris = getAsArray(track.albumArtistUri);
       [
-        ...artists.map((name, index) => ({
-          name,
-          source: track.source,
-          uri: artistUris[index] ? artistUris[index] : undefined
-        })),
-        ...albumArtists.map((name, index) => ({
-          name,
-          source: track.source,
-          uri: albumArtistUris[index] ? albumArtistUris[index] : undefined
-        }))
-      ].forEach(({ name, source, uri }) => {
-        const artistId = uri ? getArtistId(source, uri) : name;
-        if (!artistsMap.has(artistId)) {
-          artistsMap.set(artistId, {
-            ...(selectArtistInfoById(state, artistId) || {}),
-            artistId,
-            uri,
-            name,
-            source,
+        ...normalizeArtists(track.artist, track.artistUri, track.source),
+        ...normalizeArtists(
+          track.albumArtist,
+          track.albumArtistUri,
+          track.source
+        )
+      ].forEach((artist) => {
+        if (!artistsMap.has(artist.id)) {
+          artistsMap.set(artist.id, {
+            ...(selectArtistInfoById(state, artist.id) || {}),
+            artistId: artist.id,
+            uri: artist.uri,
+            name: artist.name,
+            source: track.source,
             firstTrackArtworkUri: track.artworkUri
           });
         }
