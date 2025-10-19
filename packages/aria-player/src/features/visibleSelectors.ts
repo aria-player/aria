@@ -31,6 +31,8 @@ import {
 } from "../app/search";
 import { selectSearch } from "./search/searchSlice";
 import { BASEPATH } from "../app/constants";
+import { selectArtistDelimiter } from "./config/configSlice";
+import { getAsArray } from "../app/utils";
 
 export const selectVisibleViewType = (state: RootState) => {
   const path = state.router.location?.pathname
@@ -271,10 +273,12 @@ export const selectVisibleTrackGroups = createSelector(
     (state: RootState) => state.undoable.present.playlists,
     (state: RootState) => state.undoable.present.library,
     (state: RootState) => state.tracks.tracks,
-    (state: RootState) => state.search.search
+    (state: RootState) => state.search.search,
+    (state: RootState) => state.config.artistDelimiter
   ],
   () => {
     const state = store.getState();
+    const delimiter = selectArtistDelimiter(state);
     if (selectVisibleDisplayMode(state) == DisplayMode.AlbumGrid) {
       const search = selectSearch(state);
       if (selectVisibleSearchCategory(state) == SearchCategory.Albums) {
@@ -301,7 +305,26 @@ export const selectVisibleTrackGroups = createSelector(
         return [
           ...new Set(
             selectVisibleTracks(state)
-              .flatMap((track) => track[grouping] as string | string[])
+              .flatMap((track) => {
+                if (
+                  grouping === TrackGrouping.Artist ||
+                  grouping === TrackGrouping.AlbumArtist
+                ) {
+                  const artists = getAsArray(track[grouping]);
+                  if (
+                    delimiter &&
+                    artists.length === 1 &&
+                    ((grouping === TrackGrouping.Artist &&
+                      !track.artistUri?.length) ||
+                      (grouping === TrackGrouping.AlbumArtist &&
+                        !track.albumArtistUri?.length))
+                  ) {
+                    return artists[0].split(delimiter);
+                  }
+                  return artists;
+                }
+                return track[grouping] as string | string[];
+              })
               .filter(
                 (group) => group !== null && group !== undefined && group != ""
               )

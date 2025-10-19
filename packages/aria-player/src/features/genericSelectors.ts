@@ -13,6 +13,8 @@ import { selectAllTracks } from "./tracks/tracksSlice";
 import { createSelector } from "@reduxjs/toolkit";
 import { selectArtistInfoById } from "./artists/artistsSlice";
 import { ArtistDetails } from "./artists/artistsTypes";
+import { selectArtistDelimiter } from "./config/configSlice";
+import { getAsArray } from "../app/utils";
 
 export const selectTrackListMetadata = (
   state: RootState,
@@ -89,14 +91,33 @@ export const selectGroupFilteredTracks = (
   playlistId?: PlaylistId
 ): TrackListItem[] => {
   if (!trackGrouping || !selectedTrackGroup) return [];
+  const delimiter = selectArtistDelimiter(state);
   return selectTrackListMetadata(state, playlistId)
-    .filter(
-      (track) =>
+    .filter((track) => {
+      if (
+        trackGrouping === TrackGrouping.Artist ||
+        trackGrouping === TrackGrouping.AlbumArtist
+      ) {
+        let artists = getAsArray(track[trackGrouping]);
+        if (
+          delimiter &&
+          artists.length === 1 &&
+          ((trackGrouping === TrackGrouping.Artist &&
+            !track.artistUri?.length) ||
+            (trackGrouping === TrackGrouping.AlbumArtist &&
+              !track.albumArtistUri?.length))
+        ) {
+          artists = artists[0].split(delimiter);
+        }
+        return artists.includes(selectedTrackGroup);
+      }
+      return (
         track[trackGrouping] == selectedTrackGroup ||
         (selectedTrackGroup &&
           Array.isArray(track[trackGrouping]) &&
           (track[trackGrouping] as string[])?.includes(selectedTrackGroup))
-    )
+      );
+    })
     .sort((a, b) => compareMetadata(a.track, b.track))
     .sort((a, b) => compareMetadata(a.disc, b.disc))
     .sort((a, b) => compareMetadata(a.album, b.album))
