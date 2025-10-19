@@ -109,9 +109,7 @@ export async function parseMetadata(track: TrackMetadata, file: File) {
     const iTunesData = new Map(
       metadata.native.iTunes.map((item) => [item.id, item.value])
     );
-    const artists = iTunesData.get("\u00A9ART") as string;
-    newTrack.artist =
-      artists && artists.includes("/") ? artists.split("/") : artists;
+    newTrack.artist = iTunesData.get("\u00A9ART") as string;
     newTrack.title = (iTunesData.get("\u00A9nam") as string) || newTrack.title;
     newTrack.albumArtist = iTunesData.get("aART") as string;
     newTrack.album = iTunesData.get("\u00A9alb") as string;

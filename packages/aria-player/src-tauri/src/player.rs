@@ -82,10 +82,7 @@ pub fn get_metadata(app: AppHandle, file_path: String) -> Result<HashMap<String,
         }
     };
 
-    let mut artists: Vec<&str> = tag.get_strings(&ItemKey::TrackArtist).collect();
-    if artists.len() == 1 {
-        artists = artists[0].split('/').collect();
-    }
+    let artists: Vec<&str> = tag.get_strings(&ItemKey::TrackArtist).collect();
     let artists_json = serde_json::to_string(&artists).unwrap_or_else(|_| "[]".to_string());
     metadata.insert("artist".to_string(), artists_json);
 
