@@ -23,6 +23,7 @@ import { push } from "redux-first-history";
 import { showToast } from "../../../app/toasts";
 import { pluginHandles } from "../../../features/plugins/pluginsSlice";
 import { normalizeArtists } from "../../../app/utils";
+import { selectArtistDelimiter } from "../../../features/config/configSlice";
 
 export function TrackMenuItems() {
   const dispatch = useAppDispatch();
@@ -32,6 +33,7 @@ export function TrackMenuItems() {
   const visibleView = useAppSelector(selectVisibleViewType);
   const visibleSelectedGroup = useAppSelector(selectVisibleSelectedTrackGroup);
   const selectedTracks = useAppSelector(selectSelectedTracks);
+  const delimiter = useAppSelector(selectArtistDelimiter);
 
   const tracksForActions =
     menuData?.type == "track" && menuData.metadata
@@ -80,12 +82,14 @@ export function TrackMenuItems() {
     ...normalizeArtists(
       menuData?.metadata?.artist,
       menuData?.metadata?.artistUri,
-      menuData?.metadata?.source
+      menuData?.metadata?.source,
+      delimiter
     ),
     ...normalizeArtists(
       menuData?.metadata?.albumArtist,
       menuData?.metadata?.albumArtistUri,
-      menuData?.metadata?.source
+      menuData?.metadata?.source,
+      delimiter
     )
   ];
   const uniqueArtists = Array.from(

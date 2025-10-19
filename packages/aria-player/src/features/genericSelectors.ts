@@ -112,19 +112,26 @@ export const selectAlbumTitle = (state: RootState, albumId: string | null) => {
 export const selectAllArtists = createSelector(
   [
     (state: RootState) => state.tracks.tracks.entities,
-    (state: RootState) => state.artists.artists
+    (state: RootState) => state.artists.artists,
+    (state: RootState) => state.config.artistDelimiter
   ],
-  (tracksById) => {
+  (tracksById, _, delimiter) => {
     const state = store.getState();
     const artistsMap = new Map<string, ArtistDetails>();
     Object.values(tracksById).forEach((track) => {
       if (!track) return;
       [
-        ...normalizeArtists(track.artist, track.artistUri, track.source),
+        ...normalizeArtists(
+          track.artist,
+          track.artistUri,
+          track.source,
+          delimiter
+        ),
         ...normalizeArtists(
           track.albumArtist,
           track.albumArtistUri,
-          track.source
+          track.source,
+          delimiter
         )
       ].forEach((artist) => {
         if (!artistsMap.has(artist.id)) {

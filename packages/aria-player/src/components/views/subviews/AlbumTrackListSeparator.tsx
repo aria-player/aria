@@ -2,13 +2,15 @@ import { ICellRendererParams } from "@ag-grid-community/core";
 import styles from "./AlbumTrackListSeparator.module.css";
 import { AlbumArt } from "./AlbumArt";
 import { getSourceHandle } from "../../../features/plugins/pluginsSlice";
-import { useAppDispatch } from "../../../app/hooks";
+import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { push } from "redux-first-history";
 import { BASEPATH } from "../../../app/constants";
 import { normalizeArtists } from "../../../app/utils";
+import { selectArtistDelimiter } from "../../../features/config/configSlice";
 
 export default function AlbumTrackListSeparator(props: ICellRendererParams) {
   const dispatch = useAppDispatch();
+  const delimiter = useAppSelector(selectArtistDelimiter);
 
   function goToArtist(id: string) {
     dispatch(push(BASEPATH + `artist/${encodeURIComponent(id)}`));
@@ -19,7 +21,8 @@ export default function AlbumTrackListSeparator(props: ICellRendererParams) {
     const artists = normalizeArtists(
       props.node.data.artist,
       props.node.data.artistUri,
-      props.node.data.source
+      props.node.data.source,
+      delimiter
     );
 
     return (

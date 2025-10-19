@@ -28,6 +28,7 @@ export interface ConfigState {
   sidebarCollapsed: boolean;
   initialView: LibraryView | "continue";
   lastView: string;
+  artistDelimiter: string;
 }
 
 const initialState: ConfigState = {
@@ -41,7 +42,8 @@ const initialState: ConfigState = {
   sidebarWidth: 220,
   sidebarCollapsed: false,
   initialView: LibraryView.Songs,
-  lastView: "/"
+  lastView: "/",
+  artistDelimiter: "/"
 };
 
 export const installThemesFromFiles = createAsyncThunk(
@@ -130,6 +132,9 @@ export const configSlice = createSlice({
       state.lastView = action.payload.startsWith("/")
         ? action.payload.substring(1)
         : action.payload;
+    },
+    setArtistDelimiter: (state, action: PayloadAction<string>) => {
+      state.artistDelimiter = action.payload;
     }
   }
 });
@@ -144,7 +149,8 @@ export const {
   setDisplayRemainingTime,
   setSidebarConfig,
   setInitialView,
-  setLastView
+  setLastView,
+  setArtistDelimiter
 } = configSlice.actions;
 
 export const selectTheme = (state: RootState) => state.config.theme;
@@ -160,6 +166,8 @@ export const selectSidebarCollapsed = (state: RootState) =>
   state.config.sidebarCollapsed;
 export const selectInitialView = (state: RootState) => state.config.initialView;
 export const selectLastView = (state: RootState) => state.config.lastView;
+export const selectArtistDelimiter = (state: RootState) =>
+  state.config.artistDelimiter;
 
 export const selectThemes = createSelector(
   (state: RootState) => state.config.installedThemes,

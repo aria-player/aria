@@ -189,11 +189,22 @@ export function getAsArray(value: string | string[] | undefined | null) {
 export function normalizeArtists(
   names: string | string[] | undefined | null,
   uris: string | string[] | undefined | null,
-  source: PluginId | undefined
+  source?: PluginId,
+  delimiter?: string
 ): { id: ArtistId; name: string; uri?: ArtistUri }[] {
   const nameArray = getAsArray(names);
   const uriArray = getAsArray(uris);
 
+  if (delimiter && nameArray.length === 1 && uriArray.length === 0) {
+    const splitNames = nameArray[0]
+      .split(delimiter)
+      .map((s) => s.trim())
+      .filter((s) => s);
+
+    return splitNames.map((name) => {
+      return { id: name, name };
+    });
+  }
   return nameArray.map((name, index) => {
     const uri = uriArray[index];
     const id = uri && source ? getArtistId(source, uri) : name;

@@ -11,12 +11,14 @@ import {
 } from "../../../features/visibleSelectors";
 import { LibraryView } from "../../../app/view";
 import { normalizeArtists } from "../../../app/utils";
+import { selectArtistDelimiter } from "../../../features/config/configSlice";
 
 export function AlbumGridItem({ album }: { album: AlbumDetails }) {
   const dispatch = useAppDispatch();
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
   const pluginHandle = getSourceHandle(album.source);
   const visibleViewType = useAppSelector(selectVisibleViewType);
+  const delimiter = useAppSelector(selectArtistDelimiter);
 
   function goToAlbum() {
     const path = visiblePlaylist?.id
@@ -31,7 +33,8 @@ export function AlbumGridItem({ album }: { album: AlbumDetails }) {
   const albumArtists = normalizeArtists(
     album.artist,
     album.artistUri,
-    album.source
+    album.source,
+    delimiter
   );
 
   return (

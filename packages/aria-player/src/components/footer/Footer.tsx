@@ -13,6 +13,7 @@ import { MenuContext } from "../../contexts/MenuContext";
 import { getSourceHandle } from "../../features/plugins/pluginsSlice";
 import { push } from "redux-first-history";
 import { BASEPATH } from "../../app/constants";
+import { selectArtistDelimiter } from "../../features/config/configSlice";
 
 export function Footer() {
   const { t } = useTranslation();
@@ -26,6 +27,7 @@ export function Footer() {
   });
   const pluginHandle = metadata && getSourceHandle(metadata?.source);
   const displayAttribution = pluginHandle?.Attribution != null;
+  const delimiter = useAppSelector(selectArtistDelimiter);
 
   function goToArtist(id: string) {
     dispatch(push(BASEPATH + `artist/${encodeURIComponent(id)}`));
@@ -34,7 +36,8 @@ export function Footer() {
   const artists = normalizeArtists(
     metadata?.artist,
     metadata?.artistUri,
-    metadata?.source
+    metadata?.source,
+    delimiter
   );
 
   return (

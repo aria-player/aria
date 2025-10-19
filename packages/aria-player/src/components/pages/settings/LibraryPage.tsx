@@ -1,7 +1,7 @@
 import { useTranslation } from "react-i18next";
 import styles from "./settings.module.css";
 import { PluginId } from "../../../../../types/plugins";
-import { useAppSelector } from "../../../app/hooks";
+import { useAppSelector, useAppDispatch } from "../../../app/hooks";
 import {
   pluginHandles,
   selectActivePlugins,
@@ -12,8 +12,14 @@ import { selectAllTracks } from "../../../features/tracks/tracksSlice";
 import { sortPlugins } from "../../../app/utils";
 import { useContext } from "react";
 import { Platform, PlatformContext } from "../../../contexts/PlatformContext";
+import {
+  selectArtistDelimiter,
+  setArtistDelimiter
+} from "../../../features/config/configSlice";
 
 export function LibraryPage() {
+  const dispatch = useAppDispatch();
+
   const { t } = useTranslation();
   const { platform } = useContext(PlatformContext);
   const activePlugins = useAppSelector(selectActivePlugins);
@@ -21,6 +27,7 @@ export function LibraryPage() {
   const allTracks = useAppSelector(selectAllTracks);
   const totalTracks = allTracks.length;
   const plugins = useAppSelector(selectPluginInfo);
+  const artistDelimiter = useAppSelector(selectArtistDelimiter);
   const activeSourcePlugins = activePlugins
     .filter((plugin: PluginId) =>
       plugins[plugin].capabilities?.includes("source")
@@ -53,6 +60,19 @@ export function LibraryPage() {
           </section>
         );
       })}
+      <section className="settings-section">
+        <h4 className="settings-heading">
+          {t("settings.library.artistDelimiter")}
+        </h4>
+        <input
+          type="text"
+          value={artistDelimiter}
+          onChange={(event) => {
+            dispatch(setArtistDelimiter(event.target.value));
+          }}
+        />
+        <p>{t("settings.library.artistDelimiterDescription")}</p>
+      </section>
       <section className="settings-section">
         <h4 className="settings-heading">{t("settings.library.info")}</h4>
         {t("settings.library.tracksCount", { totalTracks })}

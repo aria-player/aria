@@ -144,6 +144,8 @@
       "subtitle": "Configure your music sources and organize your library.",
       "managePlugin": "Manage {{plugin}}",
       "noSources": "No sources are enabled, please add a plugin that provides music.",
+      "artistDelimiter": "Multiple artist delimiter",
+      "artistDelimiterDescription": "Choose the character(s) used to separate multiple artists in your library.",
       "info": "Statistics",
       "tracksCount": "Total tracks in library: {{totalTracks}}"
     },
