@@ -77,6 +77,9 @@ export function LibraryPage() {
             );
           }}
         >
+          <option value="">
+            {`${t("settings.library.delimiterOptions.none")} ${t("settings.default")}`}
+          </option>
           <option value="/">
             {t("settings.library.delimiterOptions.slash")}
           </option>

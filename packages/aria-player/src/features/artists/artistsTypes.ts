@@ -8,6 +8,7 @@ export interface ArtistDetails extends Partial<Artist> {
 }
 
 export enum ArtistDelimiterType {
+  None = "",
   Slash = "/",
   Semicolon = ";",
   Comma = ",",

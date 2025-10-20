@@ -147,6 +147,7 @@
       "artistDelimiter": "Multiple artist delimiter",
       "artistDelimiterDescription": "Choose the character(s) used to separate multiple artists in your library.",
       "delimiterOptions": {
+        "none": "None",
         "slash": "/ (slash)",
         "semicolon": "; (semicolon)",
         "comma": ", (comma)",

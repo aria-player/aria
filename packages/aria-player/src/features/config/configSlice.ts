@@ -45,7 +45,7 @@ const initialState: ConfigState = {
   sidebarCollapsed: false,
   initialView: LibraryView.Songs,
   lastView: "/",
-  artistDelimiterType: ArtistDelimiterType.Slash,
+  artistDelimiterType: ArtistDelimiterType.None,
   customArtistDelimiter: ""
 };
 
