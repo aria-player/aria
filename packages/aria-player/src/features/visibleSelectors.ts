@@ -32,7 +32,7 @@ import {
 import { selectSearch } from "./search/searchSlice";
 import { BASEPATH } from "../app/constants";
 import { selectArtistDelimiter } from "./config/configSlice";
-import { getAsArray } from "../app/utils";
+import { getAsArray, normalizeArtists } from "../app/utils";
 
 export const selectVisibleViewType = (state: RootState) => {
   const path = state.router.location?.pathname
@@ -424,10 +424,12 @@ export const selectVisibleArtist = createSelector(
 export const selectVisibleArtistTracks = createSelector(
   [
     (state: RootState) => state.tracks.tracks,
-    (state: RootState) => state.router.location?.pathname
+    (state: RootState) => state.router.location?.pathname,
+    (state: RootState) => state.config.artistDelimiter
   ],
   () => {
     const state = store.getState();
+    const delimiter = selectArtistDelimiter(state);
     const visibleViewType = selectVisibleViewType(state);
     const visibleSelectedTrackGroup = selectVisibleSelectedTrackGroup(state);
     const visibleArtist = selectVisibleArtist(state);
@@ -439,21 +441,26 @@ export const selectVisibleArtistTracks = createSelector(
       const name = visibleArtist.name;
       const uri = visibleArtist?.uri;
       return selectAllTracks(state)
-        .filter((track) =>
-          uri
-            ? (Array.isArray(track.artistUri)
-                ? track.artistUri.includes(uri)
-                : track.artistUri === uri) ||
-              (Array.isArray(track.albumArtistUri)
-                ? track.albumArtistUri.includes(uri)
-                : track.albumArtistUri === uri)
-            : (Array.isArray(track.artist)
-                ? track.artist.includes(name) && !track.artistUri
-                : track.artist === name && !track.artistUri) ||
-              (Array.isArray(track.albumArtist)
-                ? track.albumArtist.includes(name) && !track.albumArtistUri
-                : track.albumArtist === name && !track.albumArtistUri)
-        )
+        .filter((track) => {
+          return (
+            normalizeArtists(
+              track.artist,
+              track.artistUri,
+              track.source,
+              delimiter
+            ).some((artist) =>
+              uri ? artist.uri === uri : artist.name === name
+            ) ||
+            normalizeArtists(
+              track.albumArtist,
+              track.albumArtistUri,
+              track.source,
+              delimiter
+            ).some((artist) =>
+              uri ? artist.uri === uri : artist.name === name
+            )
+          );
+        })
         .map((track) => ({
           ...track,
           itemId: track.trackId
@@ -466,10 +473,12 @@ export const selectVisibleArtistTracks = createSelector(
 export const selectVisibleArtistAlbums = createSelector(
   [
     (state: RootState) => state.tracks.tracks,
-    (state: RootState) => state.router.location?.pathname
+    (state: RootState) => state.router.location?.pathname,
+    (state: RootState) => state.config.artistDelimiter
   ],
   () => {
     const state = store.getState();
+    const delimiter = selectArtistDelimiter(state);
     const visibleViewType = selectVisibleViewType(state);
     const visibleSelectedTrackGroup = selectVisibleSelectedTrackGroup(state);
     const visibleArtist = selectVisibleArtist(state);
@@ -480,15 +489,14 @@ export const selectVisibleArtistAlbums = createSelector(
     ) {
       const name = visibleArtist.name;
       const uri = visibleArtist?.uri;
-      return selectAllAlbums(state).filter((album) =>
-        uri
-          ? Array.isArray(album.artistUri)
-            ? album.artistUri.includes(uri)
-            : album.artistUri === uri
-          : Array.isArray(album.artist)
-            ? album.artist.includes(name) && !album.artistUri
-            : album.artist === name && !album.artistUri
-      );
+      return selectAllAlbums(state).filter((album) => {
+        return normalizeArtists(
+          album.artist,
+          album.artistUri,
+          album.source,
+          delimiter
+        ).some((artist) => (uri ? artist.uri === uri : artist.name === name));
+      });
     }
     return [];
   }
