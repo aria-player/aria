@@ -6,3 +6,12 @@ export interface ArtistDetails extends Partial<Artist> {
   source: string;
   firstTrackArtworkUri?: string;
 }
+
+export enum ArtistDelimiterType {
+  Slash = "/",
+  Semicolon = ";",
+  Comma = ",",
+  Ampersand = "&",
+  SpacedSlash = " / ",
+  Custom = "custom"
+}

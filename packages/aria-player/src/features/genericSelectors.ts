@@ -134,7 +134,7 @@ export const selectAllArtists = createSelector(
   [
     (state: RootState) => state.tracks.tracks.entities,
     (state: RootState) => state.artists.artists,
-    (state: RootState) => state.config.artistDelimiter
+    (state: RootState) => selectArtistDelimiter(state)
   ],
   (tracksById, _, delimiter) => {
     const state = store.getState();

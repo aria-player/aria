@@ -13,9 +13,12 @@ import { sortPlugins } from "../../../app/utils";
 import { useContext } from "react";
 import { Platform, PlatformContext } from "../../../contexts/PlatformContext";
 import {
-  selectArtistDelimiter,
-  setArtistDelimiter
+  selectArtistDelimiterType,
+  selectCustomArtistDelimiter,
+  setArtistDelimiterType,
+  setCustomArtistDelimiter
 } from "../../../features/config/configSlice";
+import { ArtistDelimiterType } from "../../../features/artists/artistsTypes";
 
 export function LibraryPage() {
   const dispatch = useAppDispatch();
@@ -27,7 +30,8 @@ export function LibraryPage() {
   const allTracks = useAppSelector(selectAllTracks);
   const totalTracks = allTracks.length;
   const plugins = useAppSelector(selectPluginInfo);
-  const artistDelimiter = useAppSelector(selectArtistDelimiter);
+  const artistDelimiterType = useAppSelector(selectArtistDelimiterType);
+  const customArtistDelimiter = useAppSelector(selectCustomArtistDelimiter);
   const activeSourcePlugins = activePlugins
     .filter((plugin: PluginId) =>
       plugins[plugin].capabilities?.includes("source")
@@ -64,13 +68,43 @@ export function LibraryPage() {
         <h4 className="settings-heading">
           {t("settings.library.artistDelimiter")}
         </h4>
-        <input
-          type="text"
-          value={artistDelimiter}
-          onChange={(event) => {
-            dispatch(setArtistDelimiter(event.target.value));
+        <select
+          className="settings-select"
+          value={artistDelimiterType}
+          onChange={(e) => {
+            dispatch(
+              setArtistDelimiterType(e.target.value as ArtistDelimiterType)
+            );
           }}
-        />
+        >
+          <option value="/">
+            {t("settings.library.delimiterOptions.slash")}
+          </option>
+          <option value=";">
+            {t("settings.library.delimiterOptions.semicolon")}
+          </option>
+          <option value=",">
+            {t("settings.library.delimiterOptions.comma")}
+          </option>
+          <option value="&">
+            {t("settings.library.delimiterOptions.ampersand")}
+          </option>
+          <option value=" / ">
+            {t("settings.library.delimiterOptions.spacedSlash")}
+          </option>
+          <option value="custom">
+            {t("settings.library.delimiterOptions.custom")}
+          </option>
+        </select>
+        {artistDelimiterType == ArtistDelimiterType.Custom && (
+          <input
+            type="text"
+            className={styles.customDelimiterInput}
+            value={customArtistDelimiter}
+            onChange={(e) => dispatch(setCustomArtistDelimiter(e.target.value))}
+            placeholder={t("settings.library.customDelimiterPlaceholder")}
+          />
+        )}
         <p>{t("settings.library.artistDelimiterDescription")}</p>
       </section>
       <section className="settings-section">

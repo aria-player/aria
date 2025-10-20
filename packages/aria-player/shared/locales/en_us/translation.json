@@ -146,6 +146,15 @@
       "noSources": "No sources are enabled, please add a plugin that provides music.",
       "artistDelimiter": "Multiple artist delimiter",
       "artistDelimiterDescription": "Choose the character(s) used to separate multiple artists in your library.",
+      "delimiterOptions": {
+        "slash": "/ (slash)",
+        "semicolon": "; (semicolon)",
+        "comma": ", (comma)",
+        "ampersand": "& (ampersand)",
+        "spacedSlash": "\u00A0/\u00A0 (slash with spaces)",
+        "custom": "Custom..."
+      },
+      "customDelimiterPlaceholder": "Custom delimiter",
       "info": "Statistics",
       "tracksCount": "Total tracks in library: {{totalTracks}}"
     },

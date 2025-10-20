@@ -15,6 +15,7 @@ import {
 } from "../../themes/themes";
 import { checkCompatibility } from "../../app/utils";
 import { t } from "i18next";
+import { ArtistDelimiterType } from "../artists/artistsTypes";
 
 export interface ConfigState {
   theme: string;
@@ -28,7 +29,8 @@ export interface ConfigState {
   sidebarCollapsed: boolean;
   initialView: LibraryView | "continue";
   lastView: string;
-  artistDelimiter: string;
+  artistDelimiterType: ArtistDelimiterType;
+  customArtistDelimiter: string;
 }
 
 const initialState: ConfigState = {
@@ -43,7 +45,8 @@ const initialState: ConfigState = {
   sidebarCollapsed: false,
   initialView: LibraryView.Songs,
   lastView: "/",
-  artistDelimiter: "/"
+  artistDelimiterType: ArtistDelimiterType.Slash,
+  customArtistDelimiter: ""
 };
 
 export const installThemesFromFiles = createAsyncThunk(
@@ -133,8 +136,14 @@ export const configSlice = createSlice({
         ? action.payload.substring(1)
         : action.payload;
     },
-    setArtistDelimiter: (state, action: PayloadAction<string>) => {
-      state.artistDelimiter = action.payload;
+    setArtistDelimiterType: (
+      state,
+      action: PayloadAction<ArtistDelimiterType>
+    ) => {
+      state.artistDelimiterType = action.payload;
+    },
+    setCustomArtistDelimiter: (state, action: PayloadAction<string>) => {
+      state.customArtistDelimiter = action.payload;
     }
   }
 });
@@ -150,7 +159,8 @@ export const {
   setSidebarConfig,
   setInitialView,
   setLastView,
-  setArtistDelimiter
+  setArtistDelimiterType,
+  setCustomArtistDelimiter
 } = configSlice.actions;
 
 export const selectTheme = (state: RootState) => state.config.theme;
@@ -166,8 +176,10 @@ export const selectSidebarCollapsed = (state: RootState) =>
   state.config.sidebarCollapsed;
 export const selectInitialView = (state: RootState) => state.config.initialView;
 export const selectLastView = (state: RootState) => state.config.lastView;
-export const selectArtistDelimiter = (state: RootState) =>
-  state.config.artistDelimiter;
+export const selectArtistDelimiterType = (state: RootState) =>
+  state.config.artistDelimiterType;
+export const selectCustomArtistDelimiter = (state: RootState) =>
+  state.config.customArtistDelimiter;
 
 export const selectThemes = createSelector(
   (state: RootState) => state.config.installedThemes,
@@ -182,6 +194,18 @@ export const selectStylesheets = createSelector(
     ...defaultStylesheets,
     ...installedStylesheets
   })
+);
+
+export const selectArtistDelimiter = createSelector(
+  selectArtistDelimiterType,
+  selectCustomArtistDelimiter,
+  (artistDelimiterType, customArtistDelimiter) => {
+    if (artistDelimiterType === ArtistDelimiterType.Custom) {
+      return customArtistDelimiter || undefined;
+    } else {
+      return artistDelimiterType || undefined;
+    }
+  }
 );
 
 export default configSlice.reducer;
