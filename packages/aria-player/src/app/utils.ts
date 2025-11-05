@@ -4,6 +4,7 @@ import { defaultColumnDefinitions } from "../features/library/libraryColumns";
 import i18n from "../i18n";
 import { defaultPluginInfo } from "../plugins/plugins";
 import { ArtistUri, ArtistId, Track, TrackId, TrackUri } from "../../../types";
+import { BASEPATH } from "./constants";
 
 interface Window {
   __TAURI_INTERNALS__?: unknown;
@@ -11,6 +12,12 @@ interface Window {
 
 export function isTauri() {
   return (window as Window).__TAURI_INTERNALS__ !== undefined;
+}
+
+export function getRelativePath(pathname: string) {
+  return pathname.startsWith(BASEPATH)
+    ? pathname.slice(BASEPATH.length)
+    : pathname;
 }
 
 export function formatDuration(duration: number) {

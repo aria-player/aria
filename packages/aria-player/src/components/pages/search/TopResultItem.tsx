@@ -16,9 +16,10 @@ import { MenuContext } from "../../../contexts/MenuContext";
 import { SearchResult } from "../../../app/search";
 import { useTranslation } from "react-i18next";
 import { getSourceHandle } from "../../../features/plugins/pluginsSlice";
-import { formatStringArray } from "../../../app/utils";
+import { formatStringArray, getRelativePath } from "../../../app/utils";
 import { ArtistArt } from "../../views/subviews/ArtistArt";
 import { ArtistDetails } from "../../../features/artists/artistsTypes";
+import { useLocation } from "react-router-dom";
 
 interface TopResultItemProps {
   result: SearchResult;
@@ -26,6 +27,7 @@ interface TopResultItemProps {
 
 export default function TopResultItem({ result }: TopResultItemProps) {
   const dispatch = useAppDispatch();
+  const location = useLocation();
   const { t } = useTranslation();
   const search = useAppSelector(selectSearch);
   const { setMenuData } = useContext(MenuContext);
@@ -119,7 +121,7 @@ export default function TopResultItem({ result }: TopResultItemProps) {
           const track = result.item as Track;
           setMenuData({
             itemId: track.trackId,
-            itemSource: undefined,
+            itemSource: getRelativePath(location.pathname),
             itemIndex: undefined,
             metadata: track,
             type: "track"

@@ -1,5 +1,9 @@
 import { ICellRendererParams } from "@ag-grid-community/core";
-import { formatStringArray, formatDuration } from "../../../app/utils";
+import {
+  formatStringArray,
+  formatDuration,
+  getRelativePath
+} from "../../../app/utils";
 import { useContextMenu } from "react-contexify";
 import { useContext } from "react";
 import { View } from "../../../app/view";
@@ -33,6 +37,7 @@ import {
   selectSearch
 } from "../../../features/search/searchSlice";
 import { QueueListItem } from "../../pages/QueuePage";
+import { useLocation } from "react-router-dom";
 
 export const TrackSummaryRow = (props: ICellRendererParams) => {
   const { show: showCellContextMenu } = useContextMenu({
@@ -40,14 +45,11 @@ export const TrackSummaryRow = (props: ICellRendererParams) => {
   });
   const { setMenuData } = useContext(MenuContext);
   const dispatch = useAppDispatch();
+  const location = useLocation();
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
   const visibleViewType = useAppSelector(selectVisibleViewType);
   const currentTrack = useAppSelector(selectCurrentTrack);
   const queueSource = useAppSelector(selectQueueSource);
-  const search = useAppSelector(selectSearch);
-  const visibleSelectedTrackGroup = useAppSelector(
-    selectVisibleSelectedTrackGroup
-  );
   const visibleView = visiblePlaylist?.id ?? visibleViewType;
   const pluginHandle = getSourceHandle(props.data.source);
 
@@ -74,8 +76,8 @@ export const TrackSummaryRow = (props: ICellRendererParams) => {
             ).filter((track) => !track.separator)
           : selectVisibleGroupFilteredTrackList(store.getState());
       setMenuData({
-        itemId: rowProps.node.data.trackId,
-        itemSource: visibleView,
+        itemId: rowProps.node.data.itemId,
+        itemSource: getRelativePath(location.pathname),
         itemIndex:
           visibleTracks.findIndex(
             (track) => track.itemId == rowProps.node.data.itemId
@@ -120,7 +122,6 @@ export const TrackSummaryRow = (props: ICellRendererParams) => {
     }
 
     const search = selectSearch(state);
-    const artist = selectVisibleSelectedTrackGroup(state);
     if (visibleView == View.Search) {
       dispatch(addToSearchHistory(search));
     }
@@ -129,12 +130,7 @@ export const TrackSummaryRow = (props: ICellRendererParams) => {
         queue,
         queueIndex:
           queue.findIndex((item) => rowProps.node.id == item.itemId) ?? 0,
-        queueSource:
-          visibleView == View.Search
-            ? visibleView + "/" + search
-            : visibleView == View.Artist
-              ? visibleView + "/" + artist
-              : visibleView,
+        queueSource: getRelativePath(location.pathname),
         queueGrouping: selectVisibleTrackGrouping(state) ?? null,
         queueSelectedGroup: selectVisibleSelectedTrackGroup(state) ?? null
       })
@@ -145,12 +141,8 @@ export const TrackSummaryRow = (props: ICellRendererParams) => {
     <div
       className={`track-summary-row ${styles.trackSummaryRow} ${
         props.data.itemId === currentTrack?.itemId &&
-        (queueSource == visibleView ||
-          visibleView == View.Queue ||
-          (visibleView == View.Search &&
-            search == queueSource?.split("/")[1]) ||
-          (visibleView == View.Artist &&
-            visibleSelectedTrackGroup == queueSource?.split("/")[1]))
+        (visibleView == View.Queue ||
+          queueSource == getRelativePath(location.pathname))
           ? styles.highlighted
           : ""
       }`}

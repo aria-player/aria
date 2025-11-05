@@ -84,7 +84,7 @@ export function SidebarItemContextMenu() {
               dispatch(
                 setQueueToNewSource({
                   queue,
-                  queueSource: menuData.itemId,
+                  queueSource: "playlist/" + menuData.itemId,
                   queueIndex: 0,
                   queueGrouping: null,
                   queueSelectedGroup: null

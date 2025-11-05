@@ -40,6 +40,7 @@ import { PlaylistItem } from "../../features/playlists/playlistsTypes";
 import { LibraryView, View } from "../../app/view";
 import {
   filterHiddenColumnSort,
+  getRelativePath,
   overrideColumnStateSort
 } from "../../app/utils";
 import { store } from "../../app/store";
@@ -53,8 +54,7 @@ import {
   selectVisibleTracks,
   selectVisiblePlaylist,
   selectVisibleViewType,
-  selectVisiblePlaylistConfig,
-  selectVisibleSelectedTrackGroup
+  selectVisiblePlaylistConfig
 } from "../../features/visibleSelectors";
 import { compareMetadata } from "../../app/sort";
 import {
@@ -64,9 +64,11 @@ import {
 import NoRowsOverlay from "./subviews/NoRowsOverlay";
 import { pluginHandles } from "../../features/plugins/pluginsSlice";
 import { selectAllTracks } from "../../features/tracks/tracksSlice";
+import { useLocation } from "react-router-dom";
 
 export const TrackList = () => {
   const dispatch = useAppDispatch();
+  const location = useLocation();
   const { gridRef, gridProps, isGridReady } = useTrackGrid();
   const currentTrack = useAppSelector(selectCurrentTrack);
   const rowData = useAppSelector(selectVisibleTracks);
@@ -173,15 +175,14 @@ export const TrackList = () => {
           fontWeight:
             params.data.itemId ===
               selectCurrentTrack(store.getState())?.itemId &&
-            (visibleView !== View.Search ||
-              selectSearch(store.getState()) === queueSource?.split("/")[1])
+            queueSource == getRelativePath(location.pathname)
               ? 700
               : 400,
           fontStyle: !params.data.metadataLoaded ? "italic" : "normal"
         };
       }
     }),
-    [queueSource, visibleView]
+    [queueSource, location]
   );
 
   const updateColumnState = (api: GridApi, alwaysCopyToPlaylist: boolean) => {
@@ -234,7 +235,6 @@ export const TrackList = () => {
     // but then we'd be re-calculating the same sorted tracks that are already displayed
     const state = store.getState();
     const search = selectSearch(state);
-    const artist = selectVisibleSelectedTrackGroup(state);
     const queue = [] as PlaylistItem[];
     event.api.forEachNodeAfterFilterAndSort((node) => {
       queue.push({
@@ -249,12 +249,7 @@ export const TrackList = () => {
       setQueueToNewSource({
         queue,
         queueIndex: event.rowIndex ?? 0,
-        queueSource:
-          visibleView == View.Search
-            ? visibleView + "/" + search
-            : visibleView == View.Artist
-              ? visibleView + "/" + artist
-              : visibleView,
+        queueSource: getRelativePath(location.pathname),
         queueGrouping: null,
         queueSelectedGroup: null
       })
@@ -362,11 +357,9 @@ export const TrackList = () => {
       event.node.setSelected(true, true);
     }
     if (event.node.id) {
-      const search = selectSearch(store.getState());
       setMenuData({
         itemId: event.node.data.trackId,
-        itemSource:
-          visibleView == View.Search ? visibleView + "/" + search : visibleView,
+        itemSource: getRelativePath(location.pathname),
         itemIndex: event.rowIndex ?? undefined,
         metadata: event.node.data,
         type: "tracklistitem"

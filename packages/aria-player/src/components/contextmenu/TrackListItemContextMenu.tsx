@@ -65,7 +65,7 @@ export function TrackListItemContextMenu() {
             const state = store.getState();
             const source = selectPlaylistById(
               state,
-              menuData.itemSource ?? ""
+              menuData.itemSource?.split("/")[1] ?? ""
             )?.id;
             if (visibleView == View.Search) {
               dispatch(addToSearchHistory(selectSearch(state)));

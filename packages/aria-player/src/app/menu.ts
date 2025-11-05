@@ -36,7 +36,6 @@ import { copySelectedTracks } from "../features/tracks/tracksSlice";
 import { PlaylistItem } from "../features/playlists/playlistsTypes";
 import { View, DisplayMode, LibraryView, TrackGrouping } from "./view";
 import {
-  selectCurrentPlaylist,
   selectCurrentTrack,
   selectCurrentTrackItemId
 } from "../features/currentSelectors";
@@ -137,48 +136,13 @@ export function handleMenuAction(
     case "goToCurrent":
       {
         const queueSource = state.player.queueSource;
-        const currentPlaylist = selectCurrentPlaylist(state);
         const currentTrack = selectCurrentTrack(state);
         if (currentTrack) {
-          if (currentPlaylist) {
-            dispatch(
-              push(
-                BASEPATH +
-                  `playlist/${currentPlaylist.id}/${encodeURIComponent(state.player.queueSelectedGroup || "")}`,
-                {
-                  focusItemId: currentTrack.itemId
-                }
-              )
-            );
-          } else if (queueSource?.startsWith(View.Search)) {
-            dispatch(
-              push(
-                BASEPATH +
-                  `search/${encodeURIComponent(queueSource.split("/")[1])}/songs`,
-                {
-                  focusItemId: currentTrack.itemId
-                }
-              )
-            );
-          } else if (queueSource?.startsWith(View.Artist)) {
-            dispatch(
-              push(
-                BASEPATH +
-                  `artist/${encodeURIComponent(queueSource.split("/")[1])}/songs`,
-                {
-                  focusItemId: currentTrack.itemId
-                }
-              )
-            );
-          } else {
-            dispatch(
-              push(
-                BASEPATH +
-                  `${queueSource}/${encodeURIComponent(state.player.queueSelectedGroup || "")}`,
-                { focusItemId: currentTrack.itemId }
-              )
-            );
-          }
+          dispatch(
+            push(BASEPATH + queueSource, {
+              focusItemId: currentTrack.itemId
+            })
+          );
         }
       }
       break;

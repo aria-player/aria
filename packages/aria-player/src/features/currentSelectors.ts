@@ -10,6 +10,7 @@ import { selectTrackById } from "./tracks/tracksSlice";
 import { TrackListItem } from "./tracks/tracksTypes";
 import { selectGroupFilteredTracks } from "./genericSelectors";
 import { RepeatMode } from "./player/playerTypes";
+import { View } from "../app/view";
 
 export const selectCurrentQueueTracks = createSelector(
   [
@@ -86,7 +87,11 @@ export const selectNextTrack = createSelector(
 
 export const selectCurrentPlaylist = (state: RootState) => {
   if (!state.player.queueSource) return null;
-  return selectPlaylistById(state, state.player.queueSource) ?? null;
+  const playlistId = state.player.queueSource?.startsWith(View.Playlist)
+    ? decodeURIComponent(state.player.queueSource.split("/")[1])
+    : null;
+  if (!playlistId) return null;
+  return selectPlaylistById(state, playlistId) ?? null;
 };
 
 export const selectCurrentTrack = createSelector(

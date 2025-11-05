@@ -27,7 +27,7 @@ export default function QueueSeparator(props: ICellRendererParams) {
   const formattedGroup =
     queueGrouping == TrackGrouping.AlbumId ? albumTitle : queueSelectedGroup;
   const artistName = queueSource?.startsWith(View.Artist)
-    ? queueSource.split("/")[1]
+    ? decodeURIComponent(queueSource.split("/")[1])
     : null;
 
   return (
