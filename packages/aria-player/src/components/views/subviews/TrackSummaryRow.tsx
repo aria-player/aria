@@ -28,7 +28,9 @@ import {
   selectVisibleTrackGrouping,
   selectVisibleSelectedTrackGroup,
   selectVisibleTracks,
-  selectVisibleGroupFilteredTrackList
+  selectVisibleGroupFilteredTrackList,
+  selectVisibleSearchResults,
+  selectVisibleArtistTracks
 } from "../../../features/visibleSelectors";
 import { getSourceHandle } from "../../../features/plugins/pluginsSlice";
 import { AlbumArt } from "./AlbumArt";
@@ -70,11 +72,17 @@ export const TrackSummaryRow = (props: ICellRendererParams) => {
     }
     if (rowProps.node.id) {
       const visibleTracks =
-        visibleView == View.Queue
-          ? (
-              selectCurrentQueueTracks(store.getState()) as QueueListItem[]
-            ).filter((track) => !track.separator)
-          : selectVisibleGroupFilteredTrackList(store.getState());
+        visibleView == View.Search
+          ? (selectVisibleSearchResults(store.getState())?.tracks.map(
+              (track) => track.item
+            ) ?? [])
+          : visibleView == View.Artist
+            ? selectVisibleArtistTracks(store.getState())
+            : visibleView == View.Queue
+              ? (
+                  selectCurrentQueueTracks(store.getState()) as QueueListItem[]
+                ).filter((track) => !track.separator)
+              : selectVisibleGroupFilteredTrackList(store.getState());
       setMenuData({
         itemId: rowProps.node.data.itemId,
         itemSource: getRelativePath(location.pathname),

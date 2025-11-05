@@ -23,7 +23,8 @@ import {
   selectVisibleGroupFilteredTrackList,
   selectVisibleTrackGrouping,
   selectVisibleSelectedTrackGroup,
-  selectVisibleTracks
+  selectVisibleSearchResults,
+  selectVisibleArtistTracks
 } from "../../features/visibleSelectors";
 import {
   addToSearchHistory,
@@ -63,21 +64,27 @@ export function TrackListItemContextMenu() {
             dispatch(skipQueueIndexes(menuData.itemIndex));
           } else {
             const state = store.getState();
-            const source = selectPlaylistById(
+            const playlistId = selectPlaylistById(
               state,
               menuData.itemSource?.split("/")[1] ?? ""
             )?.id;
             if (visibleView == View.Search) {
               dispatch(addToSearchHistory(selectSearch(state)));
             }
+            const searchResults = selectVisibleSearchResults(state)?.tracks.map(
+              (track) => track.item
+            );
+            const visibleArtistTracks = selectVisibleArtistTracks(state);
             dispatch(
               setQueueToNewSource({
                 queue:
-                  selectVisibleDisplayMode(state) == DisplayMode.TrackList
-                    ? visibleView == View.Search
-                      ? selectVisibleTracks(state)
-                      : selectSortedTrackList(state, source ?? undefined)
-                    : selectVisibleGroupFilteredTrackList(state),
+                  visibleView == View.Search
+                    ? (searchResults ?? [])
+                    : visibleView == View.Artist
+                      ? visibleArtistTracks
+                      : selectVisibleDisplayMode(state) == DisplayMode.TrackList
+                        ? selectSortedTrackList(state, playlistId)
+                        : selectVisibleGroupFilteredTrackList(state),
                 queueSource: menuData.itemSource ?? LibraryView.Songs,
                 queueIndex: menuData.itemIndex ?? 0,
                 queueGrouping: selectVisibleTrackGrouping(state) ?? null,
