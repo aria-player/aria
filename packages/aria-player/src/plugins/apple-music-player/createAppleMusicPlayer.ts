@@ -227,6 +227,9 @@ export default function createAppleMusicPlayer(
           track.albumArtist = data.albumArtist;
           track.albumArtistUri = data.albumArtistUri;
         }
+        if (data?.albumUri) {
+          track.albumUri = data.albumUri;
+        }
       });
 
       return { tracks, artists: Object.keys(artistData) };
@@ -309,7 +312,8 @@ export default function createAppleMusicPlayer(
         artist: artistUri.map((id) => artistMap[id]).filter(Boolean),
         artistUri,
         albumArtist: albumArtistUri.map((id) => artistMap[id]).filter(Boolean),
-        albumArtistUri
+        albumArtistUri,
+        albumUri: albumId
       };
     });
 
