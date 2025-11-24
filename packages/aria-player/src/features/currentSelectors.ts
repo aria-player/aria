@@ -6,7 +6,7 @@ import {
 } from "./player/playerSlice";
 import { selectPlaylistById } from "./playlists/playlistsSlice";
 import { PlaylistItem } from "./playlists/playlistsTypes";
-import { selectTrackById } from "./tracks/tracksSlice";
+import { selectAllTracks, selectTrackById } from "./tracks/tracksSlice";
 import { TrackListItem } from "./tracks/tracksTypes";
 import { selectGroupFilteredTracks } from "./genericSelectors";
 import { RepeatMode } from "./player/playerTypes";
@@ -97,7 +97,7 @@ export const selectCurrentPlaylist = (state: RootState) => {
 export const selectCurrentTrack = createSelector(
   [
     (state: RootState) => state.player.currentTrack,
-    (state: RootState) => state.tracks.tracks.entities
+    (state: RootState) => selectAllTracks(state)
   ],
   () => {
     const state = store.getState();

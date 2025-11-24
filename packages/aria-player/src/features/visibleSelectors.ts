@@ -22,7 +22,11 @@ import {
 } from "./genericSelectors";
 import { TrackListItem } from "./tracks/tracksTypes";
 import { Track } from "../../../types/tracks";
-import { selectAllTracks, selectAllAlbums } from "./tracks/tracksSlice";
+import {
+  selectAllTracks,
+  selectAllAlbums,
+  selectTrackById
+} from "./tracks/tracksSlice";
 import {
   searchTracks,
   searchArtists,
@@ -116,7 +120,6 @@ export const selectVisibleTracks = createSelector(
   ],
   () => {
     const state = store.getState();
-    const tracksById = state.tracks.tracks.entities;
     const visiblePlaylist = selectVisiblePlaylist(state)?.tracks;
     const visibleViewType = selectVisibleViewType(state);
     const visibleSelectedTrackGroup = selectVisibleSelectedTrackGroup(state);
@@ -130,7 +133,7 @@ export const selectVisibleTracks = createSelector(
       ? visiblePlaylist.map((playlistTrack) => {
           return {
             ...playlistTrack,
-            ...tracksById[playlistTrack.trackId]
+            ...selectTrackById(state, playlistTrack.trackId)
           };
         })
       : Object.values(LibraryView).includes(

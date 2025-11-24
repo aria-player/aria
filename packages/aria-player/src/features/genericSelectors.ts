@@ -9,7 +9,7 @@ import { PlaylistId, PlaylistItem } from "./playlists/playlistsTypes";
 import { selectLibraryColumnState } from "./library/librarySlice";
 import { normalizeArtists, overrideColumnStateSort } from "../app/utils";
 import { compareMetadata } from "../app/sort";
-import { selectAllTracks } from "./tracks/tracksSlice";
+import { selectAllTracks, selectTrackById } from "./tracks/tracksSlice";
 import { createSelector } from "@reduxjs/toolkit";
 import { selectArtistInfoById } from "./artists/artistsSlice";
 import { ArtistDetails } from "./artists/artistsTypes";
@@ -26,7 +26,7 @@ export const selectTrackListMetadata = (
   return playlist
     ? playlist.tracks.map((track) => ({
         ...track,
-        ...state.tracks.tracks.entities[track.trackId]
+        ...selectTrackById(state, track.trackId)
       }))
     : (selectAllTracks(state).map((track) => ({
         ...track,
@@ -132,7 +132,7 @@ export const selectAlbumTitle = (state: RootState, albumId: string | null) => {
 
 export const selectAllArtists = createSelector(
   [
-    (state: RootState) => state.tracks.tracks.entities,
+    (state: RootState) => selectAllTracks(state),
     (state: RootState) => state.artists.artists,
     (state: RootState) => selectArtistDelimiter(state)
   ],
