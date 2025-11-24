@@ -70,8 +70,12 @@ export function getTrackId(source: PluginId, uri: TrackUri): TrackId {
   return source + ":" + uri;
 }
 
-export function getArtistId(source: PluginId, uri: ArtistUri): ArtistId {
-  return source + ":" + uri;
+export function getArtistId(
+  source: PluginId,
+  artist: string,
+  uri?: ArtistUri
+): ArtistId {
+  return source + ":" + (uri ?? artist);
 }
 
 export function getAlbumId(
@@ -231,7 +235,7 @@ export function normalizeArtists(
   }
   return nameArray.map((name, index) => {
     const uri = uriArray[index];
-    const id = uri && source ? getArtistId(source, uri) : name;
+    const id = getArtistId(source ?? "unknown", name, uri);
     return { id, name, uri };
   });
 }

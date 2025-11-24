@@ -106,7 +106,7 @@ function handleUpdateArtists(source: PluginId, metadata: ArtistMetadata[]) {
   const artists: Artist[] = metadata.map((artist) => ({
     ...artist,
     source,
-    artistId: getArtistId(source, artist.uri)
+    artistId: getArtistId(source, artist.name, artist.uri)
   }));
   store.dispatch(addArtists({ source, artists }));
 }
