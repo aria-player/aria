@@ -75,7 +75,7 @@ export function getArtistId(
   artist: string,
   uri?: ArtistUri
 ): ArtistId {
-  return source + ":" + (uri ?? artist);
+  return uri ? `${source}:uri:${uri}` : `${source}:name:${artist}`;
 }
 
 export function getAlbumId(
@@ -84,7 +84,9 @@ export function getAlbumId(
   albumArtist?: string | string[],
   uri?: AlbumUri
 ): AlbumId {
-  return source + ":" + (uri ?? `${album}${getAsArray(albumArtist).join("-")}`);
+  return uri
+    ? `${source}:uri:${uri}`
+    : `${source}:name:${album}${getAsArray(albumArtist).join("-")}`;
 }
 
 export function getMostCommonArtworkUri(albumTracks: Track[]) {
