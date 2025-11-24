@@ -11,7 +11,11 @@ import { Track, TrackId, TrackMetadata } from "../../../../types/tracks";
 import { PluginId } from "../../../../types/plugins";
 import { PlaylistItem } from "../playlists/playlistsTypes";
 import { AlbumDetails } from "./tracksTypes";
-import { getMostCommonArtworkUri, getTrackId } from "../../app/utils";
+import {
+  getAlbumId,
+  getMostCommonArtworkUri,
+  getTrackId
+} from "../../app/utils";
 
 const tracksAdapter = createEntityAdapter<Track, TrackId>({
   selectId: (track) => track.trackId,
@@ -43,15 +47,6 @@ const tracksSlice = createSlice({
         action.payload.tracks?.map((track) => ({
           ...track,
           trackId: getTrackId(action.payload.source, track.uri),
-          albumId:
-            track.albumUri ??
-            (track.album
-              ? `${track.album ?? ""} ${
-                  Array.isArray(track.albumArtist)
-                    ? track.albumArtist.join(" ")
-                    : (track.albumArtist ?? "")
-                }`
-              : undefined),
           source: action.payload.source
         })) ?? []
       );
@@ -83,17 +78,39 @@ export const {
   copySelectedTracks
 } = tracksSlice.actions;
 
-export const {
-  selectIds: selectTrackIds,
-  selectAll: selectAllTracks,
-  selectById: selectTrackById
-} = tracksAdapter.getSelectors((state: RootState) => state.tracks.tracks);
 export const selectSelectedTracks = (state: RootState) =>
   state.tracks.selectedTracks;
 export const selectClipboard = (state: RootState) => state.tracks.clipboard;
 
-export const selectAllAlbums = createSelector(
+export const selectTrackById = (state: RootState, trackId: TrackId) => {
+  const track = state.tracks.tracks.entities[trackId];
+  return {
+    ...track,
+    albumId: getAlbumId(
+      track.source,
+      track.album || "",
+      track.albumArtist,
+      track.albumUri
+    )
+  };
+};
+
+export const selectAllTracks = createSelector(
   [(state: RootState) => state.tracks.tracks.entities],
+  (tracks) =>
+    Object.values(tracks).map((track) => ({
+      ...track,
+      albumId: getAlbumId(
+        track.source,
+        track.album || "",
+        track.albumArtist,
+        track.albumUri
+      )
+    }))
+);
+
+export const selectAllAlbums = createSelector(
+  [(state: RootState) => selectAllTracks(state)],
   (tracksById) => {
     const albumsMap = new Map<string, AlbumDetails>();
     const tracks = Object.values(tracksById);

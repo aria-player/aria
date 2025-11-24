@@ -3,7 +3,15 @@ import { ColumnState } from "@ag-grid-community/core";
 import { defaultColumnDefinitions } from "../features/library/libraryColumns";
 import i18n from "../i18n";
 import { defaultPluginInfo } from "../plugins/plugins";
-import { ArtistUri, ArtistId, Track, TrackId, TrackUri } from "../../../types";
+import {
+  ArtistUri,
+  ArtistId,
+  Track,
+  TrackId,
+  TrackUri,
+  AlbumUri,
+  AlbumId
+} from "../../../types";
 import { BASEPATH } from "./constants";
 
 interface Window {
@@ -64,6 +72,15 @@ export function getTrackId(source: PluginId, uri: TrackUri): TrackId {
 
 export function getArtistId(source: PluginId, uri: ArtistUri): ArtistId {
   return source + ":" + uri;
+}
+
+export function getAlbumId(
+  source: PluginId,
+  album: string,
+  albumArtist?: string | string[],
+  uri?: AlbumUri
+): AlbumId {
+  return source + ":" + (uri ?? `${album}${getAsArray(albumArtist).join("-")}`);
 }
 
 export function getMostCommonArtworkUri(albumTracks: Track[]) {

@@ -4,8 +4,7 @@ import {
   addTracks,
   removeTracks,
   selectAllTracks,
-  selectTrackById,
-  selectTrackIds
+  selectTrackById
 } from "../tracks/tracksSlice";
 import {
   selectActivePlugins,
@@ -67,7 +66,9 @@ function handleUpdateData(pluginId: PluginId, data: object) {
 function handleAddTracks(source: PluginId, metadata: TrackMetadata[]) {
   if (!isPluginActive(source)) return;
   metadata.forEach(validateTrackMetadata);
-  const libraryTrackIds = selectTrackIds(store.getState());
+  const libraryTrackIds = selectAllTracks(store.getState()).map(
+    (track) => track.trackId
+  );
   const newTracks = metadata.filter(
     (track: TrackMetadata) =>
       !libraryTrackIds.includes(getTrackId(source, track.uri))
