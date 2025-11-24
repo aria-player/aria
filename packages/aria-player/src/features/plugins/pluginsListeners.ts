@@ -40,10 +40,15 @@ function getPluginCallbacks(pluginId: PluginId, capabilities?: string[]) {
 const createPluginInstance = async (pluginId: PluginId) => {
   if (!pluginHandles[pluginId]) {
     const plugin = selectPluginInfo(store.getState())[pluginId];
-    if (!plugin) {
-      throw new Error(`Plugin "${pluginId}" not found`);
-    }
     try {
+      if (!plugin) {
+        throw new Error(`Plugin "${pluginId}" not found`);
+      }
+      if (pluginId.includes(":")) {
+        throw new Error(
+          `Plugin "${pluginId}" contains disallowed character ":" in its ID`
+        );
+      }
       let module;
       if (Object.keys(defaultPluginInfo).includes(pluginId)) {
         module = defaultPluginScripts[pluginId];
