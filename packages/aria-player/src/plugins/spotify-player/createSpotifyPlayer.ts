@@ -303,7 +303,7 @@ export default function createSpotifyPlayer(
                 artworkUri: album.album.images[0].url
               };
             });
-          albumArtistMapping[album.album.id] = album.album.artists.map(
+          albumArtistMapping[album.album.uri] = album.album.artists.map(
             (artist) => artist.id
           );
           album.album.tracks.items.forEach((track) =>
