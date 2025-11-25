@@ -15,7 +15,7 @@ import { LibraryView, View } from "../app/view";
 
 export const selectCurrentQueueTracks = createSelector(
   [
-    (state: RootState) => state.tracks.tracks,
+    (state: RootState) => selectAllTracks(state),
     (state: RootState) => state.player.currentTrack,
     (state: RootState) => state.player.queue,
     (state: RootState) => state.player.queueIndex,
@@ -24,22 +24,21 @@ export const selectCurrentQueueTracks = createSelector(
   () => {
     const state = store.getState();
     if (!state.player.currentTrack) return [];
-    const tracks = state.tracks.tracks;
 
     const currentTrack = {
-      ...tracks.entities[state.player.currentTrack.trackId],
+      ...selectTrackById(state, state.player.currentTrack.trackId),
       itemId: state.player.currentTrack.itemId
     };
 
     const queue = state.player.queue
       .map((queueTrack) => ({
-        ...tracks.entities[queueTrack.trackId],
+        ...selectTrackById(state, queueTrack.trackId),
         itemId: queueTrack.itemId
       }))
       .slice(state.player.queueIndex!);
 
     const upNext = state.player.upNext.map((queueTrack) => ({
-      ...tracks.entities[queueTrack.trackId],
+      ...selectTrackById(state, queueTrack.trackId),
       itemId: queueTrack.itemId
     }));
 
@@ -63,7 +62,7 @@ export const selectCurrentQueueTracks = createSelector(
 
 export const selectNextTrack = createSelector(
   [
-    (state: RootState) => state.tracks.tracks,
+    (state: RootState) => selectAllTracks(state),
     (state: RootState) => state.player.queue,
     (state: RootState) => state.player.queueIndex,
     (state: RootState) => state.player.upNext,

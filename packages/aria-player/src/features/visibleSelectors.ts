@@ -114,7 +114,7 @@ export const selectVisiblePlaylistConfig = (state: RootState) => {
 
 export const selectVisibleTracks = createSelector(
   [
-    (state: RootState) => state.tracks.tracks,
+    (state: RootState) => selectAllTracks(state),
     (state: RootState) => state.search.search,
     (state: RootState) => state.router.location?.pathname,
     (state: RootState) => state.undoable.present.playlists.playlists
@@ -162,7 +162,7 @@ export const selectVisibleTracks = createSelector(
 
 export const selectVisibleGroupFilteredTracks = createSelector(
   [
-    (state: RootState) => state.tracks.tracks,
+    (state: RootState) => selectAllTracks(state),
     (state: RootState) => state.router.location?.pathname,
     (state: RootState) => state.undoable.present.library.splitViewStates,
     (state: RootState) => state.undoable.present.playlists.playlists,
@@ -278,7 +278,7 @@ export const selectVisibleTrackGroups = createSelector(
     (state: RootState) => state.router.location?.pathname,
     (state: RootState) => state.undoable.present.playlists,
     (state: RootState) => state.undoable.present.library,
-    (state: RootState) => state.tracks.tracks,
+    (state: RootState) => selectAllTracks(state),
     (state: RootState) => state.search.search,
     (state: RootState) => selectArtistDelimiter(state)
   ],
@@ -347,7 +347,7 @@ export const selectVisibleAlbums = createSelector(
     (state: RootState) => state.router.location?.pathname,
     (state: RootState) => state.undoable.present.playlists,
     (state: RootState) => state.undoable.present.library,
-    (state: RootState) => state.tracks.tracks,
+    (state: RootState) => selectAllTracks(state),
     (state: RootState) => state.search.search
   ],
   () => {
@@ -381,7 +381,7 @@ export const selectVisibleArtists = createSelector(
     (state: RootState) => state.router.location?.pathname,
     (state: RootState) => state.undoable.present.playlists,
     (state: RootState) => state.undoable.present.library,
-    (state: RootState) => state.tracks.tracks,
+    (state: RootState) => selectAllTracks(state),
     (state: RootState) => state.search.search
   ],
   () => {
@@ -408,7 +408,7 @@ export const selectVisibleArtists = createSelector(
 
 export const selectVisibleArtist = createSelector(
   [
-    (state: RootState) => state.tracks.tracks,
+    (state: RootState) => selectAllTracks(state),
     (state: RootState) => state.router.location?.pathname
   ],
   () => {
@@ -429,7 +429,7 @@ export const selectVisibleArtist = createSelector(
 
 export const selectVisibleArtistTracks = createSelector(
   [
-    (state: RootState) => state.tracks.tracks,
+    (state: RootState) => selectAllTracks(state),
     (state: RootState) => state.router.location?.pathname,
     (state: RootState) => selectArtistDelimiter(state)
   ],
@@ -478,7 +478,7 @@ export const selectVisibleArtistTracks = createSelector(
 
 export const selectVisibleArtistAlbums = createSelector(
   [
-    (state: RootState) => state.tracks.tracks,
+    (state: RootState) => selectAllTracks(state),
     (state: RootState) => state.router.location?.pathname,
     (state: RootState) => selectArtistDelimiter(state)
   ],
