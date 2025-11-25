@@ -63,7 +63,7 @@ import {
 } from "../../features/search/searchSlice";
 import NoRowsOverlay from "./subviews/NoRowsOverlay";
 import { pluginHandles } from "../../features/plugins/pluginsSlice";
-import { selectAllTracks } from "../../features/tracks/tracksSlice";
+import { selectLibraryTracks } from "../../features/tracks/tracksSlice";
 import { useLocation } from "react-router-dom";
 
 export const TrackList = () => {
@@ -87,7 +87,7 @@ export const TrackList = () => {
   const { t } = useTranslation();
   const libraryColumnState = useAppSelector(selectLibraryColumnState);
   const playlistConfig = useAppSelector(selectVisiblePlaylistConfig);
-  const libraryTracks = useAppSelector(selectAllTracks);
+  const libraryTracks = useAppSelector(selectLibraryTracks);
   const showAttribution = [
     ...new Set(libraryTracks.map((track) => track.source))
   ].some((source) => pluginHandles[source]?.Attribution);
@@ -290,6 +290,7 @@ export const TrackList = () => {
           updateQueueAfterChange(
             selectSortedTrackList(
               store.getState(),
+              visibleViewType,
               selectCurrentPlaylist(store.getState())?.id
             )
           )
@@ -312,7 +313,11 @@ export const TrackList = () => {
     if (queueSource == visibleView) {
       dispatch(
         updateQueueAfterChange(
-          selectSortedTrackList(store.getState(), visiblePlaylist?.id)
+          selectSortedTrackList(
+            store.getState(),
+            visibleViewType,
+            visiblePlaylist?.id
+          )
         )
       );
     }

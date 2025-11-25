@@ -15,6 +15,7 @@ import { setQueueToNewSource } from "../../features/player/playerSlice";
 import { selectSortedTrackList } from "../../features/genericSelectors";
 import { store } from "../../app/store";
 import { showToast } from "../../app/toasts";
+import { View } from "../../app/view";
 
 const id = "sidebaritem";
 
@@ -78,6 +79,7 @@ export function SidebarItemContextMenu() {
               if (!menuData) return;
               const queue = selectSortedTrackList(
                 store.getState(),
+                View.Playlist,
                 menuData.itemId
               );
               if (queue.length == 0) return;

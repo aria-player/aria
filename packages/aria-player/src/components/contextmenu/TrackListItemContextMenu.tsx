@@ -83,7 +83,7 @@ export function TrackListItemContextMenu() {
                     : visibleView == View.Artist
                       ? visibleArtistTracks
                       : selectVisibleDisplayMode(state) == DisplayMode.TrackList
-                        ? selectSortedTrackList(state, playlistId)
+                        ? selectSortedTrackList(state, visibleView, playlistId)
                         : selectVisibleGroupFilteredTrackList(state),
                 queueSource: menuData.itemSource ?? LibraryView.Songs,
                 queueIndex: menuData.itemIndex ?? 0,

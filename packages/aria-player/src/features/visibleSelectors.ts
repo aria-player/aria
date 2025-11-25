@@ -25,7 +25,8 @@ import { Track } from "../../../types/tracks";
 import {
   selectAllTracks,
   selectAllAlbums,
-  selectTrackById
+  selectTrackById,
+  selectLibraryTracks
 } from "./tracks/tracksSlice";
 import {
   searchTracks,
@@ -139,12 +140,12 @@ export const selectVisibleTracks = createSelector(
       : Object.values(LibraryView).includes(
             selectVisibleViewType(state) as LibraryView
           )
-        ? (selectAllTracks(state).map((track) => ({
+        ? (selectLibraryTracks(state).map((track) => ({
             ...track,
             itemId: track?.trackId
           })) as TrackListItem[])
         : selectVisibleViewType(state) == View.Search
-          ? (searchTracks(selectAllTracks(state), search).map((track) => ({
+          ? (searchTracks(selectLibraryTracks(state), search).map((track) => ({
               ...track,
               itemId: track?.trackId
             })) as TrackListItem[])
@@ -171,6 +172,7 @@ export const selectVisibleGroupFilteredTracks = createSelector(
     const state = store.getState();
     return selectGroupFilteredTracks(
       state,
+      selectVisibleViewType(state),
       selectVisibleTrackGrouping(state),
       selectVisibleSelectedTrackGroup(state),
       selectVisiblePlaylist(state)?.id
@@ -183,6 +185,7 @@ export const selectVisibleGroupFilteredTrackList = (
 ): PlaylistItem[] => {
   return selectGroupFilteredTracks(
     state,
+    selectVisibleViewType(state),
     selectVisibleTrackGrouping(state),
     selectVisibleSelectedTrackGroup(state),
     selectVisiblePlaylist(state)?.id
@@ -507,7 +510,7 @@ export const selectVisibleArtistAlbums = createSelector(
 
 export const selectVisibleSearchResults = createSelector(
   [
-    (state: RootState) => state.tracks.tracks,
+    (state: RootState) => selectLibraryTracks(state),
     (state: RootState) => state.router.location?.pathname,
     (state: RootState) => state.search.search
   ],
@@ -518,7 +521,7 @@ export const selectVisibleSearchResults = createSelector(
       return null;
     }
     const searchResults = searchAllCategories(
-      selectAllTracks(state),
+      selectLibraryTracks(state),
       selectAllArtists(state),
       selectAllAlbums(state),
       search

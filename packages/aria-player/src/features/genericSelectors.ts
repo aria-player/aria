@@ -4,12 +4,16 @@ import {
   selectPlaylistConfigById
 } from "./playlists/playlistsSlice";
 import { TrackListItem } from "./tracks/tracksTypes";
-import { TrackGrouping } from "../app/view";
+import { isLibraryView, LibraryView, TrackGrouping, View } from "../app/view";
 import { PlaylistId, PlaylistItem } from "./playlists/playlistsTypes";
 import { selectLibraryColumnState } from "./library/librarySlice";
 import { normalizeArtists, overrideColumnStateSort } from "../app/utils";
 import { compareMetadata } from "../app/sort";
-import { selectAllTracks, selectTrackById } from "./tracks/tracksSlice";
+import {
+  selectAllTracks,
+  selectTrackById,
+  selectLibraryTracks
+} from "./tracks/tracksSlice";
 import { createSelector } from "@reduxjs/toolkit";
 import { selectArtistInfoById } from "./artists/artistsSlice";
 import { ArtistDetails } from "./artists/artistsTypes";
@@ -18,6 +22,7 @@ import { getAsArray } from "../app/utils";
 
 export const selectTrackListMetadata = (
   state: RootState,
+  view: View | LibraryView,
   playlistId?: PlaylistId
 ): TrackListItem[] => {
   const playlist = playlistId
@@ -28,18 +33,24 @@ export const selectTrackListMetadata = (
         ...track,
         ...selectTrackById(state, track.trackId)
       }))
-    : (selectAllTracks(state).map((track) => ({
-        ...track,
-        itemId: track?.trackId
-      })) as TrackListItem[]);
+    : isLibraryView(view)
+      ? (selectLibraryTracks(state).map((track) => ({
+          ...track,
+          itemId: track?.trackId
+        })) as TrackListItem[])
+      : (selectAllTracks(state).map((track) => ({
+          ...track,
+          itemId: track?.trackId
+        })) as TrackListItem[]);
 };
 
 export const selectSortedTrackList = (
   state: RootState,
+  view: View | LibraryView,
   playlistId?: PlaylistId
 ): PlaylistItem[] => {
   // 1. Get tracks with metadata
-  const tracks = selectTrackListMetadata(state, playlistId);
+  const tracks = selectTrackListMetadata(state, view, playlistId);
 
   // 2. Get the column state that applies to this playlist
   const playlistConfig = playlistId
@@ -86,13 +97,14 @@ export const selectSortedTrackList = (
 
 export const selectGroupFilteredTracks = (
   state: RootState,
+  view: View | LibraryView,
   trackGrouping?: TrackGrouping | null,
   selectedTrackGroup?: string | null,
   playlistId?: PlaylistId
 ): TrackListItem[] => {
   if (!trackGrouping || !selectedTrackGroup) return [];
   const delimiter = selectArtistDelimiter(state);
-  return selectTrackListMetadata(state, playlistId)
+  return selectTrackListMetadata(state, view, playlistId)
     .filter((track) => {
       if (
         trackGrouping === TrackGrouping.Artist ||

@@ -63,7 +63,11 @@ function handleUpdateData(pluginId: PluginId, data: object) {
   store.dispatch(setPluginData({ plugin: pluginId, data }));
 }
 
-function handleAddTracks(source: PluginId, metadata: TrackMetadata[]) {
+function handleAddTracks(
+  source: PluginId,
+  metadata: TrackMetadata[],
+  addToLibrary: boolean
+) {
   if (!isPluginActive(source)) return;
   metadata.forEach(validateTrackMetadata);
   const libraryTrackIds = selectAllTracks(store.getState()).map(
@@ -74,10 +78,14 @@ function handleAddTracks(source: PluginId, metadata: TrackMetadata[]) {
       !libraryTrackIds.includes(getTrackId(source, track.uri))
   );
 
-  store.dispatch(addTracks({ source, tracks: newTracks }));
+  store.dispatch(addTracks({ source, tracks: newTracks, addToLibrary }));
 }
 
-function handleUpdateTracks(source: PluginId, metadata: TrackMetadata[]) {
+function handleUpdateTracks(
+  source: PluginId,
+  metadata: TrackMetadata[],
+  addToLibrary: boolean
+) {
   if (!isPluginActive(source)) return;
   metadata.forEach(validateTrackMetadata);
   const newTracks = metadata.map((track: TrackMetadata) => ({
@@ -86,7 +94,7 @@ function handleUpdateTracks(source: PluginId, metadata: TrackMetadata[]) {
     source: source
   }));
 
-  store.dispatch(addTracks({ source, tracks: newTracks }));
+  store.dispatch(addTracks({ source, tracks: newTracks, addToLibrary }));
 }
 
 function handleRemoveTracks(source: PluginId, uris?: TrackUri[]) {
@@ -143,10 +151,10 @@ export const getSourceCallbacks = (pluginId: PluginId): SourceCallbacks => {
   return {
     ...getBaseCallbacks(pluginId),
     addTracks: (metadata: TrackMetadata[]) =>
-      handleAddTracks(pluginId, metadata),
+      handleAddTracks(pluginId, metadata, true),
     removeTracks: (uris?: TrackUri[]) => handleRemoveTracks(pluginId, uris),
     updateTracks: (metadata: TrackMetadata[]) =>
-      handleUpdateTracks(pluginId, metadata),
+      handleUpdateTracks(pluginId, metadata, true),
     updateArtists: (metadata: ArtistMetadata[]) =>
       handleUpdateArtists(pluginId, metadata),
     removeArtists: (artists?: ArtistUri[]) =>

@@ -84,7 +84,7 @@ export function setupPlaylistsListeners() {
       }
       const newQueue = state.player.queueGrouping
         ? selectCurrentGroupFilteredTrackList(state)
-        : selectSortedTrackList(state, newPlaylist?.id);
+        : selectSortedTrackList(state, View.Playlist, newPlaylist?.id);
       dispatch(updateQueueAfterChange(newQueue));
     }
   );

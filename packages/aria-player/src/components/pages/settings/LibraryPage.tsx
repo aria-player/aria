@@ -8,7 +8,7 @@ import {
   selectPluginData,
   selectPluginInfo
 } from "../../../features/plugins/pluginsSlice";
-import { selectAllTracks } from "../../../features/tracks/tracksSlice";
+import { selectLibraryTracks } from "../../../features/tracks/tracksSlice";
 import { sortPlugins } from "../../../app/utils";
 import { useContext } from "react";
 import { Platform, PlatformContext } from "../../../contexts/PlatformContext";
@@ -27,8 +27,8 @@ export function LibraryPage() {
   const { platform } = useContext(PlatformContext);
   const activePlugins = useAppSelector(selectActivePlugins);
   const pluginData = useAppSelector(selectPluginData);
-  const allTracks = useAppSelector(selectAllTracks);
-  const totalTracks = allTracks.length;
+  const libraryTracks = useAppSelector(selectLibraryTracks);
+  const totalTracks = libraryTracks.length;
   const plugins = useAppSelector(selectPluginInfo);
   const artistDelimiterType = useAppSelector(selectArtistDelimiterType);
   const customArtistDelimiter = useAppSelector(selectCustomArtistDelimiter);

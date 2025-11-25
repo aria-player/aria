@@ -40,14 +40,20 @@ const tracksSlice = createSlice({
   reducers: {
     addTracks: (
       state,
-      action: PayloadAction<{ source: PluginId; tracks?: TrackMetadata[] }>
+      action: PayloadAction<{
+        source: PluginId;
+        tracks?: TrackMetadata[];
+        addToLibrary: boolean;
+      }>
     ) => {
+      const { source, tracks, addToLibrary } = action.payload;
       tracksAdapter.upsertMany(
         state.tracks,
-        action.payload.tracks?.map((track) => ({
+        tracks?.map((track) => ({
           ...track,
-          trackId: getTrackId(action.payload.source, track.uri),
-          source: action.payload.source
+          trackId: getTrackId(source, track.uri),
+          source,
+          isInLibrary: addToLibrary
         })) ?? []
       );
     },
@@ -133,6 +139,10 @@ export const selectAllAlbums = createSelector(
       a.album.localeCompare(b.album)
     );
   }
+);
+
+export const selectLibraryTracks = createSelector([selectAllTracks], (tracks) =>
+  tracks.filter((track) => track.isInLibrary !== false)
 );
 
 export default tracksSlice.reducer;

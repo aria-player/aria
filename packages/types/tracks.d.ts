@@ -138,4 +138,8 @@ export interface Track extends TrackMetadata {
    * The ID of the source plugin that provides this track.
    */
   source: PluginId;
+  /**
+   * Whether this track is in the user's library.
+   */
+  isInLibrary: boolean;
 }

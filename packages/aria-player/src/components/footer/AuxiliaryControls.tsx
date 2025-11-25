@@ -19,7 +19,7 @@ import { goBack, push } from "redux-first-history";
 import { View } from "../../app/view";
 import { selectVisibleViewType } from "../../features/visibleSelectors";
 import { useTranslation } from "react-i18next";
-import { selectAllTracks } from "../../features/tracks/tracksSlice";
+import { selectLibraryTracks } from "../../features/tracks/tracksSlice";
 import { SyncProgress } from "./SyncProgress";
 import { selectAggregateSyncProgress } from "../../features/plugins/pluginsSlice";
 
@@ -30,12 +30,12 @@ export function AuxiliaryControls() {
   const muted = useAppSelector(selectMuted);
   const volume = useAppSelector(selectVolume);
   const visibleViewType = useAppSelector(selectVisibleViewType);
-  const allTracks = useAppSelector(selectAllTracks);
+  const libraryTracks = useAppSelector(selectLibraryTracks);
   const aggregateProgress = useAppSelector(selectAggregateSyncProgress);
-  const scannedTracks = allTracks.filter(
+  const scannedTracks = libraryTracks.filter(
     (track) => track.metadataLoaded
   ).length;
-  const totalTracks = allTracks.length;
+  const totalTracks = libraryTracks.length;
   const [localVolume, setLocalVolume] = useState(volume);
 
   useEffect(() => {

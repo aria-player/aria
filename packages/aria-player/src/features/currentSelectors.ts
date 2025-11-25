@@ -2,7 +2,8 @@ import { createSelector } from "@reduxjs/toolkit";
 import { RootState, store } from "../app/store";
 import {
   selectQueueGrouping,
-  selectQueueSelectedGroup
+  selectQueueSelectedGroup,
+  selectQueueSource
 } from "./player/playerSlice";
 import { selectPlaylistById } from "./playlists/playlistsSlice";
 import { PlaylistItem } from "./playlists/playlistsTypes";
@@ -10,7 +11,7 @@ import { selectAllTracks, selectTrackById } from "./tracks/tracksSlice";
 import { TrackListItem } from "./tracks/tracksTypes";
 import { selectGroupFilteredTracks } from "./genericSelectors";
 import { RepeatMode } from "./player/playerTypes";
-import { View } from "../app/view";
+import { LibraryView, View } from "../app/view";
 
 export const selectCurrentQueueTracks = createSelector(
   [
@@ -121,6 +122,7 @@ export const selectCurrentGroupFilteredTrackList = (
 ): PlaylistItem[] => {
   return selectGroupFilteredTracks(
     state,
+    selectQueueSource(state)?.split("/")[0] as View | LibraryView,
     selectQueueGrouping(state),
     selectQueueSelectedGroup(state),
     selectCurrentPlaylist(state)?.id
