@@ -7,6 +7,7 @@ import {
   ArtistMetadata,
   Artist,
   ArtistUri,
+  AlbumUri,
 } from "./tracks";
 
 export type PluginId = string;
@@ -239,6 +240,10 @@ export interface SourceHandle extends BaseHandle {
    * If the artist's `artworkUri` is already an image URL, this method can simply return `artworkUri`.
    */
   getArtistArtwork?: (artworkUri: string) => Promise<string | undefined>;
+  /**
+   * Fetch all tracks for an album by its URI.
+   */
+  getAlbumTracks?: (uri: AlbumUri) => Promise<TrackMetadata[]>;
   /**
    * Called after every update to this source's tracks.
    */

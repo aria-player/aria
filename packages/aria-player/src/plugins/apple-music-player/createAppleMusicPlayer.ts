@@ -191,52 +191,85 @@ export default function createAppleMusicPlayer(
         ) {
           libraryToCatalogMap[track.id] = track.attributes.playParams.catalogId;
         }
-        const trackMetadata = {
-          uri: track.id,
-          title: track.attributes?.name,
-          artist: track.attributes?.artistName,
-          albumArtist: albumData.attributes?.artistName,
-          album: track.attributes?.albumName,
-          albumUri: albumData.id,
-          genre: track.attributes?.genreNames,
-          duration: track.attributes?.durationInMillis,
-          artworkUri: track.attributes?.artwork?.url,
-          disc: track.attributes?.discNumber,
-          track: track.attributes?.trackNumber,
-          dateAdded:
-            albumData.attributes?.dateAdded &&
-            new Date(albumData.attributes?.dateAdded).getTime(),
-          year:
-            albumData?.attributes?.releaseDate &&
-            parseInt(albumData?.attributes?.releaseDate?.split("-")[0]),
-          metadataLoaded: true
-        } as TrackMetadata;
-        tracks.push(trackMetadata);
+        tracks.push(
+          getTrackMetadata(
+            track,
+            albumData,
+            (albumData.attributes?.dateAdded &&
+              new Date(albumData.attributes.dateAdded).getTime()) ||
+              Date.now()
+          )
+        );
       });
+
+      await addCatalogArtistsToTracks(tracks, libraryToCatalogMap);
 
       const artistData = await fetchCatalogArtists(
         Object.values(libraryToCatalogMap)
       );
-      tracks.forEach((track) => {
-        const data = artistData[libraryToCatalogMap[track.uri]];
-        if (data?.artist?.length) {
-          track.artist = data.artist;
-          track.artistUri = data.artistUri;
-        }
-        if (data?.albumArtist?.length) {
-          track.albumArtist = data.albumArtist;
-          track.albumArtistUri = data.albumArtistUri;
-        }
-        if (data?.albumUri) {
-          track.albumUri = data.albumUri;
-        }
-      });
-
       return { tracks, artists: Object.keys(artistData) };
     } catch (error) {
       console.error("Error fetching tracks:", error);
       return null;
     }
+  }
+
+  function getTrackMetadata(
+    track: MusicKit.Songs,
+    albumData: {
+      id: string;
+      attributes?:
+        | MusicKit.Albums["attributes"]
+        | MusicKit.LibraryAlbums["attributes"];
+    },
+    dateAdded: number
+  ): TrackMetadata {
+    return {
+      uri: track.id,
+      title: track.attributes?.name ?? "",
+      artist: track.attributes?.artistName,
+      albumArtist:
+        albumData.attributes?.artistName ?? track.attributes?.artistName,
+      album: track.attributes?.albumName,
+      albumUri: albumData.id,
+      genre: track.attributes?.genreNames,
+      duration: track.attributes?.durationInMillis,
+      artworkUri: track.attributes?.artwork?.url,
+      disc: track.attributes?.discNumber,
+      track: track.attributes?.trackNumber,
+      dateAdded,
+      year:
+        albumData.attributes?.releaseDate &&
+        parseInt(albumData.attributes.releaseDate.split("-")[0]),
+      metadataLoaded: true
+    } as TrackMetadata;
+  }
+
+  async function addCatalogArtistsToTracks(
+    tracks: TrackMetadata[],
+    catalogIdMap: Record<string, string>
+  ): Promise<void> {
+    const catalogIds = Object.values(catalogIdMap);
+    if (catalogIds.length === 0) return;
+
+    const artistData = await fetchCatalogArtists(catalogIds);
+
+    tracks.forEach((track) => {
+      const catalogId = catalogIdMap[track.uri];
+      const data = catalogId ? artistData[catalogId] : undefined;
+
+      if (data?.artist?.length) {
+        track.artist = data.artist;
+        track.artistUri = data.artistUri;
+      }
+      if (data?.albumArtist?.length) {
+        track.albumArtist = data.albumArtist;
+        track.albumArtistUri = data.albumArtistUri;
+      }
+      if (data?.albumUri) {
+        track.albumUri = data.albumUri;
+      }
+    });
   }
 
   /* Apple Music doesn't seem to include artist arrays in library responses, so 
@@ -423,6 +456,88 @@ export default function createAppleMusicPlayer(
 
     getArtistArtwork: async (artworkUri) => {
       return artworkUri?.replace("{w}", "1000").replace("{h}", "1000");
+    },
+
+    getAlbumTracks: async (uri: string) => {
+      if (!music) {
+        throw new Error("Apple Music not initialized");
+      }
+      if (uri.startsWith("l.")) {
+        // Library albums should already be fully loaded
+        return [];
+      }
+      try {
+        const albumResponse = (await music.api.music(
+          `v1/catalog/${music.storefrontId}/albums/${uri}`
+        )) as {
+          data: MusicKit.Relationship<MusicKit.Albums>;
+        };
+
+        const albumData = albumResponse.data?.data?.[0];
+        if (!albumData) {
+          throw new Error(`Album not found: ${uri}`);
+        }
+
+        const tracks: TrackMetadata[] = [];
+        const catalogIds: string[] = [];
+        const catalogIdMap = new Map<string, string>();
+        const albumAttributes =
+          albumData.attributes as MusicKit.Albums["attributes"];
+
+        let tracksOffset = 0;
+        const tracksLimit = 300;
+        let hasMore = true;
+
+        while (hasMore) {
+          const tracksResponse = (await music.api.music(
+            `v1/catalog/${music.storefrontId}/albums/${uri}/tracks?limit=${tracksLimit}&offset=${tracksOffset}`
+          )) as {
+            data: MusicKit.Relationship<MusicKit.Songs>;
+          };
+
+          const albumTracks = tracksResponse.data?.data;
+          if (!albumTracks || albumTracks.length === 0) {
+            hasMore = false;
+            break;
+          }
+
+          albumTracks.forEach((track) => {
+            if (
+              albumAttributes?.releaseDate &&
+              track.attributes?.playParams?.catalogId
+            ) {
+              catalogIds.push(track.attributes.playParams.catalogId);
+              catalogIdMap.set(track.id, track.attributes.playParams.catalogId);
+            }
+
+            tracks.push(
+              getTrackMetadata(
+                track,
+                { id: albumData.id, attributes: albumAttributes },
+                Date.now()
+              )
+            );
+          });
+
+          hasMore = albumTracks.length === tracksLimit;
+          tracksOffset += tracksLimit;
+        }
+
+        if (tracks.length === 0) {
+          throw new Error(`No tracks found for album: ${uri}`);
+        }
+
+        const catalogIdRecord: Record<string, string> = {};
+        catalogIdMap.forEach((catalogId, trackId) => {
+          catalogIdRecord[trackId] = catalogId;
+        });
+        await addCatalogArtistsToTracks(tracks, catalogIdRecord);
+
+        return tracks;
+      } catch (error) {
+        console.error("Failed to fetch album tracks:", error);
+        throw error;
+      }
     },
 
     pause: () => {

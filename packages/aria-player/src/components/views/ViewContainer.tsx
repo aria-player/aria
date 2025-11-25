@@ -12,9 +12,8 @@ import {
 } from "../../features/visibleSelectors";
 import ArtistGrid from "./ArtistGrid";
 import ErrorPage from "../pages/ErrorPage";
-import { AlbumTrackList } from "./subviews/AlbumTrackList";
-import { useScrollDetection } from "../../hooks/useScrollDetection";
 import ArtistView from "./ArtistView";
+import AlbumView from "./AlbumView";
 
 export default function ViewContainer() {
   const visibleDisplayMode = useAppSelector(selectVisibleDisplayMode);
@@ -22,7 +21,6 @@ export default function ViewContainer() {
   const visibleSearchCategory = useAppSelector(selectVisibleSearchCategory);
   const visibleViewType = useAppSelector(selectVisibleViewType);
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
-  const { onScroll } = useScrollDetection();
 
   return (
     <>
@@ -46,18 +44,7 @@ export default function ViewContainer() {
         </div>
       )}
       {visibleDisplayMode == DisplayMode.SplitView && <SplitView />}
-      {visibleViewType == View.Album && (
-        <div
-          className="ag-overrides-album-view"
-          style={{ height: "100%", width: "100%" }}
-        >
-          <AlbumTrackList
-            onBodyScroll={(e) => {
-              onScroll(e.top);
-            }}
-          />
-        </div>
-      )}
+      {visibleViewType == View.Album && <AlbumView />}
       {visibleViewType == View.Artist && !visibleArtistSection && (
         <ArtistView />
       )}

@@ -89,6 +89,21 @@ export function getAlbumId(
     : `${source}:name:${album}${getAsArray(albumArtist).join("-")}`;
 }
 
+export function parseAlbumId(albumId: AlbumId):
+  | {
+      source: PluginId;
+      uri: AlbumUri;
+    }
+  | undefined {
+  const parts = albumId.split(":");
+  if (parts[1] === "uri") {
+    return {
+      source: parts[0],
+      uri: parts.slice(2).join(":")
+    };
+  }
+}
+
 export function getMostCommonArtworkUri(albumTracks: Track[]) {
   const artworkUriCount: { [key: string]: number } = {};
   albumTracks.forEach((track) => {
