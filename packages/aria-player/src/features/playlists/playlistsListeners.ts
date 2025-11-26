@@ -40,7 +40,7 @@ export function setupPlaylistsListeners() {
       const track = selectTrackById(state, payload.newTracks[0].trackId);
       showToast(
         t("toasts.addedNamedTrackToPlaylist", {
-          title: track.title,
+          title: track?.title,
           playlist: playlistName
         })
       );

@@ -30,10 +30,12 @@ export const selectTrackListMetadata = (
     ? selectPlaylistById(state, playlistId)
     : undefined;
   return playlist
-    ? playlist.tracks.map((track) => ({
-        ...track,
-        ...selectTrackById(state, track.trackId)
-      }))
+    ? playlist.tracks.map((track) => {
+        return {
+          ...track,
+          ...selectTrackById(state, track.trackId)
+        } as TrackListItem;
+      })
     : isLibraryView(view)
       ? (selectLibraryTracks(state).map((track) => ({
           ...track,

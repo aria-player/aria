@@ -94,6 +94,7 @@ export const selectClipboard = (state: RootState) => state.tracks.clipboard;
 
 export const selectTrackById = (state: RootState, trackId: TrackId) => {
   const track = state.tracks.tracks.entities[trackId];
+  if (!track) return undefined;
   return {
     ...track,
     albumId: getAlbumId(
