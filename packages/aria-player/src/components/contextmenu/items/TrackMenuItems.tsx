@@ -101,7 +101,8 @@ export function TrackMenuItems() {
   );
 
   const showGoToAlbum =
-    visibleView != View.Album && menuData?.metadata?.albumId;
+    visibleView != View.Album ||
+    menuData?.metadata?.albumId != visibleSelectedGroup;
   const showGoToArtist = goToArtists.length > 0;
 
   function goToArtist(id: string) {
