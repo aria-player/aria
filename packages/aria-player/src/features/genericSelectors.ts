@@ -1,4 +1,4 @@
-import { RootState, store } from "../app/store";
+import { RootState } from "../app/store";
 import {
   selectPlaylistById,
   selectPlaylistConfigById
@@ -19,6 +19,7 @@ import { selectArtistInfoById } from "./artists/artistsSlice";
 import { ArtistDetails } from "./artists/artistsTypes";
 import { selectArtistDelimiter } from "./config/configSlice";
 import { getAsArray } from "../app/utils";
+import { Track } from "../../../types";
 
 export const selectTrackListMetadata = (
   state: RootState,
@@ -142,46 +143,60 @@ export const selectAlbumTitle = (state: RootState, albumId: string | null) => {
     ?.album;
 };
 
+const selectArtistsFromTracks = (
+  tracks: Track[],
+  state: RootState,
+  delimiter: string | undefined
+): ArtistDetails[] => {
+  const artistsMap = new Map<string, ArtistDetails>();
+  tracks.forEach((track) => {
+    if (!track) return;
+    [
+      ...normalizeArtists(
+        track.artist,
+        track.artistUri,
+        track.source,
+        delimiter
+      ),
+      ...normalizeArtists(
+        track.albumArtist,
+        track.albumArtistUri,
+        track.source,
+        delimiter
+      )
+    ].forEach((artist) => {
+      if (!artistsMap.has(artist.id)) {
+        artistsMap.set(artist.id, {
+          ...(selectArtistInfoById(state, artist.id) || {}),
+          artistId: artist.id,
+          uri: artist.uri,
+          name: artist.name,
+          source: track.source,
+          firstTrackArtworkUri: track.artworkUri
+        });
+      }
+    });
+  });
+
+  return Array.from(artistsMap.values()).sort((a, b) =>
+    a.name.localeCompare(b.name)
+  );
+};
+
 export const selectAllArtists = createSelector(
   [
     (state: RootState) => selectAllTracks(state),
-    (state: RootState) => state.artists.artists,
+    (state: RootState) => state,
     (state: RootState) => selectArtistDelimiter(state)
   ],
-  (tracksById, _, delimiter) => {
-    const state = store.getState();
-    const artistsMap = new Map<string, ArtistDetails>();
-    Object.values(tracksById).forEach((track) => {
-      if (!track) return;
-      [
-        ...normalizeArtists(
-          track.artist,
-          track.artistUri,
-          track.source,
-          delimiter
-        ),
-        ...normalizeArtists(
-          track.albumArtist,
-          track.albumArtistUri,
-          track.source,
-          delimiter
-        )
-      ].forEach((artist) => {
-        if (!artistsMap.has(artist.id)) {
-          artistsMap.set(artist.id, {
-            ...(selectArtistInfoById(state, artist.id) || {}),
-            artistId: artist.id,
-            uri: artist.uri,
-            name: artist.name,
-            source: track.source,
-            firstTrackArtworkUri: track.artworkUri
-          });
-        }
-      });
-    });
+  selectArtistsFromTracks
+);
 
-    return Array.from(artistsMap.values()).sort((a, b) =>
-      a.name.localeCompare(b.name)
-    );
-  }
+export const selectLibraryArtists = createSelector(
+  [
+    (state: RootState) => selectLibraryTracks(state),
+    (state: RootState) => state,
+    (state: RootState) => selectArtistDelimiter(state)
+  ],
+  selectArtistsFromTracks
 );

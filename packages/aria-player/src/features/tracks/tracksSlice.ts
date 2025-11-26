@@ -119,34 +119,40 @@ export const selectAllTracks = createSelector(
     }))
 );
 
-export const selectAllAlbums = createSelector(
-  [(state: RootState) => selectAllTracks(state)],
-  (tracksById) => {
-    const albumsMap = new Map<string, AlbumDetails>();
-    const tracks = Object.values(tracksById);
-    tracks.forEach((track) => {
-      if (!track?.albumId || !track.album) return;
-      if (!albumsMap.has(track.albumId)) {
-        const albumTracks = tracks.filter((t) => t.albumId === track.albumId);
-        albumsMap.set(track.albumId, {
-          albumId: track.albumId,
-          album: track.album,
-          artist: track.albumArtist || track.artist,
-          artistUri: track.albumArtistUri || track.artistUri,
-          source: track.source,
-          artworkUri: getMostCommonArtworkUri(albumTracks)
-        });
-      }
-    });
+const selectAlbumsFromTracks = (tracks: Track[]): AlbumDetails[] => {
+  const albumsMap = new Map<string, AlbumDetails>();
+  tracks.forEach((track) => {
+    if (!track?.albumId || !track.album) return;
+    if (!albumsMap.has(track.albumId)) {
+      const albumTracks = tracks.filter((t) => t.albumId === track.albumId);
+      albumsMap.set(track.albumId, {
+        albumId: track.albumId,
+        album: track.album,
+        artist: track.albumArtist || track.artist,
+        artistUri: track.albumArtistUri || track.artistUri,
+        source: track.source,
+        artworkUri: getMostCommonArtworkUri(albumTracks)
+      });
+    }
+  });
 
-    return Array.from(albumsMap.values()).sort((a, b) =>
-      a.album.localeCompare(b.album)
-    );
-  }
+  return Array.from(albumsMap.values()).sort((a, b) =>
+    a.album.localeCompare(b.album)
+  );
+};
+
+export const selectAllAlbums = createSelector(
+  [selectAllTracks],
+  selectAlbumsFromTracks
 );
 
 export const selectLibraryTracks = createSelector([selectAllTracks], (tracks) =>
   tracks.filter((track) => track.isInLibrary !== false)
+);
+
+export const selectLibraryAlbums = createSelector(
+  [selectLibraryTracks],
+  selectAlbumsFromTracks
 );
 
 export default tracksSlice.reducer;

@@ -18,7 +18,8 @@ import {
 import { PlaylistItem } from "./playlists/playlistsTypes";
 import {
   selectAllArtists,
-  selectGroupFilteredTracks
+  selectGroupFilteredTracks,
+  selectLibraryArtists
 } from "./genericSelectors";
 import { TrackListItem } from "./tracks/tracksTypes";
 import { Track } from "../../../types/tracks";
@@ -26,7 +27,8 @@ import {
   selectAllTracks,
   selectAllAlbums,
   selectTrackById,
-  selectLibraryTracks
+  selectLibraryTracks,
+  selectLibraryAlbums
 } from "./tracks/tracksSlice";
 import {
   searchTracks,
@@ -288,7 +290,7 @@ export const selectVisibleTrackGroups = createSelector(
     if (selectVisibleDisplayMode(state) == DisplayMode.AlbumGrid) {
       const search = selectSearch(state);
       if (selectVisibleSearchCategory(state) == SearchCategory.Albums) {
-        return searchAlbums(selectAllAlbums(state), search).map(
+        return searchAlbums(selectLibraryAlbums(state), search).map(
           (album) => album.albumId
         );
       } else {
@@ -298,7 +300,7 @@ export const selectVisibleTrackGroups = createSelector(
       }
     } else if (selectVisibleSearchCategory(state) == SearchCategory.Artists) {
       const search = selectSearch(state);
-      return searchArtists(selectAllArtists(state), search).map(
+      return searchArtists(selectLibraryArtists(state), search).map(
         (group) => group.name
       );
     } else if (selectVisibleDisplayMode(state) == DisplayMode.SplitView) {
@@ -359,7 +361,7 @@ export const selectVisibleAlbums = createSelector(
     if (visibleViewType === View.Artist) {
       return selectVisibleArtistAlbums(state);
     } else if (search && visibleViewType == View.Search) {
-      return searchAlbums(allAlbums, search);
+      return searchAlbums(selectLibraryAlbums(state), search);
     } else {
       return allAlbums
         .filter((album) =>
@@ -389,7 +391,7 @@ export const selectVisibleArtists = createSelector(
     const allArtists = selectAllArtists(state);
     const search = selectSearch(state);
     if (search && selectVisibleViewType(state) == View.Search) {
-      return searchArtists(allArtists, search);
+      return searchArtists(selectLibraryArtists(state), search);
     } else {
       return allArtists
         .filter((artist) =>
@@ -522,8 +524,8 @@ export const selectVisibleSearchResults = createSelector(
     }
     const searchResults = searchAllCategories(
       selectLibraryTracks(state),
-      selectAllArtists(state),
-      selectAllAlbums(state),
+      selectLibraryArtists(state),
+      selectLibraryAlbums(state),
       search
     );
     if (!searchResults) return null;
