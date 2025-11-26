@@ -49,12 +49,16 @@ const tracksSlice = createSlice({
       const { source, tracks, addToLibrary } = action.payload;
       tracksAdapter.upsertMany(
         state.tracks,
-        tracks?.map((track) => ({
-          ...track,
-          trackId: getTrackId(source, track.uri),
-          source,
-          isInLibrary: addToLibrary
-        })) ?? []
+        tracks?.map((track) => {
+          const trackId = getTrackId(source, track.uri);
+          const existingTrack = state.tracks.entities[trackId];
+          return {
+            ...track,
+            trackId,
+            source,
+            isInLibrary: addToLibrary || existingTrack?.isInLibrary || false
+          };
+        }) ?? []
       );
     },
     removeTracks: (

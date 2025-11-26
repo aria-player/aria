@@ -1,15 +1,20 @@
 import { AlbumTrackList } from "./subviews/AlbumTrackList";
 import { useScrollDetection } from "../../hooks/useScrollDetection";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { selectVisibleSelectedTrackGroup } from "../../features/visibleSelectors";
 import { parseAlbumId } from "../../app/utils";
 import { getSourceHandle } from "../../features/plugins/pluginsSlice";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { addTracks } from "../../features/tracks/tracksSlice";
+import LoadingSpinner from "./subviews/LoadingSpinner";
 
 export default function AlbumView() {
+  const dispatch = useDispatch();
   const albumId = useSelector(selectVisibleSelectedTrackGroup);
   const { onScroll } = useScrollDetection();
+  const [isLoading, setIsLoading] = useState(false);
 
+  // TODO: Determine if we already have the full album before deciding to load
   useEffect(() => {
     async function fetchAlbumTracks() {
       if (albumId) {
@@ -18,25 +23,37 @@ export default function AlbumView() {
         if (plugin) {
           const handle = getSourceHandle(plugin);
           if (handle && handle?.getAlbumTracks) {
+            setIsLoading(true);
             const tracks = await handle.getAlbumTracks(albumInfo.uri);
-            console.log("Fetched external album tracks:", tracks);
+            dispatch(
+              addTracks({
+                source: plugin,
+                tracks: tracks,
+                addToLibrary: false
+              })
+            );
+            setIsLoading(false);
           }
         }
       }
     }
     fetchAlbumTracks();
-  }, [albumId]);
+  }, [dispatch, albumId]);
 
   return (
     <div
       className="ag-overrides-album-view"
       style={{ height: "100%", width: "100%" }}
     >
-      <AlbumTrackList
-        onBodyScroll={(e) => {
-          onScroll(e.top);
-        }}
-      />
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <AlbumTrackList
+          onBodyScroll={(e) => {
+            onScroll(e.top);
+          }}
+        />
+      )}
     </div>
   );
 }

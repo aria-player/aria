@@ -1,0 +1,38 @@
+.container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  position: relative;
+}
+
+.blade {
+  position: absolute;
+  width: 2px;
+  height: 6px;
+  background: var(--secondary-text);
+  border-radius: 2.5px;
+  top: 0;
+  left: 50%;
+  transform-origin: 50% 10px;
+  transform: translateX(-50%) rotate(calc(var(--blade-index) * 45deg));
+  opacity: 0.08;
+  animation: fade 1s linear infinite;
+  animation-delay: calc(var(--blade-index) * 0.125s);
+}
+
+@keyframes fade {
+  0%, 100% {
+    opacity: 0.08;
+  }
+
+  12.5% {
+    opacity: 0.5;
+  }
+}
