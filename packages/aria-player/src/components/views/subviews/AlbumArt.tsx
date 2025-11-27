@@ -4,7 +4,7 @@ import { Track } from "../../../../../types/tracks";
 import styles from "./AlbumArt.module.css";
 import { ArtworkContext } from "../../../contexts/ArtworkContext";
 import { getSourceHandle } from "../../../features/plugins/pluginsSlice";
-import { AlbumDetails } from "../../../features/tracks/tracksTypes";
+import { AlbumDetails } from "../../../features/albums/albumsTypes";
 
 export const AlbumArt = ({
   track,

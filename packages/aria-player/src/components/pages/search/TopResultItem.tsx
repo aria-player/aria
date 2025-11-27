@@ -1,7 +1,7 @@
 import { push } from "redux-first-history";
 import { BASEPATH } from "../../../app/constants";
 import { useAppDispatch } from "../../../app/hooks";
-import { AlbumDetails } from "../../../features/tracks/tracksTypes";
+import { AlbumDetails } from "../../../features/albums/albumsTypes";
 import { Track } from "../../../../../types/tracks";
 import {
   addToSearchHistory,

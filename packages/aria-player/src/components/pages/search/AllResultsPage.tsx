@@ -12,13 +12,11 @@ import styles from "./AllResultsPage.module.css";
 import { useTranslation } from "react-i18next";
 import ArtistGridItem from "../../views/subviews/ArtistGridItem";
 import { getScrollbarWidth } from "../../../app/utils";
-import {
-  AlbumDetails,
-  TrackListItem
-} from "../../../features/tracks/tracksTypes";
+import { TrackListItem } from "../../../features/tracks/tracksTypes";
 import TopResultItem from "./TopResultItem";
 import { useScrollDetection } from "../../../hooks/useScrollDetection";
 import { ArtistDetails } from "../../../features/artists/artistsTypes";
+import { AlbumDetails } from "../../../features/albums/albumsTypes";
 
 export default function SearchResults() {
   const dispatch = useAppDispatch();

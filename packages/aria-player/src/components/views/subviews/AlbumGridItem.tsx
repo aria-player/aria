@@ -1,4 +1,3 @@
-import { AlbumDetails } from "../../../features/tracks/tracksTypes";
 import { getSourceHandle } from "../../../features/plugins/pluginsSlice";
 import { AlbumArt } from "./AlbumArt";
 import styles from "./AlbumGridItem.module.css";
@@ -12,6 +11,7 @@ import {
 import { LibraryView } from "../../../app/view";
 import { normalizeArtists } from "../../../app/utils";
 import { selectArtistDelimiter } from "../../../features/config/configSlice";
+import { AlbumDetails } from "../../../features/albums/albumsTypes";
 
 export function AlbumGridItem({ album }: { album: AlbumDetails }) {
   const dispatch = useAppDispatch();

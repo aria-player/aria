@@ -3,7 +3,7 @@ import {
   selectPlaylistById,
   selectPlaylistConfigById
 } from "./playlists/playlistsSlice";
-import { AlbumDetails, TrackListItem } from "./tracks/tracksTypes";
+import { TrackListItem } from "./tracks/tracksTypes";
 import { isLibraryView, LibraryView, TrackGrouping, View } from "../app/view";
 import { PlaylistId, PlaylistItem } from "./playlists/playlistsTypes";
 import { selectLibraryColumnState } from "./library/librarySlice";
@@ -25,6 +25,7 @@ import { selectArtistDelimiter } from "./config/configSlice";
 import { getAsArray } from "../app/utils";
 import { Track } from "../../../types";
 import { selectAlbumsInfo } from "./albums/albumsSlice";
+import { AlbumDetails } from "./albums/albumsTypes";
 
 export const selectTrackListMetadata = (
   state: RootState,
