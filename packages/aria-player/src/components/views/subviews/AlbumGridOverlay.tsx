@@ -60,7 +60,7 @@ export default function AlbumGrid() {
                 scrollY <= 0 || !gridRef?.current?.api ? "hidden" : "visible"
             }}
           >
-            {visibleAlbum?.album}
+            {visibleAlbum?.name}
           </h2>
         </div>
         <div

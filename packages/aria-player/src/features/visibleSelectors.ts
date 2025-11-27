@@ -369,7 +369,7 @@ export const selectVisibleAlbums = createSelector(
         )
         .sort(
           (a, b) =>
-            a.album?.localeCompare(b.album!, undefined, {
+            a.name.localeCompare(b.name, undefined, {
               sensitivity: "base",
               ignorePunctuation: true
             }) ?? 0

@@ -42,12 +42,12 @@ export const AlbumArt = ({
     <img
       className={`album-art ${styles.artwork}`}
       src={artwork}
-      alt={track?.album ?? album?.album}
+      alt={track?.album ?? album?.name}
     />
   ) : (
     <MusicIcon
       className={`album-art ${styles.artwork}`}
-      title={track?.album ?? album?.album}
+      title={track?.album ?? album?.name}
     />
   );
 };

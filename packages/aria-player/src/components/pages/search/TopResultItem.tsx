@@ -96,7 +96,7 @@ export default function TopResultItem({ result }: TopResultItemProps) {
         const album = result.item as AlbumDetails;
         return {
           id: album.albumId,
-          title: album.album,
+          title: album.name,
           subtitle: formatStringArray(album.artist),
           label: t("search.categories.albums.one"),
           attributionId: album.albumId

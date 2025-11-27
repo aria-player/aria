@@ -48,7 +48,7 @@ export function AlbumGridItem({ album }: { album: AlbumDetails }) {
             className={`${styles.albumText} ${styles.albumTitle}`}
             onClick={goToAlbum}
           >
-            {album.album}
+            {album.name}
           </button>
           <div className={styles.artistButtons}>
             {albumArtists.map((artist, index) => (

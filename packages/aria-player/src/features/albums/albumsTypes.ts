@@ -1,8 +1,7 @@
-export interface AlbumDetails {
+import { Album } from "../../../../types";
+
+export interface AlbumDetails extends Partial<Album> {
   albumId: string;
-  album: string;
-  artist?: string | string[];
-  artistUri?: string | string[];
+  name: string;
   source: string;
-  artworkUri?: string;
 }

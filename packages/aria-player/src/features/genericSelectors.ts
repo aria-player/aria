@@ -206,7 +206,8 @@ const selectAlbumsFromTracks = (
       albumsMap.set(track.albumId, {
         ...(albumInfo || {}),
         albumId: track.albumId,
-        album: albumInfo?.name ?? track.album, // TODO: Rename to 'name' in AlbumDetails
+        uri: track.albumUri,
+        name: track.album,
         artist: track.albumArtist || track.artist,
         artistUri: track.albumArtistUri || track.artistUri,
         source: track.source,
@@ -216,7 +217,7 @@ const selectAlbumsFromTracks = (
   });
 
   return Array.from(albumsMap.values()).sort((a, b) =>
-    a.album.localeCompare(b.album)
+    a.name.localeCompare(b.name)
   );
 };
 
