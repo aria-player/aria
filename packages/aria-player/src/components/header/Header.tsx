@@ -18,8 +18,8 @@ import { ScrollContext } from "../../contexts/ScrollContext";
 import { useContext } from "react";
 import { useTrackGrid } from "../../hooks/useTrackGrid";
 import { selectMenuState } from "../../app/menu";
-import { selectAllAlbums } from "../../features/tracks/tracksSlice";
 import { BASEPATH } from "../../app/constants";
+import { selectAllAlbums } from "../../features/genericSelectors";
 
 export default function Header() {
   const dispatch = useAppDispatch();

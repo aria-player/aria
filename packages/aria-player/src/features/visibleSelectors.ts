@@ -17,18 +17,18 @@ import {
 } from "./playlists/playlistsSlice";
 import { PlaylistItem } from "./playlists/playlistsTypes";
 import {
+  selectAllAlbums,
   selectAllArtists,
   selectGroupFilteredTracks,
+  selectLibraryAlbums,
   selectLibraryArtists
 } from "./genericSelectors";
 import { TrackListItem } from "./tracks/tracksTypes";
 import { Track } from "../../../types/tracks";
 import {
   selectAllTracks,
-  selectAllAlbums,
   selectTrackById,
-  selectLibraryTracks,
-  selectLibraryAlbums
+  selectLibraryTracks
 } from "./tracks/tracksSlice";
 import {
   searchTracks,

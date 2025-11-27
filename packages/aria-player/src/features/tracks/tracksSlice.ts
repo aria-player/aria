@@ -10,13 +10,7 @@ import { setupTracksListeners } from "./tracksListeners";
 import { Track, TrackId, TrackMetadata } from "../../../../types/tracks";
 import { PluginId } from "../../../../types/plugins";
 import { PlaylistItem } from "../playlists/playlistsTypes";
-import {
-  getAlbumId,
-  getMostCommonArtworkUri,
-  getTrackId
-} from "../../app/utils";
-import { selectAlbumsInfo } from "../albums/albumsSlice";
-import { AlbumDetails } from "./tracksTypes";
+import { getAlbumId, getTrackId } from "../../app/utils";
 
 const tracksAdapter = createEntityAdapter<Track, TrackId>({
   selectId: (track) => track.trackId,
@@ -121,50 +115,8 @@ export const selectAllTracks = createSelector(
     }))
 );
 
-const selectAlbumsFromTracks = (
-  tracks: Track[],
-  state: RootState
-): AlbumDetails[] => {
-  const albumsMap = new Map<string, AlbumDetails>();
-  const albumsInfo = selectAlbumsInfo(state);
-
-  tracks.forEach((track) => {
-    if (!track?.albumId || !track.album) return;
-    if (!albumsMap.has(track.albumId)) {
-      const albumTracks = tracks.filter((t) => t.albumId === track.albumId);
-      const albumInfo = albumsInfo[track.albumId];
-      albumsMap.set(track.albumId, {
-        ...(albumInfo || {}),
-        albumId: track.albumId,
-        album: albumInfo?.name ?? track.album, // TODO: Rename to 'name' in AlbumDetails
-        artist: track.albumArtist || track.artist,
-        artistUri: track.albumArtistUri || track.artistUri,
-        source: track.source,
-        artworkUri: getMostCommonArtworkUri(albumTracks)
-      });
-    }
-  });
-
-  return Array.from(albumsMap.values()).sort((a, b) =>
-    a.album.localeCompare(b.album)
-  );
-};
-
-export const selectAllAlbums = createSelector(
-  [(state: RootState) => selectAllTracks(state), (state: RootState) => state],
-  selectAlbumsFromTracks
-);
-
 export const selectLibraryTracks = createSelector([selectAllTracks], (tracks) =>
   tracks.filter((track) => track.isInLibrary !== false)
-);
-
-export const selectLibraryAlbums = createSelector(
-  [
-    (state: RootState) => selectLibraryTracks(state),
-    (state: RootState) => state
-  ],
-  selectAlbumsFromTracks
 );
 
 export default tracksSlice.reducer;

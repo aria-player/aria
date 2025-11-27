@@ -3,11 +3,15 @@ import {
   selectPlaylistById,
   selectPlaylistConfigById
 } from "./playlists/playlistsSlice";
-import { TrackListItem } from "./tracks/tracksTypes";
+import { AlbumDetails, TrackListItem } from "./tracks/tracksTypes";
 import { isLibraryView, LibraryView, TrackGrouping, View } from "../app/view";
 import { PlaylistId, PlaylistItem } from "./playlists/playlistsTypes";
 import { selectLibraryColumnState } from "./library/librarySlice";
-import { normalizeArtists, overrideColumnStateSort } from "../app/utils";
+import {
+  getMostCommonArtworkUri,
+  normalizeArtists,
+  overrideColumnStateSort
+} from "../app/utils";
 import { compareMetadata } from "../app/sort";
 import {
   selectAllTracks,
@@ -20,6 +24,7 @@ import { ArtistDetails } from "./artists/artistsTypes";
 import { selectArtistDelimiter } from "./config/configSlice";
 import { getAsArray } from "../app/utils";
 import { Track } from "../../../types";
+import { selectAlbumsInfo } from "./albums/albumsSlice";
 
 export const selectTrackListMetadata = (
   state: RootState,
@@ -185,6 +190,35 @@ const selectArtistsFromTracks = (
   );
 };
 
+const selectAlbumsFromTracks = (
+  tracks: Track[],
+  state: RootState
+): AlbumDetails[] => {
+  const albumsMap = new Map<string, AlbumDetails>();
+  const albumsInfo = selectAlbumsInfo(state);
+
+  tracks.forEach((track) => {
+    if (!track?.albumId || !track.album) return;
+    if (!albumsMap.has(track.albumId)) {
+      const albumTracks = tracks.filter((t) => t.albumId === track.albumId);
+      const albumInfo = albumsInfo[track.albumId];
+      albumsMap.set(track.albumId, {
+        ...(albumInfo || {}),
+        albumId: track.albumId,
+        album: albumInfo?.name ?? track.album, // TODO: Rename to 'name' in AlbumDetails
+        artist: track.albumArtist || track.artist,
+        artistUri: track.albumArtistUri || track.artistUri,
+        source: track.source,
+        artworkUri: getMostCommonArtworkUri(albumTracks)
+      });
+    }
+  });
+
+  return Array.from(albumsMap.values()).sort((a, b) =>
+    a.album.localeCompare(b.album)
+  );
+};
+
 export const selectAllArtists = createSelector(
   [
     (state: RootState) => selectAllTracks(state),
@@ -194,6 +228,11 @@ export const selectAllArtists = createSelector(
   selectArtistsFromTracks
 );
 
+export const selectAllAlbums = createSelector(
+  [(state: RootState) => selectAllTracks(state), (state: RootState) => state],
+  selectAlbumsFromTracks
+);
+
 export const selectLibraryArtists = createSelector(
   [
     (state: RootState) => selectLibraryTracks(state),
@@ -201,4 +240,12 @@ export const selectLibraryArtists = createSelector(
     (state: RootState) => selectArtistDelimiter(state)
   ],
   selectArtistsFromTracks
+);
+
+export const selectLibraryAlbums = createSelector(
+  [
+    (state: RootState) => selectLibraryTracks(state),
+    (state: RootState) => state
+  ],
+  selectAlbumsFromTracks
 );
