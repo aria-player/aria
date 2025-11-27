@@ -1,5 +1,10 @@
 import { store } from "../../app/store";
-import { getArtistId, getAsArray, getTrackId } from "../../app/utils";
+import {
+  getAlbumId,
+  getArtistId,
+  getAsArray,
+  getTrackId
+} from "../../app/utils";
 import {
   addTracks,
   removeTracks,
@@ -18,7 +23,11 @@ import {
 } from "../player/playerTime";
 import { showAlert } from "./pluginsAlerts";
 import { addArtists, removeArtists } from "../artists/artistsSlice";
+import { addAlbums, removeAlbums } from "../albums/albumsSlice";
 import {
+  AlbumMetadata,
+  Album,
+  AlbumUri,
   ArtistMetadata,
   Artist,
   ArtistUri,
@@ -124,6 +133,22 @@ function handleRemoveArtists(source: PluginId, artists?: ArtistUri[]) {
   store.dispatch(removeArtists({ source, artists }));
 }
 
+function handleUpdateAlbums(source: PluginId, metadata: AlbumMetadata[]) {
+  if (!isPluginActive(source)) return;
+  const albums: Album[] = metadata.map((album) => ({
+    ...album,
+    source,
+    albumId: getAlbumId(source, album.name, album.artist, album.uri)
+  }));
+  store.dispatch(addAlbums({ source, albums }));
+}
+
+function handleRemoveAlbums(source: PluginId, uris?: AlbumUri[]) {
+  if (!isPluginActive(source)) return;
+  const albumIds = uris?.map((uri) => getAlbumId(source, "", undefined, uri));
+  store.dispatch(removeAlbums({ source, albums: albumIds }));
+}
+
 export const getBaseCallbacks = (pluginId: PluginId): BaseCallbacks => {
   return {
     updateData: (data: object) => handleUpdateData(pluginId, data),
@@ -159,6 +184,9 @@ export const getSourceCallbacks = (pluginId: PluginId): SourceCallbacks => {
       handleUpdateArtists(pluginId, metadata),
     removeArtists: (artists?: ArtistUri[]) =>
       handleRemoveArtists(pluginId, artists),
+    updateAlbums: (metadata: AlbumMetadata[]) =>
+      handleUpdateAlbums(pluginId, metadata),
+    removeAlbums: (uris?: AlbumUri[]) => handleRemoveAlbums(pluginId, uris),
     setSyncProgress(syncProgress: SyncProgress) {
       store.dispatch(setSourceSyncProgress({ pluginId, syncProgress }));
     },
@@ -173,6 +201,12 @@ export const getSourceCallbacks = (pluginId: PluginId): SourceCallbacks => {
       const allArtists = store.getState().artists.artists;
       return Object.values(allArtists).filter(
         (artist) => artist.source === pluginId
+      );
+    },
+    getAlbums: () => {
+      const allAlbums = store.getState().albums.albums;
+      return Object.values(allAlbums.entities).filter(
+        (album) => album?.source === pluginId
       );
     },
     getTrackByUri: (uri: TrackUri) => {

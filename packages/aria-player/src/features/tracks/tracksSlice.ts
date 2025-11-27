@@ -10,12 +10,13 @@ import { setupTracksListeners } from "./tracksListeners";
 import { Track, TrackId, TrackMetadata } from "../../../../types/tracks";
 import { PluginId } from "../../../../types/plugins";
 import { PlaylistItem } from "../playlists/playlistsTypes";
-import { AlbumDetails } from "./tracksTypes";
 import {
   getAlbumId,
   getMostCommonArtworkUri,
   getTrackId
 } from "../../app/utils";
+import { selectAlbumsInfo } from "../albums/albumsSlice";
+import { AlbumDetails } from "./tracksTypes";
 
 const tracksAdapter = createEntityAdapter<Track, TrackId>({
   selectId: (track) => track.trackId,
@@ -120,15 +121,22 @@ export const selectAllTracks = createSelector(
     }))
 );
 
-const selectAlbumsFromTracks = (tracks: Track[]): AlbumDetails[] => {
+const selectAlbumsFromTracks = (
+  tracks: Track[],
+  state: RootState
+): AlbumDetails[] => {
   const albumsMap = new Map<string, AlbumDetails>();
+  const albumsInfo = selectAlbumsInfo(state);
+
   tracks.forEach((track) => {
     if (!track?.albumId || !track.album) return;
     if (!albumsMap.has(track.albumId)) {
       const albumTracks = tracks.filter((t) => t.albumId === track.albumId);
+      const albumInfo = albumsInfo[track.albumId];
       albumsMap.set(track.albumId, {
+        ...(albumInfo || {}),
         albumId: track.albumId,
-        album: track.album,
+        album: albumInfo?.name ?? track.album, // TODO: Rename to 'name' in AlbumDetails
         artist: track.albumArtist || track.artist,
         artistUri: track.albumArtistUri || track.artistUri,
         source: track.source,
@@ -143,7 +151,7 @@ const selectAlbumsFromTracks = (tracks: Track[]): AlbumDetails[] => {
 };
 
 export const selectAllAlbums = createSelector(
-  [selectAllTracks],
+  [(state: RootState) => selectAllTracks(state), (state: RootState) => state],
   selectAlbumsFromTracks
 );
 
@@ -152,7 +160,10 @@ export const selectLibraryTracks = createSelector([selectAllTracks], (tracks) =>
 );
 
 export const selectLibraryAlbums = createSelector(
-  [selectLibraryTracks],
+  [
+    (state: RootState) => selectLibraryTracks(state),
+    (state: RootState) => state
+  ],
   selectAlbumsFromTracks
 );
 

@@ -3,12 +3,9 @@ import {
   Track,
   TrackMetadata,
   TrackUri,
-  ArtistId,
-  ArtistMetadata,
-  Artist,
-  ArtistUri,
-  AlbumUri,
 } from "./tracks";
+import { ArtistMetadata, ArtistUri, Artist } from "./artists";
+import { AlbumMetadata, AlbumUri, Album } from "./albums";
 
 export type PluginId = string;
 
@@ -316,6 +313,16 @@ export interface SourceCallbacks extends BaseCallbacks {
    */
   removeArtists: (uris?: ArtistUri[]) => void;
   /**
+   * Add or update information about albums for this source.
+   */
+  updateAlbums: (metadata: AlbumMetadata[]) => void;
+  /**
+   * Remove albums with the specified URIs from the library.
+   *
+   * If `uris` is null, all albums for this source are removed from the library.
+   */
+  removeAlbums: (uris?: AlbumUri[]) => void;
+  /**
    * Set the current progress while synchronizing the user's library to be up to date with an external source.
    *
    * A progress indicator will appear if `status` indicates that there are still tracks left to synchronize.
@@ -335,6 +342,10 @@ export interface SourceCallbacks extends BaseCallbacks {
    * Returns all artists for this source in the library.
    */
   getArtists: () => Artist[];
+  /**
+   * Returns all albums for this source in the library.
+   */
+  getAlbums: () => Album[];
   /**
    * Returns metadata for the track with the specified URI.
    */

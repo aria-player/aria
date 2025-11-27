@@ -1,10 +1,9 @@
+import { AlbumId, AlbumUri } from "./albums";
 import { ArtistUri } from "./artists";
 import { PluginId } from "./plugins";
 
 export type TrackId = string;
-export type AlbumId = string;
 export type TrackUri = string;
-export type AlbumUri = string;
 
 /**
  * Metadata describing a track that can be provided by the track source.
