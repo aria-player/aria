@@ -638,6 +638,105 @@ export default function createSpotifyPlayer(
       }));
     },
 
+    async getArtistInfo(uri: string) {
+      const artistId = uri.split(":").pop();
+      if (!artistId) {
+        throw new Error(`Invalid Spotify artist URI: ${uri}`);
+      }
+
+      const artistResponse = (await spotifyRequest(
+        `/artists/${artistId}`
+      )) as SpotifyApi.SingleArtistResponse;
+
+      if (!artistResponse) {
+        return undefined;
+      }
+
+      return {
+        uri: artistResponse.uri,
+        name: artistResponse.name,
+        artworkUri: artistResponse.images?.[0]?.url
+      };
+    },
+
+    async getArtistTopTracks(
+      uri: string,
+      startIndex: number,
+      stopIndex: number
+    ) {
+      const artistId = uri.split(":").pop();
+      if (!artistId) {
+        throw new Error(`Invalid Spotify artist URI: ${uri}`);
+      }
+
+      const topTracksResponse = (await spotifyRequest(
+        `/artists/${artistId}/top-tracks?market=from_token`
+      )) as SpotifyApi.ArtistsTopTracksResponse;
+
+      if (!topTracksResponse?.tracks) {
+        return [];
+      }
+
+      const requestedTracks = topTracksResponse.tracks.slice(
+        startIndex,
+        stopIndex
+      );
+      const tracks: TrackMetadata[] = [];
+      const artistIds = new Set<string>();
+
+      for (const track of requestedTracks) {
+        if (track.restrictions?.reason) continue;
+        tracks.push(getTrackMetadata(track, track.album, Date.now()));
+        track.artists.forEach((artist) => artistIds.add(artist.id));
+        track.album.artists.forEach((artist) => artistIds.add(artist.id));
+      }
+
+      const artists = Array.from(artistIds);
+      const artistGenreMapping = await fetchArtistGenres(artists);
+
+      return tracks.map((track) => {
+        const albumArtistIds =
+          topTracksResponse.tracks
+            .find((t) => t.uri === track.uri)
+            ?.album.artists.map((artist) => artist.id) ?? [];
+        const formattedGenres = getUniqueGenresFromArtists(
+          albumArtistIds,
+          artistGenreMapping
+        );
+        return {
+          ...track,
+          genre: formattedGenres
+        };
+      });
+    },
+
+    async getArtistAlbums(uri: string, startIndex: number, stopIndex: number) {
+      const artistId = uri.split(":").pop();
+      if (!artistId) {
+        throw new Error(`Invalid Spotify artist URI: ${uri}`);
+      }
+
+      const limit = stopIndex - startIndex;
+      const albumsResponse = (await spotifyRequest(
+        `/artists/${artistId}/albums?include_groups=album,single&limit=${limit}&offset=${startIndex}`
+      )) as SpotifyApi.ArtistsAlbumsResponse;
+
+      if (!albumsResponse?.items) {
+        return [];
+      }
+
+      return albumsResponse.items.map((album) => ({
+        uri: album.uri,
+        name: album.name,
+        artist: album.artists.map((artist) => artist.name),
+        artistUri: album.artists.map((artist) => artist.uri),
+        year: album.release_date
+          ? parseInt(album.release_date.split("-")[0])
+          : undefined,
+        artworkUri: album.images?.[0]?.url
+      }));
+    },
+
     pause() {
       player?.pause();
     },

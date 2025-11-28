@@ -1,9 +1,5 @@
 import * as React from "react";
-import {
-  Track,
-  TrackMetadata,
-  TrackUri,
-} from "./tracks";
+import { Track, TrackMetadata, TrackUri } from "./tracks";
 import { ArtistMetadata, ArtistUri, Artist } from "./artists";
 import { AlbumMetadata, AlbumUri, Album } from "./albums";
 
@@ -241,6 +237,30 @@ export interface SourceHandle extends BaseHandle {
    * Fetch all tracks for an album by its URI.
    */
   getAlbumTracks?: (uri: AlbumUri) => Promise<TrackMetadata[]>;
+  /**
+   * Fetch information for an artist by their URI.
+   */
+  getArtistInfo?: (uri: ArtistUri) => Promise<ArtistMetadata | undefined>;
+  /**
+   * Fetch top tracks for an artist by their URI.
+   * 
+   * Assumed to be in order of relevance/popularity.
+   */
+  getArtistTopTracks?: (
+    uri: ArtistUri,
+    startIndex: number,
+    stopIndex: number
+  ) => Promise<TrackMetadata[]>;
+  /**
+   * Fetch albums for an artist by their URI.
+   * 
+   * Assumed to be in order of most recently released.
+   */
+  getArtistAlbums?: (
+    uri: ArtistUri,
+    startIndex: number,
+    stopIndex: number
+  ) => Promise<AlbumMetadata[]>;
   /**
    * Called after every update to this source's tracks.
    */

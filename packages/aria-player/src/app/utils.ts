@@ -78,6 +78,21 @@ export function getArtistId(
   return uri ? `${source}:uri:${uri}` : `${source}:name:${artist}`;
 }
 
+export function parseArtistId(artistId: ArtistId):
+  | {
+      source: PluginId;
+      uri: ArtistUri;
+    }
+  | undefined {
+  const parts = artistId.split(":");
+  if (parts[1] === "uri") {
+    return {
+      source: parts[0],
+      uri: parts.slice(2).join(":")
+    };
+  }
+}
+
 export function getAlbumId(
   source: PluginId,
   album: string,

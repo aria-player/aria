@@ -4,20 +4,30 @@ import { push } from "redux-first-history";
 import { useTranslation } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { BASEPATH } from "../../app/constants";
-import { getScrollbarWidth } from "../../app/utils";
+import {
+  getAlbumId,
+  getScrollbarWidth,
+  getTrackId,
+  parseArtistId
+} from "../../app/utils";
 import { useTrackGrid } from "../../hooks/useTrackGrid";
 import { TrackSummaryRow } from "./subviews/TrackSummaryRow";
 import { AlbumGridItem } from "./subviews/AlbumGridItem";
 import styles from "./ArtistView.module.css";
 import {
   selectVisibleSelectedTrackGroup,
+  selectVisibleArtist,
   selectVisibleArtistTracks,
-  selectVisibleArtistAlbums,
-  selectVisibleArtist
+  selectVisibleArtistAlbums
 } from "../../features/visibleSelectors";
 import { useScrollDetection } from "../../hooks/useScrollDetection";
 import { ArtistArt } from "./subviews/ArtistArt";
 import { getSourceHandle } from "../../features/plugins/pluginsSlice";
+import { addTracks, selectTrackById } from "../../features/tracks/tracksSlice";
+import LoadingSpinner from "./subviews/LoadingSpinner";
+import { addAlbums } from "../../features/albums/albumsSlice";
+import { TrackId } from "../../../../types";
+import { store } from "../../app/store";
 
 export default function ArtistView() {
   const dispatch = useAppDispatch();
@@ -27,9 +37,13 @@ export default function ArtistView() {
   const [containerWidth, setContainerWidth] = useState(0);
   const artistId = useAppSelector(selectVisibleSelectedTrackGroup);
   const artistTracks = useAppSelector(selectVisibleArtistTracks);
+  // TODO: Order albums by release date
   const artistAlbums = useAppSelector(selectVisibleArtistAlbums);
   const visibleArtist = useAppSelector(selectVisibleArtist);
   const { onScroll } = useScrollDetection();
+  const [isLoading, setIsLoading] = useState(false);
+  const [orderedTracks, setOrderedTracks] = useState<TrackId[]>([]);
+
   const pluginHandle = visibleArtist
     ? getSourceHandle(visibleArtist.source)
     : null;
@@ -60,6 +74,61 @@ export default function ArtistView() {
     return { columnCount, columnWidth };
   }, [containerWidth]);
 
+  useEffect(() => {
+    async function fetchArtistData() {
+      if (!artistId) return;
+      const artistInfo = parseArtistId(artistId);
+      const handle = artistInfo && getSourceHandle(artistInfo.source);
+      if (!handle || !artistInfo?.uri) return;
+      const { source, uri } = artistInfo;
+      setIsLoading(true);
+      try {
+        const tracks = await handle.getArtistTopTracks?.(uri, 0, 5);
+        const albums = await handle.getArtistAlbums?.(uri, 0, 10);
+        if (tracks?.length) {
+          dispatch(
+            addTracks({
+              source,
+              tracks,
+              addToLibrary: false
+            })
+          );
+          setOrderedTracks(tracks.map((t) => getTrackId(source, t.uri)));
+        }
+        if (albums?.length) {
+          dispatch(
+            addAlbums({
+              source,
+              albums: albums.map((album) => ({
+                ...album,
+                albumId: getAlbumId(
+                  source,
+                  album.name,
+                  album.artist,
+                  album.uri
+                ),
+                source
+              }))
+            })
+          );
+        }
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    fetchArtistData();
+  }, [dispatch, artistId]);
+
+  const rowData = useMemo(() => {
+    if (isLoading) return [];
+    if (!orderedTracks.length) return artistTracks.slice(0, 5);
+    const state = store.getState();
+    return orderedTracks.map((trackId) => ({
+      ...selectTrackById(state, trackId),
+      itemId: trackId
+    }));
+  }, [artistTracks, isLoading, orderedTracks]);
+
   const viewAllSongs = () => {
     if (!artistId) return;
     dispatch(
@@ -74,7 +143,7 @@ export default function ArtistView() {
     );
   };
 
-  if (!artistId || !visibleArtist) {
+  if (!artistId) {
     return <div className={styles.notFound}>{t("artist.notFound")}</div>;
   }
 
@@ -83,86 +152,95 @@ export default function ArtistView() {
       className={styles.artistView}
       onScroll={(e) => onScroll(e.currentTarget.scrollTop)}
     >
-      <section className={styles.artistHeader}>
-        <div className={styles.artistArt}>
-          <ArtistArt artist={visibleArtist} />
-        </div>
-        <div className={styles.artistInfo}>
-          <h1 className={styles.artistName}>{visibleArtist.name}</h1>
-          {visibleArtist.uri && pluginHandle?.Attribution && (
-            <pluginHandle.Attribution
-              type="artist"
-              id={visibleArtist.uri}
-              compact={false}
-            />
-          )}
-        </div>
-      </section>
-      <div ref={containerRef}>
-        {artistTracks.length > 0 && (
-          <section className={styles.section}>
-            <div className={styles.sectionHeader}>
-              <h2 className={styles.sectionTitle}>
-                {t("artist.sections.songs.title")}
-              </h2>
-              <button
-                className={styles.viewAll}
-                onClick={viewAllSongs}
-                title={t("artist.sections.songs.viewAll")}
-              >
-                {t("artist.viewAll")}
-              </button>
-            </div>
-            <div
-              style={{ height: 48 * Math.min(5, artistTracks.length) + 8 }}
-              className="ag-theme-balham ag-overrides-track-summary-rows"
-            >
-              <AgGridReact
-                {...gridProps}
-                ref={gridRef}
-                rowData={artistTracks.slice(0, 5)}
-                columnDefs={[]}
-                alwaysShowVerticalScroll={false}
-                fullWidthCellRenderer={TrackSummaryRow}
-                isFullWidthRow={() => true}
-                headerHeight={0}
-                rowHeight={48}
+      {!isLoading && visibleArtist && (
+        <section className={styles.artistHeader}>
+          <div className={styles.artistArt}>
+            <ArtistArt artist={visibleArtist} />
+          </div>
+          <div className={styles.artistInfo}>
+            <h1 className={styles.artistName}>{visibleArtist.name}</h1>
+            {visibleArtist.uri && pluginHandle?.Attribution && (
+              <pluginHandle.Attribution
+                type="artist"
+                id={visibleArtist.uri}
+                compact={false}
               />
-            </div>
-          </section>
-        )}
-        {artistAlbums.length > 0 && (
-          <section className={styles.section}>
-            <div className={styles.sectionHeader}>
-              <h2 className={styles.sectionTitle}>
-                {t("artist.sections.albums.title")}
-              </h2>
-              <button
-                className={styles.viewAll}
-                onClick={viewAllAlbums}
-                title={t("artist.sections.albums.viewAll")}
-              >
-                {t("artist.viewAll")}
-              </button>
-            </div>
-            <div
-              className={styles.gridRow}
-              style={{
-                gridTemplateColumns: `repeat(${gridLayout.columnCount}, 1fr)`,
-                height: gridLayout.columnWidth + 80
-              }}
-            >
-              {artistAlbums.slice(0, gridLayout.columnCount).map((album) => (
-                <div
-                  key={album.albumId}
-                  className={styles.gridItem}
-                  style={{ width: gridLayout.columnWidth }}
-                >
-                  <AlbumGridItem album={album} />
+            )}
+          </div>
+        </section>
+      )}
+      {isLoading && <LoadingSpinner />}
+      <div ref={containerRef}>
+        {!isLoading && (
+          <>
+            {rowData.length > 0 && (
+              <section className={styles.section}>
+                <div className={styles.sectionHeader}>
+                  <h2 className={styles.sectionTitle}>
+                    {t("artist.sections.songs.title")}
+                  </h2>
+                  <button
+                    className={styles.viewAll}
+                    onClick={viewAllSongs}
+                    title={t("artist.sections.songs.viewAll")}
+                  >
+                    {t("artist.viewAll")}
+                  </button>
                 </div>
-              ))}
-            </div>
-          </section>
+                <div
+                  style={{ height: 48 * Math.min(5, rowData.length) + 8 }}
+                  className="ag-theme-balham ag-overrides-track-summary-rows"
+                >
+                  <AgGridReact
+                    {...gridProps}
+                    ref={gridRef}
+                    rowData={rowData}
+                    columnDefs={[]}
+                    alwaysShowVerticalScroll={false}
+                    fullWidthCellRenderer={TrackSummaryRow}
+                    isFullWidthRow={() => true}
+                    headerHeight={0}
+                    rowHeight={48}
+                  />
+                </div>
+              </section>
+            )}
+            {artistAlbums.length > 0 && (
+              <section className={styles.section}>
+                <div className={styles.sectionHeader}>
+                  <h2 className={styles.sectionTitle}>
+                    {t("artist.sections.albums.title")}
+                  </h2>
+                  <button
+                    className={styles.viewAll}
+                    onClick={viewAllAlbums}
+                    title={t("artist.sections.albums.viewAll")}
+                  >
+                    {t("artist.viewAll")}
+                  </button>
+                </div>
+                <div
+                  className={styles.gridRow}
+                  style={{
+                    gridTemplateColumns: `repeat(${gridLayout.columnCount}, 1fr)`,
+                    height: gridLayout.columnWidth + 80
+                  }}
+                >
+                  {artistAlbums
+                    .slice(0, gridLayout.columnCount)
+                    .map((album) => (
+                      <div
+                        key={album.albumId}
+                        className={styles.gridItem}
+                        style={{ width: gridLayout.columnWidth }}
+                      >
+                        <AlbumGridItem album={album} />
+                      </div>
+                    ))}
+                </div>
+              </section>
+            )}
+          </>
         )}
       </div>
     </div>
