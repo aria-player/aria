@@ -19,12 +19,15 @@ import {
   selectLibraryTracks
 } from "./tracks/tracksSlice";
 import { createSelector } from "@reduxjs/toolkit";
-import { selectArtistInfoById } from "./artists/artistsSlice";
+import {
+  selectArtistInfoById,
+  selectArtistsInfo
+} from "./artists/artistsSlice";
 import { ArtistDetails } from "./artists/artistsTypes";
 import { selectArtistDelimiter } from "./config/configSlice";
 import { getAsArray } from "../app/utils";
-import { Track } from "../../../types";
-import { selectAlbumsInfo } from "./albums/albumsSlice";
+import { AlbumId, ArtistId, Track } from "../../../types";
+import { selectAlbumInfoById, selectAlbumsInfo } from "./albums/albumsSlice";
 import { AlbumDetails } from "./albums/albumsTypes";
 
 export const selectTrackListMetadata = (
@@ -196,15 +199,12 @@ const selectAlbumsFromTracks = (
   state: RootState
 ): AlbumDetails[] => {
   const albumsMap = new Map<string, AlbumDetails>();
-  const albumsInfo = selectAlbumsInfo(state);
-
   tracks.forEach((track) => {
     if (!track?.albumId || !track.album) return;
     if (!albumsMap.has(track.albumId)) {
       const albumTracks = tracks.filter((t) => t.albumId === track.albumId);
-      const albumInfo = albumsInfo[track.albumId];
       albumsMap.set(track.albumId, {
-        ...(albumInfo || {}),
+        ...(selectAlbumInfoById(state, track.albumId) || {}),
         albumId: track.albumId,
         uri: track.albumUri,
         name: track.album,
@@ -225,14 +225,45 @@ export const selectAllArtists = createSelector(
   [
     (state: RootState) => selectAllTracks(state),
     (state: RootState) => state,
-    (state: RootState) => selectArtistDelimiter(state)
+    (state: RootState) => selectArtistDelimiter(state),
+    (state: RootState) => selectArtistsInfo(state)
   ],
-  selectArtistsFromTracks
+  (tracks, state, delimiter, artistsInfo) => {
+    const artistsMap = new Map<ArtistId, ArtistDetails>(
+      Object.entries(artistsInfo)
+    );
+
+    selectArtistsFromTracks(tracks, state, delimiter).forEach((artist) => {
+      if (artistsMap.has(artist.artistId)) return;
+      artistsMap.set(artist.artistId, artist);
+    });
+
+    return Array.from(artistsMap.values()).sort((a, b) =>
+      a.name.localeCompare(b.name)
+    );
+  }
 );
 
 export const selectAllAlbums = createSelector(
-  [(state: RootState) => selectAllTracks(state), (state: RootState) => state],
-  selectAlbumsFromTracks
+  [
+    (state: RootState) => selectAllTracks(state),
+    (state: RootState) => state,
+    (state: RootState) => selectAlbumsInfo(state)
+  ],
+  (tracks, state, albumsInfo) => {
+    const albumsMap = new Map<AlbumId, AlbumDetails>(
+      Object.entries(albumsInfo)
+    );
+
+    selectAlbumsFromTracks(tracks, state).forEach((album) => {
+      if (albumsMap.has(album.albumId)) return;
+      albumsMap.set(album.albumId, album);
+    });
+
+    return Array.from(albumsMap.values()).sort((a, b) =>
+      a.name.localeCompare(b.name)
+    );
+  }
 );
 
 export const selectLibraryArtists = createSelector(
