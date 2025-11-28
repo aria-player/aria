@@ -24,6 +24,19 @@ export default function createAppleMusicPlayer(
   i18n.addResourceBundle("en-US", "apple-music-player", en_us);
 
   let music: MusicKit.MusicKitInstance | undefined;
+  let musicKitReadyResolve: (() => void) | undefined;
+  const musicKitReady = new Promise<void>((resolve) => {
+    musicKitReadyResolve = resolve;
+  });
+
+  async function waitForMusicKit(): Promise<MusicKit.MusicKitInstance> {
+    if (music) return music;
+    await musicKitReady;
+    if (!music) {
+      throw new Error("MusicKit failed to initialize");
+    }
+    return music;
+  }
 
   const getConfig = () => host.getData() as AppleMusicConfig;
 
@@ -48,6 +61,7 @@ export default function createAppleMusicPlayer(
     };
     await window.MusicKit.configure(musicKitConfig);
     music = await window.MusicKit.getInstance();
+    musicKitReadyResolve?.();
     if (music.isAuthorized) {
       fetchUserLibrary();
     }
@@ -459,9 +473,7 @@ export default function createAppleMusicPlayer(
     },
 
     getAlbumTracks: async (uri: string) => {
-      if (!music) {
-        throw new Error("Apple Music not initialized");
-      }
+      const music = await waitForMusicKit();
       if (uri.startsWith("l.")) {
         // Library albums should already be fully loaded
         return [];
@@ -541,9 +553,7 @@ export default function createAppleMusicPlayer(
     },
 
     getArtistInfo: async (uri: string) => {
-      if (!music) {
-        throw new Error("Apple Music not initialized");
-      }
+      const music = await waitForMusicKit();
       try {
         const artistResponse = (await music.api.music(
           `v1/catalog/${music.storefrontId}/artists/${uri}`
@@ -572,9 +582,7 @@ export default function createAppleMusicPlayer(
       startIndex: number,
       stopIndex: number
     ) => {
-      if (!music) {
-        throw new Error("Apple Music not initialized");
-      }
+      const music = await waitForMusicKit();
       if (uri.startsWith("l.")) {
         return [];
       }
@@ -611,9 +619,7 @@ export default function createAppleMusicPlayer(
       startIndex: number,
       stopIndex: number
     ) => {
-      if (!music) {
-        throw new Error("Apple Music not initialized");
-      }
+      const music = await waitForMusicKit();
       if (uri.startsWith("l.")) {
         return [];
       }
