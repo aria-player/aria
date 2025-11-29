@@ -32,6 +32,10 @@ export interface AlbumMetadata {
    * The year this album was released.
    */
   year?: number;
+  /**
+   * The date this album was released, in milliseconds since epoch.
+   */
+  dateReleased?: number;
 }
 
 /**

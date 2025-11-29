@@ -274,6 +274,7 @@
     "comments": "Comments",
     "track": "Track #",
     "disc": "Disc #",
+    "dateReleased": "Date Released",
     "dateAdded": "Date Added",
     "dateModified": "Date Modified",
     "fileFolder": "Folder",

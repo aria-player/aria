@@ -121,6 +121,9 @@ pub fn get_metadata(app: AppHandle, file_path: String) -> Result<HashMap<String,
     if let Some(value) = tag.get_string(&ItemKey::AlbumArtist) {
         metadata.insert("albumArtist".to_string(), value.to_string());
     }
+    if let Some(date_str) = tag.get_string(&ItemKey::ReleaseDate) {
+        metadata.insert("dateReleased".to_string(), date_str.to_string());
+    }
     if let Some(cover) = tag.pictures().first() {
         let mut hasher = Sha256::new();
         hasher.update(cover.data());

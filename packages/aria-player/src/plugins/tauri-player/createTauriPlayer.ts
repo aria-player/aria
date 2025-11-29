@@ -82,6 +82,7 @@ export default function createTauriPlayer(
               comments: metadata.comments && JSON.parse(metadata.comments),
               artworkUri: metadata.artworkUri,
               year: parseNumber(metadata.year),
+              dateReleased: parseNumber(metadata.dateReleased),
               track: parseNumber(metadata.track),
               disc: parseNumber(metadata.disc),
               fileSize: parseNumber(metadata.fileSize),

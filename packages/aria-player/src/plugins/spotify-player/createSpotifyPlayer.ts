@@ -368,6 +368,7 @@ export default function createSpotifyPlayer(
       albumUri: album.uri,
       genre,
       year: parseInt(album.release_date.split("-")[0]),
+      dateReleased: new Date(album.release_date).getTime(),
       track: track.track_number,
       disc: track.disc_number,
       artworkUri: album.images[0]?.url
@@ -732,6 +733,9 @@ export default function createSpotifyPlayer(
         artistUri: album.artists.map((artist) => artist.uri),
         year: album.release_date
           ? parseInt(album.release_date.split("-")[0])
+          : undefined,
+        dateReleased: album.release_date
+          ? new Date(album.release_date).getTime()
           : undefined,
         artworkUri: album.images?.[0]?.url
       }));

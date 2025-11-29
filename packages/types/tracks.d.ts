@@ -84,6 +84,10 @@ export interface TrackMetadata {
    */
   year?: number;
   /**
+   * The date this track's album was released, in milliseconds since epoch.
+   */
+  dateReleased?: number;
+  /**
    * The number of this track within its album.
    */
   track?: number;

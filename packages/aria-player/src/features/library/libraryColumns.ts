@@ -121,6 +121,15 @@ export const defaultColumnDefinitions: ColDef[] = [
     type: "rightAligned"
   },
   {
+    field: "dateReleased",
+    hide: true,
+    valueFormatter: (params: { value: number | null }) => {
+      return params.value !== undefined && params.value !== null
+        ? formatDate(params.value)
+        : "";
+    }
+  },
+  {
     field: "dateAdded",
     hide: true,
     filter: false,

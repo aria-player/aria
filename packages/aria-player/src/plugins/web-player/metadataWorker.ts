@@ -103,6 +103,10 @@ export async function parseMetadata(track: TrackMetadata, file: File) {
       ? (ID3v23Data.get("COMM") as IComment)?.text
       : undefined;
     newTrack.year = Number(ID3v23Data.get("TYER"));
+    const releaseDateStr = ID3v23Data.get("TDRL") as string;
+    newTrack.dateReleased = releaseDateStr
+      ? new Date(releaseDateStr).getTime()
+      : undefined;
     newTrack.disc = Number((ID3v23Data.get("TPOS") as string)?.split("/")[0]);
     newTrack.track = Number((ID3v23Data.get("TRCK") as string)?.split("/")[0]);
   } else if (metadata.native && metadata.native.iTunes) {
@@ -118,6 +122,10 @@ export async function parseMetadata(track: TrackMetadata, file: File) {
     newTrack.composer = iTunesData.get("\u00A9wrt") as string;
     newTrack.comments = iTunesData.get("\u00A9cmt") as string;
     newTrack.year = Number(iTunesData.get("\u00A9day"));
+    const iTunesDateStr = iTunesData.get("\u00A9day") as string;
+    newTrack.dateReleased = iTunesDateStr
+      ? new Date(iTunesDateStr).getTime()
+      : undefined;
     newTrack.disc = Number((iTunesData.get("disk") as string)?.split("/")[0]);
     newTrack.track = Number((iTunesData.get("trkn") as string)?.split("/")[0]);
   } else {
@@ -134,6 +142,9 @@ export async function parseMetadata(track: TrackMetadata, file: File) {
       ?.map((comment) => comment.text)
       .filter((text) => text !== undefined);
     newTrack.year = Number(metadata.common.year);
+    newTrack.dateReleased = metadata.common.date
+      ? new Date(metadata.common.date).getTime()
+      : undefined;
     newTrack.disc = Number(metadata.common.disk);
     newTrack.track = Number(metadata.common.track.no);
   }

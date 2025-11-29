@@ -255,6 +255,9 @@ export default function createAppleMusicPlayer(
       year:
         albumData.attributes?.releaseDate &&
         parseInt(albumData.attributes.releaseDate.split("-")[0]),
+      dateReleased:
+        albumData.attributes?.releaseDate &&
+        new Date(albumData.attributes.releaseDate).getTime(),
       metadataLoaded: true
     } as TrackMetadata;
   }
@@ -664,6 +667,9 @@ export default function createAppleMusicPlayer(
             artistUri: artistUris.length > 0 ? artistUris : uri,
             year: album.attributes?.releaseDate
               ? parseInt(album.attributes.releaseDate.split("-")[0])
+              : undefined,
+            dateReleased: album.attributes?.releaseDate
+              ? new Date(album.attributes.releaseDate).getTime()
               : undefined,
             artworkUri: album.attributes?.artwork?.url
           };

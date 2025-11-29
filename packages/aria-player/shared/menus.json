@@ -103,6 +103,7 @@
           { "id": "columns.comments", "keepopen": true, "checkbox": true },
           { "id": "columns.track", "keepopen": true, "checkbox": true },
           { "id": "columns.disc", "keepopen": true, "checkbox": true },
+          { "id": "columns.dateReleased", "keepopen": true, "checkbox": true },
           { "id": "columns.dateAdded", "keepopen": true, "checkbox": true },
           { "id": "columns.dateModified", "keepopen": true, "checkbox": true },
           { "id": "columns.fileFolder", "keepopen": true, "checkbox": true },
