@@ -620,7 +620,7 @@ export default function createAppleMusicPlayer(
       try {
         const limit = stopIndex - startIndex;
         const albumsResponse = (await music.api.music(
-          `v1/catalog/${music.storefrontId}/artists/${uri}/albums?limit=${limit}&offset=${startIndex}&include=artists`
+          `v1/catalog/${music.storefrontId}/artists/${uri}/albums?limit=${limit}&offset=${startIndex}&include=artists&sort=-releaseDate`
         )) as {
           data: MusicKit.Relationship<MusicKit.Albums>;
         };
