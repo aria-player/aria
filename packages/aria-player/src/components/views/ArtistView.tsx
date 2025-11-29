@@ -29,6 +29,8 @@ import { addAlbums } from "../../features/albums/albumsSlice";
 import { TrackId } from "../../../../types";
 import { store } from "../../app/store";
 
+const OVERSCROLL_BUFFER = 5;
+
 export default function ArtistView() {
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
@@ -43,6 +45,7 @@ export default function ArtistView() {
   const { onScroll } = useScrollDetection();
   const [isLoading, setIsLoading] = useState(false);
   const [orderedTracks, setOrderedTracks] = useState<TrackId[]>([]);
+  const [fetchedAlbumCount, setFetchedAlbumCount] = useState(0);
 
   const pluginHandle = visibleArtist
     ? getSourceHandle(visibleArtist.source)
@@ -75,16 +78,17 @@ export default function ArtistView() {
   }, [containerWidth]);
 
   useEffect(() => {
-    async function fetchArtistData() {
+    async function fetchTracks() {
       if (!artistId) return;
       const artistInfo = parseArtistId(artistId);
       const handle = artistInfo && getSourceHandle(artistInfo.source);
       if (!handle || !artistInfo?.uri) return;
       const { source, uri } = artistInfo;
       setIsLoading(true);
+      setOrderedTracks([]);
+      setFetchedAlbumCount(0);
       try {
         const tracks = await handle.getArtistTopTracks?.(uri, 0, 5);
-        const albums = await handle.getArtistAlbums?.(uri, 0, 10);
         if (tracks?.length) {
           dispatch(
             addTracks({
@@ -95,29 +99,45 @@ export default function ArtistView() {
           );
           setOrderedTracks(tracks.map((t) => getTrackId(source, t.uri)));
         }
-        if (albums?.length) {
-          dispatch(
-            addAlbums({
-              source,
-              albums: albums.map((album) => ({
-                ...album,
-                albumId: getAlbumId(
-                  source,
-                  album.name,
-                  album.artist,
-                  album.uri
-                ),
-                source
-              }))
-            })
-          );
-        }
       } finally {
         setIsLoading(false);
       }
     }
-    fetchArtistData();
+    fetchTracks();
   }, [dispatch, artistId]);
+
+  useEffect(() => {
+    async function fetchAlbums() {
+      const requiredAlbumCount = gridLayout.columnCount + OVERSCROLL_BUFFER;
+      if (!artistId || requiredAlbumCount <= OVERSCROLL_BUFFER) return;
+      if (fetchedAlbumCount >= requiredAlbumCount) return;
+
+      const artistInfo = parseArtistId(artistId);
+      const handle = artistInfo && getSourceHandle(artistInfo.source);
+      if (!handle || !artistInfo?.uri) return;
+      const { source, uri } = artistInfo;
+
+      const albums = await handle.getArtistAlbums?.(
+        uri,
+        fetchedAlbumCount,
+        requiredAlbumCount
+      );
+      if (albums?.length) {
+        dispatch(
+          addAlbums({
+            source,
+            albums: albums.map((album) => ({
+              ...album,
+              albumId: getAlbumId(source, album.name, album.artist, album.uri),
+              source
+            }))
+          })
+        );
+        setFetchedAlbumCount((prev) => prev + albums.length);
+      }
+    }
+    fetchAlbums();
+  }, [dispatch, artistId, fetchedAlbumCount, gridLayout.columnCount]);
 
   const rowData = useMemo(() => {
     if (isLoading) return [];
