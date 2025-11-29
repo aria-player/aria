@@ -272,6 +272,9 @@ export default function createAppleMusicPlayer(
       const catalogId = catalogIdMap[track.uri];
       const data = catalogId ? artistData[catalogId] : undefined;
 
+      if (data) {
+        track.uri = catalogId;
+      }
       if (data?.artist?.length) {
         track.artist = data.artist;
         track.artistUri = data.artistUri;
@@ -491,8 +494,7 @@ export default function createAppleMusicPlayer(
         }
 
         const tracks: TrackMetadata[] = [];
-        const catalogIds: string[] = [];
-        const catalogIdMap = new Map<string, string>();
+        const catalogIdMap: Record<string, string> = {};
         const albumAttributes =
           albumData.attributes as MusicKit.Albums["attributes"];
 
@@ -514,14 +516,7 @@ export default function createAppleMusicPlayer(
           }
 
           albumTracks.forEach((track) => {
-            if (
-              albumAttributes?.releaseDate &&
-              track.attributes?.playParams?.catalogId
-            ) {
-              catalogIds.push(track.attributes.playParams.catalogId);
-              catalogIdMap.set(track.id, track.attributes.playParams.catalogId);
-            }
-
+            catalogIdMap[track.id] = track.id;
             tracks.push(
               getTrackMetadata(
                 track,
@@ -539,11 +534,7 @@ export default function createAppleMusicPlayer(
           throw new Error(`No tracks found for album: ${uri}`);
         }
 
-        const catalogIdRecord: Record<string, string> = {};
-        catalogIdMap.forEach((catalogId, trackId) => {
-          catalogIdRecord[trackId] = catalogId;
-        });
-        await addCatalogArtistsToTracks(tracks, catalogIdRecord);
+        await addCatalogArtistsToTracks(tracks, catalogIdMap);
 
         return tracks;
       } catch (error) {
