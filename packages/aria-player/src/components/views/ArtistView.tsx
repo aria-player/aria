@@ -41,7 +41,7 @@ export default function ArtistView() {
   const artistId = useAppSelector(selectVisibleSelectedTrackGroup);
   const artistTracks = useAppSelector(selectVisibleArtistTracks);
   const artistAlbums = useAppSelector(selectVisibleArtistAlbums).sort((a, b) =>
-    compareMetadata(b.dateReleased, a.dateReleased)
+    compareMetadata(a.dateReleased, b.dateReleased, true)
   );
   const visibleArtist = useAppSelector(selectVisibleArtist);
   const { onScroll } = useScrollDetection();

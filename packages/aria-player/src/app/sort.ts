@@ -6,8 +6,8 @@ export const compareMetadata = (
   isDescending?: boolean
 ): number => {
   const order = isDescending ? -1 : 1;
-  const cacheKey = `${valueA}-${valueB}`;
-  if (sortCache[cacheKey] !== undefined) return sortCache[cacheKey] * order;
+  const cacheKey = `${valueA}-${valueB}-${isDescending}`;
+  if (sortCache[cacheKey] !== undefined) return sortCache[cacheKey];
 
   if (valueA == null && valueB == null) return (sortCache[cacheKey] = 0);
   if (valueA == null) return (sortCache[cacheKey] = 1 * order);
