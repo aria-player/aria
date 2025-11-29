@@ -40,6 +40,7 @@ import { selectSearch } from "./search/searchSlice";
 import { BASEPATH } from "../app/constants";
 import { selectArtistDelimiter } from "./config/configSlice";
 import { getAsArray, normalizeArtists } from "../app/utils";
+import { compareMetadata } from "../app/sort";
 
 export const selectVisibleViewType = (state: RootState) => {
   const path = state.router.location?.pathname
@@ -497,14 +498,17 @@ export const selectVisibleArtistAlbums = createSelector(
     ) {
       const name = visibleArtist.name;
       const uri = visibleArtist?.uri;
-      return selectAllAlbums(state).filter((album) => {
-        return normalizeArtists(
-          album.artist,
-          album.artistUri,
-          album.source,
-          delimiter
-        ).some((artist) => (uri ? artist.uri === uri : artist.name === name));
-      });
+      return selectAllAlbums(state)
+        .filter((album) => {
+          return normalizeArtists(
+            album.artist,
+            album.artistUri,
+            album.source,
+            delimiter
+          ).some((artist) => (uri ? artist.uri === uri : artist.name === name));
+        })
+        .sort((a, b) => compareMetadata(a.year, b.year, true))
+        .sort((a, b) => compareMetadata(a.dateReleased, b.dateReleased, true));
     }
     return [];
   }
