@@ -146,7 +146,8 @@ export const selectGroupFilteredTracks = (
     .sort((a, b) => compareMetadata(a.disc, b.disc))
     .sort((a, b) => compareMetadata(a.album, b.album))
     .sort((a, b) => compareMetadata(a.albumId, b.albumId))
-    .sort((a, b) => compareMetadata(a.year, b.year));
+    .sort((a, b) => compareMetadata(a.year, b.year))
+    .sort((a, b) => compareMetadata(a.dateReleased, b.dateReleased));
 };
 
 export const selectAlbumTitle = (state: RootState, albumId: string | null) => {
@@ -211,6 +212,7 @@ const selectAlbumsFromTracks = (
         artist: track.albumArtist || track.artist,
         artistUri: track.albumArtistUri || track.artistUri,
         source: track.source,
+        dateReleased: track.dateReleased,
         artworkUri: getMostCommonArtworkUri(albumTracks)
       });
     }

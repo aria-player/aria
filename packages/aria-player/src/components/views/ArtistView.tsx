@@ -28,6 +28,7 @@ import LoadingSpinner from "./subviews/LoadingSpinner";
 import { addAlbums } from "../../features/albums/albumsSlice";
 import { TrackId } from "../../../../types";
 import { store } from "../../app/store";
+import { compareMetadata } from "../../app/sort";
 
 const OVERSCROLL_BUFFER = 5;
 
@@ -39,8 +40,9 @@ export default function ArtistView() {
   const [containerWidth, setContainerWidth] = useState(0);
   const artistId = useAppSelector(selectVisibleSelectedTrackGroup);
   const artistTracks = useAppSelector(selectVisibleArtistTracks);
-  // TODO: Order albums by release date
-  const artistAlbums = useAppSelector(selectVisibleArtistAlbums);
+  const artistAlbums = useAppSelector(selectVisibleArtistAlbums).sort((a, b) =>
+    compareMetadata(b.dateReleased, a.dateReleased)
+  );
   const visibleArtist = useAppSelector(selectVisibleArtist);
   const { onScroll } = useScrollDetection();
   const [isLoading, setIsLoading] = useState(false);
