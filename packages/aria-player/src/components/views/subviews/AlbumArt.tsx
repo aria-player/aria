@@ -13,7 +13,7 @@ export const AlbumArt = ({
   track?: Track;
   album?: AlbumDetails;
 }) => {
-  const { artworkCache } = useContext(ArtworkContext);
+  const { artworkCache, cacheArtwork } = useContext(ArtworkContext);
   const [fetchedArtwork, setFetchedArtwork] = useState<string | null>(null);
 
   const item = track ?? album;
@@ -40,10 +40,11 @@ export const AlbumArt = ({
       handle.getTrackArtwork(artworkUri).then((coverArtData) => {
         if (coverArtData) {
           setFetchedArtwork(coverArtData);
+          cacheArtwork(artworkUri, coverArtData);
         }
       });
     }
-  }, [artworkUri, source, artworkCache]);
+  }, [artworkUri, source, artworkCache, cacheArtwork]);
 
   return artwork ? (
     <img

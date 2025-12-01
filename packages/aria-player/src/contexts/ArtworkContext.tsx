@@ -1,4 +1,10 @@
-import { createContext, useState, ReactNode, useEffect } from "react";
+import {
+  createContext,
+  useState,
+  ReactNode,
+  useEffect,
+  useCallback
+} from "react";
 import { useAppSelector } from "../app/hooks";
 import { selectAllTracks } from "../features/tracks/tracksSlice";
 import {
@@ -12,9 +18,12 @@ import { selectArtistsInfo } from "../features/artists/artistsSlice";
 
 export const ArtworkContext = createContext<{
   artworkCache: Record<string, string>;
+  cacheArtwork: (uri: string, data: string) => void;
   artistArtworkCache: Record<string, string>;
+  // TODO: Add method for caching artist artwork once external artist search is added
 }>({
   artworkCache: {},
+  cacheArtwork: () => {},
   artistArtworkCache: {}
 });
 
@@ -69,6 +78,17 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
   const artistsInfo = useAppSelector(selectArtistsInfo);
   const activePlugins = useAppSelector(selectActivePlugins);
 
+  const cacheArtwork = useCallback((uri: string, data: string) => {
+    if (!uri || !data) return;
+    setArtworkCache((prev) => {
+      if (prev[uri]) return prev;
+      return {
+        ...prev,
+        [uri]: data
+      };
+    });
+  }, []);
+
   useDebounce(
     () => {
       loadAllArtwork().then((result) => {
@@ -88,7 +108,9 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
   }, [activePlugins]);
 
   return (
-    <ArtworkContext.Provider value={{ artworkCache, artistArtworkCache }}>
+    <ArtworkContext.Provider
+      value={{ artworkCache, cacheArtwork, artistArtworkCache }}
+    >
       {children}
     </ArtworkContext.Provider>
   );
