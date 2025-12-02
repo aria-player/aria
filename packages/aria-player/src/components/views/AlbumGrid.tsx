@@ -25,6 +25,7 @@ type AlbumGridItemProps = GridChildComponentProps & {
   columnCount: number;
   columnWidth: number;
   loadingSpinnerRowIndex: number | null;
+  displayAlbumLimit: number;
 };
 
 const ARTIST_ALBUMS_BATCH_SIZE = 20;
@@ -165,22 +166,24 @@ export default function AlbumGrid() {
     style,
     columnCount,
     columnWidth,
-    loadingSpinnerRowIndex
+    loadingSpinnerRowIndex,
+    displayAlbumLimit
   }: AlbumGridItemProps) => {
     const index = rowIndex * columnCount + columnIndex;
-    const album =
-      index < displayAlbums.length ? displayAlbums[index] : undefined;
+    const shouldRenderAlbum = index < displayAlbumLimit;
+    const album = shouldRenderAlbum ? displayAlbums[index] : undefined;
     if (!album) {
       const isSpinnerRow =
         loadingSpinnerRowIndex !== null && rowIndex === loadingSpinnerRowIndex;
-      if (shouldShowGridLoading && isSpinnerRow) {
+      if (isSpinnerRow) {
         if (columnIndex === 0) {
           return (
             <div
               key={`${index}`}
               style={{
                 ...style,
-                width: columnWidth * columnCount
+                width: columnWidth * columnCount,
+                height: (style.height as number) * 2
               }}
             >
               <div className={styles.gridLoadingRow}>
@@ -219,16 +222,28 @@ export default function AlbumGrid() {
             );
             const columnWidth = widthWithoutScrollbar / columnCount;
             const rowHeight = columnWidth + 40;
+            const remainder = displayAlbums.length % columnCount;
+            const displayAlbumLimit = shouldShowGridLoading
+              ? displayAlbums.length - remainder
+              : displayAlbums.length;
+            const shouldDisplayLoadingSpinner =
+              shouldShowGridLoading && displayAlbumLimit >= columnCount;
             const rowCount = Math.ceil(totalItemCount / columnCount);
             const selectedIndex = displayAlbums.findIndex(
               (album) => album.albumId === selectedItem
             );
+            const visibleSelectedIndex =
+              displayAlbumLimit > 0 && selectedIndex >= 0
+                ? Math.min(selectedIndex, displayAlbumLimit - 1)
+                : -1;
             const initialRowIndex =
-              selectedIndex >= 0 ? Math.floor(selectedIndex / columnCount) : 0;
+              visibleSelectedIndex >= 0
+                ? Math.floor(visibleSelectedIndex / columnCount)
+                : 0;
             const initialScrollTop =
               initialRowIndex * rowHeight - height / 2 + rowHeight / 2;
-            const loadingSpinnerRowIndex = shouldShowGridLoading
-              ? Math.floor(displayAlbums.length / columnCount)
+            const loadingSpinnerRowIndex = shouldDisplayLoadingSpinner
+              ? Math.floor(displayAlbumLimit / columnCount)
               : null;
 
             return (
@@ -267,7 +282,8 @@ export default function AlbumGrid() {
                     data,
                     columnCount,
                     columnWidth,
-                    loadingSpinnerRowIndex
+                    loadingSpinnerRowIndex,
+                    displayAlbumLimit
                   })
                 }
               </FixedSizeGrid>
