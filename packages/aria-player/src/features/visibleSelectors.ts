@@ -440,15 +440,8 @@ export const selectVisibleArtistTracks = createSelector(
     const state = store.getState();
     const delimiter = selectArtistDelimiter(state);
     const visibleViewType = selectVisibleViewType(state);
-    const visibleSelectedTrackGroup = selectVisibleSelectedTrackGroup(state);
     const visibleArtist = selectVisibleArtist(state);
-    if (
-      visibleViewType === View.Artist &&
-      visibleSelectedTrackGroup &&
-      visibleArtist
-    ) {
-      const name = visibleArtist.name;
-      const uri = visibleArtist?.uri;
+    if (visibleViewType === View.Artist && visibleArtist) {
       return selectAllTracks(state)
         .filter((track) => {
           return (
@@ -457,17 +450,13 @@ export const selectVisibleArtistTracks = createSelector(
               track.artistUri,
               track.source,
               delimiter
-            ).some((artist) =>
-              uri ? artist.uri === uri : artist.name === name
-            ) ||
+            ).some((artist) => artist.id == visibleArtist.artistId) ||
             normalizeArtists(
               track.albumArtist,
               track.albumArtistUri,
               track.source,
               delimiter
-            ).some((artist) =>
-              uri ? artist.uri === uri : artist.name === name
-            )
+            ).some((artist) => artist.id == visibleArtist.artistId)
           );
         })
         .map((track) => ({
@@ -489,15 +478,8 @@ export const selectVisibleArtistAlbums = createSelector(
     const state = store.getState();
     const delimiter = selectArtistDelimiter(state);
     const visibleViewType = selectVisibleViewType(state);
-    const visibleSelectedTrackGroup = selectVisibleSelectedTrackGroup(state);
     const visibleArtist = selectVisibleArtist(state);
-    if (
-      visibleViewType === View.Artist &&
-      visibleSelectedTrackGroup &&
-      visibleArtist
-    ) {
-      const name = visibleArtist.name;
-      const uri = visibleArtist?.uri;
+    if (visibleViewType === View.Artist && visibleArtist) {
       return selectAllAlbums(state)
         .filter((album) => {
           return normalizeArtists(
@@ -505,7 +487,7 @@ export const selectVisibleArtistAlbums = createSelector(
             album.artistUri,
             album.source,
             delimiter
-          ).some((artist) => (uri ? artist.uri === uri : artist.name === name));
+          ).some((artist) => artist.id == visibleArtist.artistId);
         })
         .sort((a, b) => compareMetadata(a.year, b.year, true))
         .sort((a, b) => compareMetadata(a.dateReleased, b.dateReleased, true));
