@@ -19,9 +19,12 @@ import { useInfiniteLoader } from "react-window-infinite-loader";
 import { getSourceHandle } from "../../features/plugins/pluginsSlice";
 import { addAlbums, selectAlbumsInfo } from "../../features/albums/albumsSlice";
 import { AlbumId } from "../../../../types";
+import LoadingSpinner from "./subviews/LoadingSpinner";
 
 type AlbumGridItemProps = GridChildComponentProps & {
-  index: number;
+  columnCount: number;
+  columnWidth: number;
+  loadingSpinnerRowIndex: number | null;
 };
 
 const ARTIST_ALBUMS_BATCH_SIZE = 20;
@@ -75,6 +78,13 @@ export default function AlbumGrid() {
   const totalItemCount = isExternalArtistView
     ? artistAlbumOrder.length + placeholderCount
     : visibleAlbums.length;
+
+  const isInitialLoading =
+    isExternalArtistView &&
+    artistAlbumOrder.length === 0 &&
+    hasMoreArtistAlbums;
+  const shouldShowGridLoading =
+    isExternalArtistView && artistAlbumOrder.length > 0 && hasMoreArtistAlbums;
 
   const loadArtistAlbums = useCallback(
     async (startIndex: number, stopIndex: number) => {
@@ -149,10 +159,38 @@ export default function AlbumGrid() {
     threshold: 10
   });
 
-  const itemRenderer = ({ index, style }: AlbumGridItemProps) => {
+  const itemRenderer = ({
+    columnIndex,
+    rowIndex,
+    style,
+    columnCount,
+    columnWidth,
+    loadingSpinnerRowIndex
+  }: AlbumGridItemProps) => {
+    const index = rowIndex * columnCount + columnIndex;
     const album =
       index < displayAlbums.length ? displayAlbums[index] : undefined;
     if (!album) {
+      const isSpinnerRow =
+        loadingSpinnerRowIndex !== null && rowIndex === loadingSpinnerRowIndex;
+      if (shouldShowGridLoading && isSpinnerRow) {
+        if (columnIndex === 0) {
+          return (
+            <div
+              key={`${index}`}
+              style={{
+                ...style,
+                width: columnWidth * columnCount
+              }}
+            >
+              <div className={styles.gridLoadingRow}>
+                <LoadingSpinner />
+              </div>
+            </div>
+          );
+        }
+        return null;
+      }
       return (
         <div key={`${index}`} style={style}>
           <div className={`album-grid-item ${styles.gridItem}`} />
@@ -189,6 +227,9 @@ export default function AlbumGrid() {
               selectedIndex >= 0 ? Math.floor(selectedIndex / columnCount) : 0;
             const initialScrollTop =
               initialRowIndex * rowHeight - height / 2 + rowHeight / 2;
+            const loadingSpinnerRowIndex = shouldShowGridLoading
+              ? Math.floor(displayAlbums.length / columnCount)
+              : null;
 
             return (
               <FixedSizeGrid
@@ -224,7 +265,9 @@ export default function AlbumGrid() {
                     rowIndex,
                     style,
                     data,
-                    index: rowIndex * columnCount + columnIndex
+                    columnCount,
+                    columnWidth,
+                    loadingSpinnerRowIndex
                   })
                 }
               </FixedSizeGrid>
@@ -233,6 +276,11 @@ export default function AlbumGrid() {
         </AutoSizer>
       ) : (
         <div className={styles.empty}>{t("albumGrid.empty")}</div>
+      )}
+      {isInitialLoading && (
+        <div className={styles.loading}>
+          <LoadingSpinner />
+        </div>
       )}
       {selectedItem && visibleViewType != View.Artist && <AlbumGridOverlay />}
     </div>
