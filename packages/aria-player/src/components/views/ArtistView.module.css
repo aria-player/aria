@@ -35,6 +35,11 @@
   margin: 0.5rem 0;
 }
 
+.artistSource {
+  font-size: 0.9rem;
+  color: var(--secondary-text);
+}
+
 .section {
   margin-bottom: 1rem;
 }

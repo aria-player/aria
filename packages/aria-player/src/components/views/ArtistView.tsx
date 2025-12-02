@@ -178,13 +178,17 @@ export default function ArtistView() {
           </div>
           <div className={styles.artistInfo}>
             <h1 className={styles.artistName}>{visibleArtist.name}</h1>
-            {visibleArtist.uri && pluginHandle?.Attribution && (
+            {visibleArtist.uri && pluginHandle?.Attribution ? (
               <pluginHandle.Attribution
                 type="artist"
                 id={visibleArtist.uri}
                 compact={false}
               />
-            )}
+            ) : pluginHandle?.displayName ? (
+              <span className={styles.artistSource}>
+                {pluginHandle?.displayName}
+              </span>
+            ) : null}
           </div>
         </section>
       )}
