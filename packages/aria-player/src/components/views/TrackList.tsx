@@ -76,6 +76,7 @@ import {
   selectLibraryTracks
 } from "../../features/tracks/tracksSlice";
 import { useLocation } from "react-router-dom";
+import LoadingSpinner from "./subviews/LoadingSpinner";
 
 const EXTERNAL_TRACKS_BATCH_SIZE = 20;
 const EXTERNAL_TRACKS_CACHE_OVERFLOW = 20;
@@ -500,9 +501,12 @@ export const TrackList = () => {
       !parsedArtistInfo?.uri ||
       !artistHandle?.getArtistTopTracks
     ) {
+      api.setGridOption("loading", false);
       api.setGridOption("datasource", undefined);
       return;
     }
+
+    api.setGridOption("loading", true);
 
     const datasource: IDatasource = {
       getRows: async (params) => {
@@ -533,6 +537,7 @@ export const TrackList = () => {
           rows ?? [],
           isLast ? params.startRow + (rows?.length ?? 0) : undefined
         );
+        api.setGridOption("loading", false);
       }
     };
 
@@ -588,6 +593,7 @@ export const TrackList = () => {
           headerHeight={37}
           rowDragManaged={visibleViewType == View.Playlist}
           noRowsOverlayComponent={NoRowsOverlay}
+          loadingOverlayComponent={LoadingSpinner}
           multiSortKey="ctrl"
           rowDragEntireRow
           suppressDragLeaveHidesColumns

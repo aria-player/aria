@@ -191,6 +191,10 @@ body {
     border-radius: 0.25rem;
   }
 
+  .ag-overlay-loading-wrapper {
+    background-color: var(--primary-background);
+  }
+
   .ag-overrides-track-summary-rows {
     .ag-header {
       display: none;
