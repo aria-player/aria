@@ -10,6 +10,7 @@ import {
   ColumnVisibleEvent,
   FocusGridInnerElementParams,
   GridApi,
+  IDatasource,
   NavigateToNextHeaderParams,
   RowClassParams,
   RowDragEndEvent,
@@ -37,10 +38,12 @@ import {
   updatePlaylistColumnState
 } from "../../features/playlists/playlistsSlice";
 import { PlaylistItem } from "../../features/playlists/playlistsTypes";
-import { LibraryView, View } from "../../app/view";
+import { ArtistSection, LibraryView, View } from "../../app/view";
 import {
   filterHiddenColumnSort,
   getRelativePath,
+  getTrackId,
+  parseArtistId,
   overrideColumnStateSort
 } from "../../app/utils";
 import { store } from "../../app/store";
@@ -54,7 +57,9 @@ import {
   selectVisibleTracks,
   selectVisiblePlaylist,
   selectVisibleViewType,
-  selectVisiblePlaylistConfig
+  selectVisiblePlaylistConfig,
+  selectVisibleArtistSection,
+  selectVisibleSelectedTrackGroup
 } from "../../features/visibleSelectors";
 import { compareMetadata } from "../../app/sort";
 import {
@@ -62,9 +67,19 @@ import {
   selectSearch
 } from "../../features/search/searchSlice";
 import NoRowsOverlay from "./subviews/NoRowsOverlay";
-import { pluginHandles } from "../../features/plugins/pluginsSlice";
-import { selectLibraryTracks } from "../../features/tracks/tracksSlice";
+import {
+  getSourceHandle,
+  pluginHandles
+} from "../../features/plugins/pluginsSlice";
+import {
+  addTracks,
+  selectLibraryTracks
+} from "../../features/tracks/tracksSlice";
 import { useLocation } from "react-router-dom";
+
+const EXTERNAL_TRACKS_BATCH_SIZE = 20;
+const EXTERNAL_TRACKS_CACHE_OVERFLOW = 20;
+const EXTERNAL_TRACKS_CONCURRENT_REQUESTS = 4;
 
 export const TrackList = () => {
   const dispatch = useAppDispatch();
@@ -74,6 +89,8 @@ export const TrackList = () => {
   const rowData = useAppSelector(selectVisibleTracks);
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
   const visibleViewType = useAppSelector(selectVisibleViewType);
+  const visibleArtistSection = useAppSelector(selectVisibleArtistSection);
+  const selectedArtistGroup = useAppSelector(selectVisibleSelectedTrackGroup);
   const queueSource = useAppSelector(selectQueueSource);
   const { setMenuData } = useContext(MenuContext);
   const { show: showHeaderContextMenu } = useContextMenu({
@@ -91,6 +108,21 @@ export const TrackList = () => {
   const showAttribution = [
     ...new Set(libraryTracks.map((track) => track.source))
   ].some((source) => pluginHandles[source]?.Attribution);
+
+  const parsedArtistInfo = useMemo(() => {
+    if (visibleViewType !== View.Artist || !selectedArtistGroup) return null;
+    return parseArtistId(selectedArtistGroup);
+  }, [selectedArtistGroup, visibleViewType]);
+
+  const artistHandle = parsedArtistInfo
+    ? getSourceHandle(parsedArtistInfo.source)
+    : null;
+
+  const useInfiniteRowModel =
+    visibleViewType === View.Artist &&
+    visibleArtistSection === ArtistSection.Songs &&
+    !!parsedArtistInfo?.uri &&
+    !!artistHandle?.getArtistTopTracks;
 
   const columnDefs = useMemo<ColDef[]>(() => {
     return defaultColumnDefinitions
@@ -173,12 +205,12 @@ export const TrackList = () => {
       cellStyle: (params: RowClassParams) => {
         return {
           fontWeight:
-            params.data.itemId ===
+            params.data?.itemId ===
               selectCurrentTrack(store.getState())?.itemId &&
             queueSource == getRelativePath(location.pathname)
               ? 700
               : 400,
-          fontStyle: !params.data.metadataLoaded ? "italic" : "normal"
+          fontStyle: !params.data?.metadataLoaded ? "italic" : "normal"
         };
       }
     }),
@@ -456,6 +488,73 @@ export const TrackList = () => {
     setScrollY(event.top);
   };
 
+  useEffect(() => {
+    if (!isGridReady || !gridRef?.current?.api) {
+      return;
+    }
+
+    const api = gridRef.current.api;
+
+    if (
+      !useInfiniteRowModel ||
+      !parsedArtistInfo?.uri ||
+      !artistHandle?.getArtistTopTracks
+    ) {
+      api.setGridOption("datasource", undefined);
+      return;
+    }
+
+    const datasource: IDatasource = {
+      getRows: async (params) => {
+        const tracks = await artistHandle?.getArtistTopTracks?.(
+          parsedArtistInfo.uri,
+          params.startRow,
+          params.endRow
+        );
+
+        const rows = tracks?.map((track) => ({
+          ...track,
+          trackId: getTrackId(parsedArtistInfo.source, track.uri),
+          itemId: getTrackId(parsedArtistInfo.source, track.uri),
+          source: parsedArtistInfo.source,
+          metadataLoaded: true
+        }));
+
+        dispatch(
+          addTracks({
+            source: parsedArtistInfo.source,
+            tracks,
+            addToLibrary: false
+          })
+        );
+
+        const isLast = (rows?.length ?? 0) < params.endRow - params.startRow;
+        params.successCallback(
+          rows ?? [],
+          isLast ? params.startRow + (rows?.length ?? 0) : undefined
+        );
+      }
+    };
+
+    api.setGridOption("datasource", datasource);
+  }, [
+    artistHandle,
+    dispatch,
+    gridRef,
+    isGridReady,
+    parsedArtistInfo,
+    useInfiniteRowModel
+  ]);
+
+  const infiniteModelProps = useMemo(() => {
+    if (!useInfiniteRowModel) return {};
+    return {
+      cacheBlockSize: EXTERNAL_TRACKS_BATCH_SIZE,
+      cacheOverflowSize: EXTERNAL_TRACKS_CACHE_OVERFLOW,
+      maxConcurrentDatasourceRequests: EXTERNAL_TRACKS_CONCURRENT_REQUESTS
+    };
+  }, [useInfiniteRowModel]);
+
   return (
     <div
       className="track-list ag-theme-balham ag-overrides-track-list"
@@ -466,9 +565,12 @@ export const TrackList = () => {
         style={{ display: isGridReady ? "block" : "none", height: "100%" }}
       >
         <AgGridReact
+          key={useInfiniteRowModel ? "infinite" : "clientSide"}
           {...gridProps}
+          {...infiniteModelProps}
           ref={gridRef}
-          rowData={rowData}
+          rowData={useInfiniteRowModel ? undefined : rowData}
+          rowModelType={useInfiniteRowModel ? "infinite" : "clientSide"}
           columnDefs={columnDefs}
           defaultColDef={defaultColDef}
           onCellDoubleClicked={handleCellDoubleClicked}

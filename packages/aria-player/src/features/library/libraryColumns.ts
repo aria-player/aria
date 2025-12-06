@@ -30,7 +30,7 @@ export const defaultColumnDefinitions: ColDef[] = [
     width: 50,
     minWidth: 50,
     maxWidth: 50,
-    cellRenderer: (params: { data: TrackListItem }) => {
+    cellRenderer: (params: { data?: TrackListItem }) => {
       return createElement(
         "div",
         {
@@ -49,8 +49,8 @@ export const defaultColumnDefinitions: ColDef[] = [
   {
     field: "title",
     flex: 0.8,
-    valueFormatter: (params: { data: Track; value: string | null }) => {
-      if (params.data.uri == undefined) {
+    valueFormatter: (params: { data?: Track; value: string | null }) => {
+      if (params.data && !params.data.uri) {
         return t("tracks.unknownTrack");
       }
       return params.value ?? "";
@@ -60,7 +60,10 @@ export const defaultColumnDefinitions: ColDef[] = [
     field: "duration",
     flex: 0.2,
     filter: false,
-    valueFormatter: (params: { data: Track; value: number | null }) => {
+    valueFormatter: (params: { data?: Track; value: number | null }) => {
+      if (!params.data) {
+        return "";
+      }
       if (
         !params.data.metadataLoaded ||
         params.value == undefined ||
@@ -207,7 +210,11 @@ export const defaultColumnDefinitions: ColDef[] = [
     width: 50,
     minWidth: 50,
     maxWidth: 50,
-    cellRenderer: (params: { data: TrackListItem }) => {
+    cellRenderer: (params: { data?: TrackListItem }) => {
+      if (!params.data) {
+        return null;
+      }
+      const track = params.data;
       return createElement(
         "div",
         {
@@ -219,9 +226,9 @@ export const defaultColumnDefinitions: ColDef[] = [
           }
         },
         createElement(() =>
-          getSourceHandle(params.data.source)?.Attribution?.({
+          getSourceHandle(track.source)?.Attribution?.({
             type: "track",
-            id: params.data.uri,
+            id: track.uri,
             compact: true
           })
         )

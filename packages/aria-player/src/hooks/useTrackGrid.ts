@@ -35,7 +35,7 @@ const rowSelectionOptions: RowSelectionOptions = {
   checkboxes: false,
   enableClickSelection: true,
   isRowSelectable: (node: IRowNode) =>
-    !(node.data as AlbumTrackListItem | QueueListItem).separator
+    !(node.data as AlbumTrackListItem | QueueListItem)?.separator
 };
 
 export function useTrackGrid() {
@@ -46,7 +46,7 @@ export function useTrackGrid() {
   const selectedTrackGroup = useAppSelector(selectVisibleSelectedTrackGroup);
   const disableAnimationTimeoutRef = useRef<number | null>(null);
 
-  const getRowId = (params: GetRowIdParams) => params.data.itemId;
+  const getRowId = (params: GetRowIdParams) => params.data?.itemId;
 
   const getSortedSelectedTracks = (api: GridApi) => {
     const sortedSelectedTracks: PlaylistItem[] = [];

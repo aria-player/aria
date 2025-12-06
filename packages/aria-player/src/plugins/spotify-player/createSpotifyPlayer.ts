@@ -680,7 +680,7 @@ export default function createSpotifyPlayer(
 
       const requestedTracks = topTracksResponse.tracks.slice(
         startIndex,
-        stopIndex
+        Math.min(stopIndex, 10)
       );
       const tracks: TrackMetadata[] = [];
       const artistIds = new Set<string>();
