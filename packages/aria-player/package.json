@@ -12,10 +12,11 @@
     "lint": "tsc && eslint ./src/** && prettier -c . && stylelint \"**/*.css\""
   },
   "dependencies": {
-    "@ag-grid-community/client-side-row-model": "^32.3.2",
-    "@ag-grid-community/core": "^32.3.2",
-    "@ag-grid-community/react": "^32.3.2",
-    "@ag-grid-community/styles": "^32.3.2",
+    "@ag-grid-community/client-side-row-model": "^32.3.9",
+    "@ag-grid-community/core": "^32.3.9",
+    "@ag-grid-community/infinite-row-model": "^32.3.9",
+    "@ag-grid-community/react": "^32.3.9",
+    "@ag-grid-community/styles": "^32.3.9",
     "@reduxjs/toolkit": "^2.3.0",
     "@tauri-apps/api": "^2.2.0",
     "@tauri-apps/plugin-dialog": "^2.2.0",

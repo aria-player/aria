@@ -10,6 +10,7 @@ import { PlatformProvider } from "./contexts/PlatformContext";
 import { BASEPATH } from "./app/constants";
 import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
 import { ModuleRegistry } from "@ag-grid-community/core";
+import { InfiniteRowModelModule } from "@ag-grid-community/infinite-row-model";
 import { MenuProvider } from "./contexts/MenuContext";
 import { TreeProvider } from "./contexts/TreeContext";
 import { HTML5toTouch } from "rdndmb-html5-to-touch";
@@ -36,7 +37,10 @@ import "./styles/base.css";
 import "./styles/overrides.css";
 import { ScrollProvider } from "./contexts/ScrollContext";
 
-ModuleRegistry.registerModules([ClientSideRowModelModule]);
+ModuleRegistry.registerModules([
+  ClientSideRowModelModule,
+  InfiniteRowModelModule
+]);
 
 createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
