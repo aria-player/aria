@@ -305,6 +305,10 @@
     "notFound": "Artist not found",
     "viewAll": "View all",
     "sections": {
+      "topSongs": {
+        "title": "Top songs",
+        "viewAll": "View all top songs"
+      },
       "songs": {
         "title": "Songs",
         "viewAll": "View all songs"

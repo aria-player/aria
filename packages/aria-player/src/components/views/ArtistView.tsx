@@ -200,12 +200,20 @@ export default function ArtistView() {
               <section className={styles.section}>
                 <div className={styles.sectionHeader}>
                   <h2 className={styles.sectionTitle}>
-                    {t("artist.sections.songs.title")}
+                    {t(
+                      orderedTracks.length
+                        ? "artist.sections.topSongs.title"
+                        : "artist.sections.songs.title"
+                    )}
                   </h2>
                   <button
                     className={styles.viewAll}
                     onClick={viewAllSongs}
-                    title={t("artist.sections.songs.viewAll")}
+                    title={t(
+                      orderedTracks.length
+                        ? "artist.sections.topSongs.viewAll"
+                        : "artist.sections.songs.viewAll"
+                    )}
                   >
                     {t("artist.viewAll")}
                   </button>
