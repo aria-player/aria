@@ -18,8 +18,11 @@ import { ArtistSection, View } from "../../app/view";
 import { useInfiniteLoader } from "react-window-infinite-loader";
 import { getSourceHandle } from "../../features/plugins/pluginsSlice";
 import { addAlbums, selectAlbumsInfo } from "../../features/albums/albumsSlice";
-import { AlbumId } from "../../../../types";
 import LoadingSpinner from "./subviews/LoadingSpinner";
+import {
+  selectCachedArtistAlbums,
+  updateCachedArtistAlbums
+} from "../../features/cache/cacheSlice";
 
 type AlbumGridItemProps = GridChildComponentProps & {
   columnCount: number;
@@ -43,8 +46,14 @@ export default function AlbumGrid() {
   const albumsInfo = useAppSelector(selectAlbumsInfo);
 
   const [overscanRowCount, setOverscanRowCount] = useState(0);
-  const [artistAlbumOrder, setArtistAlbumOrder] = useState<AlbumId[]>([]);
   const [hasMoreArtistAlbums, setHasMoreArtistAlbums] = useState(true);
+  const cachedArtistAlbums = useAppSelector((state) =>
+    selectCachedArtistAlbums(state, selectedItem || "")
+  );
+  const artistAlbumOrder = useMemo(
+    () => cachedArtistAlbums || [],
+    [cachedArtistAlbums]
+  );
 
   useEffect(() => {
     setOverscanRowCount(20);
@@ -63,7 +72,6 @@ export default function AlbumGrid() {
     getSourceHandle(parsedArtist.source)?.getArtistAlbums != undefined;
 
   useEffect(() => {
-    setArtistAlbumOrder([]);
     setHasMoreArtistAlbums(isExternalArtistView);
   }, [isExternalArtistView, selectedItem]);
 
@@ -127,18 +135,27 @@ export default function AlbumGrid() {
 
       dispatch(addAlbums({ source: parsedArtist.source, albums }));
 
-      setArtistAlbumOrder((prev) => {
-        const ordered = new Set(prev);
-        albums.forEach((album) => ordered.add(album.albumId));
-        return Array.from(ordered);
-      });
+      const newAlbumIds = albums?.map((a) => a.albumId);
+      dispatch(
+        updateCachedArtistAlbums({
+          artistId: selectedItem!,
+          albumIds: newAlbumIds,
+          offset: startIndex
+        })
+      );
 
       const requestedCount = fetchStopIndex - startIndex;
       if (albums.length < requestedCount) {
         setHasMoreArtistAlbums(false);
       }
     },
-    [dispatch, hasMoreArtistAlbums, isExternalArtistView, parsedArtist]
+    [
+      dispatch,
+      hasMoreArtistAlbums,
+      isExternalArtistView,
+      parsedArtist,
+      selectedItem
+    ]
   );
 
   const isRowLoaded = useCallback(

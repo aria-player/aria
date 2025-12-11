@@ -11,6 +11,7 @@ import {
   FocusGridInnerElementParams,
   GridApi,
   IDatasource,
+  IRowNode,
   NavigateToNextHeaderParams,
   RowClassParams,
   RowDragEndEvent,
@@ -73,10 +74,15 @@ import {
 } from "../../features/plugins/pluginsSlice";
 import {
   addTracks,
-  selectLibraryTracks
+  selectLibraryTracks,
+  selectTrackById
 } from "../../features/tracks/tracksSlice";
 import { useLocation } from "react-router-dom";
 import LoadingSpinner from "./subviews/LoadingSpinner";
+import {
+  selectCachedArtistTopTracks,
+  updateCachedArtistTopTracks
+} from "../../features/cache/cacheSlice";
 
 const EXTERNAL_TRACKS_BATCH_SIZE = 20;
 const EXTERNAL_TRACKS_CACHE_OVERFLOW = 20;
@@ -510,6 +516,32 @@ export const TrackList = () => {
 
     const datasource: IDatasource = {
       getRows: async (params) => {
+        const currentCachedTracks =
+          selectCachedArtistTopTracks(store.getState(), selectedArtistGroup!) ||
+          [];
+        const cachedCount = currentCachedTracks.length;
+        const showCachedTracks = params.startRow < cachedCount;
+        if (showCachedTracks) {
+          const cachedRows = currentCachedTracks
+            .slice(params.startRow, Math.min(params.endRow, cachedCount))
+            .map((trackId) => {
+              const track = selectTrackById(store.getState(), trackId);
+              return track
+                ? {
+                    ...track,
+                    itemId: trackId,
+                    metadataLoaded: true
+                  }
+                : null;
+            })
+            .filter(Boolean);
+
+          params.successCallback(
+            cachedRows,
+            cachedCount < params.endRow ? cachedCount : undefined
+          );
+          api.setGridOption("loading", false);
+        }
         const tracks = await artistHandle?.getArtistTopTracks?.(
           parsedArtistInfo.uri,
           params.startRow,
@@ -524,19 +556,55 @@ export const TrackList = () => {
           metadataLoaded: true
         }));
 
-        dispatch(
-          addTracks({
-            source: parsedArtistInfo.source,
-            tracks,
-            addToLibrary: false
-          })
-        );
+        if (tracks?.length) {
+          dispatch(
+            addTracks({
+              source: parsedArtistInfo.source,
+              tracks,
+              addToLibrary: false
+            })
+          );
+          const newTrackIds = rows!.map((r) => r.trackId);
+          dispatch(
+            updateCachedArtistTopTracks({
+              artistId: selectedArtistGroup!,
+              trackIds: newTrackIds,
+              offset: params.startRow
+            })
+          );
+          if (showCachedTracks) {
+            const nodesToUpdate: IRowNode[] = [];
+            api.forEachNode((node) => {
+              if (
+                node.rowIndex !== null &&
+                node.rowIndex >= params.startRow &&
+                node.rowIndex < params.endRow &&
+                rows
+              ) {
+                const updatedRow = rows[node.rowIndex - params.startRow];
+                if (updatedRow) {
+                  node.setData(updatedRow);
+                  nodesToUpdate.push(node);
+                }
+              }
+            });
 
-        const isLast = (rows?.length ?? 0) < params.endRow - params.startRow;
-        params.successCallback(
-          rows ?? [],
-          isLast ? params.startRow + (rows?.length ?? 0) : undefined
-        );
+            if (nodesToUpdate.length > 0) {
+              api.refreshCells({ rowNodes: nodesToUpdate, force: true });
+            }
+          } else {
+            const isLast =
+              (rows?.length ?? 0) < params.endRow - params.startRow;
+            params.successCallback(
+              rows ?? [],
+              isLast ? params.startRow + (rows?.length ?? 0) : undefined
+            );
+          }
+        } else if (!showCachedTracks) {
+          const inferredRowCount = Math.max(cachedCount, params.startRow);
+          params.successCallback([], inferredRowCount);
+        }
+
         api.setGridOption("loading", false);
       }
     };
@@ -548,7 +616,8 @@ export const TrackList = () => {
     gridRef,
     isGridReady,
     parsedArtistInfo,
-    useInfiniteRowModel
+    useInfiniteRowModel,
+    selectedArtistGroup
   ]);
 
   const infiniteModelProps = useMemo(() => {

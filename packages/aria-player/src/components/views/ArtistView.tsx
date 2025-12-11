@@ -25,9 +25,14 @@ import { ArtistArt } from "./subviews/ArtistArt";
 import { getSourceHandle } from "../../features/plugins/pluginsSlice";
 import { addTracks, selectTrackById } from "../../features/tracks/tracksSlice";
 import LoadingSpinner from "./subviews/LoadingSpinner";
-import { addAlbums } from "../../features/albums/albumsSlice";
-import { TrackId } from "../../../../types";
+import { addAlbums, selectAlbumsInfo } from "../../features/albums/albumsSlice";
 import { store } from "../../app/store";
+import {
+  selectCachedArtistAlbums,
+  selectCachedArtistTopTracks,
+  updateCachedArtistAlbums,
+  updateCachedArtistTopTracks
+} from "../../features/cache/cacheSlice";
 
 const OVERSCROLL_BUFFER = 5;
 
@@ -42,13 +47,44 @@ export default function ArtistView() {
   const artistAlbums = useAppSelector(selectVisibleArtistAlbums);
   const visibleArtist = useAppSelector(selectVisibleArtist);
   const { onScroll } = useScrollDetection();
-  const [isLoading, setIsLoading] = useState(false);
-  const [orderedTracks, setOrderedTracks] = useState<TrackId[]>([]);
-  const [fetchedAlbumCount, setFetchedAlbumCount] = useState(0);
+  const artistTopTracks = useAppSelector((state) =>
+    selectCachedArtistTopTracks(state, artistId || "")
+  );
+  const orderedTracks = useMemo(() => artistTopTracks || [], [artistTopTracks]);
+  const albumsInfo = useAppSelector(selectAlbumsInfo);
+  const cachedAlbums = useAppSelector((state) =>
+    selectCachedArtistAlbums(state, artistId || "")
+  );
+
+  const parsedArtist = useMemo(() => {
+    if (!artistId) return null;
+    return parseArtistId(artistId);
+  }, [artistId]);
 
   const pluginHandle = visibleArtist
     ? getSourceHandle(visibleArtist.source)
     : null;
+
+  const isExternalArtistView =
+    parsedArtist != undefined &&
+    parsedArtist.uri != undefined &&
+    pluginHandle?.getArtistAlbums != undefined;
+
+  const [isLoading, setIsLoading] = useState(
+    isExternalArtistView && artistTopTracks === undefined
+  );
+
+  const displayAlbums = useMemo(() => {
+    if (isExternalArtistView && cachedAlbums && cachedAlbums.length > 0) {
+      return cachedAlbums.map((albumId) => albumsInfo[albumId]).filter(Boolean);
+    }
+    return artistAlbums;
+  }, [albumsInfo, cachedAlbums, isExternalArtistView, artistAlbums]);
+
+  const orderedAlbums = useMemo(
+    () => displayAlbums.map((album) => album.albumId),
+    [displayAlbums]
+  );
 
   useEffect(() => {
     const resizeObserver = new ResizeObserver(() => {
@@ -83,11 +119,11 @@ export default function ArtistView() {
       const handle = artistInfo && getSourceHandle(artistInfo.source);
       if (!handle || !artistInfo?.uri) return;
       const { source, uri } = artistInfo;
-      setIsLoading(true);
-      setOrderedTracks([]);
-      setFetchedAlbumCount(0);
+      if (orderedTracks.length == 0 || orderedAlbums.length == 0) {
+        setIsLoading(true);
+      }
       try {
-        const tracks = await handle.getArtistTopTracks?.(uri, 0, 5);
+        const tracks = await handle.getArtistTopTracks?.(uri, 0, 20);
         if (tracks?.length) {
           dispatch(
             addTracks({
@@ -96,20 +132,28 @@ export default function ArtistView() {
               addToLibrary: false
             })
           );
-          setOrderedTracks(tracks.map((t) => getTrackId(source, t.uri)));
+          const trackIds = tracks.map((t) => getTrackId(source, t.uri));
+          dispatch(
+            updateCachedArtistTopTracks({
+              artistId,
+              trackIds,
+              offset: 0
+            })
+          );
         }
       } finally {
         setIsLoading(false);
       }
     }
     fetchTracks();
-  }, [dispatch, artistId]);
+  }, [dispatch, artistId, orderedTracks.length, orderedAlbums.length]);
 
   useEffect(() => {
     async function fetchAlbums() {
       const requiredAlbumCount = gridLayout.columnCount + OVERSCROLL_BUFFER;
       if (!artistId || requiredAlbumCount <= OVERSCROLL_BUFFER) return;
-      if (fetchedAlbumCount >= requiredAlbumCount) return;
+      if (!isExternalArtistView) return;
+      if (orderedAlbums.length >= requiredAlbumCount) return;
 
       const artistInfo = parseArtistId(artistId);
       const handle = artistInfo && getSourceHandle(artistInfo.source);
@@ -118,35 +162,45 @@ export default function ArtistView() {
 
       const albums = await handle.getArtistAlbums?.(
         uri,
-        fetchedAlbumCount,
+        orderedAlbums.length,
         requiredAlbumCount
       );
       if (albums?.length) {
+        const albumsWithIds = albums.map((album) => ({
+          ...album,
+          albumId: getAlbumId(source, album.name, album.artist, album.uri),
+          source
+        }));
+        dispatch(addAlbums({ source, albums: albumsWithIds }));
+        const newAlbumIds = albumsWithIds.map((a) => a.albumId);
         dispatch(
-          addAlbums({
-            source,
-            albums: albums.map((album) => ({
-              ...album,
-              albumId: getAlbumId(source, album.name, album.artist, album.uri),
-              source
-            }))
+          updateCachedArtistAlbums({
+            artistId,
+            albumIds: newAlbumIds,
+            offset: orderedAlbums.length
           })
         );
-        setFetchedAlbumCount((prev) => prev + albums.length);
       }
     }
     fetchAlbums();
-  }, [dispatch, artistId, fetchedAlbumCount, gridLayout.columnCount]);
+  }, [
+    dispatch,
+    artistId,
+    orderedAlbums.length,
+    gridLayout.columnCount,
+    isExternalArtistView
+  ]);
 
   const rowData = useMemo(() => {
-    if (isLoading) return [];
     if (!orderedTracks.length) return artistTracks.slice(0, 5);
     const state = store.getState();
-    return orderedTracks.map((trackId) => ({
-      ...selectTrackById(state, trackId),
-      itemId: trackId
-    }));
-  }, [artistTracks, isLoading, orderedTracks]);
+    return orderedTracks
+      .map((trackId) => ({
+        ...selectTrackById(state, trackId),
+        itemId: trackId
+      }))
+      .slice(0, 5);
+  }, [artistTracks, orderedTracks]);
 
   const viewAllSongs = () => {
     if (!artistId) return;
@@ -236,7 +290,7 @@ export default function ArtistView() {
                 </div>
               </section>
             )}
-            {artistAlbums.length > 0 && (
+            {displayAlbums.length > 0 && (
               <section className={styles.section}>
                 <div className={styles.sectionHeader}>
                   <h2 className={styles.sectionTitle}>
@@ -257,7 +311,7 @@ export default function ArtistView() {
                     height: gridLayout.columnWidth + 80
                   }}
                 >
-                  {artistAlbums
+                  {displayAlbums
                     .slice(0, gridLayout.columnCount)
                     .map((album) => (
                       <div
