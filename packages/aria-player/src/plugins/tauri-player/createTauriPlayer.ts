@@ -105,7 +105,7 @@ export default function createTauriPlayer(
       );
 
       if (batchMetadata.length > 0) {
-        host.updateTracks(
+        host.updateLibraryTracks(
           batchMetadata.filter((item) => item != null) as TrackMetadata[]
         );
       }
@@ -127,7 +127,7 @@ export default function createTauriPlayer(
           metadataLoaded: false
         }) as Track
     );
-    host.addTracks(tracks);
+    host.addLibraryTracks(tracks);
     getMetadata(tracks);
   }
 
@@ -162,7 +162,7 @@ export default function createTauriPlayer(
       })
     );
     if (!confirmed) return;
-    host.removeTracks(folders[folderPath]);
+    host.removeLibraryTracks(folders[folderPath]);
     delete (folders = { ...folders })[folderPath];
     host.updateData({ folders: folders });
   }
@@ -186,7 +186,7 @@ export default function createTauriPlayer(
         host.getMuted() ? 0 : host.getVolume() / 100
       );
       if (actualDuration != null && actualDuration != track.duration) {
-        host.updateTracks([{ ...track, duration: actualDuration }]);
+        host.updateLibraryTracks([{ ...track, duration: actualDuration }]);
       }
     },
 

@@ -17,7 +17,7 @@ export function LibraryConfig(props: {
     props.host.updateData({
       folder: ""
     } as WebPlayerData);
-    props.host.removeTracks();
+    props.host.removeLibraryTracks();
   }
 
   return (

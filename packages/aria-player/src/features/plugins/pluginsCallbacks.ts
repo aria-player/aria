@@ -72,11 +72,7 @@ function handleUpdateData(pluginId: PluginId, data: object) {
   store.dispatch(setPluginData({ plugin: pluginId, data }));
 }
 
-function handleAddTracks(
-  source: PluginId,
-  metadata: TrackMetadata[],
-  addToLibrary: boolean
-) {
+function handleAddLibraryTracks(source: PluginId, metadata: TrackMetadata[]) {
   if (!isPluginActive(source)) return;
   metadata.forEach(validateTrackMetadata);
   const libraryTrackIds = selectAllTracks(store.getState()).map(
@@ -87,13 +83,12 @@ function handleAddTracks(
       !libraryTrackIds.includes(getTrackId(source, track.uri))
   );
 
-  store.dispatch(addTracks({ source, tracks: newTracks, addToLibrary }));
+  store.dispatch(addTracks({ source, tracks: newTracks, addToLibrary: true }));
 }
 
-function handleUpdateTracks(
+function handleUpdateLibraryTracks(
   source: PluginId,
-  metadata: TrackMetadata[],
-  addToLibrary: boolean
+  metadata: TrackMetadata[]
 ) {
   if (!isPluginActive(source)) return;
   metadata.forEach(validateTrackMetadata);
@@ -103,10 +98,10 @@ function handleUpdateTracks(
     source: source
   }));
 
-  store.dispatch(addTracks({ source, tracks: newTracks, addToLibrary }));
+  store.dispatch(addTracks({ source, tracks: newTracks, addToLibrary: true }));
 }
 
-function handleRemoveTracks(source: PluginId, uris?: TrackUri[]) {
+function handleRemoveLibraryTracks(source: PluginId, uris?: TrackUri[]) {
   if (uris) {
     const delTracks: TrackId[] = [];
     uris.forEach((uri: TrackUri) => {
@@ -175,11 +170,12 @@ export const getIntegrationCallbacks = (
 export const getSourceCallbacks = (pluginId: PluginId): SourceCallbacks => {
   return {
     ...getBaseCallbacks(pluginId),
-    addTracks: (metadata: TrackMetadata[]) =>
-      handleAddTracks(pluginId, metadata, true),
-    removeTracks: (uris?: TrackUri[]) => handleRemoveTracks(pluginId, uris),
-    updateTracks: (metadata: TrackMetadata[]) =>
-      handleUpdateTracks(pluginId, metadata, true),
+    addLibraryTracks: (metadata: TrackMetadata[]) =>
+      handleAddLibraryTracks(pluginId, metadata),
+    removeLibraryTracks: (uris?: TrackUri[]) =>
+      handleRemoveLibraryTracks(pluginId, uris),
+    updateLibraryTracks: (metadata: TrackMetadata[]) =>
+      handleUpdateLibraryTracks(pluginId, metadata),
     updateArtists: (metadata: ArtistMetadata[]) =>
       handleUpdateArtists(pluginId, metadata),
     removeArtists: (artists?: ArtistUri[]) =>

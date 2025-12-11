@@ -45,7 +45,7 @@ export default function createWebPlayer(
     if (directoryHandle != undefined) {
       loaded = true;
       if (directoryHandle.name != folder) {
-        host.removeTracks();
+        host.removeLibraryTracks();
       }
       folder = directoryHandle.name;
       fileHandles = await getAudioFileHandlesWeb(directoryHandle);
@@ -69,12 +69,12 @@ export default function createWebPlayer(
         album: uri.split("/").slice(-2, -1)[0],
         metadataLoaded: false
       }));
-      host.addTracks(tracks);
-      updateTracksMetadata(tracks);
+      host.addLibraryTracks(tracks);
+      updateLibraryTracksMetadata(tracks);
     }
   }
 
-  async function updateTracksMetadata(tracks: TrackMetadata[]) {
+  async function updateLibraryTracksMetadata(tracks: TrackMetadata[]) {
     const batchSize = 10;
     for (let i = 0; i < tracks.length; i += batchSize) {
       const metadataPromises = tracks
@@ -82,7 +82,7 @@ export default function createWebPlayer(
         .filter((track) => !host.getTrackByUri(track.uri)?.metadataLoaded)
         .map((track) => parseMetadata(track, fileHandles[track.uri]));
       const newMetadata = await Promise.all(metadataPromises);
-      host.updateTracks(newMetadata);
+      host.updateLibraryTracks(newMetadata);
     }
   }
 
@@ -134,7 +134,7 @@ export default function createWebPlayer(
       }
       if (!track.metadataLoaded) {
         const metadata = await parseMetadata(track, fileHandles[track.uri]);
-        host.updateTracks([metadata]);
+        host.updateLibraryTracks([metadata]);
       }
       const actualDuration = await webAudioBackend.loadPrimaryAudioFile(
         track.uri,
@@ -142,7 +142,7 @@ export default function createWebPlayer(
         host.getMuted() ? 0 : host.getVolume() / 100
       );
       if (actualDuration != null && actualDuration != track.duration) {
-        host.updateTracks([{ ...track, duration: actualDuration }]);
+        host.updateLibraryTracks([{ ...track, duration: actualDuration }]);
       }
     },
 

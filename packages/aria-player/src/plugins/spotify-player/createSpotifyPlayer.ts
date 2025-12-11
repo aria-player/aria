@@ -238,7 +238,7 @@ export default function createSpotifyPlayer(
           tracksToAdd.push(newTrack);
         }
         if (!getConfig().accessToken) return;
-        host.updateTracks(tracksToAdd);
+        host.updateLibraryTracks(tracksToAdd);
         incrementProgress(tracksResponse.items.length);
         if (tracksResponse.items.length < tracksLimit) {
           tracksRemaining = false;
@@ -287,7 +287,7 @@ export default function createSpotifyPlayer(
           tracksToAdd.push(...tracksFromResponse);
         }
         if (!getConfig().accessToken) return;
-        host.updateTracks(tracksToAdd);
+        host.updateLibraryTracks(tracksToAdd);
         incrementProgress(albumsResponse.items.length);
         if (albumsResponse.items.length < albumsLimit) {
           albumsRemaining = false;
@@ -302,7 +302,7 @@ export default function createSpotifyPlayer(
       (track) => !tracksInLibrary.includes(track.uri)
     );
     if (removedTracks.length > 0) {
-      host.removeTracks(removedTracks.map((track) => track.uri));
+      host.removeLibraryTracks(removedTracks.map((track) => track.uri));
     }
     const tracks = host.getTracks();
     const existingArtists = host.getArtists();
@@ -345,7 +345,7 @@ export default function createSpotifyPlayer(
       };
     });
     if (!getConfig().accessToken) return;
-    host.updateTracks(updatedTracks);
+    host.updateLibraryTracks(updatedTracks);
   }
 
   function getTrackMetadata(
@@ -510,7 +510,7 @@ export default function createSpotifyPlayer(
       player.disconnect();
     }
     host.setSyncProgress({ synced: 0, total: 0 });
-    host.removeTracks();
+    host.removeLibraryTracks();
     host.removeArtists();
     const config = getConfig();
     host.updateData({

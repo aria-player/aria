@@ -311,25 +311,25 @@ export interface SourceCallbacks extends BaseCallbacks {
   /**
    * Add new tracks to the library, ignoring existing tracks.
    */
-  addTracks: (metadata: TrackMetadata[]) => void;
+  addLibraryTracks: (metadata: TrackMetadata[]) => void;
   /**
    * Remove tracks with the specified URIs from the library.
    *
    * If `uris` is null, all tracks for this source are removed from the library.
    */
-  removeTracks: (uris?: TrackUri[]) => void;
+  removeLibraryTracks: (uris?: TrackUri[]) => void;
   /**
    * Add new tracks to the library and update existing tracks with new metadata.
    */
-  updateTracks: (metadata: TrackMetadata[]) => void;
+  updateLibraryTracks: (metadata: TrackMetadata[]) => void;
   /**
    * Add or update information about artists for this source.
    */
   updateArtists: (metadata: ArtistMetadata[]) => void;
   /**
-   * Remove artists with the specified URIs from the library.
+   * Remove information about artists with the specified URIs.
    *
-   * If `uris` is null, all artists for this source are removed from the library.
+   * If `uris` is null, all artist data for this source will be removed.
    */
   removeArtists: (uris?: ArtistUri[]) => void;
   /**
@@ -337,9 +337,9 @@ export interface SourceCallbacks extends BaseCallbacks {
    */
   updateAlbums: (metadata: AlbumMetadata[]) => void;
   /**
-   * Remove albums with the specified URIs from the library.
+   * Remove information about albums with the specified URIs.
    *
-   * If `uris` is null, all albums for this source are removed from the library.
+   * If `uris` is null, all album data for this source will be removed.
    */
   removeAlbums: (uris?: AlbumUri[]) => void;
   /**

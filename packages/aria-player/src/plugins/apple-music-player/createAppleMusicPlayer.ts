@@ -161,7 +161,7 @@ export default function createAppleMusicPlayer(
         if (!music?.isAuthorized) return;
 
         if (allTracks.length > 0) {
-          host.updateTracks([...allTracks]);
+          host.updateLibraryTracks([...allTracks]);
         }
       } catch (error) {
         console.error("Error fetching user library:", error);
@@ -171,7 +171,7 @@ export default function createAppleMusicPlayer(
       (track) => !tracksInLibrary.includes(track.uri)
     );
     if (removedTracks.length > 0) {
-      host.removeTracks(removedTracks.map((track) => track.uri));
+      host.removeLibraryTracks(removedTracks.map((track) => track.uri));
     }
 
     if (!music?.isAuthorized) return;
@@ -446,7 +446,7 @@ export default function createAppleMusicPlayer(
     await music?.unauthorize();
     host.updateData({ ...getConfig(), loggedIn: false });
     host.setSyncProgress({ synced: 0, total: 0 });
-    host.removeTracks();
+    host.removeLibraryTracks();
     host.removeArtists();
   }
 
