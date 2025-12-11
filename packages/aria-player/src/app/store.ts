@@ -8,6 +8,7 @@ import tracksReducer from "../features/tracks/tracksSlice";
 import artistsReducer from "../features/artists/artistsSlice";
 import albumsReducer from "../features/albums/albumsSlice";
 import searchReducer from "../features/search/searchSlice";
+import cacheReducer from "../features/cache/cacheSlice";
 import localforage from "localforage";
 import {
   FLUSH,
@@ -98,6 +99,13 @@ const reducer = combineReducers({
       blacklist: ["search"]
     },
     searchReducer
+  ),
+  cache: persistReducer(
+    {
+      key: "cache",
+      storage
+    },
+    cacheReducer
   ),
   undoable: recordUndoableActions(
     excludeStateFromUndo(undoableSlices)

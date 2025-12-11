@@ -1,20 +1,27 @@
 import { AlbumTrackList } from "./subviews/AlbumTrackList";
 import { useScrollDetection } from "../../hooks/useScrollDetection";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { selectVisibleSelectedTrackGroup } from "../../features/visibleSelectors";
 import { parseAlbumId } from "../../app/utils";
 import { getSourceHandle } from "../../features/plugins/pluginsSlice";
 import { useEffect, useState } from "react";
 import { addTracks } from "../../features/tracks/tracksSlice";
+import {
+  markAlbumFetched,
+  selectIsAlbumFetched
+} from "../../features/cache/cacheSlice";
 import LoadingSpinner from "./subviews/LoadingSpinner";
+import { useAppSelector } from "../../app/hooks";
 
 export default function AlbumView() {
   const dispatch = useDispatch();
-  const albumId = useSelector(selectVisibleSelectedTrackGroup);
+  const albumId = useAppSelector(selectVisibleSelectedTrackGroup);
+  const isAlbumCached = useAppSelector((state) =>
+    selectIsAlbumFetched(state, albumId ?? "")
+  );
   const { onScroll } = useScrollDetection();
   const [isLoading, setIsLoading] = useState(false);
 
-  // TODO: Determine if we already have the full album before deciding to load
   useEffect(() => {
     async function fetchAlbumTracks() {
       if (albumId) {
@@ -23,7 +30,9 @@ export default function AlbumView() {
         if (plugin) {
           const handle = getSourceHandle(plugin);
           if (handle && handle?.getAlbumTracks) {
-            setIsLoading(true);
+            if (!isAlbumCached) {
+              setIsLoading(true);
+            }
             const tracks = await handle.getAlbumTracks(albumInfo.uri);
             dispatch(
               addTracks({
@@ -32,13 +41,14 @@ export default function AlbumView() {
                 addToLibrary: false
               })
             );
+            dispatch(markAlbumFetched(albumId));
             setIsLoading(false);
           }
         }
       }
     }
     fetchAlbumTracks();
-  }, [dispatch, albumId]);
+  }, [dispatch, albumId, isAlbumCached]);
 
   return (
     <div
