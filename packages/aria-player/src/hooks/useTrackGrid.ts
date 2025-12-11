@@ -282,6 +282,7 @@ export function useTrackGrid() {
   return {
     gridRef,
     gridProps,
-    isGridReady
+    isGridReady,
+    setIsGridReady
   };
 }

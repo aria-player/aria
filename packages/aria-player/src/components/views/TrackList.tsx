@@ -59,8 +59,8 @@ import {
   selectVisiblePlaylist,
   selectVisibleViewType,
   selectVisiblePlaylistConfig,
-  selectVisibleArtistSection,
-  selectVisibleSelectedTrackGroup
+  selectVisibleSelectedTrackGroup,
+  selectVisibleArtistSection
 } from "../../features/visibleSelectors";
 import { compareMetadata } from "../../app/sort";
 import {
@@ -91,7 +91,7 @@ const EXTERNAL_TRACKS_CONCURRENT_REQUESTS = 4;
 export const TrackList = () => {
   const dispatch = useAppDispatch();
   const location = useLocation();
-  const { gridRef, gridProps, isGridReady } = useTrackGrid();
+  const { gridRef, gridProps, isGridReady, setIsGridReady } = useTrackGrid();
   const currentTrack = useAppSelector(selectCurrentTrack);
   const rowData = useAppSelector(selectVisibleTracks);
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
@@ -130,6 +130,8 @@ export const TrackList = () => {
     visibleArtistSection === ArtistSection.Songs &&
     !!parsedArtistInfo?.uri &&
     !!artistHandle?.getArtistTopTracks;
+
+  useEffect(() => setIsGridReady(false), [setIsGridReady, useInfiniteRowModel]);
 
   const columnDefs = useMemo<ColDef[]>(() => {
     return defaultColumnDefinitions
