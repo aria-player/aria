@@ -50,11 +50,15 @@ export function useTrackGrid() {
 
   const getSortedSelectedTracks = (api: GridApi) => {
     const sortedSelectedTracks: PlaylistItem[] = [];
-    api.forEachNodeAfterFilterAndSort((node) => {
-      if (node.isSelected()) {
-        sortedSelectedTracks.push(node.data);
-      }
-    });
+    if (api.getGridOption("rowModelType") === "clientSide") {
+      api.forEachNodeAfterFilterAndSort((node) => {
+        if (node.isSelected()) {
+          sortedSelectedTracks.push(node.data);
+        }
+      });
+    } else {
+      return api.getSelectedRows();
+    }
     return sortedSelectedTracks;
   };
 

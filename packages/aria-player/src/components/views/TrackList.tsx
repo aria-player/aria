@@ -275,12 +275,24 @@ export const TrackList = () => {
     const state = store.getState();
     const search = selectSearch(state);
     const queue = [] as PlaylistItem[];
-    event.api.forEachNodeAfterFilterAndSort((node) => {
-      queue.push({
-        itemId: node.data.itemId,
-        trackId: node.data.trackId
+    if (event.api.getGridOption("rowModelType") === "clientSide") {
+      event.api.forEachNodeAfterFilterAndSort((node) => {
+        queue.push({
+          itemId: node.data.itemId,
+          trackId: node.data.trackId
+        });
       });
-    });
+    } else {
+      const state = store.getState();
+      const cachedTracks =
+        selectCachedArtistTopTracks(state, selectedArtistGroup!) || [];
+      for (const trackId of cachedTracks) {
+        queue.push({
+          itemId: trackId,
+          trackId: trackId
+        });
+      }
+    }
     if (visibleView == View.Search) {
       dispatch(addToSearchHistory(search));
     }
