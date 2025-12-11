@@ -10,7 +10,10 @@ import { selectCurrentPlaylist } from "../../../features/currentSelectors";
 import { selectPlaylistsLayoutItemById } from "../../../features/playlists/playlistsSlice";
 import { useTranslation } from "react-i18next";
 import { isLibraryView, TrackGrouping, View } from "../../../app/view";
-import { selectAlbumTitle } from "../../../features/genericSelectors";
+import {
+  selectAlbumTitle,
+  selectAllArtists
+} from "../../../features/genericSelectors";
 
 export default function QueueSeparator(props: ICellRendererParams) {
   const { t } = useTranslation();
@@ -26,9 +29,14 @@ export default function QueueSeparator(props: ICellRendererParams) {
   );
   const formattedGroup =
     queueGrouping == TrackGrouping.AlbumId ? albumTitle : queueSelectedGroup;
-  const artistName = queueSource?.startsWith(View.Artist)
+  const artistId = queueSource?.startsWith(View.Artist)
     ? decodeURIComponent(queueSource.split("/")[1])
     : null;
+  const artistName = useAppSelector(
+    (state) =>
+      selectAllArtists(state).find((artist) => artist.artistId === artistId)
+        ?.name
+  );
 
   return (
     <div className={`queue-separator ${styles.separator}`}>
@@ -41,8 +49,8 @@ export default function QueueSeparator(props: ICellRendererParams) {
           {t("queue.playingFrom")}
           <span className={styles.source}>
             {playlistName ||
-              formattedGroup ||
               artistName ||
+              formattedGroup ||
               (queueSource && isLibraryView(queueSource)
                 ? t(`views.${queueSource}`)
                 : queueSource && queueSource.startsWith("search")
