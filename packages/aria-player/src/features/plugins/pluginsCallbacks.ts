@@ -107,9 +107,11 @@ function handleRemoveLibraryTracks(source: PluginId, uris?: TrackUri[]) {
     uris.forEach((uri: TrackUri) => {
       delTracks.push(getTrackId(source, uri));
     });
-    store.dispatch(removeTracks({ source, tracks: delTracks }));
+    store.dispatch(
+      removeTracks({ source, tracks: delTracks, removeFromLibrary: true })
+    );
   } else {
-    store.dispatch(removeTracks({ source }));
+    store.dispatch(removeTracks({ source, removeFromLibrary: true }));
   }
 }
 

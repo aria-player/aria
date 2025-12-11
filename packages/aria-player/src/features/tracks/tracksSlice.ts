@@ -58,13 +58,26 @@ const tracksSlice = createSlice({
     },
     removeTracks: (
       state,
-      action: PayloadAction<{ source: PluginId; tracks?: TrackId[] }>
+      action: PayloadAction<{
+        source: PluginId;
+        tracks?: TrackId[];
+        removeFromLibrary?: boolean;
+      }>
     ) => {
       const tracksToFilter = action.payload.tracks ?? state.tracks.ids;
       const tracksToRemove = tracksToFilter.filter(
         (trackId) =>
           state.tracks.entities[trackId]?.source === action.payload.source
       );
+      if (action.payload.removeFromLibrary) {
+        tracksToRemove.forEach((trackId) => {
+          const track = state.tracks.entities[trackId];
+          if (track) {
+            track.isInLibrary = false;
+          }
+        });
+        return;
+      }
       tracksAdapter.removeMany(state.tracks, tracksToRemove);
     },
     setSelectedTracks: (state, action: PayloadAction<PlaylistItem[]>) => {
