@@ -548,14 +548,6 @@ export const TrackList = () => {
           params.endRow
         );
 
-        const rows = tracks?.map((track) => ({
-          ...track,
-          trackId: getTrackId(parsedArtistInfo.source, track.uri),
-          itemId: getTrackId(parsedArtistInfo.source, track.uri),
-          source: parsedArtistInfo.source,
-          metadataLoaded: true
-        }));
-
         if (tracks?.length) {
           dispatch(
             addTracks({
@@ -564,7 +556,9 @@ export const TrackList = () => {
               addToLibrary: false
             })
           );
-          const newTrackIds = rows!.map((r) => r.trackId);
+          const newTrackIds = tracks.map((track) =>
+            getTrackId(parsedArtistInfo.source, track.uri)
+          );
           dispatch(
             updateCachedArtistTopTracks({
               artistId: selectedArtistGroup!,
@@ -572,6 +566,14 @@ export const TrackList = () => {
               offset: params.startRow
             })
           );
+          const state = store.getState();
+          const rows = tracks.map((track) => ({
+            ...selectTrackById(
+              state,
+              getTrackId(parsedArtistInfo.source, track.uri)
+            ),
+            itemId: getTrackId(parsedArtistInfo.source, track.uri)
+          }));
           if (showCachedTracks) {
             const nodesToUpdate: IRowNode[] = [];
             api.forEachNode((node) => {
