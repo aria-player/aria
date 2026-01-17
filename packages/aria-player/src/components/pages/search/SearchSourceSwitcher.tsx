@@ -10,7 +10,10 @@ import {
   selectSearch,
   setSelectedSearchSource
 } from "../../../features/search/searchSlice";
-import { selectVisibleSearchSource } from "../../../features/visibleSelectors";
+import {
+  selectVisibleSearchCategory,
+  selectVisibleSearchSource
+} from "../../../features/visibleSelectors";
 import { sortPlugins } from "../../../app/utils";
 import { PluginId } from "../../../../../types/plugins";
 import styles from "./SearchSourceSwitcher.module.css";
@@ -23,6 +26,7 @@ export default function SearchSourceSwitcher() {
   const dispatch = useAppDispatch();
   const activePlugins = useAppSelector(selectActivePlugins);
   const plugins = useAppSelector(selectPluginInfo);
+  const visibleSearchCategory = useAppSelector(selectVisibleSearchCategory);
   const visibleSearchSource = useAppSelector(selectVisibleSearchSource);
   const selectedSearchSource = useAppSelector(selectSelectedSearchSource);
   const search = useAppSelector(selectSearch);
@@ -56,7 +60,7 @@ export default function SearchSourceSwitcher() {
     dispatch(
       push(
         BASEPATH +
-          `search/${encodeURIComponent(search)}/${encodeURIComponent(source)}`
+          `search/${encodeURIComponent(search)}/${encodeURIComponent(source)}/${encodeURIComponent(visibleSearchCategory ?? "")}`
       )
     );
     dispatch(setSelectedSearchSource(source));
