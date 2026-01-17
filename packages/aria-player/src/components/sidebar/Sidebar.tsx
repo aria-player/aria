@@ -32,7 +32,11 @@ import {
   selectVisibleSearchSource
 } from "../../features/visibleSelectors";
 import { View } from "../../app/view";
-import { selectSearch, setSearch } from "../../features/search/searchSlice";
+import {
+  selectSelectedSearchSource,
+  selectSearch,
+  setSearch
+} from "../../features/search/searchSlice";
 
 import FolderOpenIcon from "../../assets/chevron-down-solid.svg?react";
 import FolderClosedIcon from "../../assets/chevron-right-solid.svg?react";
@@ -53,6 +57,7 @@ export function Sidebar() {
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
   const visibleSearchCategory = useAppSelector(selectVisibleSearchCategory);
   const visibleSearchSource = useAppSelector(selectVisibleSearchSource);
+  const selectedSearchSource = useAppSelector(selectSelectedSearchSource);
   const search = useAppSelector(selectSearch);
   const [isComposing, setIsComposing] = useState(false);
   const [localSearch, setLocalSearch] = useState(search);
@@ -136,7 +141,7 @@ export function Sidebar() {
   }
 
   function getSearchRoute(search: string) {
-    const source = visibleSearchSource ?? "library";
+    const source = visibleSearchSource ?? selectedSearchSource ?? "library";
     if (!search.trim()) {
       return "search";
     }

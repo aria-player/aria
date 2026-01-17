@@ -5,21 +5,33 @@ import {
   selectActivePlugins,
   selectPluginInfo
 } from "../../../features/plugins/pluginsSlice";
-import { selectSearch } from "../../../features/search/searchSlice";
+import {
+  selectSelectedSearchSource,
+  selectSearch,
+  setSelectedSearchSource
+} from "../../../features/search/searchSlice";
 import { selectVisibleSearchSource } from "../../../features/visibleSelectors";
 import { sortPlugins } from "../../../app/utils";
 import { PluginId } from "../../../../../types/plugins";
 import styles from "./SearchSourceSwitcher.module.css";
 import { push } from "redux-first-history";
 import { BASEPATH } from "../../../app/constants";
+import { useEffect } from "react";
 
 export default function SearchSourceSwitcher() {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const activePlugins = useAppSelector(selectActivePlugins);
   const plugins = useAppSelector(selectPluginInfo);
-  const selectedSearchSource = useAppSelector(selectVisibleSearchSource);
+  const visibleSearchSource = useAppSelector(selectVisibleSearchSource);
+  const selectedSearchSource = useAppSelector(selectSelectedSearchSource);
   const search = useAppSelector(selectSearch);
+
+  useEffect(() => {
+    if (visibleSearchSource !== selectedSearchSource) {
+      dispatch(setSelectedSearchSource(visibleSearchSource));
+    }
+  }, [dispatch, visibleSearchSource, selectedSearchSource]);
 
   const searchableSourcePlugins = activePlugins
     .filter(
@@ -47,12 +59,13 @@ export default function SearchSourceSwitcher() {
           `search/${encodeURIComponent(search)}/${encodeURIComponent(source)}`
       )
     );
+    dispatch(setSelectedSearchSource(source));
   };
 
   return (
     <div className={styles.switcher}>
       <button
-        className={`${styles.option} ${selectedSearchSource === null ? styles.selected : ""}`}
+        className={`${styles.option} ${visibleSearchSource === null ? styles.selected : ""}`}
         onClick={() => switchToSource("library")}
       >
         {t("search.sources.library")}
@@ -60,7 +73,7 @@ export default function SearchSourceSwitcher() {
       {searchableSourcePlugins.map((pluginId) => (
         <button
           key={pluginId}
-          className={`${styles.option} ${selectedSearchSource === pluginId ? styles.selected : ""}`}
+          className={`${styles.option} ${visibleSearchSource === pluginId ? styles.selected : ""}`}
           onClick={() => switchToSource(pluginId)}
         >
           {getDisplayName(pluginId)}
