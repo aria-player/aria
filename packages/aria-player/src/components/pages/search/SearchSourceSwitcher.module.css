@@ -1,0 +1,26 @@
+.switcher {
+  display: flex;
+  gap: 0.25rem;
+  margin-left: auto;
+  align-items: center;
+}
+
+.option {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  cursor: pointer;
+  white-space: nowrap;
+
+  &:hover:not(.selected) {
+    background-color: var(--button-background-hover);
+  }
+
+  &:active:not(.selected) {
+    background-color: var(--button-background-active);
+  }
+}
+
+.selected {
+  color: var(--button-text-selected);
+  background-color: var(--accent-color);
+}

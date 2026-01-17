@@ -119,7 +119,10 @@
         "viewAll": "View all album results"
       }
     },
-    "viewAll": "View all"
+    "viewAll": "View all",
+    "sources": {
+      "library": "Library"
+    }
   },
   "settings": {
     "default": "(default)",

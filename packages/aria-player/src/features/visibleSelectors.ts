@@ -41,6 +41,7 @@ import { BASEPATH } from "../app/constants";
 import { selectArtistDelimiter } from "./config/configSlice";
 import { getAsArray, normalizeArtists } from "../app/utils";
 import { compareMetadata } from "../app/sort";
+import { PluginId } from "../../../types";
 
 export const selectVisibleViewType = (state: RootState) => {
   const path = state.router.location?.pathname
@@ -73,17 +74,31 @@ export const selectVisibleSettingsSection = (state: RootState) => {
   }
 };
 
-export const selectVisibleSearchCategory = (state: RootState) => {
+export const selectVisibleSearchSource = (
+  state: RootState
+): PluginId | null => {
   if (selectVisibleViewType(state) == View.Search) {
     const thirdPath = state.router.location?.pathname
       .substring(BASEPATH.length)
       .split("/")[2];
-    if (!thirdPath) {
+    if (thirdPath && thirdPath !== "library") {
+      return decodeURIComponent(thirdPath) as PluginId;
+    }
+  }
+  return null;
+};
+
+export const selectVisibleSearchCategory = (state: RootState) => {
+  if (selectVisibleViewType(state) == View.Search) {
+    const fourthPath = state.router.location?.pathname
+      .substring(BASEPATH.length)
+      .split("/")[3];
+    if (!fourthPath) {
       return null;
     } else if (
-      Object.values(SearchCategory).includes(thirdPath as SearchCategory)
+      Object.values(SearchCategory).includes(fourthPath as SearchCategory)
     ) {
-      return thirdPath as SearchCategory;
+      return fourthPath as SearchCategory;
     }
   }
 };

@@ -36,7 +36,11 @@ export default function SearchPage() {
           >
             <button
               onClick={() => {
-                dispatch(push(BASEPATH + "search/" + encodeURIComponent(item)));
+                dispatch(
+                  push(
+                    BASEPATH + "search/" + encodeURIComponent(item) + "/library"
+                  )
+                );
               }}
               className={styles.searchLink}
             >

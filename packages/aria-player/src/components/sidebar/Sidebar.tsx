@@ -28,7 +28,8 @@ import { useDragDropManager } from "react-dnd";
 import {
   selectVisibleViewType,
   selectVisiblePlaylist,
-  selectVisibleSearchCategory
+  selectVisibleSearchCategory,
+  selectVisibleSearchSource
 } from "../../features/visibleSelectors";
 import { View } from "../../app/view";
 import { selectSearch, setSearch } from "../../features/search/searchSlice";
@@ -51,6 +52,7 @@ export function Sidebar() {
   const visibleViewType = useAppSelector(selectVisibleViewType);
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
   const visibleSearchCategory = useAppSelector(selectVisibleSearchCategory);
+  const visibleSearchSource = useAppSelector(selectVisibleSearchSource);
   const search = useAppSelector(selectSearch);
   const [isComposing, setIsComposing] = useState(false);
   const [localSearch, setLocalSearch] = useState(search);
@@ -134,10 +136,11 @@ export function Sidebar() {
   }
 
   function getSearchRoute(search: string) {
+    const source = visibleSearchSource ?? "library";
     if (!search.trim()) {
       return "search";
     }
-    return `search/${encodeURIComponent(search)}${visibleSearchCategory ? `/${visibleSearchCategory}` : ""}`;
+    return `search/${encodeURIComponent(search)}/${encodeURIComponent(source)}${visibleSearchCategory ? `/${visibleSearchCategory}` : ""}`;
   }
 
   const isFolder = (itemId: string) => {

@@ -104,7 +104,10 @@ function App() {
               <Route path="playlist/:id" Component={ViewContainer} />
               <Route path="playlist/:id/:group" Component={ViewContainer} />
               <Route path="/search" Component={SearchPage} />
-              <Route path="/search/:query" Component={SearchResultsPage}>
+              <Route
+                path="/search/:query/:source"
+                Component={SearchResultsPage}
+              >
                 <Route index Component={AllResultsPage} />
                 <Route path="songs" Component={ViewContainer} />
                 <Route path="artists" Component={ViewContainer} />

@@ -4,7 +4,10 @@ import { push } from "redux-first-history";
 import { BASEPATH } from "../../../app/constants";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { selectSearch } from "../../../features/search/searchSlice";
-import { selectVisibleSearchResults } from "../../../features/visibleSelectors";
+import {
+  selectVisibleSearchResults,
+  selectVisibleSearchSource
+} from "../../../features/visibleSelectors";
 import { useTrackGrid } from "../../../hooks/useTrackGrid";
 import { AlbumGridItem } from "../../views/subviews/AlbumGridItem";
 import { TrackSummaryRow } from "../../views/subviews/TrackSummaryRow";
@@ -23,6 +26,7 @@ export default function SearchResults() {
   const { t } = useTranslation();
   const search = useAppSelector(selectSearch);
   const searchResults = useAppSelector(selectVisibleSearchResults);
+  const visibleSearchSource = useAppSelector(selectVisibleSearchSource);
   const { gridRef, gridProps } = useTrackGrid();
   const containerRef = useRef<HTMLDivElement>(null);
   const [containerWidth, setContainerWidth] = useState(0);
@@ -72,23 +76,18 @@ export default function SearchResults() {
     return { columnCount, columnWidth };
   }, [containerWidth]);
 
-  const viewAllSongs = () => {
-    dispatch(
-      push(BASEPATH + "search/" + encodeURIComponent(search) + "/songs")
-    );
+  const buildSearchRoute = (category?: string) => {
+    const basePath =
+      "search/" +
+      encodeURIComponent(search) +
+      "/" +
+      encodeURIComponent(visibleSearchSource || "library");
+    return BASEPATH + basePath + (category ? `/${category}` : "");
   };
 
-  const viewAllArtists = () => {
-    dispatch(
-      push(BASEPATH + "search/" + encodeURIComponent(search) + "/artists")
-    );
-  };
-
-  const viewAllAlbums = () => {
-    dispatch(
-      push(BASEPATH + "search/" + encodeURIComponent(search) + "/albums")
-    );
-  };
+  const viewAllSongs = () => dispatch(push(buildSearchRoute("songs")));
+  const viewAllArtists = () => dispatch(push(buildSearchRoute("artists")));
+  const viewAllAlbums = () => dispatch(push(buildSearchRoute("albums")));
 
   return (
     <div
