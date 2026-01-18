@@ -23,6 +23,8 @@ import {
   selectLibraryAlbums,
   selectLibraryArtists
 } from "./genericSelectors";
+import { AlbumDetails } from "./albums/albumsTypes";
+import { ArtistDetails } from "./artists/artistsTypes";
 import { TrackListItem } from "./tracks/tracksTypes";
 import { Track } from "../../../types/tracks";
 import {
@@ -135,7 +137,8 @@ export const selectVisibleTracks = createSelector(
     (state: RootState) => selectAllTracks(state),
     (state: RootState) => state.search.search,
     (state: RootState) => state.router.location?.pathname,
-    (state: RootState) => state.undoable.present.playlists.playlists
+    (state: RootState) => state.undoable.present.playlists.playlists,
+    (state: RootState) => selectVisibleSearchSource(state)
   ],
   () => {
     const state = store.getState();
@@ -163,10 +166,23 @@ export const selectVisibleTracks = createSelector(
             itemId: track?.trackId
           })) as TrackListItem[])
         : selectVisibleViewType(state) == View.Search
-          ? (searchTracks(selectLibraryTracks(state), search).map((track) => ({
-              ...track,
-              itemId: track?.trackId
-            })) as TrackListItem[])
+          ? (() => {
+              const visibleSource = selectVisibleSearchSource(state);
+              const searchResults = searchTracks(
+                selectLibraryTracks(state),
+                search
+              );
+              return (
+                visibleSource
+                  ? searchResults.filter(
+                      (track) => track.source == visibleSource
+                    )
+                  : searchResults
+              ).map((track) => ({
+                ...track,
+                itemId: track?.trackId
+              })) as TrackListItem[];
+            })()
           : visibleViewType == View.Album && visibleSelectedTrackGroup
             ? (selectAllTracks(state)
                 .filter((track) => track.albumId === visibleSelectedTrackGroup)
@@ -298,7 +314,9 @@ export const selectVisibleTrackGroups = createSelector(
     (state: RootState) => state.undoable.present.library,
     (state: RootState) => selectAllTracks(state),
     (state: RootState) => state.search.search,
-    (state: RootState) => selectArtistDelimiter(state)
+    (state: RootState) => selectArtistDelimiter(state),
+    (state: RootState) => selectVisibleSearchSource(state),
+    (state: RootState) => selectVisibleSearchCategory(state)
   ],
   () => {
     const state = store.getState();
@@ -306,9 +324,13 @@ export const selectVisibleTrackGroups = createSelector(
     if (selectVisibleDisplayMode(state) == DisplayMode.AlbumGrid) {
       const search = selectSearch(state);
       if (selectVisibleSearchCategory(state) == SearchCategory.Albums) {
-        return searchAlbums(selectLibraryAlbums(state), search).map(
-          (album) => album.albumId
-        );
+        const visibleSource = selectVisibleSearchSource(state);
+        const searchResults = searchAlbums(selectLibraryAlbums(state), search);
+        return (
+          visibleSource
+            ? searchResults.filter((album) => album.source == visibleSource)
+            : searchResults
+        ).map((album) => album.albumId);
       } else {
         return [
           ...new Set(selectVisibleTracks(state).map((track) => track.albumId))
@@ -316,9 +338,13 @@ export const selectVisibleTrackGroups = createSelector(
       }
     } else if (selectVisibleSearchCategory(state) == SearchCategory.Artists) {
       const search = selectSearch(state);
-      return searchArtists(selectLibraryArtists(state), search).map(
-        (group) => group.name
-      );
+      const visibleSource = selectVisibleSearchSource(state);
+      const searchResults = searchArtists(selectLibraryArtists(state), search);
+      return (
+        visibleSource
+          ? searchResults.filter((artist) => artist.source == visibleSource)
+          : searchResults
+      ).map((group) => group.name);
     } else if (selectVisibleDisplayMode(state) == DisplayMode.SplitView) {
       const grouping = selectVisiblePlaylist(state)
         ? selectVisiblePlaylistConfig(state)?.splitViewState.trackGrouping
@@ -366,7 +392,9 @@ export const selectVisibleAlbums = createSelector(
     (state: RootState) => state.undoable.present.playlists,
     (state: RootState) => state.undoable.present.library,
     (state: RootState) => selectAllTracks(state),
-    (state: RootState) => state.search.search
+    (state: RootState) => state.search.search,
+    (state: RootState) => selectVisibleSearchSource(state),
+    (state: RootState) => selectVisibleSearchCategory(state)
   ],
   () => {
     const state = store.getState();
@@ -377,7 +405,11 @@ export const selectVisibleAlbums = createSelector(
     if (visibleViewType === View.Artist) {
       return selectVisibleArtistAlbums(state);
     } else if (search && visibleViewType == View.Search) {
-      return searchAlbums(selectLibraryAlbums(state), search);
+      const visibleSource = selectVisibleSearchSource(state);
+      const searchResults = searchAlbums(selectLibraryAlbums(state), search);
+      return visibleSource
+        ? searchResults.filter((album) => album.source == visibleSource)
+        : searchResults;
     } else {
       return allAlbums
         .filter((album) =>
@@ -400,14 +432,20 @@ export const selectVisibleArtists = createSelector(
     (state: RootState) => state.undoable.present.playlists,
     (state: RootState) => state.undoable.present.library,
     (state: RootState) => selectAllTracks(state),
-    (state: RootState) => state.search.search
+    (state: RootState) => state.search.search,
+    (state: RootState) => selectVisibleSearchSource(state),
+    (state: RootState) => selectVisibleSearchCategory(state)
   ],
   () => {
     const state = store.getState();
     const allArtists = selectAllArtists(state);
     const search = selectSearch(state);
     if (search && selectVisibleViewType(state) == View.Search) {
-      return searchArtists(selectLibraryArtists(state), search);
+      const visibleSource = selectVisibleSearchSource(state);
+      const searchResults = searchArtists(selectLibraryArtists(state), search);
+      return visibleSource
+        ? searchResults.filter((artist) => artist.source == visibleSource)
+        : searchResults;
     } else {
       return allArtists
         .filter((artist) =>
@@ -514,6 +552,8 @@ export const selectVisibleArtistAlbums = createSelector(
 export const selectVisibleSearchResults = createSelector(
   [
     (state: RootState) => selectLibraryTracks(state),
+    (state: RootState) => selectVisibleSearchSource(state),
+    (state: RootState) => selectVisibleSearchCategory(state),
     (state: RootState) => state.router.location?.pathname,
     (state: RootState) => state.search.search
   ],
@@ -531,8 +571,14 @@ export const selectVisibleSearchResults = createSelector(
     );
     if (!searchResults) return null;
 
+    const visibleSource = selectVisibleSearchSource(state);
     return {
-      tracks: searchResults.tracks.map((result) => ({
+      tracks: (visibleSource
+        ? searchResults.tracks.filter(
+            (result) => (result.item as Track).source == visibleSource
+          )
+        : searchResults.tracks
+      ).map((result) => ({
         type: result.type,
         item: {
           ...result.item,
@@ -540,8 +586,16 @@ export const selectVisibleSearchResults = createSelector(
         } as TrackListItem,
         score: result.score
       })),
-      artists: searchResults.artists,
-      albums: searchResults.albums
+      artists: visibleSource
+        ? searchResults.artists.filter(
+            (result) => (result.item as ArtistDetails).source == visibleSource
+          )
+        : searchResults.artists,
+      albums: visibleSource
+        ? searchResults.albums.filter(
+            (result) => (result.item as AlbumDetails).source == visibleSource
+          )
+        : searchResults.albums
     };
   }
 );
