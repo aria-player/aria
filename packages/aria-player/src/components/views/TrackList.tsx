@@ -65,7 +65,8 @@ import {
 import { compareMetadata } from "../../app/sort";
 import {
   addToSearchHistory,
-  selectSearch
+  selectSearch,
+  selectSelectedSearchSource
 } from "../../features/search/searchSlice";
 import NoRowsOverlay from "./subviews/NoRowsOverlay";
 import {
@@ -125,11 +126,28 @@ export const TrackList = () => {
     ? getSourceHandle(parsedArtistInfo.source)
     : null;
 
-  const useInfiniteRowModel =
+  const search = useAppSelector(selectSearch);
+  const selectedSearchSource = useAppSelector(selectSelectedSearchSource);
+  const isExternalSearchSource =
+    selectedSearchSource !== null && selectedSearchSource !== "library";
+  const externalSearchHandle = isExternalSearchSource
+    ? getSourceHandle(selectedSearchSource)
+    : null;
+
+  const useInfiniteRowModelForArtist =
     visibleViewType === View.Artist &&
     visibleArtistSection === ArtistSection.Songs &&
     !!parsedArtistInfo?.uri &&
     !!artistHandle?.getArtistTopTracks;
+
+  const useInfiniteRowModelForSearch =
+    visibleViewType === View.Search &&
+    isExternalSearchSource &&
+    !!externalSearchHandle?.searchTracks &&
+    !!search.trim();
+
+  const useInfiniteRowModel =
+    useInfiniteRowModelForArtist || useInfiniteRowModelForSearch;
 
   useEffect(() => setIsGridReady(false), [setIsGridReady, useInfiniteRowModel]);
 
@@ -517,12 +535,14 @@ export const TrackList = () => {
     const api = gridRef.current.api;
 
     if (
-      !useInfiniteRowModel ||
+      !useInfiniteRowModelForArtist ||
       !parsedArtistInfo?.uri ||
       !artistHandle?.getArtistTopTracks
     ) {
-      api.setGridOption("loading", false);
-      api.setGridOption("datasource", undefined);
+      if (!useInfiniteRowModelForSearch) {
+        api.setGridOption("loading", false);
+        api.setGridOption("datasource", undefined);
+      }
       return;
     }
 
@@ -633,7 +653,75 @@ export const TrackList = () => {
     isGridReady,
     parsedArtistInfo,
     useInfiniteRowModel,
-    selectedArtistGroup
+    selectedArtistGroup,
+    useInfiniteRowModelForSearch,
+    useInfiniteRowModelForArtist
+  ]);
+
+  useEffect(() => {
+    if (!isGridReady || !gridRef?.current?.api) {
+      return;
+    }
+
+    const api = gridRef.current.api;
+
+    if (
+      !useInfiniteRowModelForSearch ||
+      !externalSearchHandle?.searchTracks ||
+      !search.trim() ||
+      !selectedSearchSource
+    ) {
+      if (!useInfiniteRowModelForArtist) {
+        api.setGridOption("loading", false);
+        api.setGridOption("datasource", undefined);
+      }
+      return;
+    }
+
+    api.setGridOption("loading", true);
+
+    const datasource: IDatasource = {
+      getRows: async (params) => {
+        const tracks = await externalSearchHandle?.searchTracks?.(
+          search,
+          params.startRow,
+          params.endRow
+        );
+
+        const rows = tracks?.map((track) => ({
+          ...track,
+          trackId: getTrackId(selectedSearchSource, track.uri),
+          itemId: getTrackId(selectedSearchSource, track.uri),
+          source: selectedSearchSource,
+          metadataLoaded: true
+        }));
+        dispatch(
+          addTracks({
+            source: selectedSearchSource,
+            tracks,
+            addToLibrary: false
+          })
+        );
+
+        const isLast = (rows?.length ?? 0) < params.endRow - params.startRow;
+        params.successCallback(
+          rows ?? [],
+          isLast ? params.startRow + (rows?.length ?? 0) : undefined
+        );
+        api.setGridOption("loading", false);
+      }
+    };
+
+    api.setGridOption("datasource", datasource);
+  }, [
+    dispatch,
+    externalSearchHandle,
+    gridRef,
+    isGridReady,
+    search,
+    selectedSearchSource,
+    useInfiniteRowModelForArtist,
+    useInfiniteRowModelForSearch
   ]);
 
   const infiniteModelProps = useMemo(() => {

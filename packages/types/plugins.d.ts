@@ -262,6 +262,14 @@ export interface SourceHandle extends BaseHandle {
     stopIndex: number
   ) => Promise<AlbumMetadata[]>;
   /**
+   * Search for tracks matching a query.
+   */
+  searchTracks?: (
+    query: string,
+    startIndex: number,
+    stopIndex: number
+  ) => Promise<TrackMetadata[]>;
+  /**
    * Called after every update to this source's tracks.
    */
   onTracksUpdate?: (tracks: Track[]) => void;

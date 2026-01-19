@@ -680,6 +680,50 @@ export default function createAppleMusicPlayer(
       }
     },
 
+    get searchTracks() {
+      if (!getConfig().loggedIn) return undefined;
+      return async (query: string, startIndex: number, stopIndex: number) => {
+        const music = await waitForMusicKit();
+        try {
+          const limit = stopIndex - startIndex;
+          const searchResponse = (await music.api.music(
+            `v1/catalog/${music.storefrontId}/search?term=${encodeURIComponent(query)}&types=songs&limit=${limit}&offset=${startIndex}&include=albums`
+          )) as {
+            data: {
+              results: {
+                songs?: MusicKit.Relationship<MusicKit.Songs>;
+              };
+            };
+          };
+
+          const songs = searchResponse.data?.results?.songs?.data;
+          if (!songs || songs.length === 0) {
+            return [];
+          }
+
+          const tracks: TrackMetadata[] = [];
+          const catalogIdMap: Record<string, string> = {};
+          songs.forEach((track) => {
+            catalogIdMap[track.id] = track.id;
+            const albumData = track.relationships?.albums
+              ?.data[0] as unknown as MusicKit.Albums;
+            tracks.push(
+              getTrackMetadata(
+                track,
+                albumData ?? { id: "", attributes: undefined },
+                Date.now()
+              )
+            );
+          });
+          await addCatalogArtistsToTracks(tracks, catalogIdMap);
+          return tracks;
+        } catch (error) {
+          console.error("Failed to fetch tracks:", error);
+          return [];
+        }
+      };
+    },
+
     pause: () => {
       music?.pause();
     },

@@ -2,6 +2,7 @@ import { useTranslation } from "react-i18next";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import {
   pluginHandles,
+  getSourceHandle,
   selectActivePlugins,
   selectPluginInfo
 } from "../../../features/plugins/pluginsSlice";
@@ -20,6 +21,7 @@ import styles from "./SearchSourceSwitcher.module.css";
 import { push } from "redux-first-history";
 import { BASEPATH } from "../../../app/constants";
 import { useEffect } from "react";
+import { selectLibraryTracks } from "../../../features/tracks/tracksSlice";
 
 export default function SearchSourceSwitcher() {
   const { t } = useTranslation();
@@ -30,6 +32,7 @@ export default function SearchSourceSwitcher() {
   const visibleSearchSource = useAppSelector(selectVisibleSearchSource);
   const selectedSearchSource = useAppSelector(selectSelectedSearchSource);
   const search = useAppSelector(selectSearch);
+  const libraryTracks = useAppSelector(selectLibraryTracks);
 
   useEffect(() => {
     if (visibleSearchSource !== selectedSearchSource) {
@@ -38,10 +41,17 @@ export default function SearchSourceSwitcher() {
   }, [dispatch, visibleSearchSource, selectedSearchSource]);
 
   const searchableSourcePlugins = activePlugins
-    .filter(
-      (plugin: PluginId) => plugins[plugin].capabilities?.includes("source")
-      // TODO: Also check if search is available for source
-    )
+    .filter((plugin: PluginId) => {
+      if (!plugins[plugin].capabilities?.includes("source")) {
+        return false;
+      }
+      const handle = getSourceHandle(plugin);
+      const searchAvailable = !!handle?.searchTracks;
+      const hasLibraryTracks = libraryTracks.some(
+        (track) => track.source === plugin
+      );
+      return searchAvailable || hasLibraryTracks;
+    })
     .sort(sortPlugins);
 
   if (searchableSourcePlugins.length === 0) {

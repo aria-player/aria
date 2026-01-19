@@ -741,6 +741,48 @@ export default function createSpotifyPlayer(
       }));
     },
 
+    get searchTracks() {
+      if (!getConfig().accessToken) return undefined;
+      return async (query: string, startIndex: number, stopIndex: number) => {
+        const limit = stopIndex - startIndex;
+        const searchResponse = (await spotifyRequest(
+          `/search?q=${encodeURIComponent(query)}&type=track&limit=${limit}&offset=${startIndex}`
+        )) as SpotifyApi.SearchResponse;
+
+        if (!searchResponse?.tracks?.items) {
+          return [];
+        }
+
+        const tracks: TrackMetadata[] = [];
+        const artistIds = new Set<string>();
+
+        for (const track of searchResponse.tracks.items) {
+          if (track.restrictions?.reason) continue;
+          tracks.push(getTrackMetadata(track, track.album, Date.now()));
+          track.artists.forEach((artist) => artistIds.add(artist.id));
+          track.album.artists.forEach((artist) => artistIds.add(artist.id));
+        }
+
+        const artists = Array.from(artistIds);
+        const artistGenreMapping = await fetchArtistGenres(artists);
+
+        return tracks.map((track) => {
+          const albumArtistIds =
+            searchResponse.tracks?.items
+              .find((t) => t.uri === track.uri)
+              ?.album.artists.map((artist) => artist.id) ?? [];
+          const formattedGenres = getUniqueGenresFromArtists(
+            albumArtistIds,
+            artistGenreMapping
+          );
+          return {
+            ...track,
+            genre: formattedGenres
+          };
+        });
+      };
+    },
+
     pause() {
       player?.pause();
     },
