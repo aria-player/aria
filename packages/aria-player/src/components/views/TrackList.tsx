@@ -46,7 +46,8 @@ import {
   getTrackId,
   parseArtistId,
   overrideColumnStateSort,
-  getExternalSearchCacheKey
+  getExternalSearchCacheKey,
+  getAlbumId
 } from "../../app/utils";
 import { store } from "../../app/store";
 import { useTrackGrid } from "../../hooks/useTrackGrid";
@@ -593,6 +594,12 @@ export const TrackList = () => {
           const state = store.getState();
           const rows = tracks.map((track) => ({
             ...selectTrackById(state, getTrackId(source, track.uri)),
+            albumId: getAlbumId(
+              source,
+              track.album!,
+              track.albumArtist,
+              track.albumUri
+            ),
             itemId: getTrackId(source, track.uri)
           }));
           if (showCachedTracks) {
