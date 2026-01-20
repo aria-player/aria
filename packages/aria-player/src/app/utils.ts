@@ -119,6 +119,9 @@ export function parseAlbumId(albumId: AlbumId):
   }
 }
 
+export const getExternalSearchCacheKey = (source: string, query: string) =>
+  `${source}:${query.trim()}`;
+
 export function getMostCommonArtworkUri(albumTracks: Track[]) {
   const artworkUriCount: { [key: string]: number } = {};
   albumTracks.forEach((track) => {

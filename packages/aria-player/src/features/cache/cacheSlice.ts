@@ -28,12 +28,18 @@ export interface CacheState {
   fetchedAlbums: AlbumId[];
   artistTopTracks: Record<ArtistId, TrackId[]>;
   artistAlbums: Record<ArtistId, AlbumId[]>;
+  search: {
+    tracks: Record<string, TrackId[]>;
+  };
 }
 
 const initialState: CacheState = {
   fetchedAlbums: [],
   artistTopTracks: {},
-  artistAlbums: {}
+  artistAlbums: {},
+  search: {
+    tracks: {}
+  }
 };
 
 export const cacheSlice = createSlice({
@@ -75,10 +81,28 @@ export const cacheSlice = createSlice({
         offset
       );
     },
+    updateCachedSearchTracks: (
+      state,
+      action: PayloadAction<{
+        key: string;
+        trackIds: TrackId[];
+        offset: number;
+      }>
+    ) => {
+      const { key, trackIds, offset } = action.payload;
+      state.search.tracks[key] = updateAtOffset(
+        state.search.tracks[key],
+        trackIds,
+        offset
+      );
+    },
     clearCache: (state) => {
       state.fetchedAlbums = [];
       state.artistTopTracks = {};
       state.artistAlbums = {};
+      state.search = {
+        tracks: {}
+      };
     }
   }
 });
@@ -87,6 +111,7 @@ export const {
   markAlbumFetched,
   updateCachedArtistTopTracks,
   updateCachedArtistAlbums,
+  updateCachedSearchTracks,
   clearCache
 } = cacheSlice.actions;
 
@@ -102,5 +127,8 @@ export const selectCachedArtistAlbums = (
   state: RootState,
   artistId: ArtistId
 ) => state.cache.artistAlbums[artistId];
+
+export const selectCachedSearchTracks = (state: RootState, key: string) =>
+  state.cache.search.tracks[key];
 
 export default cacheSlice.reducer;

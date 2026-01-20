@@ -103,7 +103,8 @@ const reducer = combineReducers({
   cache: persistReducer(
     {
       key: "cache",
-      storage
+      storage,
+      blacklist: ["search"]
     },
     cacheReducer
   ),

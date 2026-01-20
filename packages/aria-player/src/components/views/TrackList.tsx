@@ -45,7 +45,8 @@ import {
   getRelativePath,
   getTrackId,
   parseArtistId,
-  overrideColumnStateSort
+  overrideColumnStateSort,
+  getExternalSearchCacheKey
 } from "../../app/utils";
 import { store } from "../../app/store";
 import { useTrackGrid } from "../../hooks/useTrackGrid";
@@ -82,7 +83,9 @@ import { useLocation } from "react-router-dom";
 import LoadingSpinner from "./subviews/LoadingSpinner";
 import {
   selectCachedArtistTopTracks,
-  updateCachedArtistTopTracks
+  selectCachedSearchTracks,
+  updateCachedArtistTopTracks,
+  updateCachedSearchTracks
 } from "../../features/cache/cacheSlice";
 
 const EXTERNAL_TRACKS_BATCH_SIZE = 20;
@@ -680,34 +683,109 @@ export const TrackList = () => {
 
     api.setGridOption("loading", true);
 
+    // TODO: Clean up duplication between search/artist tracks fetching
     const datasource: IDatasource = {
       getRows: async (params) => {
+        const cacheKey = getExternalSearchCacheKey(
+          selectedSearchSource,
+          search
+        );
+        const currentCachedTracks =
+          selectCachedSearchTracks(store.getState(), cacheKey) || [];
+        const cachedCount = currentCachedTracks.length;
+        const showCachedTracks = params.startRow < cachedCount;
+
+        if (showCachedTracks) {
+          const cachedRows = currentCachedTracks
+            .slice(params.startRow, Math.min(params.endRow, cachedCount))
+            .map((trackId) => {
+              const track = selectTrackById(store.getState(), trackId);
+              return track
+                ? {
+                    ...track,
+                    itemId: trackId,
+                    metadataLoaded: true
+                  }
+                : null;
+            })
+            .filter(Boolean);
+
+          params.successCallback(
+            cachedRows,
+            cachedCount < params.endRow ? cachedCount : undefined
+          );
+          api.setGridOption("loading", false);
+        }
+
         const tracks = await externalSearchHandle?.searchTracks?.(
           search,
           params.startRow,
           params.endRow
         );
 
-        const rows = tracks?.map((track) => ({
-          ...track,
-          trackId: getTrackId(selectedSearchSource, track.uri),
-          itemId: getTrackId(selectedSearchSource, track.uri),
-          source: selectedSearchSource,
-          metadataLoaded: true
-        }));
-        dispatch(
-          addTracks({
-            source: selectedSearchSource,
-            tracks,
-            addToLibrary: false
-          })
-        );
+        if (tracks?.length) {
+          dispatch(
+            addTracks({
+              source: selectedSearchSource,
+              tracks,
+              addToLibrary: false
+            })
+          );
 
-        const isLast = (rows?.length ?? 0) < params.endRow - params.startRow;
-        params.successCallback(
-          rows ?? [],
-          isLast ? params.startRow + (rows?.length ?? 0) : undefined
-        );
+          const newTrackIds = tracks.map((track) =>
+            getTrackId(selectedSearchSource, track.uri)
+          );
+
+          dispatch(
+            updateCachedSearchTracks({
+              key: cacheKey,
+              trackIds: newTrackIds,
+              offset: params.startRow
+            })
+          );
+
+          const state = store.getState();
+          const rows = tracks.map((track) => ({
+            ...selectTrackById(
+              state,
+              getTrackId(selectedSearchSource, track.uri)
+            ),
+            itemId: getTrackId(selectedSearchSource, track.uri)
+          }));
+
+          if (showCachedTracks) {
+            const nodesToUpdate: IRowNode[] = [];
+            api.forEachNode((node) => {
+              if (
+                node.rowIndex !== null &&
+                node.rowIndex >= params.startRow &&
+                node.rowIndex < params.endRow &&
+                rows
+              ) {
+                const updatedRow = rows[node.rowIndex - params.startRow];
+                if (updatedRow) {
+                  node.setData(updatedRow);
+                  nodesToUpdate.push(node);
+                }
+              }
+            });
+
+            if (nodesToUpdate.length > 0) {
+              api.refreshCells({ rowNodes: nodesToUpdate, force: true });
+            }
+          } else {
+            const isLast =
+              (rows?.length ?? 0) < params.endRow - params.startRow;
+            params.successCallback(
+              rows ?? [],
+              isLast ? params.startRow + (rows?.length ?? 0) : undefined
+            );
+          }
+        } else if (!showCachedTracks) {
+          const inferredRowCount = Math.max(cachedCount, params.startRow);
+          params.successCallback([], inferredRowCount);
+        }
+
         api.setGridOption("loading", false);
       }
     };
