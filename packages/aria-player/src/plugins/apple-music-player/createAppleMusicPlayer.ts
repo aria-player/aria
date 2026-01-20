@@ -805,6 +805,43 @@ export default function createAppleMusicPlayer(
       };
     },
 
+    get searchArtists() {
+      if (!getConfig().loggedIn) return undefined;
+      return async (query: string, startIndex: number, stopIndex: number) => {
+        const music = await waitForMusicKit();
+        try {
+          const limit = stopIndex - startIndex;
+          const searchResponse = (await music.api.music(
+            `v1/catalog/${music.storefrontId}/search?term=${encodeURIComponent(query)}&types=artists&limit=${limit}&offset=${startIndex}`
+          )) as {
+            data: {
+              results: {
+                artists?: MusicKit.Relationship<MusicKit.Artists>;
+              };
+            };
+          };
+
+          const artists = searchResponse.data?.results?.artists?.data;
+          if (!artists || artists.length === 0) {
+            return [];
+          }
+
+          return artists.map((artist) => ({
+            uri: artist.id,
+            name: artist.attributes?.name ?? "",
+            artworkUri: (
+              artist.attributes as MusicKit.Artists["attributes"] & {
+                artwork?: MusicKit.Artwork;
+              }
+            ).artwork?.url
+          }));
+        } catch (error) {
+          console.error("Failed to search artists:", error);
+          return [];
+        }
+      };
+    },
+
     pause: () => {
       music?.pause();
     },

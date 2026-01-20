@@ -811,6 +811,26 @@ export default function createSpotifyPlayer(
       };
     },
 
+    get searchArtists() {
+      if (!getConfig().accessToken) return undefined;
+      return async (query: string, startIndex: number, stopIndex: number) => {
+        const limit = stopIndex - startIndex;
+        const searchResponse = (await spotifyRequest(
+          `/search?q=${encodeURIComponent(query)}&type=artist&limit=${limit}&offset=${startIndex}`
+        )) as SpotifyApi.SearchResponse;
+
+        if (!searchResponse?.artists?.items) {
+          return [];
+        }
+
+        return searchResponse.artists.items.map((artist) => ({
+          uri: artist.uri,
+          name: artist.name,
+          artworkUri: artist.images?.[0]?.url
+        }));
+      };
+    },
+
     pause() {
       player?.pause();
     },
