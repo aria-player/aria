@@ -724,6 +724,87 @@ export default function createAppleMusicPlayer(
       };
     },
 
+    get searchAlbums() {
+      if (!getConfig().loggedIn) return undefined;
+      return async (query: string, startIndex: number, stopIndex: number) => {
+        const music = await waitForMusicKit();
+        try {
+          const limit = stopIndex - startIndex;
+          const searchResponse = (await music.api.music(
+            `v1/catalog/${music.storefrontId}/search?term=${encodeURIComponent(query)}&types=albums&limit=${limit}&offset=${startIndex}`
+          )) as {
+            data: {
+              results: {
+                albums?: MusicKit.Relationship<MusicKit.Albums>;
+              };
+            };
+          };
+
+          const albums = searchResponse.data?.results?.albums?.data;
+          if (!albums || albums.length === 0) {
+            return [];
+          }
+          const albumIds = albums.map((album) => album.id);
+          const albumDetails = await batchFetch<MusicKit.Albums>(
+            albumIds,
+            25,
+            `v1/catalog/${music.storefrontId}/albums`
+          );
+          const albumToArtistIds: Record<string, string[]> = {};
+          const allArtistIds = new Set<string>();
+
+          albumDetails.forEach((album) => {
+            const artistIds =
+              album.relationships?.artists?.data?.map((a) => a.id) ?? [];
+            if (artistIds.length > 0) {
+              albumToArtistIds[album.id] = artistIds;
+              artistIds.forEach((id) => allArtistIds.add(id));
+            }
+          });
+          const artistMap: Record<string, string> = {};
+          if (allArtistIds.size > 0) {
+            const artistBatches = await batchFetch<MusicKit.Artists>(
+              Array.from(allArtistIds),
+              25,
+              `v1/catalog/${music.storefrontId}/artists`
+            );
+            artistBatches.forEach((artist) => {
+              if (artist.attributes?.name) {
+                artistMap[artist.id] = artist.attributes.name;
+              }
+            });
+          }
+
+          return albums.map((album) => {
+            const artistUris = albumToArtistIds[album.id] ?? [];
+            const artistNames = artistUris
+              .map((id) => artistMap[id])
+              .filter(Boolean);
+
+            return {
+              uri: album.id,
+              name: album.attributes?.name ?? "",
+              artist:
+                artistNames.length > 0
+                  ? artistNames
+                  : (album.attributes?.artistName ?? ""),
+              artistUri: artistUris,
+              year: album.attributes?.releaseDate
+                ? parseInt(album.attributes.releaseDate.split("-")[0])
+                : undefined,
+              dateReleased: album.attributes?.releaseDate
+                ? new Date(album.attributes.releaseDate).getTime()
+                : undefined,
+              artworkUri: album.attributes?.artwork?.url
+            };
+          });
+        } catch (error) {
+          console.error("Failed to search albums:", error);
+          return [];
+        }
+      };
+    },
+
     pause: () => {
       music?.pause();
     },

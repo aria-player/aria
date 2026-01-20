@@ -783,6 +783,34 @@ export default function createSpotifyPlayer(
       };
     },
 
+    get searchAlbums() {
+      if (!getConfig().accessToken) return undefined;
+      return async (query: string, startIndex: number, stopIndex: number) => {
+        const limit = stopIndex - startIndex;
+        const searchResponse = (await spotifyRequest(
+          `/search?q=${encodeURIComponent(query)}&type=album&limit=${limit}&offset=${startIndex}`
+        )) as SpotifyApi.SearchResponse;
+
+        if (!searchResponse?.albums?.items) {
+          return [];
+        }
+
+        return searchResponse.albums.items.map((album) => ({
+          uri: album.uri,
+          name: album.name,
+          artist: album.artists.map((artist) => artist.name),
+          artistUri: album.artists.map((artist) => artist.uri),
+          year: album.release_date
+            ? parseInt(album.release_date.split("-")[0])
+            : undefined,
+          dateReleased: album.release_date
+            ? new Date(album.release_date).getTime()
+            : undefined,
+          artworkUri: album.images?.[0]?.url
+        }));
+      };
+    },
+
     pause() {
       player?.pause();
     },

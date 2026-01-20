@@ -21,8 +21,15 @@ import { addAlbums, selectAlbumsInfo } from "../../features/albums/albumsSlice";
 import LoadingSpinner from "./subviews/LoadingSpinner";
 import {
   selectCachedArtistAlbums,
-  updateCachedArtistAlbums
+  selectCachedSearchAlbums,
+  updateCachedArtistAlbums,
+  updateCachedSearchAlbums
 } from "../../features/cache/cacheSlice";
+import {
+  selectSearch,
+  selectSelectedSearchSource
+} from "../../features/search/searchSlice";
+import { getExternalSearchCacheKey } from "../../app/utils";
 
 type AlbumGridItemProps = GridChildComponentProps & {
   columnCount: number;
@@ -31,7 +38,7 @@ type AlbumGridItemProps = GridChildComponentProps & {
   displayAlbumLimit: number;
 };
 
-const ARTIST_ALBUMS_BATCH_SIZE = 20;
+const ALBUMS_BATCH_SIZE = 20;
 
 export default function AlbumGrid() {
   const dispatch = useAppDispatch();
@@ -47,12 +54,42 @@ export default function AlbumGrid() {
 
   const [overscanRowCount, setOverscanRowCount] = useState(0);
   const [hasMoreArtistAlbums, setHasMoreArtistAlbums] = useState(true);
+  const [hasMoreSearchAlbums, setHasMoreSearchAlbums] = useState(true);
+
   const cachedArtistAlbums = useAppSelector((state) =>
     selectCachedArtistAlbums(state, selectedItem || "")
   );
   const artistAlbumOrder = useMemo(
     () => cachedArtistAlbums || [],
     [cachedArtistAlbums]
+  );
+
+  const search = useAppSelector(selectSearch);
+  const selectedSearchSource = useAppSelector(selectSelectedSearchSource);
+  const isExternalSearchSource =
+    selectedSearchSource !== null && selectedSearchSource !== "library";
+  const externalSearchHandle = isExternalSearchSource
+    ? getSourceHandle(selectedSearchSource)
+    : null;
+
+  const isExternalSearch =
+    visibleViewType === View.Search &&
+    isExternalSearchSource &&
+    !!externalSearchHandle?.searchAlbums &&
+    !!search.trim();
+
+  const searchCacheKey = useMemo(() => {
+    if (!isExternalSearch || !selectedSearchSource) return "";
+    return getExternalSearchCacheKey(selectedSearchSource, search);
+  }, [isExternalSearch, selectedSearchSource, search]);
+
+  const cachedSearchAlbums = useAppSelector((state) =>
+    searchCacheKey ? selectCachedSearchAlbums(state, searchCacheKey) : undefined
+  );
+
+  const searchAlbumOrder = useMemo(
+    () => cachedSearchAlbums || [],
+    [cachedSearchAlbums]
   );
 
   useEffect(() => {
@@ -75,25 +112,48 @@ export default function AlbumGrid() {
     setHasMoreArtistAlbums(isExternalArtistView);
   }, [isExternalArtistView, selectedItem]);
 
+  useEffect(() => {
+    setHasMoreSearchAlbums(isExternalSearch);
+  }, [isExternalSearch, searchCacheKey]);
+
   const displayAlbums = useMemo(() => {
+    if (isExternalSearch) {
+      return searchAlbumOrder.map((albumId) => albumsInfo[albumId]);
+    }
     if (isExternalArtistView) {
       return artistAlbumOrder.map((albumId) => albumsInfo[albumId]);
     }
     return visibleAlbums;
-  }, [albumsInfo, artistAlbumOrder, isExternalArtistView, visibleAlbums]);
+  }, [
+    albumsInfo,
+    artistAlbumOrder,
+    searchAlbumOrder,
+    isExternalArtistView,
+    isExternalSearch,
+    visibleAlbums
+  ]);
 
   const placeholderCount =
-    isExternalArtistView && hasMoreArtistAlbums ? ARTIST_ALBUMS_BATCH_SIZE : 0;
-  const totalItemCount = isExternalArtistView
-    ? artistAlbumOrder.length + placeholderCount
-    : visibleAlbums.length;
+    (isExternalArtistView && hasMoreArtistAlbums) ||
+    (isExternalSearch && hasMoreSearchAlbums)
+      ? ALBUMS_BATCH_SIZE
+      : 0;
+  const totalItemCount = isExternalSearch
+    ? searchAlbumOrder.length + placeholderCount
+    : isExternalArtistView
+      ? artistAlbumOrder.length + placeholderCount
+      : visibleAlbums.length;
 
   const isInitialLoading =
-    isExternalArtistView &&
-    artistAlbumOrder.length === 0 &&
-    hasMoreArtistAlbums;
+    (isExternalArtistView &&
+      artistAlbumOrder.length === 0 &&
+      hasMoreArtistAlbums) ||
+    (isExternalSearch && searchAlbumOrder.length === 0 && hasMoreSearchAlbums);
   const shouldShowGridLoading =
-    isExternalArtistView && artistAlbumOrder.length > 0 && hasMoreArtistAlbums;
+    (isExternalArtistView &&
+      artistAlbumOrder.length > 0 &&
+      hasMoreArtistAlbums) ||
+    (isExternalSearch && searchAlbumOrder.length > 0 && hasMoreSearchAlbums);
 
   const loadArtistAlbums = useCallback(
     async (startIndex: number, stopIndex: number) => {
@@ -158,22 +218,107 @@ export default function AlbumGrid() {
     ]
   );
 
+  const loadSearchAlbums = useCallback(
+    async (startIndex: number, stopIndex: number) => {
+      if (
+        !isExternalSearch ||
+        !externalSearchHandle?.searchAlbums ||
+        !selectedSearchSource ||
+        !searchCacheKey ||
+        !hasMoreSearchAlbums
+      ) {
+        return;
+      }
+
+      const fetchStopIndex = stopIndex + 1;
+      if (fetchStopIndex <= startIndex) return;
+
+      const albumsMetadata = await externalSearchHandle.searchAlbums(
+        search,
+        startIndex,
+        fetchStopIndex
+      );
+
+      if (!albumsMetadata?.length) {
+        setHasMoreSearchAlbums(false);
+        return;
+      }
+
+      const albums = albumsMetadata.map((album) => ({
+        ...album,
+        albumId: getAlbumId(
+          selectedSearchSource,
+          album.name ?? "",
+          album.artist,
+          album.uri
+        ),
+        source: selectedSearchSource
+      }));
+
+      dispatch(addAlbums({ source: selectedSearchSource, albums }));
+
+      const newAlbumIds = albums.map((a) => a.albumId);
+      dispatch(
+        updateCachedSearchAlbums({
+          key: searchCacheKey,
+          albumIds: newAlbumIds,
+          offset: startIndex
+        })
+      );
+
+      const requestedCount = fetchStopIndex - startIndex;
+      if (albums.length < requestedCount) {
+        setHasMoreSearchAlbums(false);
+      }
+    },
+    [
+      dispatch,
+      externalSearchHandle,
+      hasMoreSearchAlbums,
+      search,
+      searchCacheKey,
+      selectedSearchSource,
+      isExternalSearch
+    ]
+  );
+
   const isRowLoaded = useCallback(
     (index: number) => {
       if (index < 0) return true;
+      if (isExternalSearch) {
+        return index < searchAlbumOrder.length;
+      }
       if (isExternalArtistView) {
         return index < artistAlbumOrder.length;
       }
       return index < visibleAlbums.length;
     },
-    [artistAlbumOrder.length, isExternalArtistView, visibleAlbums.length]
+    [
+      artistAlbumOrder.length,
+      isExternalArtistView,
+      searchAlbumOrder.length,
+      isExternalSearch,
+      visibleAlbums.length
+    ]
+  );
+
+  const loadMoreRows = useCallback(
+    async (startIndex: number, stopIndex: number) => {
+      if (isExternalSearch) {
+        return loadSearchAlbums(startIndex, stopIndex);
+      }
+      if (isExternalArtistView) {
+        return loadArtistAlbums(startIndex, stopIndex);
+      }
+    },
+    [isExternalSearch, isExternalArtistView, loadSearchAlbums, loadArtistAlbums]
   );
 
   const onRowsRendered = useInfiniteLoader({
     isRowLoaded,
-    loadMoreRows: loadArtistAlbums,
+    loadMoreRows,
     rowCount: Math.max(totalItemCount, 0),
-    minimumBatchSize: ARTIST_ALBUMS_BATCH_SIZE,
+    minimumBatchSize: ALBUMS_BATCH_SIZE,
     threshold: 10
   });
 
@@ -280,7 +425,7 @@ export default function AlbumGrid() {
                   overscanRowStartIndex,
                   overscanRowStopIndex
                 }) => {
-                  if (!isExternalArtistView) return;
+                  if (!isExternalArtistView && !isExternalSearch) return;
                   const startIndex = overscanRowStartIndex * columnCount;
                   const stopIndex = Math.min(
                     totalItemCount - 1,

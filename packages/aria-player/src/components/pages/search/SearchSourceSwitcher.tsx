@@ -46,7 +46,8 @@ export default function SearchSourceSwitcher() {
         return false;
       }
       const handle = getSourceHandle(plugin);
-      const searchAvailable = !!handle?.searchTracks;
+      // TODO: Possibly include plugins that don't support all search functions
+      const searchAvailable = !!handle?.searchTracks && !!handle?.searchAlbums;
       const hasLibraryTracks = libraryTracks.some(
         (track) => track.source === plugin
       );
