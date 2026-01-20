@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { AgGridReact } from "@ag-grid-community/react";
 import {
   BodyScrollEvent,
@@ -79,6 +79,7 @@ import {
   selectLibraryTracks,
   selectTrackById
 } from "../../features/tracks/tracksSlice";
+import { TrackMetadata } from "../../../../types/tracks";
 import { useLocation } from "react-router-dom";
 import LoadingSpinner from "./subviews/LoadingSpinner";
 import {
@@ -530,32 +531,26 @@ export const TrackList = () => {
     setScrollY(event.top);
   };
 
-  useEffect(() => {
-    if (!isGridReady || !gridRef?.current?.api) {
-      return;
-    }
-
-    const api = gridRef.current.api;
-
-    if (
-      !useInfiniteRowModelForArtist ||
-      !parsedArtistInfo?.uri ||
-      !artistHandle?.getArtistTopTracks
-    ) {
-      if (!useInfiniteRowModelForSearch) {
-        api.setGridOption("loading", false);
-        api.setGridOption("datasource", undefined);
+  const createDatasource = useCallback(
+    (
+      api: GridApi,
+      {
+        getCachedTrackIds,
+        fetchTracks,
+        source,
+        onCacheUpdate
+      }: {
+        getCachedTrackIds: () => string[];
+        fetchTracks: (
+          startRow: number,
+          endRow: number
+        ) => Promise<TrackMetadata[]>;
+        source: string;
+        onCacheUpdate: (trackIds: string[], offset: number) => void;
       }
-      return;
-    }
-
-    api.setGridOption("loading", true);
-
-    const datasource: IDatasource = {
+    ): IDatasource => ({
       getRows: async (params) => {
-        const currentCachedTracks =
-          selectCachedArtistTopTracks(store.getState(), selectedArtistGroup!) ||
-          [];
+        const currentCachedTracks = getCachedTrackIds() || [];
         const cachedCount = currentCachedTracks.length;
         const showCachedTracks = params.startRow < cachedCount;
         if (showCachedTracks) {
@@ -579,37 +574,26 @@ export const TrackList = () => {
           );
           api.setGridOption("loading", false);
         }
-        const tracks = await artistHandle?.getArtistTopTracks?.(
-          parsedArtistInfo.uri,
-          params.startRow,
-          params.endRow
-        );
+        const tracks = await fetchTracks(params.startRow, params.endRow);
 
         if (tracks?.length) {
           dispatch(
             addTracks({
-              source: parsedArtistInfo.source,
+              source,
               tracks,
               addToLibrary: false
             })
           );
           const newTrackIds = tracks.map((track) =>
-            getTrackId(parsedArtistInfo.source, track.uri)
+            getTrackId(source, track.uri)
           );
-          dispatch(
-            updateCachedArtistTopTracks({
-              artistId: selectedArtistGroup!,
-              trackIds: newTrackIds,
-              offset: params.startRow
-            })
-          );
+
+          onCacheUpdate(newTrackIds, params.startRow);
+
           const state = store.getState();
           const rows = tracks.map((track) => ({
-            ...selectTrackById(
-              state,
-              getTrackId(parsedArtistInfo.source, track.uri)
-            ),
-            itemId: getTrackId(parsedArtistInfo.source, track.uri)
+            ...selectTrackById(state, getTrackId(source, track.uri)),
+            itemId: getTrackId(source, track.uri)
           }));
           if (showCachedTracks) {
             const nodesToUpdate: IRowNode[] = [];
@@ -646,7 +630,51 @@ export const TrackList = () => {
 
         api.setGridOption("loading", false);
       }
-    };
+    }),
+    [dispatch]
+  );
+
+  useEffect(() => {
+    if (!isGridReady || !gridRef?.current?.api) {
+      return;
+    }
+
+    const api = gridRef.current.api;
+
+    if (
+      !useInfiniteRowModelForArtist ||
+      !parsedArtistInfo?.uri ||
+      !artistHandle?.getArtistTopTracks
+    ) {
+      if (!useInfiniteRowModelForSearch) {
+        api.setGridOption("loading", false);
+        api.setGridOption("datasource", undefined);
+      }
+      return;
+    }
+
+    api.setGridOption("loading", true);
+
+    const datasource = createDatasource(api, {
+      getCachedTrackIds: () =>
+        selectCachedArtistTopTracks(store.getState(), selectedArtistGroup!) ||
+        [],
+      fetchTracks: async (startRow, endRow) =>
+        (await artistHandle?.getArtistTopTracks?.(
+          parsedArtistInfo.uri,
+          startRow,
+          endRow
+        )) ?? [],
+      source: parsedArtistInfo.source,
+      onCacheUpdate: (trackIds, offset) =>
+        dispatch(
+          updateCachedArtistTopTracks({
+            artistId: selectedArtistGroup!,
+            trackIds,
+            offset
+          })
+        )
+    });
 
     api.setGridOption("datasource", datasource);
   }, [
@@ -658,7 +686,8 @@ export const TrackList = () => {
     useInfiniteRowModel,
     selectedArtistGroup,
     useInfiniteRowModelForSearch,
-    useInfiniteRowModelForArtist
+    useInfiniteRowModelForArtist,
+    createDatasource
   ]);
 
   useEffect(() => {
@@ -683,112 +712,27 @@ export const TrackList = () => {
 
     api.setGridOption("loading", true);
 
-    // TODO: Clean up duplication between search/artist tracks fetching
-    const datasource: IDatasource = {
-      getRows: async (params) => {
-        const cacheKey = getExternalSearchCacheKey(
-          selectedSearchSource,
-          search
-        );
-        const currentCachedTracks =
-          selectCachedSearchTracks(store.getState(), cacheKey) || [];
-        const cachedCount = currentCachedTracks.length;
-        const showCachedTracks = params.startRow < cachedCount;
+    const cacheKey = getExternalSearchCacheKey(selectedSearchSource, search);
 
-        if (showCachedTracks) {
-          const cachedRows = currentCachedTracks
-            .slice(params.startRow, Math.min(params.endRow, cachedCount))
-            .map((trackId) => {
-              const track = selectTrackById(store.getState(), trackId);
-              return track
-                ? {
-                    ...track,
-                    itemId: trackId,
-                    metadataLoaded: true
-                  }
-                : null;
-            })
-            .filter(Boolean);
-
-          params.successCallback(
-            cachedRows,
-            cachedCount < params.endRow ? cachedCount : undefined
-          );
-          api.setGridOption("loading", false);
-        }
-
-        const tracks = await externalSearchHandle?.searchTracks?.(
+    const datasource = createDatasource(api, {
+      getCachedTrackIds: () =>
+        selectCachedSearchTracks(store.getState(), cacheKey) || [],
+      fetchTracks: async (startRow, endRow) =>
+        (await externalSearchHandle?.searchTracks?.(
           search,
-          params.startRow,
-          params.endRow
-        );
-
-        if (tracks?.length) {
-          dispatch(
-            addTracks({
-              source: selectedSearchSource,
-              tracks,
-              addToLibrary: false
-            })
-          );
-
-          const newTrackIds = tracks.map((track) =>
-            getTrackId(selectedSearchSource, track.uri)
-          );
-
-          dispatch(
-            updateCachedSearchTracks({
-              key: cacheKey,
-              trackIds: newTrackIds,
-              offset: params.startRow
-            })
-          );
-
-          const state = store.getState();
-          const rows = tracks.map((track) => ({
-            ...selectTrackById(
-              state,
-              getTrackId(selectedSearchSource, track.uri)
-            ),
-            itemId: getTrackId(selectedSearchSource, track.uri)
-          }));
-
-          if (showCachedTracks) {
-            const nodesToUpdate: IRowNode[] = [];
-            api.forEachNode((node) => {
-              if (
-                node.rowIndex !== null &&
-                node.rowIndex >= params.startRow &&
-                node.rowIndex < params.endRow &&
-                rows
-              ) {
-                const updatedRow = rows[node.rowIndex - params.startRow];
-                if (updatedRow) {
-                  node.setData(updatedRow);
-                  nodesToUpdate.push(node);
-                }
-              }
-            });
-
-            if (nodesToUpdate.length > 0) {
-              api.refreshCells({ rowNodes: nodesToUpdate, force: true });
-            }
-          } else {
-            const isLast =
-              (rows?.length ?? 0) < params.endRow - params.startRow;
-            params.successCallback(
-              rows ?? [],
-              isLast ? params.startRow + (rows?.length ?? 0) : undefined
-            );
-          }
-        } else if (!showCachedTracks) {
-          const inferredRowCount = Math.max(cachedCount, params.startRow);
-          params.successCallback([], inferredRowCount);
-        }
-
-        api.setGridOption("loading", false);
-      }
-    };
+          startRow,
+          endRow
+        )) ?? [],
+      source: selectedSearchSource,
+      onCacheUpdate: (trackIds, offset) =>
+        dispatch(
+          updateCachedSearchTracks({
+            key: cacheKey,
+            trackIds,
+            offset
+          })
+        )
+    });
 
     api.setGridOption("datasource", datasource);
   }, [
@@ -799,7 +743,8 @@ export const TrackList = () => {
     search,
     selectedSearchSource,
     useInfiniteRowModelForArtist,
-    useInfiniteRowModelForSearch
+    useInfiniteRowModelForSearch,
+    createDatasource
   ]);
 
   const infiniteModelProps = useMemo(() => {
