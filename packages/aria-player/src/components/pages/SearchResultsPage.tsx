@@ -31,7 +31,9 @@ export default function SearchResultsPage() {
 
   return (
     <div className={styles.searchResults}>
-      <div className={`${styles.tabs} ${scrollY <= 0 ? "" : styles.border}`}>
+      <div
+        className={`${styles.tabs} ${scrollY <= 0 || visibleSearchCategory == SearchCategory.Songs ? "" : styles.border}`}
+      >
         <div className={styles.categoryTabs}>
           <button
             className={`${styles.tab} ${
