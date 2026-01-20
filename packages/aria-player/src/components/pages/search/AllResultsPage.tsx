@@ -313,8 +313,54 @@ export default function AllResultsPage() {
       .filter(Boolean);
   }, [cachedSearchArtistIds, isExternalSearchSource, artistsInfo]);
 
+  const songResults = useMemo(
+    () =>
+      (isExternalSearchSource
+        ? cachedSongResults
+        : searchResults?.tracks.map((result) => result.item) ||
+          []) as TrackListItem[],
+    [isExternalSearchSource, cachedSongResults, searchResults?.tracks]
+  );
+
+  const artistResults = useMemo(
+    () =>
+      (isExternalSearchSource
+        ? cachedArtistResults
+        : searchResults?.artists.map((result) => result.item) ||
+          []) as ArtistDetails[],
+    [isExternalSearchSource, cachedArtistResults, searchResults?.artists]
+  );
+
+  const albumResults = useMemo(
+    () =>
+      (isExternalSearchSource
+        ? cachedAlbumResults
+        : searchResults?.albums.map((result) => result.item) ||
+          []) as AlbumDetails[],
+    [isExternalSearchSource, cachedAlbumResults, searchResults?.albums]
+  );
+
   const topResults = useMemo(() => {
-    if (!search.trim() || !searchResults) return [];
+    if (!search.trim()) return [];
+
+    if (isExternalSearchSource) {
+      // For now, rather than scoring external results across categories, just show a few from each
+      const songs = songResults
+        .slice(0, 2)
+        .map((item) => ({ type: "track" as const, item, score: 0 }));
+      const artists = artistResults
+        .slice(0, 2)
+        .map((item) => ({ type: "artist" as const, item, score: 0 }));
+      const albums = albumResults
+        .slice(0, 2)
+        .map((item) => ({ type: "album" as const, item, score: 0 }));
+      const moreSongs = songResults
+        .slice(2, 6)
+        .map((item) => ({ type: "track" as const, item, score: 0 }));
+      return [...songs, ...artists, ...albums, ...moreSongs].slice(0, 6);
+    }
+
+    if (!searchResults) return [];
 
     const allResults = [
       ...searchResults.tracks,
@@ -323,23 +369,14 @@ export default function AllResultsPage() {
     ];
 
     return allResults.sort((a, b) => a.score - b.score);
-  }, [search, searchResults]);
-
-  const songResults = (
-    isExternalSearchSource
-      ? cachedSongResults
-      : searchResults?.tracks.map((result) => result.item) || []
-  ) as TrackListItem[];
-  const artistResults = (
-    isExternalSearchSource
-      ? cachedArtistResults
-      : searchResults?.artists.map((result) => result.item) || []
-  ) as ArtistDetails[];
-  const albumResults = (
-    isExternalSearchSource
-      ? cachedAlbumResults
-      : searchResults?.albums.map((result) => result.item) || []
-  ) as AlbumDetails[];
+  }, [
+    search,
+    searchResults,
+    isExternalSearchSource,
+    artistResults,
+    albumResults,
+    songResults
+  ]);
 
   useEffect(() => {
     const resizeObserver = new ResizeObserver(() => {
