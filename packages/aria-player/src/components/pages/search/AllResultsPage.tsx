@@ -26,7 +26,9 @@ import { AlbumDetails } from "../../../features/albums/albumsTypes";
 import {
   selectCachedSearchTracks,
   selectCachedSearchAlbums,
-  updateCachedSearchAlbums
+  selectCachedSearchArtists,
+  updateCachedSearchAlbums,
+  updateCachedSearchArtists
 } from "../../../features/cache/cacheSlice";
 import { store } from "../../../app/store";
 import {
@@ -37,9 +39,13 @@ import {
   addAlbums,
   selectAlbumsInfo
 } from "../../../features/albums/albumsSlice";
+import {
+  addArtists,
+  selectArtistsInfo
+} from "../../../features/artists/artistsSlice";
 import { getSourceHandle } from "../../../features/plugins/pluginsSlice";
 import { updateCachedSearchTracks } from "../../../features/cache/cacheSlice";
-import { getTrackId, getAlbumId } from "../../../app/utils";
+import { getTrackId, getAlbumId, getArtistId } from "../../../app/utils";
 import LoadingSpinner from "../../views/subviews/LoadingSpinner";
 
 export default function AllResultsPage() {
@@ -70,7 +76,13 @@ export default function AllResultsPage() {
       ? selectCachedSearchAlbums(state, externalSearchCacheKey)
       : undefined
   );
+  const cachedSearchArtistIds = useAppSelector((state) =>
+    externalSearchCacheKey
+      ? selectCachedSearchArtists(state, externalSearchCacheKey)
+      : undefined
+  );
   const albumsInfo = useAppSelector(selectAlbumsInfo);
+  const artistsInfo = useAppSelector(selectArtistsInfo);
   const [isLoading, setIsLoading] = useState(
     isExternalSearchSource &&
       !!externalSearchHandle?.searchTracks &&
@@ -204,12 +216,70 @@ export default function AllResultsPage() {
     visibleSearchSource
   ]);
 
+  useEffect(() => {
+    const shouldFetch =
+      isExternalSearchSource &&
+      externalSearchHandle?.searchArtists &&
+      search.trim().length > 0 &&
+      externalSearchCacheKey;
+
+    if (!shouldFetch || !visibleSearchSource) return;
+
+    const fetchExternalArtists = async () => {
+      try {
+        const artistsMetadata = await externalSearchHandle?.searchArtists?.(
+          search,
+          0,
+          20
+        );
+        if (!artistsMetadata?.length) return;
+
+        const artists = artistsMetadata.map((artist) => ({
+          ...artist,
+          artistId: getArtistId(visibleSearchSource, artist.name, artist.uri),
+          source: visibleSearchSource
+        }));
+
+        dispatch(addArtists({ source: visibleSearchSource, artists }));
+
+        const artistIds = artists.map((artist) => artist.artistId);
+
+        dispatch(
+          updateCachedSearchArtists({
+            key: externalSearchCacheKey,
+            artistIds,
+            offset: 0
+          })
+        );
+      } catch (error) {
+        console.error("Failed to fetch external artists:", error);
+      }
+    };
+
+    fetchExternalArtists();
+  }, [
+    dispatch,
+    externalSearchCacheKey,
+    externalSearchHandle,
+    externalSearchHandle?.searchArtists,
+    isExternalSearchSource,
+    search,
+    visibleSearchSource
+  ]);
+
   const cachedAlbumResults = useMemo(() => {
     if (!isExternalSearchSource || !cachedSearchAlbumIds?.length) return [];
     return cachedSearchAlbumIds
       .map((albumId) => albumsInfo[albumId])
       .filter(Boolean);
   }, [cachedSearchAlbumIds, isExternalSearchSource, albumsInfo]);
+
+  const cachedArtistResults = useMemo(() => {
+    if (!isExternalSearchSource || !cachedSearchArtistIds?.length) return [];
+    return cachedSearchArtistIds
+      .map((artistId) => artistsInfo[artistId])
+      .filter(Boolean);
+  }, [cachedSearchArtistIds, isExternalSearchSource, artistsInfo]);
 
   const topResults = useMemo(() => {
     if (!search.trim() || !searchResults) return [];
@@ -228,8 +298,11 @@ export default function AllResultsPage() {
       ? cachedSongResults
       : searchResults?.tracks.map((result) => result.item) || []
   ) as TrackListItem[];
-  const artistResults = (searchResults?.artists.map((result) => result.item) ||
-    []) as ArtistDetails[];
+  const artistResults = (
+    isExternalSearchSource
+      ? cachedArtistResults
+      : searchResults?.artists.map((result) => result.item) || []
+  ) as ArtistDetails[];
   const albumResults = (
     isExternalSearchSource
       ? cachedAlbumResults
