@@ -42,7 +42,7 @@ import { updateCachedSearchTracks } from "../../../features/cache/cacheSlice";
 import { getTrackId, getAlbumId } from "../../../app/utils";
 import LoadingSpinner from "../../views/subviews/LoadingSpinner";
 
-export default function SearchResults() {
+export default function AllResultsPage() {
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
   const search = useAppSelector(selectSearch);
