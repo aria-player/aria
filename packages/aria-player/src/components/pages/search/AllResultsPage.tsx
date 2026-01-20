@@ -23,15 +23,23 @@ import TopResultItem from "./TopResultItem";
 import { useScrollDetection } from "../../../hooks/useScrollDetection";
 import { ArtistDetails } from "../../../features/artists/artistsTypes";
 import { AlbumDetails } from "../../../features/albums/albumsTypes";
-import { selectCachedSearchTracks } from "../../../features/cache/cacheSlice";
+import {
+  selectCachedSearchTracks,
+  selectCachedSearchAlbums,
+  updateCachedSearchAlbums
+} from "../../../features/cache/cacheSlice";
 import { store } from "../../../app/store";
 import {
   addTracks,
   selectTrackById
 } from "../../../features/tracks/tracksSlice";
+import {
+  addAlbums,
+  selectAlbumsInfo
+} from "../../../features/albums/albumsSlice";
 import { getSourceHandle } from "../../../features/plugins/pluginsSlice";
 import { updateCachedSearchTracks } from "../../../features/cache/cacheSlice";
-import { getTrackId } from "../../../app/utils";
+import { getTrackId, getAlbumId } from "../../../app/utils";
 import LoadingSpinner from "../../views/subviews/LoadingSpinner";
 
 export default function SearchResults() {
@@ -57,6 +65,12 @@ export default function SearchResults() {
       ? selectCachedSearchTracks(state, externalSearchCacheKey)
       : undefined
   );
+  const cachedSearchAlbumIds = useAppSelector((state) =>
+    externalSearchCacheKey
+      ? selectCachedSearchAlbums(state, externalSearchCacheKey)
+      : undefined
+  );
+  const albumsInfo = useAppSelector(selectAlbumsInfo);
   const [isLoading, setIsLoading] = useState(
     isExternalSearchSource &&
       !!externalSearchHandle?.searchTracks &&
@@ -134,6 +148,69 @@ export default function SearchResults() {
     visibleSearchSource
   ]);
 
+  useEffect(() => {
+    const shouldFetch =
+      isExternalSearchSource &&
+      externalSearchHandle?.searchAlbums &&
+      search.trim().length > 0 &&
+      externalSearchCacheKey;
+
+    if (!shouldFetch || !visibleSearchSource) return;
+
+    const fetchExternalAlbums = async () => {
+      try {
+        const albumsMetadata = await externalSearchHandle?.searchAlbums?.(
+          search,
+          0,
+          20
+        );
+        if (!albumsMetadata?.length) return;
+
+        const albums = albumsMetadata.map((album) => ({
+          ...album,
+          albumId: getAlbumId(
+            visibleSearchSource,
+            album.name ?? "",
+            album.artist,
+            album.uri
+          ),
+          source: visibleSearchSource
+        }));
+
+        dispatch(addAlbums({ source: visibleSearchSource, albums }));
+
+        const albumIds = albums.map((album) => album.albumId);
+
+        dispatch(
+          updateCachedSearchAlbums({
+            key: externalSearchCacheKey,
+            albumIds,
+            offset: 0
+          })
+        );
+      } catch (error) {
+        console.error("Failed to fetch external albums:", error);
+      }
+    };
+
+    fetchExternalAlbums();
+  }, [
+    dispatch,
+    externalSearchCacheKey,
+    externalSearchHandle,
+    externalSearchHandle?.searchAlbums,
+    isExternalSearchSource,
+    search,
+    visibleSearchSource
+  ]);
+
+  const cachedAlbumResults = useMemo(() => {
+    if (!isExternalSearchSource || !cachedSearchAlbumIds?.length) return [];
+    return cachedSearchAlbumIds
+      .map((albumId) => albumsInfo[albumId])
+      .filter(Boolean);
+  }, [cachedSearchAlbumIds, isExternalSearchSource, albumsInfo]);
+
   const topResults = useMemo(() => {
     if (!search.trim() || !searchResults) return [];
 
@@ -153,8 +230,11 @@ export default function SearchResults() {
   ) as TrackListItem[];
   const artistResults = (searchResults?.artists.map((result) => result.item) ||
     []) as ArtistDetails[];
-  const albumResults = (searchResults?.albums.map((result) => result.item) ||
-    []) as AlbumDetails[];
+  const albumResults = (
+    isExternalSearchSource
+      ? cachedAlbumResults
+      : searchResults?.albums.map((result) => result.item) || []
+  ) as AlbumDetails[];
 
   useEffect(() => {
     const resizeObserver = new ResizeObserver(() => {
