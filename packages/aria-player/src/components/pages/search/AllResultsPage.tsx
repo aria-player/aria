@@ -88,6 +88,21 @@ export default function AllResultsPage() {
       !!externalSearchHandle?.searchTracks &&
       !cachedSearchTrackIds
   );
+  const fetchedTracksRef = useRef<string | null>(null);
+  const fetchedAlbumsRef = useRef<string | null>(null);
+  const fetchedArtistsRef = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (
+      externalSearchCacheKey &&
+      fetchedTracksRef.current !== externalSearchCacheKey
+    ) {
+      fetchedTracksRef.current = null;
+      fetchedAlbumsRef.current = null;
+      fetchedArtistsRef.current = null;
+    }
+  }, [externalSearchCacheKey]);
+
   const cachedSongResults = useMemo(() => {
     if (!isExternalSearchSource || !cachedSearchTrackIds?.length) return [];
     const state = store.getState();
@@ -110,10 +125,16 @@ export default function AllResultsPage() {
       search.trim().length > 0 &&
       externalSearchCacheKey;
 
-    if (!shouldFetch || !visibleSearchSource) return;
+    if (
+      !shouldFetch ||
+      !visibleSearchSource ||
+      fetchedTracksRef.current === externalSearchCacheKey
+    )
+      return;
 
     const fetchExternalTracks = async () => {
-      if ((cachedSearchTrackIds?.length ?? 0) === 0) {
+      fetchedTracksRef.current = externalSearchCacheKey;
+      if (!cachedSearchTrackIds) {
         setIsLoading(true);
       }
       try {
@@ -150,11 +171,10 @@ export default function AllResultsPage() {
 
     fetchExternalTracks();
   }, [
-    cachedSearchTrackIds?.length,
+    cachedSearchTrackIds,
     dispatch,
     externalSearchCacheKey,
     externalSearchHandle,
-    externalSearchHandle?.searchTracks,
     isExternalSearchSource,
     search,
     visibleSearchSource
@@ -167,9 +187,15 @@ export default function AllResultsPage() {
       search.trim().length > 0 &&
       externalSearchCacheKey;
 
-    if (!shouldFetch || !visibleSearchSource) return;
+    if (
+      !shouldFetch ||
+      !visibleSearchSource ||
+      fetchedAlbumsRef.current === externalSearchCacheKey
+    )
+      return;
 
     const fetchExternalAlbums = async () => {
+      fetchedAlbumsRef.current = externalSearchCacheKey;
       try {
         const albumsMetadata = await externalSearchHandle?.searchAlbums?.(
           search,
@@ -207,10 +233,10 @@ export default function AllResultsPage() {
 
     fetchExternalAlbums();
   }, [
+    cachedSearchAlbumIds,
     dispatch,
     externalSearchCacheKey,
     externalSearchHandle,
-    externalSearchHandle?.searchAlbums,
     isExternalSearchSource,
     search,
     visibleSearchSource
@@ -223,9 +249,15 @@ export default function AllResultsPage() {
       search.trim().length > 0 &&
       externalSearchCacheKey;
 
-    if (!shouldFetch || !visibleSearchSource) return;
+    if (
+      !shouldFetch ||
+      !visibleSearchSource ||
+      fetchedArtistsRef.current === externalSearchCacheKey
+    )
+      return;
 
     const fetchExternalArtists = async () => {
+      fetchedArtistsRef.current = externalSearchCacheKey;
       try {
         const artistsMetadata = await externalSearchHandle?.searchArtists?.(
           search,
@@ -258,10 +290,10 @@ export default function AllResultsPage() {
 
     fetchExternalArtists();
   }, [
+    cachedSearchArtistIds,
     dispatch,
     externalSearchCacheKey,
     externalSearchHandle,
-    externalSearchHandle?.searchArtists,
     isExternalSearchSource,
     search,
     visibleSearchSource
