@@ -132,11 +132,10 @@ export const TrackList = () => {
     : null;
 
   const search = useAppSelector(selectSearch);
-  const selectedSearchSource = useAppSelector(selectSelectedSearchSource);
-  const isExternalSearchSource =
-    selectedSearchSource !== null && selectedSearchSource !== "library";
+  const visibleSearchSource = useAppSelector(selectSelectedSearchSource);
+  const isExternalSearchSource = visibleSearchSource !== null;
   const externalSearchHandle = isExternalSearchSource
-    ? getSourceHandle(selectedSearchSource)
+    ? getSourceHandle(visibleSearchSource)
     : null;
 
   const useInfiniteRowModelForArtist =
@@ -708,7 +707,7 @@ export const TrackList = () => {
       !useInfiniteRowModelForSearch ||
       !externalSearchHandle?.searchTracks ||
       !search.trim() ||
-      !selectedSearchSource
+      !visibleSearchSource
     ) {
       if (!useInfiniteRowModelForArtist) {
         api.setGridOption("loading", false);
@@ -719,7 +718,7 @@ export const TrackList = () => {
 
     api.setGridOption("loading", true);
 
-    const cacheKey = getExternalSearchCacheKey(selectedSearchSource, search);
+    const cacheKey = getExternalSearchCacheKey(visibleSearchSource, search);
 
     const datasource = createDatasource(api, {
       getCachedTrackIds: () =>
@@ -730,7 +729,7 @@ export const TrackList = () => {
           startRow,
           endRow
         )) ?? [],
-      source: selectedSearchSource,
+      source: visibleSearchSource,
       onCacheUpdate: (trackIds, offset) =>
         dispatch(
           updateCachedSearchTracks({
@@ -748,7 +747,7 @@ export const TrackList = () => {
     gridRef,
     isGridReady,
     search,
-    selectedSearchSource,
+    visibleSearchSource,
     useInfiniteRowModelForArtist,
     useInfiniteRowModelForSearch,
     createDatasource

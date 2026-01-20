@@ -1,7 +1,10 @@
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import styles from "./ArtistGrid.module.css";
 import { useTranslation } from "react-i18next";
-import { selectVisibleArtists } from "../../features/visibleSelectors";
+import {
+  selectVisibleArtists,
+  selectVisibleSearchSource
+} from "../../features/visibleSelectors";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import {
   getScrollbarWidth,
@@ -23,10 +26,7 @@ import {
   selectCachedSearchArtists,
   updateCachedSearchArtists
 } from "../../features/cache/cacheSlice";
-import {
-  selectSearch,
-  selectSelectedSearchSource
-} from "../../features/search/searchSlice";
+import { selectSearch } from "../../features/search/searchSlice";
 
 const ARTISTS_BATCH_SIZE = 20;
 
@@ -50,11 +50,10 @@ export default function ArtistGrid() {
   const [hasMoreSearchArtists, setHasMoreSearchArtists] = useState(true);
 
   const search = useAppSelector(selectSearch);
-  const selectedSearchSource = useAppSelector(selectSelectedSearchSource);
-  const isExternalSearchSource =
-    selectedSearchSource !== null && selectedSearchSource !== "library";
+  const visibleSearchSource = useAppSelector(selectVisibleSearchSource);
+  const isExternalSearchSource = visibleSearchSource !== null;
   const externalSearchHandle = isExternalSearchSource
-    ? getSourceHandle(selectedSearchSource)
+    ? getSourceHandle(visibleSearchSource)
     : null;
 
   const isExternalSearch =
@@ -63,9 +62,9 @@ export default function ArtistGrid() {
     !!search.trim();
 
   const searchCacheKey = useMemo(() => {
-    if (!isExternalSearch || !selectedSearchSource) return "";
-    return getExternalSearchCacheKey(selectedSearchSource, search);
-  }, [isExternalSearch, selectedSearchSource, search]);
+    if (!isExternalSearch || !visibleSearchSource) return "";
+    return getExternalSearchCacheKey(visibleSearchSource, search);
+  }, [isExternalSearch, visibleSearchSource, search]);
 
   const cachedSearchArtists = useAppSelector((state) =>
     searchCacheKey
@@ -109,7 +108,7 @@ export default function ArtistGrid() {
       if (
         !isExternalSearch ||
         !externalSearchHandle?.searchArtists ||
-        !selectedSearchSource ||
+        !visibleSearchSource ||
         !searchCacheKey ||
         !hasMoreSearchArtists
       ) {
@@ -132,11 +131,11 @@ export default function ArtistGrid() {
 
       const artists = artistsMetadata.map((artist) => ({
         ...artist,
-        artistId: getArtistId(selectedSearchSource, artist.name, artist.uri),
-        source: selectedSearchSource
+        artistId: getArtistId(visibleSearchSource, artist.name, artist.uri),
+        source: visibleSearchSource
       }));
 
-      dispatch(addArtists({ source: selectedSearchSource, artists }));
+      dispatch(addArtists({ source: visibleSearchSource, artists }));
 
       const newArtistIds = artists.map((a) => a.artistId);
       dispatch(
@@ -158,7 +157,7 @@ export default function ArtistGrid() {
       hasMoreSearchArtists,
       search,
       searchCacheKey,
-      selectedSearchSource,
+      visibleSearchSource,
       isExternalSearch
     ]
   );

@@ -65,11 +65,10 @@ export default function AlbumGrid() {
   );
 
   const search = useAppSelector(selectSearch);
-  const selectedSearchSource = useAppSelector(selectSelectedSearchSource);
-  const isExternalSearchSource =
-    selectedSearchSource !== null && selectedSearchSource !== "library";
+  const visibleSearchSource = useAppSelector(selectSelectedSearchSource);
+  const isExternalSearchSource = visibleSearchSource !== null;
   const externalSearchHandle = isExternalSearchSource
-    ? getSourceHandle(selectedSearchSource)
+    ? getSourceHandle(visibleSearchSource)
     : null;
 
   const isExternalSearch =
@@ -79,9 +78,9 @@ export default function AlbumGrid() {
     !!search.trim();
 
   const searchCacheKey = useMemo(() => {
-    if (!isExternalSearch || !selectedSearchSource) return "";
-    return getExternalSearchCacheKey(selectedSearchSource, search);
-  }, [isExternalSearch, selectedSearchSource, search]);
+    if (!isExternalSearch || !visibleSearchSource) return "";
+    return getExternalSearchCacheKey(visibleSearchSource, search);
+  }, [isExternalSearch, visibleSearchSource, search]);
 
   const cachedSearchAlbums = useAppSelector((state) =>
     searchCacheKey ? selectCachedSearchAlbums(state, searchCacheKey) : undefined
@@ -223,7 +222,7 @@ export default function AlbumGrid() {
       if (
         !isExternalSearch ||
         !externalSearchHandle?.searchAlbums ||
-        !selectedSearchSource ||
+        !visibleSearchSource ||
         !searchCacheKey ||
         !hasMoreSearchAlbums
       ) {
@@ -247,15 +246,15 @@ export default function AlbumGrid() {
       const albums = albumsMetadata.map((album) => ({
         ...album,
         albumId: getAlbumId(
-          selectedSearchSource,
+          visibleSearchSource,
           album.name ?? "",
           album.artist,
           album.uri
         ),
-        source: selectedSearchSource
+        source: visibleSearchSource
       }));
 
-      dispatch(addAlbums({ source: selectedSearchSource, albums }));
+      dispatch(addAlbums({ source: visibleSearchSource, albums }));
 
       const newAlbumIds = albums.map((a) => a.albumId);
       dispatch(
@@ -277,7 +276,7 @@ export default function AlbumGrid() {
       hasMoreSearchAlbums,
       search,
       searchCacheKey,
-      selectedSearchSource,
+      visibleSearchSource,
       isExternalSearch
     ]
   );
