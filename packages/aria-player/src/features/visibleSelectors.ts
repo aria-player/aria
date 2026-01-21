@@ -32,6 +32,7 @@ import {
   selectTrackById,
   selectLibraryTracks
 } from "./tracks/tracksSlice";
+import { selectCachedArtistTopTracks } from "./cache/cacheSlice";
 import {
   searchTracks,
   searchArtists,
@@ -487,7 +488,8 @@ export const selectVisibleArtistTracks = createSelector(
   [
     (state: RootState) => selectAllTracks(state),
     (state: RootState) => state.router.location?.pathname,
-    (state: RootState) => selectArtistDelimiter(state)
+    (state: RootState) => selectArtistDelimiter(state),
+    (state: RootState) => selectVisibleSelectedTrackGroup(state)
   ],
   () => {
     const state = store.getState();
@@ -495,27 +497,47 @@ export const selectVisibleArtistTracks = createSelector(
     const visibleViewType = selectVisibleViewType(state);
     const visibleArtist = selectVisibleArtist(state);
     if (visibleViewType === View.Artist && visibleArtist) {
-      return selectAllTracks(state)
-        .filter((track) => {
-          return (
-            normalizeArtists(
-              track.artist,
-              track.artistUri,
-              track.source,
-              delimiter
-            ).some((artist) => artist.id == visibleArtist.artistId) ||
-            normalizeArtists(
-              track.albumArtist,
-              track.albumArtistUri,
-              track.source,
-              delimiter
-            ).some((artist) => artist.id == visibleArtist.artistId)
-          );
-        })
-        .map((track) => ({
-          ...track,
-          itemId: track.trackId
-        })) as TrackListItem[];
+      const artistId = selectVisibleSelectedTrackGroup(state);
+      const visibleArtistSection = selectVisibleArtistSection(state);
+      const cachedTrackOrder = artistId
+        ? selectCachedArtistTopTracks(state, artistId)
+        : null;
+      const artistTracks = selectAllTracks(state).filter((track) => {
+        return (
+          normalizeArtists(
+            track.artist,
+            track.artistUri,
+            track.source,
+            delimiter
+          ).some((artist) => artist.id == visibleArtist.artistId) ||
+          normalizeArtists(
+            track.albumArtist,
+            track.albumArtistUri,
+            track.source,
+            delimiter
+          ).some((artist) => artist.id == visibleArtist.artistId)
+        );
+      });
+      if (cachedTrackOrder && cachedTrackOrder.length > 0) {
+        const trackMap = new Map(
+          artistTracks.map((track) => [track.trackId, track])
+        );
+        return (
+          visibleArtistSection == null
+            ? cachedTrackOrder.slice(0, 5)
+            : cachedTrackOrder
+        )
+          .map((trackId) => trackMap.get(trackId))
+          .filter((track) => track !== undefined)
+          .map((track) => ({
+            ...track,
+            itemId: track.trackId
+          })) as TrackListItem[];
+      }
+      return artistTracks.map((track) => ({
+        ...track,
+        itemId: track.trackId
+      })) as TrackListItem[];
     }
     return [];
   }
