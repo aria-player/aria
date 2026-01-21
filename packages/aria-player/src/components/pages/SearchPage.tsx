@@ -1,7 +1,8 @@
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import {
   selectSearchHistory,
-  removeFromSearchHistory
+  removeFromSearchHistory,
+  selectSelectedSearchSource
 } from "../../features/search/searchSlice";
 import styles from "./SearchPage.module.css";
 import ClearIcon from "../../assets/xmark-solid.svg?react";
@@ -14,6 +15,7 @@ export default function SearchPage() {
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
   const searchHistory = useAppSelector(selectSearchHistory);
+  const selectedSearchSource = useAppSelector(selectSelectedSearchSource);
   const { onScroll } = useScrollDetection();
 
   if (searchHistory.length === 0) {
@@ -38,7 +40,11 @@ export default function SearchPage() {
               onClick={() => {
                 dispatch(
                   push(
-                    BASEPATH + "search/" + encodeURIComponent(item) + "/library"
+                    BASEPATH +
+                      "search/" +
+                      encodeURIComponent(item) +
+                      "/" +
+                      encodeURIComponent(selectedSearchSource ?? "library")
                   )
                 );
               }}
