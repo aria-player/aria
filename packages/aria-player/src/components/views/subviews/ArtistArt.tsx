@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 import MusicIcon from "../../../assets/music.svg?react";
 import styles from "./ArtistArt.module.css";
 import { ArtworkContext } from "../../../contexts/ArtworkContext";
@@ -6,45 +6,70 @@ import { getSourceHandle } from "../../../features/plugins/pluginsSlice";
 import { ArtistDetails } from "../../../features/artists/artistsTypes";
 
 export const ArtistArt = ({ artist }: { artist: ArtistDetails }) => {
-  const { artworkCache, artistArtworkCache } = useContext(ArtworkContext);
-  const [artwork, setArtwork] = useState<string | null>(null);
+  const { artworkCache, artistArtworkCache, cacheArtwork, cacheArtistArtwork } =
+    useContext(ArtworkContext);
+  const [fetchedArtwork, setFetchedArtwork] = useState<string | null>(null);
+
+  const artworkUri = artist?.artworkUri;
+  const fallbackArtworkUri = artist?.firstTrackArtworkUri;
+  const source = artist?.source;
+
+  const artwork = useMemo(() => {
+    if (artworkUri) {
+      return artistArtworkCache[artworkUri] || fetchedArtwork;
+    }
+    if (fallbackArtworkUri) {
+      return artworkCache[fallbackArtworkUri] || fetchedArtwork;
+    }
+    return null;
+  }, [
+    artworkUri,
+    artistArtworkCache,
+    fallbackArtworkUri,
+    artworkCache,
+    fetchedArtwork
+  ]);
 
   useEffect(() => {
-    if (artist.artworkUri && artistArtworkCache[artist.artworkUri]) {
-      setArtwork(artistArtworkCache[artist.artworkUri]);
+    if (!artworkUri || !source) {
+      setFetchedArtwork(null);
       return;
     }
-    if (artist.artworkUri) {
-      const pluginHandle = getSourceHandle(artist.source);
-      if (pluginHandle?.getArtistArtwork) {
-        pluginHandle
-          .getArtistArtwork(artist.artworkUri)
-          .then((artistArtwork) => {
-            setArtwork(artistArtwork ?? null);
-            return;
-          });
+    if (artistArtworkCache[artworkUri]) {
+      return;
+    }
+    const handle = getSourceHandle(source);
+    if (handle?.getArtistArtwork) {
+      handle.getArtistArtwork(artworkUri).then((artistArtwork) => {
+        if (artistArtwork) {
+          setFetchedArtwork(artistArtwork);
+          cacheArtistArtwork(artworkUri, artistArtwork);
+        }
+      });
+      return;
+    }
+    if (fallbackArtworkUri) {
+      if (artworkCache[fallbackArtworkUri]) {
+        return;
+      }
+      if (handle?.getTrackArtwork) {
+        handle.getTrackArtwork(fallbackArtworkUri).then((coverArtData) => {
+          if (coverArtData) {
+            setFetchedArtwork(coverArtData);
+            cacheArtwork(fallbackArtworkUri, coverArtData);
+          }
+        });
       }
     }
-    if (
-      artist.firstTrackArtworkUri &&
-      artworkCache[artist.firstTrackArtworkUri]
-    ) {
-      setArtwork(artworkCache[artist.firstTrackArtworkUri]);
-      return;
-    }
-    if (
-      artist.firstTrackArtworkUri &&
-      getSourceHandle(artist.source)?.getTrackArtwork != undefined
-    ) {
-      getSourceHandle(artist.source)
-        ?.getTrackArtwork?.(artist.firstTrackArtworkUri)
-        .then((coverArtData) => {
-          setArtwork(coverArtData ?? null);
-          return;
-        });
-    }
-    setArtwork(null);
-  }, [artworkCache, artistArtworkCache, artist]);
+  }, [
+    artworkUri,
+    fallbackArtworkUri,
+    source,
+    artworkCache,
+    artistArtworkCache,
+    cacheArtwork,
+    cacheArtistArtwork
+  ]);
 
   return artwork ? (
     <img

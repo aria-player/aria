@@ -20,11 +20,12 @@ export const ArtworkContext = createContext<{
   artworkCache: Record<string, string>;
   cacheArtwork: (uri: string, data: string) => void;
   artistArtworkCache: Record<string, string>;
-  // TODO: Add method for caching artist artwork once external artist search is added
+  cacheArtistArtwork: (uri: string, data: string) => void;
 }>({
   artworkCache: {},
   cacheArtwork: () => {},
-  artistArtworkCache: {}
+  artistArtworkCache: {},
+  cacheArtistArtwork: () => {}
 });
 
 function filterByUniqueArtwork(array: Track[]) {
@@ -89,6 +90,17 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
     });
   }, []);
 
+  const cacheArtistArtwork = useCallback((uri: string, data: string) => {
+    if (!uri || !data) return;
+    setArtistArtworkCache((prev) => {
+      if (prev[uri]) return prev;
+      return {
+        ...prev,
+        [uri]: data
+      };
+    });
+  }, []);
+
   useDebounce(
     () => {
       loadAllArtwork().then((result) => {
@@ -109,7 +121,12 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <ArtworkContext.Provider
-      value={{ artworkCache, cacheArtwork, artistArtworkCache }}
+      value={{
+        artworkCache,
+        cacheArtwork,
+        artistArtworkCache,
+        cacheArtistArtwork
+      }}
     >
       {children}
     </ArtworkContext.Provider>
