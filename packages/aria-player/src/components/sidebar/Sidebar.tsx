@@ -35,7 +35,8 @@ import { View } from "../../app/view";
 import {
   selectSelectedSearchSource,
   selectSearch,
-  setSearch
+  setSearch,
+  setDebouncedSearch
 } from "../../features/search/searchSlice";
 
 import FolderOpenIcon from "../../assets/chevron-down-solid.svg?react";
@@ -133,6 +134,13 @@ export function Sidebar() {
   useEffect(() => {
     setLocalSearch(search);
   }, [search]);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      dispatch(setDebouncedSearch(search));
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [search, dispatch]);
 
   function goToSearch() {
     if (visibleViewType != View.Search || visibleSearchCategory != null) {

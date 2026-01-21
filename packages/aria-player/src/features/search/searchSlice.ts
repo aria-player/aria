@@ -3,12 +3,14 @@ import { RootState } from "../../app/store";
 
 interface SearchState {
   search: string;
+  debouncedSearch: string;
   searchHistory: string[];
   selectedSearchSource: string | null;
 }
 
 const initialState: SearchState = {
   search: "",
+  debouncedSearch: "",
   searchHistory: [],
   selectedSearchSource: null
 };
@@ -19,6 +21,9 @@ const searchSlice = createSlice({
   reducers: {
     setSearch: (state, action) => {
       state.search = action.payload;
+    },
+    setDebouncedSearch: (state, action) => {
+      state.debouncedSearch = action.payload;
     },
     addToSearchHistory: (state, action) => {
       state.searchHistory = state.searchHistory.filter(
@@ -39,12 +44,15 @@ const searchSlice = createSlice({
 
 export const {
   setSearch,
+  setDebouncedSearch,
   addToSearchHistory,
   removeFromSearchHistory,
   setSelectedSearchSource
 } = searchSlice.actions;
 
 export const selectSearch = (state: RootState) => state.search.search;
+export const selectDebouncedSearch = (state: RootState) =>
+  state.search.debouncedSearch;
 export const selectSearchHistory = (state: RootState) =>
   state.search.searchHistory;
 export const selectSelectedSearchSource = (state: RootState) =>

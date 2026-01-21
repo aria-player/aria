@@ -68,6 +68,7 @@ import { compareMetadata } from "../../app/sort";
 import {
   addToSearchHistory,
   selectSearch,
+  selectDebouncedSearch,
   selectSelectedSearchSource
 } from "../../features/search/searchSlice";
 import NoRowsOverlay from "./subviews/NoRowsOverlay";
@@ -131,7 +132,7 @@ export const TrackList = () => {
     ? getSourceHandle(parsedArtistInfo.source)
     : null;
 
-  const search = useAppSelector(selectSearch);
+  const debouncedSearch = useAppSelector(selectDebouncedSearch);
   const visibleSearchSource = useAppSelector(selectSelectedSearchSource);
   const isExternalSearchSource = visibleSearchSource !== null;
   const externalSearchHandle = isExternalSearchSource
@@ -148,7 +149,7 @@ export const TrackList = () => {
     visibleViewType === View.Search &&
     isExternalSearchSource &&
     !!externalSearchHandle?.searchTracks &&
-    !!search.trim();
+    !!debouncedSearch.trim();
 
   const useInfiniteRowModel =
     useInfiniteRowModelForArtist || useInfiniteRowModelForSearch;
@@ -706,7 +707,7 @@ export const TrackList = () => {
     if (
       !useInfiniteRowModelForSearch ||
       !externalSearchHandle?.searchTracks ||
-      !search.trim() ||
+      !debouncedSearch.trim() ||
       !visibleSearchSource
     ) {
       if (!useInfiniteRowModelForArtist) {
@@ -718,14 +719,17 @@ export const TrackList = () => {
 
     api.setGridOption("loading", true);
 
-    const cacheKey = getExternalSearchCacheKey(visibleSearchSource, search);
+    const cacheKey = getExternalSearchCacheKey(
+      visibleSearchSource,
+      debouncedSearch
+    );
 
     const datasource = createDatasource(api, {
       getCachedTrackIds: () =>
         selectCachedSearchTracks(store.getState(), cacheKey) || [],
       fetchTracks: async (startRow, endRow) =>
         (await externalSearchHandle?.searchTracks?.(
-          search,
+          debouncedSearch,
           startRow,
           endRow
         )) ?? [],
@@ -746,7 +750,7 @@ export const TrackList = () => {
     externalSearchHandle,
     gridRef,
     isGridReady,
-    search,
+    debouncedSearch,
     visibleSearchSource,
     useInfiniteRowModelForArtist,
     useInfiniteRowModelForSearch,

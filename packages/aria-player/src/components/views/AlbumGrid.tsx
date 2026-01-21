@@ -27,6 +27,7 @@ import {
 } from "../../features/cache/cacheSlice";
 import {
   selectSearch,
+  selectDebouncedSearch,
   selectSelectedSearchSource
 } from "../../features/search/searchSlice";
 import { getExternalSearchCacheKey } from "../../app/utils";
@@ -65,6 +66,7 @@ export default function AlbumGrid() {
   );
 
   const search = useAppSelector(selectSearch);
+  const debouncedSearch = useAppSelector(selectDebouncedSearch);
   const visibleSearchSource = useAppSelector(selectSelectedSearchSource);
   const isExternalSearchSource = visibleSearchSource !== null;
   const externalSearchHandle = isExternalSearchSource
@@ -75,12 +77,12 @@ export default function AlbumGrid() {
     visibleViewType === View.Search &&
     isExternalSearchSource &&
     !!externalSearchHandle?.searchAlbums &&
-    !!search.trim();
+    !!debouncedSearch.trim();
 
   const searchCacheKey = useMemo(() => {
     if (!isExternalSearch || !visibleSearchSource) return "";
-    return getExternalSearchCacheKey(visibleSearchSource, search);
-  }, [isExternalSearch, visibleSearchSource, search]);
+    return getExternalSearchCacheKey(visibleSearchSource, debouncedSearch);
+  }, [isExternalSearch, visibleSearchSource, debouncedSearch]);
 
   const cachedSearchAlbums = useAppSelector((state) =>
     searchCacheKey ? selectCachedSearchAlbums(state, searchCacheKey) : undefined

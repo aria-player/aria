@@ -3,7 +3,10 @@ import { useMemo, useEffect, useRef, useState } from "react";
 import { push } from "redux-first-history";
 import { BASEPATH } from "../../../app/constants";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
-import { selectSearch } from "../../../features/search/searchSlice";
+import {
+  selectSearch,
+  selectDebouncedSearch
+} from "../../../features/search/searchSlice";
 import {
   selectVisibleSearchResults,
   selectVisibleSearchSource
@@ -52,6 +55,7 @@ export default function AllResultsPage() {
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
   const search = useAppSelector(selectSearch);
+  const debouncedSearch = useAppSelector(selectDebouncedSearch);
   const searchResults = useAppSelector(selectVisibleSearchResults);
   const visibleSearchSource = useAppSelector(selectVisibleSearchSource);
   const { gridRef, gridProps } = useTrackGrid();
@@ -61,11 +65,11 @@ export default function AllResultsPage() {
   const externalSearchHandle =
     visibleSearchSource !== null ? getSourceHandle(visibleSearchSource) : null;
   const isExternalSearchSource =
-    !!externalSearchHandle?.searchTracks && !!search.trim();
+    !!externalSearchHandle?.searchTracks && !!debouncedSearch.trim();
   const externalSearchCacheKey = useMemo(() => {
     if (!isExternalSearchSource || !visibleSearchSource) return null;
-    return getExternalSearchCacheKey(visibleSearchSource, search);
-  }, [isExternalSearchSource, search, visibleSearchSource]);
+    return getExternalSearchCacheKey(visibleSearchSource, debouncedSearch);
+  }, [isExternalSearchSource, debouncedSearch, visibleSearchSource]);
   const cachedSearchTrackIds = useAppSelector((state) =>
     externalSearchCacheKey
       ? selectCachedSearchTracks(state, externalSearchCacheKey)

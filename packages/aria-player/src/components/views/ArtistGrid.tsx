@@ -26,7 +26,10 @@ import {
   selectCachedSearchArtists,
   updateCachedSearchArtists
 } from "../../features/cache/cacheSlice";
-import { selectSearch } from "../../features/search/searchSlice";
+import {
+  selectSearch,
+  selectDebouncedSearch
+} from "../../features/search/searchSlice";
 
 const ARTISTS_BATCH_SIZE = 20;
 
@@ -50,6 +53,7 @@ export default function ArtistGrid() {
   const [hasMoreSearchArtists, setHasMoreSearchArtists] = useState(true);
 
   const search = useAppSelector(selectSearch);
+  const debouncedSearch = useAppSelector(selectDebouncedSearch);
   const visibleSearchSource = useAppSelector(selectVisibleSearchSource);
   const isExternalSearchSource = visibleSearchSource !== null;
   const externalSearchHandle = isExternalSearchSource
@@ -59,12 +63,12 @@ export default function ArtistGrid() {
   const isExternalSearch =
     isExternalSearchSource &&
     !!externalSearchHandle?.searchArtists &&
-    !!search.trim();
+    !!debouncedSearch.trim();
 
   const searchCacheKey = useMemo(() => {
     if (!isExternalSearch || !visibleSearchSource) return "";
-    return getExternalSearchCacheKey(visibleSearchSource, search);
-  }, [isExternalSearch, visibleSearchSource, search]);
+    return getExternalSearchCacheKey(visibleSearchSource, debouncedSearch);
+  }, [isExternalSearch, visibleSearchSource, debouncedSearch]);
 
   const cachedSearchArtists = useAppSelector((state) =>
     searchCacheKey
