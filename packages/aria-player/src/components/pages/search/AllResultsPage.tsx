@@ -423,9 +423,12 @@ export default function AllResultsPage() {
       onScroll={(e) => onScroll(e.currentTarget.scrollTop)}
     >
       {isLoading && <LoadingSpinner />}
-      {!isLoading && songResults.length === 0 && (
-        <div className={styles.noResults}>{t("search.noResults")}</div>
-      )}
+      {!isLoading &&
+        songResults.length === 0 &&
+        artistResults.length === 0 &&
+        albumResults.length === 0 && (
+          <div className={styles.noResults}>{t("search.noResults")}</div>
+        )}
       {!isLoading && (
         <div ref={containerRef}>
           {topResults.length > 0 && (
