@@ -18,7 +18,7 @@ import {
 import { sortPlugins } from "../../../app/utils";
 import { PluginId } from "../../../../../types/plugins";
 import styles from "./SearchSourceSwitcher.module.css";
-import { push } from "redux-first-history";
+import { push, replace } from "redux-first-history";
 import { BASEPATH } from "../../../app/constants";
 import { useEffect } from "react";
 import { selectLibraryTracks } from "../../../features/tracks/tracksSlice";
@@ -33,12 +33,6 @@ export default function SearchSourceSwitcher() {
   const selectedSearchSource = useAppSelector(selectSelectedSearchSource);
   const search = useAppSelector(selectSearch);
   const libraryTracks = useAppSelector(selectLibraryTracks);
-
-  useEffect(() => {
-    if (visibleSearchSource !== selectedSearchSource) {
-      dispatch(setSelectedSearchSource(visibleSearchSource));
-    }
-  }, [dispatch, visibleSearchSource, selectedSearchSource]);
 
   const hasExternalSearch = (plugin: PluginId) => {
     // TODO: Possibly include plugins that don't support all search functions
@@ -66,6 +60,31 @@ export default function SearchSourceSwitcher() {
     searchableSourcePlugins.filter(hasExternalSearch);
   const librarySources = new Set(libraryTracks.map((track) => track.source))
     .size;
+
+  useEffect(() => {
+    if (
+      visibleSearchSource !== null &&
+      !searchableSourcePlugins.includes(visibleSearchSource)
+    ) {
+      dispatch(
+        replace(
+          BASEPATH +
+            `search/${encodeURIComponent(search)}/library/${encodeURIComponent(visibleSearchCategory ?? "")}`
+        )
+      );
+      dispatch(setSelectedSearchSource("library"));
+    } else if (visibleSearchSource !== selectedSearchSource) {
+      dispatch(setSelectedSearchSource(visibleSearchSource));
+    }
+  }, [
+    visibleSearchSource,
+    selectedSearchSource,
+    searchableSourcePlugins,
+    dispatch,
+    search,
+    visibleSearchCategory
+  ]);
+
   if (
     searchableSourcePlugins.length === 0 ||
     (externalSearchPlugins.length === 0 && librarySources <= 1)
