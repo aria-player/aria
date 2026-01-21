@@ -40,25 +40,36 @@ export default function SearchSourceSwitcher() {
     }
   }, [dispatch, visibleSearchSource, selectedSearchSource]);
 
+  const hasExternalSearch = (plugin: PluginId) => {
+    // TODO: Possibly include plugins that don't support all search functions
+    const handle = getSourceHandle(plugin);
+    return (
+      !!handle?.searchTracks &&
+      !!handle?.searchAlbums &&
+      !!handle?.searchArtists
+    );
+  };
+
   const searchableSourcePlugins = activePlugins
     .filter((plugin: PluginId) => {
       if (!plugins[plugin].capabilities?.includes("source")) {
         return false;
       }
-      const handle = getSourceHandle(plugin);
-      // TODO: Possibly include plugins that don't support all search functions
-      const searchAvailable =
-        !!handle?.searchTracks &&
-        !!handle?.searchAlbums &&
-        !!handle?.searchArtists;
       const hasLibraryTracks = libraryTracks.some(
         (track) => track.source === plugin
       );
-      return searchAvailable || hasLibraryTracks;
+      return hasExternalSearch(plugin) || hasLibraryTracks;
     })
     .sort(sortPlugins);
 
-  if (searchableSourcePlugins.length === 0) {
+  const externalSearchPlugins =
+    searchableSourcePlugins.filter(hasExternalSearch);
+  const librarySources = new Set(libraryTracks.map((track) => track.source))
+    .size;
+  if (
+    searchableSourcePlugins.length === 0 ||
+    (externalSearchPlugins.length === 0 && librarySources <= 1)
+  ) {
     return null;
   }
 
