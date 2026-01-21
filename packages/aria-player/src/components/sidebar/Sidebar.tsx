@@ -226,7 +226,10 @@ export function Sidebar() {
             title={t("search.clear")}
             onClick={() => {
               setLocalSearch("");
-              dispatch(push(BASEPATH + "search"));
+              dispatch(setSearch(""));
+              if (visibleViewType == View.Search) {
+                dispatch(push(BASEPATH + "search"));
+              }
             }}
           >
             <ClearIcon />
