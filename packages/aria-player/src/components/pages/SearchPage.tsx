@@ -18,50 +18,58 @@ export default function SearchPage() {
   const selectedSearchSource = useAppSelector(selectSelectedSearchSource);
   const { onScroll } = useScrollDetection();
 
-  if (searchHistory.length === 0) {
-    // TODO: Display 'Start typing to search' message
-    return null;
-  }
   return (
     <div
       className={styles.search}
       onScroll={(e) => onScroll(e.currentTarget.scrollTop)}
     >
-      <h2 className={`search-history-header ${styles.historyHeader}`}>
-        {t("search.previousSearches")}
-      </h2>
-      <ul className={`search-history-list ${styles.historyList}`}>
-        {searchHistory.map((item, index) => (
-          <li
-            key={index}
-            className={`search-history-item ${styles.historyItem}`}
-          >
-            <button
-              onClick={() => {
-                dispatch(
-                  push(
-                    BASEPATH +
-                      "search/" +
-                      encodeURIComponent(item) +
-                      "/" +
-                      encodeURIComponent(selectedSearchSource ?? "library")
-                  )
-                );
-              }}
-              className={styles.searchLink}
-            >
-              {item}
-            </button>
-            <button
-              className={styles.removeButton}
-              title={t("search.remove")}
-              onClick={() => dispatch(removeFromSearchHistory(item))}
-            >
-              <ClearIcon />
-            </button>
-          </li>
-        ))}
-      </ul>
+      <div className={styles.container}>
+        <>
+          <h1 className={styles.title}>{t("search.landingTitle")}</h1>
+          <p className={styles.subtitle}>{t("search.landingSubtitle")}</p>
+        </>
+        {searchHistory.length > 0 && (
+          <div className={styles.historyPanel}>
+            <h2 className={`search-history-header ${styles.historyHeader}`}>
+              {t("search.recentSearches")}
+            </h2>
+            <ul className={`search-history-list ${styles.historyList}`}>
+              {searchHistory.map((item, index) => (
+                <li
+                  key={index}
+                  className={`search-history-item ${styles.historyItem}`}
+                >
+                  <button
+                    onClick={() => {
+                      dispatch(
+                        push(
+                          BASEPATH +
+                            "search/" +
+                            encodeURIComponent(item) +
+                            "/" +
+                            encodeURIComponent(
+                              selectedSearchSource ?? "library"
+                            )
+                        )
+                      );
+                    }}
+                    className={styles.searchLink}
+                  >
+                    {item}
+                  </button>
+                  <button
+                    className={styles.removeButton}
+                    title={t("search.remove")}
+                    onClick={() => dispatch(removeFromSearchHistory(item))}
+                  >
+                    <ClearIcon />
+                  </button>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

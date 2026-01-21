@@ -97,7 +97,9 @@
   "search": {
     "resultsFor": "Search results for \"{{search}}\"",
     "noResults": "No results",
-    "previousSearches": "Previous searches",
+    "landingTitle": "Start typing to search",
+    "landingSubtitle": "Search for songs, artists, and albums",
+    "recentSearches": "Recent searches",
     "clear": "Clear",
     "remove": "Remove from list",
     "topResults": "Top results",
