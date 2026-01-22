@@ -66,6 +66,10 @@ export default function AllResultsPage() {
     visibleSearchSource !== null ? getSourceHandle(visibleSearchSource) : null;
   const isExternalSearchSource =
     !!externalSearchHandle?.searchTracks && !!debouncedSearch.trim();
+  const isDebouncingExternalSearch =
+    !!externalSearchHandle?.searchTracks &&
+    !!search.trim() &&
+    debouncedSearch !== search;
   const externalSearchCacheKey = useMemo(() => {
     if (!isExternalSearchSource || !visibleSearchSource) return null;
     return getExternalSearchCacheKey(visibleSearchSource, debouncedSearch);
@@ -126,7 +130,7 @@ export default function AllResultsPage() {
     const shouldFetch =
       isExternalSearchSource &&
       externalSearchHandle?.searchTracks &&
-      search.trim().length > 0 &&
+      debouncedSearch.trim().length > 0 &&
       externalSearchCacheKey;
 
     if (
@@ -143,7 +147,7 @@ export default function AllResultsPage() {
       }
       try {
         const tracks = await externalSearchHandle?.searchTracks?.(
-          search,
+          debouncedSearch,
           0,
           20
         );
@@ -180,7 +184,7 @@ export default function AllResultsPage() {
     externalSearchCacheKey,
     externalSearchHandle,
     isExternalSearchSource,
-    search,
+    debouncedSearch,
     visibleSearchSource
   ]);
 
@@ -188,7 +192,7 @@ export default function AllResultsPage() {
     const shouldFetch =
       isExternalSearchSource &&
       externalSearchHandle?.searchAlbums &&
-      search.trim().length > 0 &&
+      debouncedSearch.trim().length > 0 &&
       externalSearchCacheKey;
 
     if (
@@ -202,7 +206,7 @@ export default function AllResultsPage() {
       fetchedAlbumsRef.current = externalSearchCacheKey;
       try {
         const albumsMetadata = await externalSearchHandle?.searchAlbums?.(
-          search,
+          debouncedSearch,
           0,
           20
         );
@@ -242,7 +246,7 @@ export default function AllResultsPage() {
     externalSearchCacheKey,
     externalSearchHandle,
     isExternalSearchSource,
-    search,
+    debouncedSearch,
     visibleSearchSource
   ]);
 
@@ -250,7 +254,7 @@ export default function AllResultsPage() {
     const shouldFetch =
       isExternalSearchSource &&
       externalSearchHandle?.searchArtists &&
-      search.trim().length > 0 &&
+      debouncedSearch.trim().length > 0 &&
       externalSearchCacheKey;
 
     if (
@@ -264,7 +268,7 @@ export default function AllResultsPage() {
       fetchedArtistsRef.current = externalSearchCacheKey;
       try {
         const artistsMetadata = await externalSearchHandle?.searchArtists?.(
-          search,
+          debouncedSearch,
           0,
           20
         );
@@ -299,7 +303,7 @@ export default function AllResultsPage() {
     externalSearchCacheKey,
     externalSearchHandle,
     isExternalSearchSource,
-    search,
+    debouncedSearch,
     visibleSearchSource
   ]);
 
@@ -317,32 +321,50 @@ export default function AllResultsPage() {
       .filter(Boolean);
   }, [cachedSearchArtistIds, isExternalSearchSource, artistsInfo]);
 
-  const songResults = useMemo(
-    () =>
-      (isExternalSearchSource
-        ? cachedSongResults
-        : searchResults?.tracks.map((result) => result.item) ||
-          []) as TrackListItem[],
-    [isExternalSearchSource, cachedSongResults, searchResults?.tracks]
-  );
+  const songResults = useMemo(() => {
+    if (isExternalSearchSource || isDebouncingExternalSearch) {
+      return (
+        isExternalSearchSource ? cachedSongResults : []
+      ) as TrackListItem[];
+    }
+    return (searchResults?.tracks.map((result) => result.item) ||
+      []) as TrackListItem[];
+  }, [
+    isExternalSearchSource,
+    isDebouncingExternalSearch,
+    cachedSongResults,
+    searchResults?.tracks
+  ]);
 
-  const artistResults = useMemo(
-    () =>
-      (isExternalSearchSource
-        ? cachedArtistResults
-        : searchResults?.artists.map((result) => result.item) ||
-          []) as ArtistDetails[],
-    [isExternalSearchSource, cachedArtistResults, searchResults?.artists]
-  );
+  const artistResults = useMemo(() => {
+    if (isExternalSearchSource || isDebouncingExternalSearch) {
+      return (
+        isExternalSearchSource ? cachedArtistResults : []
+      ) as ArtistDetails[];
+    }
+    return (searchResults?.artists.map((result) => result.item) ||
+      []) as ArtistDetails[];
+  }, [
+    isExternalSearchSource,
+    isDebouncingExternalSearch,
+    cachedArtistResults,
+    searchResults?.artists
+  ]);
 
-  const albumResults = useMemo(
-    () =>
-      (isExternalSearchSource
-        ? cachedAlbumResults
-        : searchResults?.albums.map((result) => result.item) ||
-          []) as AlbumDetails[],
-    [isExternalSearchSource, cachedAlbumResults, searchResults?.albums]
-  );
+  const albumResults = useMemo(() => {
+    if (isExternalSearchSource || isDebouncingExternalSearch) {
+      return (
+        isExternalSearchSource ? cachedAlbumResults : []
+      ) as AlbumDetails[];
+    }
+    return (searchResults?.albums.map((result) => result.item) ||
+      []) as AlbumDetails[];
+  }, [
+    isExternalSearchSource,
+    isDebouncingExternalSearch,
+    cachedAlbumResults,
+    searchResults?.albums
+  ]);
 
   const topResults = useMemo(() => {
     if (!search.trim()) return [];
@@ -421,19 +443,21 @@ export default function AllResultsPage() {
   const viewAllArtists = () => dispatch(push(buildSearchRoute("artists")));
   const viewAllAlbums = () => dispatch(push(buildSearchRoute("albums")));
 
+  const showLoadingSpinner = isLoading || isDebouncingExternalSearch;
+
   return (
     <div
       className={styles.searchResults}
       onScroll={(e) => onScroll(e.currentTarget.scrollTop)}
     >
-      {isLoading && <LoadingSpinner />}
-      {!isLoading &&
+      {showLoadingSpinner && <LoadingSpinner />}
+      {!showLoadingSpinner &&
         songResults.length === 0 &&
         artistResults.length === 0 &&
         albumResults.length === 0 && (
           <div className={styles.noResults}>{t("search.noResults")}</div>
         )}
-      {!isLoading && (
+      {!showLoadingSpinner && (
         <div ref={containerRef}>
           {topResults.length > 0 && (
             <section className={styles.section}>
