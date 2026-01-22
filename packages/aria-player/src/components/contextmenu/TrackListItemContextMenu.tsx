@@ -23,7 +23,7 @@ import {
   selectVisibleGroupFilteredTrackList,
   selectVisibleTrackGrouping,
   selectVisibleSelectedTrackGroup,
-  selectVisibleSearchResults,
+  selectVisibleSearchTracks,
   selectVisibleArtistTracks
 } from "../../features/visibleSelectors";
 import {
@@ -71,9 +71,7 @@ export function TrackListItemContextMenu() {
             if (visibleView == View.Search) {
               dispatch(addToSearchHistory(selectSearch(state)));
             }
-            const searchResults = selectVisibleSearchResults(state)?.tracks.map(
-              (track) => track.item
-            );
+            const searchResults = selectVisibleSearchTracks(state);
             const visibleArtistTracks = selectVisibleArtistTracks(state);
             dispatch(
               setQueueToNewSource({

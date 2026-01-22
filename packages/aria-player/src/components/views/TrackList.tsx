@@ -62,7 +62,8 @@ import {
   selectVisibleViewType,
   selectVisiblePlaylistConfig,
   selectVisibleSelectedTrackGroup,
-  selectVisibleArtistSection
+  selectVisibleArtistSection,
+  selectVisibleSearchTracks
 } from "../../features/visibleSelectors";
 import { compareMetadata } from "../../app/sort";
 import {
@@ -309,13 +310,22 @@ export const TrackList = () => {
       });
     } else {
       const state = store.getState();
-      const cachedTracks =
-        selectCachedArtistTopTracks(state, selectedArtistGroup!) || [];
-      for (const trackId of cachedTracks) {
-        queue.push({
-          itemId: trackId,
-          trackId: trackId
+      if (visibleViewType == View.Search) {
+        selectVisibleSearchTracks(state).forEach((track) => {
+          queue.push({
+            itemId: track.itemId,
+            trackId: track.trackId
+          });
         });
+      } else {
+        const cachedTracks =
+          selectCachedArtistTopTracks(state, selectedArtistGroup!) || [];
+        for (const trackId of cachedTracks) {
+          queue.push({
+            itemId: trackId,
+            trackId: trackId
+          });
+        }
       }
     }
     if (visibleView == View.Search) {

@@ -27,9 +27,8 @@ import {
   selectVisibleViewType,
   selectVisibleTrackGrouping,
   selectVisibleSelectedTrackGroup,
-  selectVisibleTracks,
   selectVisibleGroupFilteredTrackList,
-  selectVisibleSearchResults,
+  selectVisibleSearchTracks,
   selectVisibleArtistTracks
 } from "../../../features/visibleSelectors";
 import { getSourceHandle } from "../../../features/plugins/pluginsSlice";
@@ -73,9 +72,7 @@ export const TrackSummaryRow = (props: ICellRendererParams) => {
     if (rowProps.node.id) {
       const visibleTracks =
         visibleView == View.Search
-          ? (selectVisibleSearchResults(store.getState())?.tracks.map(
-              (track) => track.item
-            ) ?? [])
+          ? selectVisibleSearchTracks(store.getState())
           : visibleView == View.Artist
             ? selectVisibleArtistTracks(store.getState())
             : visibleView == View.Queue
@@ -104,7 +101,7 @@ export const TrackSummaryRow = (props: ICellRendererParams) => {
     const state = store.getState();
     const queue = [] as PlaylistItem[];
     if (visibleView == View.Search) {
-      selectVisibleTracks(state).forEach((track) => {
+      selectVisibleSearchTracks(state).forEach((track) => {
         queue.push({
           itemId: track.itemId,
           trackId: track.trackId

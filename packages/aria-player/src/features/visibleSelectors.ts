@@ -32,19 +32,27 @@ import {
   selectTrackById,
   selectLibraryTracks
 } from "./tracks/tracksSlice";
-import { selectCachedArtistTopTracks } from "./cache/cacheSlice";
+import {
+  selectCachedArtistTopTracks,
+  selectCachedSearchTracks
+} from "./cache/cacheSlice";
 import {
   searchTracks,
   searchArtists,
   searchAlbums,
   searchAllCategories
 } from "../app/search";
-import { selectSearch } from "./search/searchSlice";
+import { selectDebouncedSearch, selectSearch } from "./search/searchSlice";
 import { BASEPATH } from "../app/constants";
 import { selectArtistDelimiter } from "./config/configSlice";
-import { getAsArray, normalizeArtists } from "../app/utils";
+import {
+  getAsArray,
+  getExternalSearchCacheKey,
+  normalizeArtists
+} from "../app/utils";
 import { compareMetadata } from "../app/sort";
 import { PluginId } from "../../../types";
+import { getSourceHandle } from "./plugins/pluginsSlice";
 
 export const selectVisibleViewType = (state: RootState) => {
   const path = state.router.location?.pathname
@@ -619,5 +627,57 @@ export const selectVisibleSearchResults = createSelector(
           )
         : searchResults.albums
     };
+  }
+);
+
+export const selectVisibleSearchTracks = createSelector(
+  [
+    (state: RootState) => selectAllTracks(state),
+    (state: RootState) => state.search.search,
+    (state: RootState) => state.search.debouncedSearch,
+    (state: RootState) => state.router.location?.pathname,
+    (state: RootState) => selectVisibleSearchSource(state),
+    (state: RootState) => selectVisibleSearchCategory(state)
+  ],
+  () => {
+    const state = store.getState();
+    const search = selectSearch(state);
+    const debouncedSearch = selectDebouncedSearch(state);
+    const visibleViewType = selectVisibleViewType(state);
+    const visibleCategory = selectVisibleSearchCategory(state);
+    if (visibleViewType !== View.Search || !search.trim()) {
+      return [];
+    }
+
+    const visibleSource = selectVisibleSearchSource(state);
+    const searchHandle = visibleSource ? getSourceHandle(visibleSource) : null;
+    const isExternalSearchSource = !!searchHandle?.searchTracks;
+
+    if (visibleSource && isExternalSearchSource) {
+      if (!debouncedSearch.trim()) return [];
+      const cacheKey = getExternalSearchCacheKey(
+        visibleSource,
+        debouncedSearch
+      );
+      const cachedTrackIds = selectCachedSearchTracks(state, cacheKey) || [];
+      const trackList = cachedTrackIds
+        .map((trackId) => selectTrackById(state, trackId))
+        .filter(Boolean)
+        .map((track) => ({
+          ...track,
+          itemId: track?.trackId
+        })) as TrackListItem[];
+      return visibleCategory == null ? trackList.slice(0, 5) : trackList;
+    }
+
+    const searchResults = searchTracks(selectLibraryTracks(state), search);
+    const filteredResults = visibleSource
+      ? searchResults.filter((track) => track.source == visibleSource)
+      : searchResults;
+    const trackList = filteredResults.map((track) => ({
+      ...track,
+      itemId: track?.trackId
+    })) as TrackListItem[];
+    return visibleCategory == null ? trackList.slice(0, 5) : trackList;
   }
 );
