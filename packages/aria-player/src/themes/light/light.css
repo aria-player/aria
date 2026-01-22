@@ -5,11 +5,11 @@
   --primary-border: #d2d7da;
   --secondary-text: #919191;
   --empty-list-text: #a3a3a3;
-  --inset-background: #f0f0f0;
+  --inset-background: #fafafa;
 
   /* Buttons */
-  --button-background-hover: #f0f2f5;
-  --button-background-active: #e4e6eb;
+  --button-background-hover: #f1f1f1;
+  --button-background-active: #e3e4e7;
   --button-destructive: #e03131;
   --button-destructive-hover: #fa5252;
 
