@@ -78,6 +78,7 @@ export function Sidebar() {
   const { visibility, setMenuData } = useContext(MenuContext);
   const { invokeMenuAction } = useMenuActions();
   const dragDropManager = useDragDropManager();
+  const [scrollY, setScrollY] = useState(0);
   const sections = [
     {
       id: "library",
@@ -170,7 +171,9 @@ export function Sidebar() {
           <MenuButton />
         </div>
       )}
-      <div className={`search-bar ${styles.search}`}>
+      <div
+        className={`search-bar ${styles.search} ${scrollY > 0 ? styles.border : ""}`}
+      >
         <input
           className={`${styles.searchInput} ${visibleViewType == View.Search ? styles.searchSelected : ""}`}
           type="text"
@@ -331,6 +334,9 @@ export function Sidebar() {
           } else {
             dispatch(push(BASEPATH + "playlist/" + itemId));
           }
+        }}
+        onScroll={(e) => {
+          setScrollY(e.scrollOffset);
         }}
       />
     </div>
