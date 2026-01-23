@@ -105,7 +105,7 @@ if (isTauri()) {
   });
   (async () => {
     const update = await check();
-    if (update?.available) {
+    if (update !== null) {
       const confirmed = await ask(
         t("updateDialog.message", {
           newVersion: update.version,
