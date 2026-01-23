@@ -59,3 +59,6 @@ export const selectSelectedSearchSource = (state: RootState) =>
   state.search.selectedSearchSource;
 
 export default searchSlice.reducer;
+
+import { setupSearchListeners } from "../../app/searchListeners";
+setupSearchListeners();

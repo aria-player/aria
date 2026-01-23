@@ -6,7 +6,6 @@ import { addTracks, removeTracks, selectAllTracks } from "./tracksSlice";
 import { getUnreferencedTrackIds } from "./tracksUtils.ts";
 import { Track, TrackId } from "../../../../types/tracks";
 import { compareMetadata } from "../../app/sort";
-import { invalidateSearchCache } from "../../app/search";
 
 export function setupTracksListeners() {
   listenForAction(isAnyOf(addTracks, removeTracks), (state, action) => {
@@ -40,13 +39,6 @@ export function setupTracksListeners() {
           dispatch(removeTracks({ source, tracks }));
         });
       }
-    }
-  );
-
-  listenForChange(
-    (state) => state.tracks.tracks,
-    () => {
-      invalidateSearchCache();
     }
   );
 }

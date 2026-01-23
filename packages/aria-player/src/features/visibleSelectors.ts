@@ -587,7 +587,8 @@ export const selectVisibleSearchResults = createSelector(
     (state: RootState) => selectVisibleSearchSource(state),
     (state: RootState) => selectVisibleSearchCategory(state),
     (state: RootState) => state.router.location?.pathname,
-    (state: RootState) => state.search.search
+    (state: RootState) => state.search.search,
+    (state: RootState) => selectArtistDelimiter(state)
   ],
   () => {
     const state = store.getState();
