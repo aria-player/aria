@@ -117,29 +117,27 @@ export function useTrackGrid() {
           : "none";
     };
 
-    const updateDragGhost = (
-      trackTitle: string,
-      playlist: string | null | undefined
-    ) => {
+    const updateDragGhost = (trackTitle: string, playlist?: string) => {
       const ghostLabel = document.querySelector(".ag-dnd-ghost-label");
       if (!ghostLabel) return;
 
       const selectedRowsCount = params.api.getSelectedRows().length ?? 0;
-      ghostLabel.textContent = playlist
-        ? selectedRowsCount <= 1
-          ? t("tracks.addNamedTrackToPlaylist", {
-              title: trackTitle,
-              playlist
-            })
-          : t("tracks.addTracksToPlaylist", {
-              count: selectedRowsCount,
-              playlist
-            })
-        : selectedRowsCount <= 1
-          ? trackTitle
-          : t("tracks.selectedCount", { count: selectedRowsCount });
+      ghostLabel.textContent =
+        playlist != undefined
+          ? selectedRowsCount <= 1
+            ? t("tracks.addNamedTrackToPlaylist", {
+                title: trackTitle,
+                playlist
+              })
+            : t("tracks.addTracksToPlaylist", {
+                count: selectedRowsCount,
+                playlist
+              })
+          : selectedRowsCount <= 1
+            ? trackTitle
+            : t("tracks.selectedCount", { count: selectedRowsCount });
 
-      if (!playlist && lastHoveredItem) {
+      if (playlist == undefined && lastHoveredItem) {
         setOutline(lastHoveredItem, false);
       }
     };
@@ -177,11 +175,11 @@ export function useTrackGrid() {
       },
 
       onDragLeave: (params: RowDragLeaveEvent) => {
-        updateDragGhost(params.node.data.title, null);
+        updateDragGhost(params.node.data.title);
       },
 
       onDragStop: (params: RowDragEndEvent) => {
-        updateDragGhost(params.node.data.title, null);
+        updateDragGhost(params.node.data.title);
         const item = getHoveredItem(params.event.clientX, params.event.clientY);
         if (!item?.id) return;
 

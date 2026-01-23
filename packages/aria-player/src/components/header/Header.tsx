@@ -103,10 +103,11 @@ export default function Header() {
             ? search == ""
               ? t("views.search")
               : t("search.resultsFor", { search })
-            : playlistName ||
-              t(`views.${visibleViewType}`, {
-                defaultValue: t("views.error")
-              })}
+            : playlistName != undefined
+              ? playlistName || "\u00A0"
+              : t(`views.${visibleViewType}`, {
+                  defaultValue: t("views.error")
+                })}
         </h1>
       )}
     </header>
