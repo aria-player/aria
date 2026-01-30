@@ -1,7 +1,42 @@
-import { RootState } from "../../app/store";
+import { RootState, store } from "../../app/store";
 import { TrackId } from "../../../../types/tracks";
-import { selectAllTracks } from "./tracksSlice";
+import { selectAllTracks, addTracks } from "./tracksSlice";
 import { selectAllPlaylists } from "../playlists/playlistsSlice";
+import { parseTrackId } from "../../app/utils";
+import { getSourceHandle } from "../plugins/pluginsSlice";
+
+const pendingTrackFetches = new Set<TrackId>();
+
+export function fetchMissingTrack(trackId: TrackId): void {
+  if (pendingTrackFetches.has(trackId)) {
+    return;
+  }
+  const track = parseTrackId(trackId);
+  const pluginHandle = track ? getSourceHandle(track.source) : null;
+  if (!track || !pluginHandle?.getTrack) {
+    return;
+  }
+  pendingTrackFetches.add(trackId);
+  pluginHandle
+    .getTrack(track.uri)
+    .then((trackMetadata) => {
+      if (trackMetadata) {
+        store.dispatch(
+          addTracks({
+            source: track.source,
+            tracks: [trackMetadata],
+            addToLibrary: false
+          })
+        );
+      }
+    })
+    .catch((error) => {
+      console.error(`Failed to fetch track ${trackId}:`, error);
+    })
+    .finally(() => {
+      pendingTrackFetches.delete(trackId);
+    });
+}
 
 export function getReferencedTrackIds(state: RootState): Set<TrackId> {
   const referenced = new Set<TrackId>();

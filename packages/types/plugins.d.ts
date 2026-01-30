@@ -222,6 +222,10 @@ export interface SourceHandle extends BaseHandle {
    */
   setTrackToPreload?: (track: Track | null) => void;
   /**
+   * Fetch information for a track by its URI.
+   */
+  getTrack?: (uri: TrackUri) => Promise<TrackMetadata | undefined>;
+  /**
    * Return an image URL for the specified track's artwork.
    *
    * If the track's `artworkUri` is already an image URL, this method can simply return `artworkUri`.
@@ -313,7 +317,7 @@ export interface SourceHandle extends BaseHandle {
    * Return an array of custom actions that can be performed on a track.
    */
   getCustomTrackActions?: (track: Track) => TrackAction[];
-    /**
+  /**
    * Add tracks to the library managed by this source.
    */
   addTracksToRemoteLibrary?: (tracks: TrackUri[]) => Promise<void>;

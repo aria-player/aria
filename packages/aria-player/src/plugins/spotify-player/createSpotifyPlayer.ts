@@ -578,6 +578,39 @@ export default function createSpotifyPlayer(
       }
     },
 
+    async getTrack(uri: TrackUri) {
+      const trackId = uri.split(":").pop();
+      if (!trackId) {
+        throw new Error(`Invalid Spotify track URI: ${uri}`);
+      }
+      const trackResponse = (await spotifyRequest(
+        `/tracks/${trackId}`
+      )) as SpotifyApi.SingleTrackResponse;
+      if (!trackResponse || trackResponse.restrictions?.reason) {
+        return undefined;
+      }
+
+      const artistIds = new Set<string>();
+      trackResponse.artists.forEach((artist) => artistIds.add(artist.id));
+      trackResponse.album.artists.forEach((artist) => artistIds.add(artist.id));
+
+      const artistGenreMapping = await fetchArtistGenres(Array.from(artistIds));
+      const albumArtistIds = trackResponse.album.artists.map(
+        (artist) => artist.id
+      );
+      const formattedGenres = getUniqueGenresFromArtists(
+        albumArtistIds,
+        artistGenreMapping
+      );
+
+      return getTrackMetadata(
+        trackResponse,
+        trackResponse.album,
+        Date.now(),
+        formattedGenres
+      );
+    },
+
     async getTrackArtwork(artworkUri) {
       return artworkUri;
     },

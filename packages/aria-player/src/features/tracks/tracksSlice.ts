@@ -11,6 +11,7 @@ import { Track, TrackId, TrackMetadata } from "../../../../types/tracks";
 import { PluginId } from "../../../../types/plugins";
 import { PlaylistItem } from "../playlists/playlistsTypes";
 import { getAlbumId, getTrackId } from "../../app/utils";
+import { fetchMissingTrack } from "./tracksUtils";
 
 const tracksAdapter = createEntityAdapter<Track, TrackId>({
   selectId: (track) => track.trackId,
@@ -102,7 +103,10 @@ export const selectClipboard = (state: RootState) => state.tracks.clipboard;
 
 export const selectTrackById = (state: RootState, trackId: TrackId) => {
   const track = state.tracks.tracks.entities[trackId];
-  if (!track) return undefined;
+  if (!track) {
+    fetchMissingTrack(trackId);
+    return undefined;
+  }
   return {
     ...track,
     albumId: getAlbumId(

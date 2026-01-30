@@ -471,6 +471,41 @@ export default function createAppleMusicPlayer(
       await music?.play();
     },
 
+    getTrack: async (uri: TrackUri) => {
+      const music = await waitForMusicKit();
+      try {
+        if (uri.startsWith("l.")) {
+          return undefined;
+        }
+        const trackResponse = (await music.api.music(
+          `v1/catalog/${music.storefrontId}/songs/${uri}`
+        )) as {
+          data: MusicKit.Relationship<MusicKit.Songs>;
+        };
+        const trackData = trackResponse.data?.data?.[0];
+        if (!trackData) {
+          return undefined;
+        }
+        const albumData = trackData.relationships?.albums
+          ?.data[0] as unknown as MusicKit.Albums;
+        if (!albumData) {
+          return undefined;
+        }
+        const track = getTrackMetadata(
+          trackData,
+          albumData ?? { id: "", attributes: undefined },
+          Date.now()
+        );
+        const catalogIdMap: Record<string, string> = {};
+        catalogIdMap[trackData.id] = trackData.id;
+        await addCatalogArtistsToTracks([track], catalogIdMap);
+        return track;
+      } catch (error) {
+        console.error("Failed to fetch track:", error);
+        return undefined;
+      }
+    },
+
     getTrackArtwork: async (artworkUri) => {
       return artworkUri?.replace("{w}", "1000").replace("{h}", "1000");
     },
