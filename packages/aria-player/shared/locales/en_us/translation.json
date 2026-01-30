@@ -54,7 +54,11 @@
     "addedNamedTrackToQueue": "Added '{{title}}' to queue",
     "addedTracksToQueue": "Added {{count}} tracks to queue",
     "addedNamedTrackToQueueFront": "Added '{{title}}' to front of queue",
-    "addedTracksToQueueFront": "Added {{count}} tracks to front of queue"
+    "addedTracksToQueueFront": "Added {{count}} tracks to front of queue",
+    "addedNamedTrackToRemoteLibrary": "Added '{{title}}' to your {{source}} library",
+    "addedTracksToRemoteLibrary": "Added {{count}} tracks to your {{source}} library",
+    "removedNamedTrackFromRemoteLibrary": "Removed '{{title}}' from your {{source}} library",
+    "removedTracksFromRemoteLibrary": "Removed {{count}} tracks from your {{source}} library"
   },
   "tracks": {
     "selectedCount_one": "{{count}} track selected",
@@ -68,6 +72,8 @@
     "addTracksToPlaylist": "Add {{count}} tracks to '{{playlist}}'",
     "emptyPlaylist": "Playlist is empty",
     "emptyQueue": "Queue is empty",
+    "addToRemoteLibrary": "Add to {{source}} library",
+    "removeFromRemoteLibrary": "Remove from {{source}} library",
     "playNamedTrack": "Play '{{title}}'",
     "playNext": "Play next",
     "addToQueue": "Add to queue",

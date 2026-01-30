@@ -12,7 +12,8 @@ import {
   ArtistMetadata,
   SourceCallbacks,
   SourceHandle,
-  TrackMetadata
+  TrackMetadata,
+  TrackUri
 } from "../../../../types";
 
 export type SpotifyConfig = {
@@ -455,7 +456,7 @@ export default function createSpotifyPlayer(
     }
 
     const scopes =
-      "user-modify-playback-state user-read-playback-state app-remote-control streaming user-library-read user-read-private user-read-email";
+      "user-modify-playback-state user-read-playback-state app-remote-control streaming user-library-read user-library-modify user-read-private user-read-email";
 
     const codeVerifier = generateRandomString(128);
     const codeChallenge = await generateCodeChallenge(codeVerifier);
@@ -739,6 +740,30 @@ export default function createSpotifyPlayer(
           : undefined,
         artworkUri: album.images?.[0]?.url
       }));
+    },
+
+    addTracksToRemoteLibrary: async (tracks: TrackUri[]) => {
+      if (!getConfig().accessToken) return;
+      const uniqueIds = Array.from(
+        new Set(tracks.map((track) => track.split(":").pop()).filter(Boolean))
+      ) as string[];
+      if (uniqueIds.length === 0) return;
+      for (let i = 0; i < uniqueIds.length; i += 50) {
+        const batch = uniqueIds.slice(i, i + 50);
+        await spotifyRequest("/me/tracks", "PUT", { ids: batch });
+      }
+    },
+
+    removeTracksFromRemoteLibrary: async (tracks: TrackUri[]) => {
+      if (!getConfig().accessToken) return;
+      const uniqueIds = Array.from(
+        new Set(tracks.map((track) => track.split(":").pop()).filter(Boolean))
+      ) as string[];
+      if (uniqueIds.length === 0) return;
+      for (let i = 0; i < uniqueIds.length; i += 50) {
+        const batch = uniqueIds.slice(i, i + 50);
+        await spotifyRequest("/me/tracks", "DELETE", { ids: batch });
+      }
     },
 
     get searchTracks() {

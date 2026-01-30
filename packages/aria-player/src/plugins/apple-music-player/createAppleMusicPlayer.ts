@@ -7,7 +7,8 @@ import {
   SourceCallbacks,
   SourceHandle,
   Track,
-  TrackMetadata
+  TrackMetadata,
+  TrackUri
 } from "../../../../types";
 
 export type AppleMusicConfig = {
@@ -840,6 +841,31 @@ export default function createAppleMusicPlayer(
           return [];
         }
       };
+    },
+
+    addTracksToRemoteLibrary: async (tracks: TrackUri[]) => {
+      const music = await waitForMusicKit();
+      if (!music.isAuthorized) return;
+      const catalogIds = Array.from(
+        new Set(tracks.filter((uri) => uri && !uri.startsWith("l.")))
+      );
+      if (catalogIds.length === 0) return;
+      const batchSize = 200;
+      for (let i = 0; i < catalogIds.length; i += batchSize) {
+        const batch = catalogIds.slice(i, i + batchSize).join(",");
+        const developerToken = await getDeveloperToken();
+        if (!developerToken || !music.musicUserToken) return;
+        await fetch(
+          `https://api.music.apple.com/v1/me/library?ids[songs]=${batch}`,
+          {
+            method: "POST",
+            headers: {
+              Authorization: `Bearer ${developerToken}`,
+              "Music-User-Token": music.musicUserToken
+            }
+          }
+        );
+      }
     },
 
     pause: () => {

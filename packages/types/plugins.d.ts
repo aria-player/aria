@@ -313,6 +313,14 @@ export interface SourceHandle extends BaseHandle {
    * Return an array of custom actions that can be performed on a track.
    */
   getCustomTrackActions?: (track: Track) => TrackAction[];
+    /**
+   * Add tracks to the library managed by this source.
+   */
+  addTracksToRemoteLibrary?: (tracks: TrackUri[]) => Promise<void>;
+  /**
+   * Remove tracks from the library managed by this source.
+   */
+  removeTracksFromRemoteLibrary?: (tracks: TrackUri[]) => Promise<void>;
 }
 
 export type SyncProgress = {

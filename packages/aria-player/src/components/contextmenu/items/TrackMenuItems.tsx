@@ -11,7 +11,12 @@ import {
 import { Item as TreeItem } from "soprano-ui";
 import { nanoid } from "@reduxjs/toolkit";
 import { PlaylistItem } from "../../../features/playlists/playlistsTypes";
-import { selectSelectedTracks } from "../../../features/tracks/tracksSlice";
+import {
+  addTracks,
+  removeTracks,
+  selectSelectedTracks,
+  selectTrackById
+} from "../../../features/tracks/tracksSlice";
 import { View } from "../../../app/view";
 import { addTracksToUpNext } from "../../../features/player/playerSlice";
 import {
@@ -21,9 +26,14 @@ import {
 import { BASEPATH } from "../../../app/constants";
 import { push } from "redux-first-history";
 import { showToast } from "../../../app/toasts";
-import { pluginHandles } from "../../../features/plugins/pluginsSlice";
+import {
+  pluginHandles,
+  selectPluginInfo
+} from "../../../features/plugins/pluginsSlice";
 import { normalizeArtists } from "../../../app/utils";
 import { selectArtistDelimiter } from "../../../features/config/configSlice";
+import { TrackMetadata } from "../../../../../types";
+import { store } from "../../../app/store";
 
 export function TrackMenuItems() {
   const dispatch = useAppDispatch();
@@ -34,13 +44,35 @@ export function TrackMenuItems() {
   const visibleSelectedGroup = useAppSelector(selectVisibleSelectedTrackGroup);
   const selectedTracks = useAppSelector(selectSelectedTracks);
   const delimiter = useAppSelector(selectArtistDelimiter);
+  const pluginInfo = useAppSelector(selectPluginInfo);
 
   const tracksForActions =
     menuData?.type == "track" && menuData.metadata
       ? [menuData.metadata]
-      : selectedTracks;
+      : selectedTracks.map(
+          (item) => selectTrackById(store.getState(), item.trackId)!
+        );
 
-  const addTracks = (playlistId: string) => {
+  const sourceForActions = tracksForActions[0]?.source;
+  const allSameSource = tracksForActions.every(
+    (track) => track.source === sourceForActions
+  );
+  const remoteLibraryHandle =
+    sourceForActions && allSameSource ? pluginHandles[sourceForActions] : null;
+  const sourceDisplayName = sourceForActions
+    ? pluginHandles[sourceForActions]?.displayName ||
+      pluginInfo[sourceForActions]?.name ||
+      sourceForActions
+    : null;
+  const hasUnaddedTracks = tracksForActions.some(
+    (track) => track.isInLibrary !== true
+  );
+  const showAddToLibrary =
+    !!remoteLibraryHandle?.addTracksToRemoteLibrary && hasUnaddedTracks;
+  const showRemoveFromLibrary =
+    !!remoteLibraryHandle?.removeTracksFromRemoteLibrary && !hasUnaddedTracks;
+
+  const addToPlaylist = (playlistId: string) => {
     const newItems: PlaylistItem[] = tracksForActions
       .map((node) => {
         return { itemId: nanoid(), trackId: node.trackId };
@@ -68,7 +100,7 @@ export function TrackMenuItems() {
           <Item
             key={item.id}
             onClick={() => {
-              addTracks(item.id);
+              addToPlaylist(item.id);
             }}
           >
             {item.name}
@@ -125,7 +157,7 @@ export function TrackMenuItems() {
                 parentId
               })
             );
-            addTracks(newPlaylistId);
+            addToPlaylist(newPlaylistId);
           }}
         >
           {t("tracks.addToNewPlaylist")}
@@ -259,6 +291,84 @@ export function TrackMenuItems() {
       <Submenu label={t("tracks.addToPlaylist")}>
         {renderItems(playlists)}
       </Submenu>
+      {showAddToLibrary || showRemoveFromLibrary ? <Separator /> : null}
+      {showAddToLibrary && (
+        <Item
+          onClick={async () => {
+            hideAll();
+            await remoteLibraryHandle?.addTracksToRemoteLibrary?.(
+              tracksForActions.map((track) => track.uri)
+            );
+            if (tracksForActions.length == 1) {
+              showToast(
+                t("toasts.addedNamedTrackToRemoteLibrary", {
+                  title: menuData?.metadata?.title,
+                  source: sourceDisplayName!
+                })
+              );
+            } else {
+              showToast(
+                t("toasts.addedTracksToRemoteLibrary", {
+                  count: tracksForActions.length,
+                  source: sourceDisplayName!
+                })
+              );
+            }
+            const now = Date.now();
+            dispatch(
+              addTracks({
+                source: sourceForActions!,
+                tracks: tracksForActions.map(
+                  (track) =>
+                    ({
+                      ...track,
+                      dateAdded: now
+                    }) as TrackMetadata
+                ),
+                addToLibrary: true
+              })
+            );
+          }}
+        >
+          {t("tracks.addToRemoteLibrary", {
+            source: sourceDisplayName
+          })}
+        </Item>
+      )}
+      {showRemoveFromLibrary && (
+        <Item
+          onClick={async () => {
+            hideAll();
+            await remoteLibraryHandle?.removeTracksFromRemoteLibrary?.(
+              tracksForActions.map((track) => track.uri)
+            );
+            if (tracksForActions.length == 1) {
+              showToast(
+                t("toasts.removedNamedTrackFromRemoteLibrary", {
+                  title: menuData?.metadata?.title,
+                  source: sourceDisplayName!
+                })
+              );
+            } else {
+              showToast(
+                t("toasts.removedTracksFromRemoteLibrary", {
+                  count: tracksForActions.length,
+                  source: sourceDisplayName!
+                })
+              );
+            }
+            dispatch(
+              removeTracks({
+                source: sourceForActions!,
+                tracks: tracksForActions.map((track) => track.trackId),
+                removeFromLibrary: true
+              })
+            );
+          }}
+        >
+          {t("tracks.removeFromRemoteLibrary", { source: sourceDisplayName })}
+        </Item>
+      )}
       {renderCustomActions()}
     </>
   );
