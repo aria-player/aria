@@ -170,10 +170,12 @@ export const selectVisibleTracks = createSelector(
       : Object.values(LibraryView).includes(
             selectVisibleViewType(state) as LibraryView
           )
-        ? (selectLibraryTracks(state).map((track) => ({
-            ...track,
-            itemId: track?.trackId
-          })) as TrackListItem[])
+        ? (
+            selectLibraryTracks(state).map((track) => ({
+              ...track,
+              itemId: track?.trackId
+            })) as TrackListItem[]
+          ).sort((a, b) => b.dateAdded - a.dateAdded)
         : selectVisibleViewType(state) == View.Search
           ? (() => {
               const visibleSource = selectVisibleSearchSource(state);
