@@ -20,7 +20,10 @@ export default function AlbumView() {
     selectIsAlbumFetched(state, albumId ?? "")
   );
   const { onScroll } = useScrollDetection();
-  const [isLoading, setIsLoading] = useState(false);
+  const albumInfo = albumId ? parseAlbumId(albumId) : null;
+  const handle = albumInfo?.source ? getSourceHandle(albumInfo?.source) : null;
+  const needsFetch = !isAlbumCached && !!(handle && handle.getAlbumTracks);
+  const [isLoading, setIsLoading] = useState(needsFetch);
 
   useEffect(() => {
     async function fetchAlbumTracks() {
