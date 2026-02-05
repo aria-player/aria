@@ -140,7 +140,7 @@ jobs:
           else
             exit 0
           fi
-          cp "${{ env.APP_PATH }}/src-tauri/target/${ARTIFACT}" "./${RENAMED_ARTIFACT}"
+          cp "./target/${ARTIFACT}" "./${RENAMED_ARTIFACT}"
           echo "RENAMED_ARTIFACT=${RENAMED_ARTIFACT}" >> $GITHUB_ENV
 
       - name: Upload renamed artifact
