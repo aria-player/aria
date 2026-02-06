@@ -24,7 +24,7 @@
         "id": "separator"
       },
       {
-        "id": "exit",
+        "id": "macQuit",
         "shortcut": "Cmd+Q"
       }
     ]

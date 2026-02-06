@@ -105,7 +105,7 @@ fn create_menu_items<R: tauri::Runtime>(
                 }
                 "macServices" => {
                     menu_items.push(MenuItemKind::Predefined(
-                        PredefinedMenuItem::quit(handle, None::<&str>).unwrap(),
+                        PredefinedMenuItem::services(handle, None::<&str>).unwrap(),
                     ));
                 }
                 "macHide" => {
@@ -121,6 +121,11 @@ fn create_menu_items<R: tauri::Runtime>(
                 "macShowAll" => {
                     menu_items.push(MenuItemKind::Predefined(
                         PredefinedMenuItem::show_all(handle, None::<&str>).unwrap(),
+                    ));
+                }
+                "macQuit" => {
+                    menu_items.push(MenuItemKind::Predefined(
+                        PredefinedMenuItem::quit(handle, None::<&str>).unwrap(),
                     ));
                 }
                 "macMinimize" => {
