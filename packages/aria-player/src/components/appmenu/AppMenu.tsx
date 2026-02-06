@@ -5,6 +5,7 @@ import { useAppSelector } from "../../app/hooks";
 import { useTranslation } from "react-i18next";
 import { useMenuActions } from "../../hooks/useMenuActions";
 import styles from "./AppMenu.module.css";
+import { IS_MAC_LIKE } from "../../app/constants";
 
 export function AppMenu(props: {
   items: MenuItem[];
@@ -78,7 +79,14 @@ export function AppMenu(props: {
               {menuState[menuStateId]?.selected ? "✔" : ""}
             </span>
             {label}
-            <RightSlot>{item.shortcut?.replace("Arrow", "")}</RightSlot>
+            <RightSlot>
+              {IS_MAC_LIKE
+                ? item.shortcut
+                    ?.replace("Arrow", "")
+                    .replace("Ctrl", "⌘")
+                    .replace("Alt", "⌥")
+                : item.shortcut?.replace("Arrow", "")}
+            </RightSlot>
           </Item>
         );
       })}

@@ -16,6 +16,18 @@ pub struct MenuItem {
     pub checkbox: Option<bool>,
 }
 
+impl MenuItem {
+    pub fn get_shortcut(&self) -> Option<String> {
+        self.shortcut.as_ref().map(|s| {
+            if OS == "macos" && !s.contains("Cmd") {
+                s.replace("Ctrl", "Cmd")
+            } else {
+                s.clone()
+            }
+        })
+    }
+}
+
 pub fn read_menu_json() -> Vec<MenuItem> {
     const MENUS: &str = include_str!("../../shared/menus.json");
     serde_json::from_str(MENUS).expect("JSON was not well-formatted")
@@ -131,7 +143,7 @@ fn create_menu_items<R: tauri::Runtime>(
                             sub_item_label,
                             true,
                             false,
-                            sub_item.shortcut.clone(),
+                            sub_item.get_shortcut(),
                         )
                         .unwrap();
                         menu_items.push(MenuItemKind::Check(custom_item));
@@ -141,7 +153,7 @@ fn create_menu_items<R: tauri::Runtime>(
                             sub_item.id.as_str(),
                             sub_item_label,
                             true,
-                            sub_item.shortcut.clone(),
+                            sub_item.get_shortcut(),
                         )
                         .unwrap();
                         menu_items.push(MenuItemKind::MenuItem(custom_item));
