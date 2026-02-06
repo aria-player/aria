@@ -93,34 +93,34 @@ fn create_menu_items<R: tauri::Runtime>(
                 }
                 "macServices" => {
                     menu_items.push(MenuItemKind::Predefined(
-                        PredefinedMenuItem::quit(handle, Some(sub_item_label)).unwrap(),
+                        PredefinedMenuItem::quit(handle, None::<&str>).unwrap(),
                     ));
                 }
                 "macHide" => {
                     menu_items.push(MenuItemKind::Predefined(
-                        PredefinedMenuItem::hide(handle, Some(sub_item_label)).unwrap(),
+                        PredefinedMenuItem::hide(handle, None::<&str>).unwrap(),
                     ));
                 }
                 "macHideOthers" => {
                     menu_items.push(MenuItemKind::Predefined(
-                        PredefinedMenuItem::hide_others(handle, Some(sub_item_label)).unwrap(),
+                        PredefinedMenuItem::hide_others(handle, None::<&str>).unwrap(),
                     ));
                 }
                 "macShowAll" => {
                     menu_items.push(MenuItemKind::Predefined(
-                        PredefinedMenuItem::show_all(handle, Some(sub_item_label)).unwrap(),
+                        PredefinedMenuItem::show_all(handle, None::<&str>).unwrap(),
                     ));
                 }
                 "macMinimize" => {
                     menu_items.push(MenuItemKind::Predefined(
-                        PredefinedMenuItem::minimize(handle, Some(sub_item_label)).unwrap(),
+                        PredefinedMenuItem::minimize(handle, None::<&str>).unwrap(),
                     ));
                 }
                 "macZoom" => {
                     // TODO: No PredefinedMenuItem for zoom at the moment
                     // https://github.com/tauri-apps/tauri/issues/11497
                     menu_items.push(MenuItemKind::Predefined(
-                        PredefinedMenuItem::maximize(handle, Some(sub_item_label)).unwrap(),
+                        PredefinedMenuItem::maximize(handle, None::<&str>).unwrap(),
                     ));
                 }
                 _ => {

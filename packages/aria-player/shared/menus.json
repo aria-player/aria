@@ -216,11 +216,11 @@
     "maconly": true,
     "submenu": [
       {
-        "id": "macosMinimize",
+        "id": "macMinimize",
         "shortcut": "Cmd+M"
       },
       {
-        "id": "macosZoom",
+        "id": "macZoom",
         "shortcut": "Ctrl+Cmd+Z"
       }
     ]
