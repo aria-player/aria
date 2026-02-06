@@ -80,12 +80,14 @@ export function AppMenu(props: {
             </span>
             {label}
             <RightSlot>
-              {IS_MAC_LIKE
-                ? item.shortcut
-                    ?.replace("Arrow", "")
-                    .replace("Ctrl", "⌘")
-                    .replace("Alt", "⌥")
-                : item.shortcut?.replace("Arrow", "")}
+              {item.shortcut
+                ?.replace("ArrowLeft", "←")
+                .replace("ArrowRight", "→")
+                .replace("ArrowUp", "↑")
+                .replace("ArrowDown", "↓")
+                .replace("Ctrl", IS_MAC_LIKE ? "⌘" : "Ctrl")
+                .replace("Alt", IS_MAC_LIKE ? "⌥" : "Alt")
+                .replace("Delete", IS_MAC_LIKE ? "⌫" : "Del")}
             </RightSlot>
           </Item>
         );

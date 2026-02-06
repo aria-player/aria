@@ -196,11 +196,11 @@
     "submenu": [
       {
         "id": "back",
-        "shortcut": "Alt+Left"
+        "shortcut": "Alt+ArrowLeft"
       },
       {
         "id": "forward",
-        "shortcut": "Alt+Right"
+        "shortcut": "Alt+ArrowRight"
       },
       {
         "id": "separator"
