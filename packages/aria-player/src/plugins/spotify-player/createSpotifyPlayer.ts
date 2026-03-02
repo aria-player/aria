@@ -461,13 +461,11 @@ export default function createSpotifyPlayer(
     const codeVerifier = generateRandomString(128);
     const codeChallenge = await generateCodeChallenge(codeVerifier);
 
-    const authWindow = window.open(
-      `https://accounts.spotify.com/authorize?response_type=code&client_id=${getClientId()}&scope=${encodeURIComponent(scopes)}&redirect_uri=${encodeURIComponent(
-        getRedirectUri()
-      )}&code_challenge_method=S256&code_challenge=${codeChallenge}`,
-      "_blank"
-    );
+    const authUrl = `https://accounts.spotify.com/authorize?response_type=code&client_id=${getClientId()}&scope=${encodeURIComponent(scopes)}&redirect_uri=${encodeURIComponent(
+      getRedirectUri()
+    )}&code_challenge_method=S256&code_challenge=${codeChallenge}`;
 
+    host.openAuthenticationUrl(authUrl);
     window.addEventListener("message", (event) => {
       if (event.origin !== window.location.origin) {
         return;
@@ -475,7 +473,6 @@ export default function createSpotifyPlayer(
       if (event.data && event.data.type === "OAuthCode") {
         const code = event.data.code;
         if (code) {
-          authWindow?.close();
           exchangeCodeForToken(code, codeVerifier);
         }
       }

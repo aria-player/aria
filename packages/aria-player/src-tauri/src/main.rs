@@ -70,8 +70,10 @@ fn main() {
                 std::thread::sleep(std::time::Duration::from_nanos(1));
             }
             WindowEvent::CloseRequested { api, .. } => {
-                commands::close(window.app_handle().clone());
-                api.prevent_close();
+                if window.label() == "main" {
+                    commands::close(window.app_handle().clone());
+                    api.prevent_close();
+                }
             }
             _ => {}
         })

@@ -87,6 +87,7 @@ if (window.location.search.includes("code")) {
     },
     window.location.origin
   );
+  window.close();
 }
 
 if (isTauri()) {

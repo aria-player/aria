@@ -3,8 +3,11 @@ import {
   getAlbumId,
   getArtistId,
   getAsArray,
-  getTrackId
+  getTrackId,
+  isTauri
 } from "../../app/utils";
+import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
+import { listen } from "@tauri-apps/api/event";
 import {
   addTracks,
   removeTracks,
@@ -14,6 +17,7 @@ import {
 } from "../tracks/tracksSlice";
 import {
   selectActivePlugins,
+  selectPluginInfo,
   setPluginData,
   setSourceSyncProgress
 } from "./pluginsSlice";
@@ -153,6 +157,25 @@ export const getBaseCallbacks = (pluginId: PluginId): BaseCallbacks => {
     getData: () => store.getState().plugins.pluginData[pluginId] ?? {},
     showAlert: (alert) => {
       showAlert(alert);
+    },
+    openAuthenticationUrl: (url: string) => {
+      if (isTauri()) {
+        const pluginName = selectPluginInfo(store.getState())[pluginId]?.name;
+        const windowLabel = `auth-${Date.now()}`;
+        const authWindow = new WebviewWindow(windowLabel, {
+          url,
+          title: pluginName ? `${pluginName} Login` : "Login",
+          width: 500,
+          height: 700,
+          center: true
+        });
+        const unlistenPromise = listen("oauth_code", () => {
+          authWindow.close();
+          unlistenPromise.then((unlisten) => unlisten());
+        });
+      } else {
+        window.open(url, "_blank");
+      }
     }
   };
 };

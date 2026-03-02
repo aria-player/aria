@@ -96,6 +96,19 @@ export interface BaseCallbacks {
    * Display a dialog containing an alert, such as a plugin configuration error.
    */
   showAlert: (alert: Alert) => void;
+  /**
+   * Open a URL allowing the user to authenticate with an external service via OAuth.
+   * 
+   * The OAuth code will be sent back to the player via `window.postMessage` in the following format:
+   * ```
+   * {
+   *   type: "OAuthCode";
+   *   code: string;
+   *   state: string;
+   * }
+   * ```
+   */
+  openAuthenticationUrl: (url: string) => void;
 }
 
 /**
