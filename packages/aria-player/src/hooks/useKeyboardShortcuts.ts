@@ -5,6 +5,8 @@ import { useContextMenu } from "react-contexify";
 import { useMenuActions } from "./useMenuActions";
 import { IS_MAC_LIKE } from "../app/constants";
 
+const isNativeMacAction = (action: string) => /^mac[A-Z]/.test(action);
+
 export const useKeyboardShortcuts = () => {
   const { hideAll } = useContextMenu();
   const { invokeMenuAction } = useMenuActions();
@@ -41,6 +43,9 @@ export const useKeyboardShortcuts = () => {
 
       const action = shortcuts[shortcut];
       if (action) {
+        if (IS_MAC_LIKE && isNativeMacAction(action)) {
+          return;
+        }
         event.preventDefault();
         invokeMenuAction(action);
         hideAll();
