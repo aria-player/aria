@@ -1,4 +1,6 @@
 import { i18n } from "i18next";
+import { listen } from "@tauri-apps/api/event";
+import { invoke } from "@tauri-apps/api/core";
 import LibraryConfig from "./LibraryConfig";
 import QuickStart from "./QuickStart";
 import en_us from "./locales/en_us/translation.json";
@@ -10,6 +12,8 @@ import {
   TrackMetadata,
   TrackUri
 } from "../../../../types";
+import { isTauri } from "../../app/utils";
+import { IS_MAC_LIKE } from "../../app/constants";
 
 export type AppleMusicConfig = {
   loggedIn?: boolean;
@@ -437,7 +441,89 @@ export default function createAppleMusicPlayer(
       });
       return;
     }
-    await music?.authorize();
+    const defaultWindowOpen = window.open.bind(window);
+
+    let closeAuthWindow: (() => void) | undefined;
+    let unlistenAuthWindowClosed: (() => void) | undefined;
+    let unlistenAuthWindowMessages: (() => void) | undefined;
+
+    try {
+      if (isTauri() && IS_MAC_LIKE) {
+        let authWindowHref: string | null = null;
+
+        unlistenAuthWindowClosed = await listen<void>(
+          "auth_window_closed",
+          () => {
+            authWindowHref = null;
+          }
+        );
+
+        unlistenAuthWindowMessages = await listen<{
+          data?: string;
+          origin?: string;
+        }>("auth_window_message", (event) => {
+          const payload = event.payload ?? {};
+          let parsedData = payload.data;
+          if (typeof parsedData === "string") {
+            try {
+              parsedData = JSON.parse(parsedData);
+            } catch {
+              parsedData = payload.data;
+            }
+          }
+          window.dispatchEvent(
+            new MessageEvent("message", {
+              data: parsedData,
+              origin: payload.origin || window.location.origin
+            })
+          );
+        });
+
+        const createAuthWindow = (nextUrl: string) => {
+          authWindowHref = nextUrl;
+          invoke("open_auth_window", {
+            url: nextUrl,
+            mainWindowOrigin: window.location.origin
+          });
+        };
+
+        closeAuthWindow = () => {
+          authWindowHref = null;
+          invoke("close_auth_window");
+        };
+
+        window.open = ((url?: string, target?: string, features?: string) => {
+          if (url?.includes("music.apple.com")) {
+            createAuthWindow(url);
+            const authWindowProxy = {
+              get closed() {
+                return authWindowHref === null;
+              },
+              close: () => {
+                closeAuthWindow?.();
+              },
+              focus: () => undefined,
+              postMessage: (data: unknown, origin?: string) => {
+                invoke("post_message_to_auth_window", {
+                  data: typeof data === "string" ? data : JSON.stringify(data),
+                  origin: origin || window.location.origin
+                });
+              }
+            };
+
+            return authWindowProxy;
+          }
+
+          return defaultWindowOpen(url, target, features);
+        }) as typeof window.open;
+      }
+      await music?.authorize();
+    } finally {
+      window.open = defaultWindowOpen;
+      unlistenAuthWindowClosed?.();
+      unlistenAuthWindowMessages?.();
+      closeAuthWindow?.();
+    }
     if (!music?.isAuthorized) return;
     host.updateData({ ...getConfig(), loggedIn: true });
     await fetchUserLibrary();

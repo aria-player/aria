@@ -5,6 +5,7 @@ mod commands;
 mod menu;
 mod oauth;
 mod player;
+mod apple_music;
 mod translation;
 mod tray;
 mod utils;
@@ -131,7 +132,11 @@ fn main() {
             player::get_audio_files_from_directory,
             player::get_metadata,
             player::show_file_in_manager,
-            oauth::start_server
+            oauth::start_server,
+            apple_music::open_auth_window,
+            apple_music::close_auth_window,
+            apple_music::post_message_to_auth_window,
+            apple_music::post_message_to_main_window
         ]);
     if OS != "windows" {
         app_builder = app_builder.menu(|handle| {
