@@ -133,6 +133,11 @@ fn create_menu_items<R: tauri::Runtime>(
                         PredefinedMenuItem::minimize(handle, None::<&str>).unwrap(),
                     ));
                 }
+                "macClose" => {
+                    menu_items.push(MenuItemKind::Predefined(
+                        PredefinedMenuItem::close_window(handle, None::<&str>).unwrap(),
+                    ));
+                }
                 "macZoom" => {
                     // TODO: No PredefinedMenuItem for zoom at the moment
                     // https://github.com/tauri-apps/tauri/issues/11497

@@ -216,6 +216,10 @@
     "maconly": true,
     "submenu": [
       {
+        "id": "macClose",
+        "shortcut": "Cmd+W"
+      },
+      {
         "id": "macMinimize",
         "shortcut": "Cmd+M"
       },
