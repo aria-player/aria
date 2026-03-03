@@ -187,8 +187,7 @@ export default function createSpotifyPlayer(
     const artistIds = new Set<string>();
     const tracksInLibrary: string[] = [];
     const tracksLimit = 50;
-    let tracksOffset = 0;
-    let tracksRemaining = true;
+    const maxConcurrentRequests = 10;
     let progress = 0;
     // TODO: Possibly refactor to make use of initial response data
     const [totalTracksResponse, totalAlbumsResponse] = await Promise.all([
@@ -212,94 +211,118 @@ export default function createSpotifyPlayer(
       });
     };
 
-    while (tracksRemaining) {
-      const tracksResponse = (await spotifyRequest(
-        `/me/tracks?limit=${tracksLimit}&offset=${tracksOffset}`
-      )) as SpotifyApi.UsersSavedTracksResponse;
-      if (tracksResponse && tracksResponse.items) {
-        const tracksToAdd = [];
-        for (const track of tracksResponse.items) {
-          if (track.track.restrictions?.reason) {
-            continue;
-          }
-          const genres = existingTracks.find(
-            (existingTrack) => existingTrack.albumUri == track.track.album.uri
-          )?.genre;
-          tracksInLibrary.push(track.track.uri);
-          const newTrack = getTrackMetadata(
-            track.track,
-            track.track.album,
-            new Date(track.added_at).getTime(),
-            genres
-          );
-          albumArtistMapping[track.track.album.uri] =
-            track.track.album.artists.map((artist) => artist.id);
-          track.track.artists.forEach((artist) => artistIds.add(artist.id));
-          track.track.album.artists.forEach((artist) =>
-            artistIds.add(artist.id)
-          );
-          tracksToAdd.push(newTrack);
-        }
-        if (!getConfig().accessToken) return;
-        host.updateLibraryTracks(tracksToAdd);
-        incrementProgress(tracksResponse.items.length);
-        if (tracksResponse.items.length < tracksLimit) {
-          tracksRemaining = false;
-        } else {
-          tracksOffset += tracksLimit;
-        }
-      } else {
-        tracksRemaining = false;
+    for (
+      let offset = 0;
+      offset < totalTracks;
+      offset += tracksLimit * maxConcurrentRequests
+    ) {
+      const remaining = totalTracks - offset;
+      const requestsInBatch = Math.min(
+        maxConcurrentRequests,
+        Math.ceil(remaining / tracksLimit)
+      );
+      const promises = [];
+      for (let i = 0; i < requestsInBatch; i++) {
+        const currentOffset = offset + i * tracksLimit;
+        promises.push(
+          spotifyRequest(
+            `/me/tracks?limit=${tracksLimit}&offset=${currentOffset}`
+          ) as Promise<SpotifyApi.UsersSavedTracksResponse>
+        );
       }
+      const batchResults = await Promise.all(promises);
+      const tracksToAdd = [];
+      let itemsFetched = 0;
+      for (const tracksResponse of batchResults) {
+        if (tracksResponse && tracksResponse.items) {
+          itemsFetched += tracksResponse.items.length;
+          for (const track of tracksResponse.items) {
+            if (track.track.restrictions?.reason) {
+              continue;
+            }
+            const genres = existingTracks.find(
+              (existingTrack) => existingTrack.albumUri == track.track.album.uri
+            )?.genre;
+            tracksInLibrary.push(track.track.uri);
+            const newTrack = getTrackMetadata(
+              track.track,
+              track.track.album,
+              new Date(track.added_at).getTime(),
+              genres
+            );
+            albumArtistMapping[track.track.album.uri] =
+              track.track.album.artists.map((artist) => artist.id);
+            track.track.artists.forEach((artist) => artistIds.add(artist.id));
+            track.track.album.artists.forEach((artist) =>
+              artistIds.add(artist.id)
+            );
+            tracksToAdd.push(newTrack);
+          }
+        }
+      }
+      if (!getConfig().accessToken) return;
+      host.updateLibraryTracks(tracksToAdd);
+      incrementProgress(itemsFetched);
     }
     const albumsLimit = 50;
-    let albumsOffset = 0;
-    let albumsRemaining = true;
-    while (albumsRemaining) {
-      const albumsResponse = (await spotifyRequest(
-        `/me/albums?limit=${albumsLimit}&offset=${albumsOffset}`
-      )) as SpotifyApi.UsersSavedAlbumsResponse;
-      if (albumsResponse && albumsResponse.items) {
-        const tracksToAdd = [];
-        for (const album of albumsResponse.items) {
-          const genres = existingTracks.find(
-            (track) => track.albumUri == album.album.uri
-          )?.genre;
-          const tracksFromResponse = album.album.tracks.items
-            .filter(
-              (track) =>
-                !tracksInLibrary.includes(track.uri) &&
-                !track.restrictions?.reason
-            )
-            .map((track) => {
-              tracksInLibrary.push(track.uri);
-              return getTrackMetadata(
-                track,
-                album.album,
-                new Date(album.added_at).getTime(),
-                genres
-              );
-            });
-          albumArtistMapping[album.album.uri] = album.album.artists.map(
-            (artist) => artist.id
-          );
-          album.album.tracks.items.forEach((track) =>
-            track.artists.forEach((artist) => artistIds.add(artist.id))
-          );
-          album.album.artists.forEach((artist) => artistIds.add(artist.id));
-          tracksToAdd.push(...tracksFromResponse);
-        }
-        if (!getConfig().accessToken) return;
-        host.updateLibraryTracks(tracksToAdd);
-        incrementProgress(albumsResponse.items.length * albumProgressMultiplier);
-        if (albumsResponse.items.length < albumsLimit) {
-          albumsRemaining = false;
-        } else {
-          albumsOffset += albumsLimit;
-        }
-      } else {
-        albumsRemaining = false;
+    for (
+      let offset = 0;
+      offset < totalAlbums;
+      offset += albumsLimit * maxConcurrentRequests
+    ) {
+      const remaining = totalAlbums - offset;
+      const requestsInBatch = Math.min(
+        maxConcurrentRequests,
+        Math.ceil(remaining / albumsLimit)
+      );
+      const promises = [];
+      for (let i = 0; i < requestsInBatch; i++) {
+        const currentOffset = offset + i * albumsLimit;
+        promises.push(
+          spotifyRequest(
+            `/me/albums?limit=${albumsLimit}&offset=${currentOffset}`
+          ) as Promise<SpotifyApi.UsersSavedAlbumsResponse>
+        );
       }
+      const batchResults = await Promise.all(promises);
+      const tracksToAdd = [];
+      let itemsFetched = 0;
+      for (const albumsResponse of batchResults) {
+        if (albumsResponse && albumsResponse.items) {
+          itemsFetched += albumsResponse.items.length;
+          for (const album of albumsResponse.items) {
+            const genres = existingTracks.find(
+              (track) => track.albumUri == album.album.uri
+            )?.genre;
+            const tracksFromResponse = album.album.tracks.items
+              .filter(
+                (track) =>
+                  !tracksInLibrary.includes(track.uri) &&
+                  !track.restrictions?.reason
+              )
+              .map((track) => {
+                tracksInLibrary.push(track.uri);
+                return getTrackMetadata(
+                  track,
+                  album.album,
+                  new Date(album.added_at).getTime(),
+                  genres
+                );
+              });
+            albumArtistMapping[album.album.uri] = album.album.artists.map(
+              (artist) => artist.id
+            );
+            album.album.tracks.items.forEach((track) =>
+              track.artists.forEach((artist) => artistIds.add(artist.id))
+            );
+            album.album.artists.forEach((artist) => artistIds.add(artist.id));
+            tracksToAdd.push(...tracksFromResponse);
+          }
+        }
+      }
+      if (!getConfig().accessToken) return;
+      host.updateLibraryTracks(tracksToAdd);
+      incrementProgress(itemsFetched * albumProgressMultiplier);
     }
     const removedTracks = existingTracks.filter(
       (track) => !tracksInLibrary.includes(track.uri)
@@ -312,21 +335,34 @@ export default function createSpotifyPlayer(
     const artists = Array.from(artistIds);
     const artistMetadata: ArtistMetadata[] = [];
     const artistGenreMapping: Record<string, string[]> = {};
-    for (let i = 0; i < artists.length; i += 50) {
-      const batchIds = artists.slice(i, i + 50).join(",");
-      const artistResponse = (await spotifyRequest(
-        `/artists?ids=${batchIds}`
-      )) as SpotifyApi.MultipleArtistsResponse;
-      if (artistResponse && artistResponse.artists) {
-        for (const artist of artistResponse.artists) {
-          artistGenreMapping[artist.id] = artist.genres;
-          artistMetadata.push({
-            uri: artist.uri,
-            name: artist.name,
-            artworkUri: artist.images?.[0]?.url
-          });
+    const artistBatchSize = 50;
+    for (let i = 0; i < artists.length; i += artistBatchSize * maxConcurrentRequests) {
+      const requestsInBatch = Math.min(
+        maxConcurrentRequests,
+        Math.ceil((artists.length - i) / artistBatchSize)
+      );
+      const promises = [];
+      for (let j = 0; j < requestsInBatch; j++) {
+        const batchIds = artists
+          .slice(i + j * artistBatchSize, i + (j + 1) * artistBatchSize)
+          .join(",");
+        promises.push(
+          spotifyRequest(`/artists?ids=${batchIds}`) as Promise<SpotifyApi.MultipleArtistsResponse>
+        );
+      }
+      const batchResults = await Promise.all(promises);
+      for (const artistResponse of batchResults) {
+        if (artistResponse && artistResponse.artists) {
+          for (const artist of artistResponse.artists) {
+            artistGenreMapping[artist.id] = artist.genres;
+            artistMetadata.push({
+              uri: artist.uri,
+              name: artist.name,
+              artworkUri: artist.images?.[0]?.url
+            });
+          }
+          incrementProgress(artistResponse.artists.length);
         }
-        incrementProgress(artistResponse.artists.length);
       }
     }
     host.updateArtists(artistMetadata);
