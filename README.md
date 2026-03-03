@@ -30,17 +30,17 @@ You can also try out Aria [online](https://aria-player.github.io/aria/). The web
 
 ## Building and running
 
-Aria uses [Tauri](https://v1.tauri.app/) to provide a cross-platform desktop wrapper for a web app. The web app uses a combination of [TypeScript](https://www.typescriptlang.org/), [React](https://react.dev/), and [Redux](https://redux.js.org/), with [Vite](https://vite.dev/) for build tooling.
+Aria uses [Tauri](https://v1.tauri.app/) to provide a cross-platform desktop wrapper for a web app. The web app uses a combination of [TypeScript](https://www.typescriptlang.org/), [React](https://react.dev/), and [Redux](https://redux.js.org/), with [Vite](https://vite.dev/) and [Bun](https://bun.sh/) for build tooling.
 
 To build the web app, you will need to:
 
 1. Install [Node.js](https://nodejs.org/) (any version newer than v18.0.0).
 2. Clone or download this repository.
-3. Navigate to the downloaded folder and run `pnpm install`.
-4. Accept the prompt to install a specific version of the [pnpm](https://pnpm.io/) package manager. If no prompt appears, you can install pnpm [manually](https://pnpm.io/installation).
-5. Run `pnpm dev` to run the web app in development mode or `pnpm build` to build the web app.
+3. Install [Bun](https://bun.sh/).
+4. Navigate to the downloaded folder and run `bun install`.
+5. Run `bun dev` to run the web app in development mode or `bun run build` to build the web app.
 
-To build the Tauri desktop app, you will also need to install the [prerequisites](https://v1.tauri.app/v1/guides/getting-started/prerequisites) listed on the Tauri website. You will then be able to use `pnpm tauri dev` to run the desktop app in development mode or `pnpm tauri build` to build and package the app into an executable.
+To build the Tauri desktop app, you will also need to install the [prerequisites](https://v1.tauri.app/v1/guides/getting-started/prerequisites) listed on the Tauri website. You will then be able to use `bun tauri dev` to run the desktop app in development mode or `bun tauri build` to build and package the app into an executable.
 
 ## Roadmap
 

@@ -1,12 +1,14 @@
 {
   "private": true,
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
-    "dev": "pnpm --filter aria-player dev",
-    "build": "pnpm --filter aria-player build",
-    "preview": "pnpm --filter aria-player preview",
-    "tauri": "pnpm --filter aria-player tauri",
-    "test": "pnpm --filter aria-player test",
-    "lint": "pnpm --filter aria-player lint"
-  },
-  "packageManager": "pnpm@9.0.6"
+    "dev": "bun --filter aria-player dev",
+    "build": "bun --filter aria-player build",
+    "preview": "bun --filter aria-player preview",
+    "tauri": "bun --filter aria-player tauri",
+    "test": "bun --filter aria-player test",
+    "lint": "bun --filter aria-player lint"
+  }
 }

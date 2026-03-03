@@ -17,7 +17,7 @@ permissions:
 
 # Allow one concurrent deployment
 concurrency:
-  group: 'pages'
+  group: "pages"
   cancel-in-progress: true
 
 jobs:
@@ -30,29 +30,28 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-      - name: Set up pnpm
-        uses: pnpm/action-setup@v2
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
         with:
-          version: 9.0.6
+          bun-version: 1.3.10
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
-          cache: 'pnpm'
+          node-version: 24
       - name: Install dependencies
-        run: pnpm install
+        run: bun install --frozen-lockfile
       - name: Build
         env:
           VITE_BASEPATH: /aria/
           VITE_APPLE_MUSIC_TOKEN_ENDPOINT: ${{ vars.VITE_APPLE_MUSIC_TOKEN_ENDPOINT }}
-        run: pnpm run --filter ./packages/aria-player build
+        run: bun --filter aria-player run build
       - name: Setup Pages
         uses: actions/configure-pages@v4
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
           # Upload dist folder
-          path: './packages/aria-player/dist'
+          path: "./packages/aria-player/dist"
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
