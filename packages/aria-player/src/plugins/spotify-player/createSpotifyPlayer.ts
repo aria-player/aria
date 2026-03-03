@@ -201,12 +201,14 @@ export default function createSpotifyPlayer(
     ]);
     const totalTracks = totalTracksResponse?.total || 0;
     const totalAlbums = totalAlbumsResponse?.total || 0;
+    const albumProgressMultiplier = 10;
 
     const incrementProgress = (amount: number) => {
       progress += amount;
       host.setSyncProgress({
         synced: progress,
-        total: totalTracks + totalAlbums + artistIds.size
+        total:
+          totalTracks + totalAlbums * albumProgressMultiplier + artistIds.size
       });
     };
 
@@ -289,7 +291,7 @@ export default function createSpotifyPlayer(
         }
         if (!getConfig().accessToken) return;
         host.updateLibraryTracks(tracksToAdd);
-        incrementProgress(albumsResponse.items.length);
+        incrementProgress(albumsResponse.items.length * albumProgressMultiplier);
         if (albumsResponse.items.length < albumsLimit) {
           albumsRemaining = false;
         } else {
