@@ -7,17 +7,11 @@
     "type": "git",
     "url": "https://github.com/mark-gl/soprano-ui.git"
   },
-  "files": [
-    "dist"
-  ],
-  "main": "./dist/soprano-ui.umd.cjs",
-  "module": "./dist/soprano-ui.js",
-  "types": "./dist/soprano-ui.d.ts",
+  "main": "./src/soprano-ui.ts",
+  "module": "./src/soprano-ui.ts",
+  "types": "./src/soprano-ui.ts",
   "exports": {
-    ".": {
-      "import": "./dist/soprano-ui.js",
-      "require": "./dist/soprano-ui.umd.cjs"
-    }
+    ".": "./src/soprano-ui.ts"
   },
   "scripts": {
     "build": "tsc && vite build",
