@@ -129,7 +129,7 @@ export default function createAppleMusicPlayer(
 
     const allTracks: TrackMetadata[] = [];
     const tracksLimit = 100;
-    const maxConcurrentRequests = 5;
+    const maxConcurrentRequests = 10;
     for (
       let offset = 0;
       offset < totalTracks;
