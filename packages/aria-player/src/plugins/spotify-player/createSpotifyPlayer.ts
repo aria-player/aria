@@ -395,9 +395,10 @@ export default function createSpotifyPlayer(
   }
 
   function getUniqueGenresFromArtists(
-    artistIds: string[],
+    artistIds: string[] | undefined,
     artistGenreMapping: Record<string, string[]>
   ): string[] {
+    if (!artistIds) return [];
     const allGenres = artistIds.flatMap(
       (artistId) => artistGenreMapping[artistId] || []
     );
