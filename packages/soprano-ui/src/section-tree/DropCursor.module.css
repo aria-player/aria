@@ -1,0 +1,5 @@
+.dropCursor {
+  width: 100%;
+  border-top: var(--tree-drop-cursor-border);
+  position: absolute;
+}

@@ -1,0 +1,7 @@
+[
+  { "id": "songs", "name": "Songs" },
+  { "id": "albums", "name": "Albums" },
+  { "id": "artists", "name": "Artists" },
+  { "id": "genres", "name": "Genres" },
+  { "id": "composers", "name": "Composers", "hidden": true }
+]

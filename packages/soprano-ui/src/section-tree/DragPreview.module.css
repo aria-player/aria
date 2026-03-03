@@ -1,0 +1,16 @@
+.preview {
+  position: fixed;
+  pointer-events: none;
+  z-index: 100;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.node {
+  font-size: 0.9rem;
+  padding-left: 24px;
+  opacity: 0.4;
+  background: transparent;
+}

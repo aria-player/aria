@@ -1,0 +1,44 @@
+.item {
+  font-size: 0.9rem;
+  transition: var(--tree-item-transition);
+  cursor: pointer;
+}
+
+.item:hover:not(.selected, .editing) {
+  background-color: var(--tree-item-background-hover);
+}
+
+.item:active:not(.selected, .editing) {
+  background-color: var(--tree-item-background-active);
+}
+
+.folderIcon {
+  display: inline-block;
+  width: 0.75rem;
+  height: 0.75rem;
+  margin-right: 0.25rem;
+}
+
+.selected {
+  background-color: var(--tree-item-background-selected);
+  color: var(--tree-item-text-selected);
+}
+
+.input {
+  background-color: var(--tree-item-editing-background);
+  width: 100%;
+  margin-left: -0.25rem;
+  color: var(--tree-item-editing-text);
+  font-family: inherit;
+  font-size: 0.9rem;
+  border-style: solid;
+  border-radius: 0.25rem;
+}
+
+.editing {
+  text-overflow: clip;
+}
+
+.itemText {
+  text-overflow: ellipsis;
+}

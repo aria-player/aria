@@ -1,0 +1,46 @@
+:root {
+  --tree-item-text: #0f0f0f;
+  --tree-item-text-selected: #f7f7f7;
+  --tree-item-background-hover: #e6e6e6;
+  --tree-item-background-active: #d9d9d9;
+  --tree-item-background-selected: #4c9de4;
+  --tree-item-line-height: 2rem;
+  --tree-item-padding: 0 0.5rem;
+  --tree-item-margin: 0.125rem 0.5rem;
+  --tree-item-border-radius: 0.25rem;
+  --tree-item-transition: background-color 100ms ease-out;
+  --tree-drop-cursor-border: 2px solid #4c9de4;
+  --tree-empty-text: #999;
+  --tree-item-editing-text: #0f0f0f;
+  --tree-item-editing-background: #f7f7f7;
+  --tree-section-header-font-size: 0.75rem;
+  --tree-section-header-font-weight: 500;
+}
+
+.treeContainer {
+  flex: 1;
+  min-height: 0;
+}
+
+.tree {
+  overflow: hidden auto !important;
+}
+
+.node {
+  color: var(--tree-item-text);
+  height: var(--tree-item-line-height);
+  line-height: var(--tree-item-line-height);
+  padding: var(--tree-item-padding);
+  margin: var(--tree-item-margin);
+  border-radius: var(--tree-item-border-radius);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.empty {
+  color: var(--tree-empty-text);
+  font-style: italic;
+  font-size: 0.9rem;
+  user-select: none;
+}

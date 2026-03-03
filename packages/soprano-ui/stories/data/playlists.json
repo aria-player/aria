@@ -1,0 +1,19 @@
+[
+  { "id": "a", "name": "Example Playlist 1" },
+  {
+    "id": "b",
+    "name": "Example Folder 1",
+    "children": [
+      { "id": "e", "name": "Example Playlist 2" },
+      { "id": "f", "name": "Example Playlist 3" },
+      { "id": "g", "name": "Example Playlist 4" },
+      {
+        "id": "h",
+        "name": "Example Folder 2",
+        "children": []
+      }
+    ]
+  },
+  { "id": "c", "name": "Example Playlist 5" },
+  { "id": "d", "name": "Example Playlist 6" }
+]
