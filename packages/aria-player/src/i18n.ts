@@ -24,7 +24,8 @@ i18n
     debug: import.meta.env.VITE_ENABLE_I18N_DEBUG_MODE == "true",
     interpolation: {
       escapeValue: false
-    }
+    },
+    showSupportNotice: false
   });
 
 export default i18n;
