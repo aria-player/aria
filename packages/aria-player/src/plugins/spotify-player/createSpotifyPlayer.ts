@@ -1,13 +1,10 @@
 import LibraryConfig from "./LibraryConfig";
 import QuickStart from "./QuickStart";
-import { createElement } from "react";
 import Attribution from "./Attribution";
 import { i18n } from "i18next";
 import en_us from "./locales/en_us/translation.json";
-import { Trans } from "react-i18next";
 import { BASEPATH } from "../../app/constants";
 import { isTauri } from "../../app/utils";
-import styles from "./spotify.module.css";
 import {
   ArtistMetadata,
   SourceCallbacks,
@@ -450,26 +447,7 @@ export default function createSpotifyPlayer(
   }
 
   async function authenticate() {
-    if (!getClientId()) {
-      host.showAlert({
-        heading: i18n.t("spotify-player:errorDialog.clientIdRequiredHeading"),
-        message: () =>
-          createElement(Trans, {
-            i18nKey: "spotify-player:errorDialog.clientIdRequiredMessage",
-            components: {
-              uri: createElement(
-                "span",
-                { className: styles.uri },
-                isTauri()
-                  ? "http://127.0.0.1:2742/"
-                  : window.location.origin + BASEPATH
-              )
-            }
-          }),
-        closeLabel: i18n.t("spotify-player:errorDialog.close")
-      });
-      return;
-    }
+    if (!getClientId()) return;
 
     function generateRandomString(length: number) {
       let text = "";
@@ -586,9 +564,24 @@ export default function createSpotifyPlayer(
 
   return {
     LibraryConfig: (props) =>
-      LibraryConfig({ ...props, host, authenticate, logout, i18n }),
+      LibraryConfig({
+        ...props,
+        host,
+        authenticate,
+        logout,
+        redirectUri: getRedirectUri(),
+        i18n
+      }),
 
-    QuickStart: (props) => QuickStart({ ...props, authenticate, i18n }),
+    QuickStart: (props) =>
+      QuickStart({
+        ...props,
+        authenticate,
+        config: getConfig(),
+        redirectUri: getRedirectUri(),
+        updateData: (data) => host.updateData(data),
+        i18n
+      }),
 
     Attribution: (props) => Attribution({ ...props, i18n }),
 

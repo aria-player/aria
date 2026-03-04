@@ -34,9 +34,128 @@
   align-items: center;
 }
 
-.uri {
+.dialogOuter {
+  position: absolute;
+  inset: 0;
+  z-index: 100;
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.setupDialog {
+  background-color: var(--primary-background);
+  border-radius: 1rem;
+  padding: 1.25rem 1.5rem;
+  max-width: 30rem;
+  width: calc(100% - 2rem);
+  box-shadow: 0 5px 15px rgb(0 0 0 / 25%);
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  text-align: left;
+}
+
+.setupHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.setupHeading {
+  font-size: 1.2rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+.setupDescription {
+  margin: 0;
+  color: var(--secondary-text);
+  font-size: 0.9rem;
+}
+
+.setupSteps {
+  margin: 0;
+  padding-left: 0;
+  list-style: none;
+  font-size: 0.9rem;
+
+  li + li {
+    margin-top: 0.75rem;
+  }
+}
+
+.uriBlock {
   font-family: "Courier New", Courier, monospace;
-  user-select: all;
+  background-color: var(--inset-background);
+  padding: 0.2rem 0.4rem;
+  border-radius: 0.25rem;
+  font-size: 0.85rem;
+  display: inline-block;
+  margin: 0.2rem 0 0;
+  border: none;
+  outline: none;
+  color: inherit;
+  cursor: text;
+}
+
+.clientIdInput {
+  height: 2rem;
+  line-height: 2rem;
+  border-radius: 0.25rem;
+  padding: 0 0.5rem;
+  font-size: 0.9rem;
+  background-color: var(--search-background);
+  outline: none;
+  border: none;
+  width: 100%;
+  box-sizing: border-box;
+
+  &:focus,
+  &:hover {
+    background-color: var(--search-background-active);
+  }
+
+  &::placeholder {
+    color: var(--search-placeholder-text);
+  }
+}
+
+.setupLink {
+  color: var(--accent-color);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+}
+
+.setupNotice {
+  font-size: 0.75rem;
+  color: var(--secondary-text);
+  line-height: 1.4;
+}
+
+.setupButtons {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+.setupContinueButton {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 500;
+
+  &:disabled {
+    opacity: 0.75;
+  }
+
+  &:hover:not(:disabled) {
+    cursor: pointer;
+  }
 }
 
 .attribution {
