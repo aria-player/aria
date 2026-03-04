@@ -4,8 +4,9 @@ import { MacTitleBar } from "../platforms/mac/MacTitleBar";
 import { WindowsMenuBar } from "../platforms/windows/WindowsMenuBar";
 import styles from "./CrashPage.module.css";
 import { useTranslation } from "react-i18next";
+import type { FallbackProps } from "react-error-boundary";
 
-export const CrashPage = ({ error }: { error: DOMException }) => {
+export const CrashPage = ({ error }: FallbackProps) => {
   const { platform, fullscreen } = useContext(PlatformContext);
   const { t } = useTranslation();
   const [showDetails, setShowDetails] = useState(false);
@@ -27,7 +28,7 @@ export const CrashPage = ({ error }: { error: DOMException }) => {
         </h1>
         <p {...tauriDragRegion}>
           {t("crash.errorMessage", 'Error message: "{{error}}"', {
-            error: error.message
+            error: error instanceof Error ? error.message : String(error)
           })}
         </p>
         <div className={styles.details} {...tauriDragRegion}>
@@ -44,7 +45,7 @@ export const CrashPage = ({ error }: { error: DOMException }) => {
             className={styles.collapsible}
             style={{ display: showDetails ? "block" : "none" }}
           >
-            <pre>{error.stack}</pre>
+            <pre>{error instanceof Error ? error.stack : undefined}</pre>
           </div>
         </div>
       </div>
