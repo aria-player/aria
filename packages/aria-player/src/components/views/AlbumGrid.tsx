@@ -15,7 +15,7 @@ import {
   getAlbumId,
   getExternalSearchCacheKey
 } from "../../app/utils";
-import AutoSizer from "react-virtualized-auto-sizer";
+import { AutoSizer } from "react-virtualized-auto-sizer";
 import { useScrollDetection } from "../../hooks/useScrollDetection";
 import AlbumGridOverlay from "./subviews/AlbumGridOverlay";
 import { ArtistSection, View } from "../../app/view";
@@ -381,8 +381,12 @@ export default function AlbumGrid() {
   return (
     <div className={`album-grid ${styles.grid}`}>
       {totalItemCount > 0 ? (
-        <AutoSizer>
-          {({ height, width }) => {
+        <AutoSizer
+          renderProp={({
+            height,
+            width
+          }) => {
+            if (height === undefined || width === undefined) return null;
             const widthWithoutScrollbar = width - (getScrollbarWidth() ?? 0);
             const minItemWidth = 240;
             const columnCount = Math.max(
@@ -456,7 +460,7 @@ export default function AlbumGrid() {
               </div>
             );
           }}
-        </AutoSizer>
+        />
       ) : (
         <div className={styles.empty}>{t("albumGrid.empty")}</div>
       )}

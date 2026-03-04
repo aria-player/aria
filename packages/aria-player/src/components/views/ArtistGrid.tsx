@@ -12,7 +12,7 @@ import {
   getExternalSearchCacheKey
 } from "../../app/utils";
 import { CellComponentProps, Grid, GridImperativeAPI } from "react-window";
-import AutoSizer from "react-virtualized-auto-sizer";
+import { AutoSizer } from "react-virtualized-auto-sizer";
 import ArtistGridItem from "./subviews/ArtistGridItem";
 import { useScrollDetection } from "../../hooks/useScrollDetection";
 import { useInfiniteLoader } from "react-window-infinite-loader";
@@ -248,8 +248,12 @@ export default function ArtistGrid() {
   return (
     <div className={`artist-grid ${styles.grid}`}>
       {totalItemCount > 0 ? (
-        <AutoSizer>
-          {({ height, width }) => {
+        <AutoSizer
+          renderProp={({
+            height,
+            width
+          }) => {
+            if (height === undefined || width === undefined) return null;
             const widthWithoutScrollbar = width - (getScrollbarWidth() ?? 0);
             const minItemWidth = 240;
             const columnCount = Math.max(
@@ -305,7 +309,7 @@ export default function ArtistGrid() {
               </div>
             );
           }}
-        </AutoSizer>
+        />
       ) : (
         <div className={styles.empty}>{t("artistGrid.empty")}</div>
       )}
