@@ -11,7 +11,7 @@ import {
   getArtistId,
   getExternalSearchCacheKey
 } from "../../app/utils";
-import { FixedSizeGrid, GridChildComponentProps } from "react-window";
+import { CellComponentProps, Grid, GridImperativeAPI } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 import ArtistGridItem from "./subviews/ArtistGridItem";
 import { useScrollDetection } from "../../hooks/useScrollDetection";
@@ -33,18 +33,19 @@ import {
 
 const ARTISTS_BATCH_SIZE = 20;
 
-type ArtistGridItemProps = GridChildComponentProps & {
+type ArtistGridItemProps = CellComponentProps<{
   columnCount: number;
   columnWidth: number;
   loadingSpinnerRowIndex: number | null;
   displayArtistLimit: number;
-};
+  displayArtists: ReturnType<typeof selectVisibleArtists>;
+}>;
 
 export default function ArtistGrid() {
   const dispatch = useAppDispatch();
   const { onScroll } = useScrollDetection();
 
-  const fixedSizeGridRef = useRef<FixedSizeGrid>(null);
+  const gridRef = useRef<GridImperativeAPI | null>(null);
   const { t } = useTranslation();
   const visibleArtists = useAppSelector(selectVisibleArtists);
   const artistsInfo = useAppSelector(selectArtistsInfo);
@@ -201,7 +202,8 @@ export default function ArtistGrid() {
     columnCount,
     columnWidth,
     loadingSpinnerRowIndex,
-    displayArtistLimit
+    displayArtistLimit,
+    displayArtists
   }: ArtistGridItemProps) => {
     const index = rowIndex * columnCount + columnIndex;
     const shouldRenderArtist = index < displayArtistLimit;
@@ -268,45 +270,39 @@ export default function ArtistGrid() {
               : null;
 
             return (
-              <FixedSizeGrid
-                ref={fixedSizeGridRef}
-                width={width}
-                height={height}
-                rowCount={rowCount}
-                columnCount={columnCount}
-                columnWidth={columnWidth}
-                rowHeight={rowHeight}
-                style={{ overflowX: "hidden" }}
-                overscanRowCount={overscanRowCount}
-                onScroll={({ scrollTop }) => onScroll(scrollTop)}
-                onItemsRendered={({
-                  overscanRowStartIndex,
-                  overscanRowStopIndex
-                }) => {
-                  if (!isExternalSearch) return;
-                  const startIndex = overscanRowStartIndex * columnCount;
-                  const stopIndex = Math.min(
-                    totalItemCount - 1,
-                    (overscanRowStopIndex + 1) * columnCount - 1
-                  );
-                  if (startIndex <= stopIndex) {
-                    onRowsRendered({ startIndex, stopIndex });
-                  }
-                }}
-              >
-                {({ columnIndex, rowIndex, style, data }) =>
-                  itemRenderer({
-                    columnIndex,
-                    rowIndex,
-                    style,
-                    data,
+              <div style={{ width, height }}>
+                <Grid
+                  gridRef={gridRef}
+                  rowCount={rowCount}
+                  columnCount={columnCount}
+                  columnWidth={columnWidth}
+                  rowHeight={rowHeight}
+                  defaultWidth={width}
+                  defaultHeight={height}
+                  style={{ overflowX: "hidden", width: "100%", height: "100%" }}
+                  overscanCount={overscanRowCount}
+                  onScroll={(event) => onScroll(event.currentTarget.scrollTop)}
+                  onCellsRendered={(_, allCells) => {
+                    if (!isExternalSearch) return;
+                    const startIndex = allCells.rowStartIndex * columnCount;
+                    const stopIndex = Math.min(
+                      totalItemCount - 1,
+                      (allCells.rowStopIndex + 1) * columnCount - 1
+                    );
+                    if (startIndex <= stopIndex) {
+                      onRowsRendered({ startIndex, stopIndex });
+                    }
+                  }}
+                  cellComponent={itemRenderer}
+                  cellProps={{
                     columnCount,
                     columnWidth,
                     loadingSpinnerRowIndex,
-                    displayArtistLimit
-                  })
-                }
-              </FixedSizeGrid>
+                    displayArtistLimit,
+                    displayArtists
+                  }}
+                />
+              </div>
             );
           }}
         </AutoSizer>
