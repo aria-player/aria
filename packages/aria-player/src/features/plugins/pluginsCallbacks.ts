@@ -171,7 +171,7 @@ export const getBaseCallbacks = (pluginId: PluginId): BaseCallbacks => {
         });
         const unlistenPromise = listen("oauth_code", () => {
           authWindow.close();
-          unlistenPromise.then((unlisten) => unlisten());
+          unlistenPromise.then((unlisten) => Promise.resolve(unlisten()).catch(() => {}));
         });
       } else {
         window.open(url, "_blank");

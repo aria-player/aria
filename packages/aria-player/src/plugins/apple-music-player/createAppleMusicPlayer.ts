@@ -520,8 +520,8 @@ export default function createAppleMusicPlayer(
       await music?.authorize();
     } finally {
       window.open = defaultWindowOpen;
-      unlistenAuthWindowClosed?.();
-      unlistenAuthWindowMessages?.();
+      Promise.resolve(unlistenAuthWindowClosed?.()).catch(() => {});
+      Promise.resolve(unlistenAuthWindowMessages?.()).catch(() => {});
       closeAuthWindow?.();
     }
     if (!music?.isAuthorized) return;

@@ -126,9 +126,7 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
     }
     init();
     return () => {
-      if (unlisten) {
-        unlisten();
-      }
+      Promise.resolve(unlisten?.()).catch(() => {});
     };
   }, [platform]);
 
@@ -157,7 +155,7 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
       : null;
     return () => {
       unlistenFunctions?.then((unlistenFns) => {
-        unlistenFns.forEach((unlisten) => unlisten());
+        unlistenFns.forEach((unlisten) => Promise.resolve(unlisten()).catch(() => {}));
       });
     };
   }, [invokeMenuAction]);
@@ -189,7 +187,7 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
     });
 
     return () => {
-      unlisten?.then((unlisten) => unlisten());
+      unlisten?.then((fn) => Promise.resolve(fn()).catch(() => {}));
     };
   }, [dispatch]);
 
