@@ -47,17 +47,13 @@ export default function createSpotifyPlayer(
       const hasSubscription = await checkForSubscription();
       if (!hasSubscription) return;
       await fetchAndStoreLibraryInfo();
-      if (getConfig().librarySetupPending) {
-        openLibrarySetupDialog();
-      } else {
-        loadTracks();
-      }
+      loadTracks();
     }
   }
 
   function openLibrarySetupDialog() {
     const config = getConfig();
-    if (!config.accessToken || !config.librarySetupPending) return;
+    if (!config.accessToken) return;
     showLibrarySetupDialog({
       host,
       config,
@@ -522,7 +518,7 @@ export default function createSpotifyPlayer(
     );
   }
 
-  async function authenticate() {
+  async function authenticate(showLibrarySetupDialog = true) {
     if (!getClientId()) return;
 
     function generateRandomString(length: number) {
@@ -566,13 +562,17 @@ export default function createSpotifyPlayer(
       if (event.data && event.data.type === "OAuthCode") {
         const code = event.data.code;
         if (code) {
-          exchangeCodeForToken(code, codeVerifier);
+          exchangeCodeForToken(code, codeVerifier, showLibrarySetupDialog);
         }
       }
     });
   }
 
-  async function exchangeCodeForToken(code: string, codeVerifier: string) {
+  async function exchangeCodeForToken(
+    code: string,
+    codeVerifier: string,
+    showLibrarySetupDialog: boolean
+  ) {
     try {
       const response = await fetch("https://accounts.spotify.com/api/token", {
         method: "POST",
@@ -594,8 +594,13 @@ export default function createSpotifyPlayer(
       const hasSubscription = await checkForSubscription();
       if (!hasSubscription) return;
       await fetchAndStoreLibraryInfo();
-      host.updateData({ ...getConfig(), librarySetupPending: true });
-      openLibrarySetupDialog();
+      if (showLibrarySetupDialog) {
+        host.updateData({ ...getConfig(), librarySetupPending: true });
+        openLibrarySetupDialog();
+      } else {
+        host.updateData({ ...getConfig(), librarySetupPending: false });
+        startLibraryLoad();
+      }
     } catch (error) {
       console.error("Error exchanging code for token:", error);
     }

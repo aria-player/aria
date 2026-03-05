@@ -47,7 +47,7 @@ export function showLibrarySetupDialog({
 export default function LibraryConfig(props: {
   data: object;
   host: SourceCallbacks;
-  authenticate: () => void;
+  authenticate: (showLibrarySetupDialog?: boolean) => void;
   logout: () => void;
   redirectUri: string;
   startLibraryLoad: () => void;
@@ -68,11 +68,15 @@ export default function LibraryConfig(props: {
   function handleSetupSubmit(clientId: string) {
     props.host.updateData({ ...config, clientId });
     setShowSetupDialog(false);
-    props.authenticate();
+    props.authenticate(false);
   }
 
   function handleLibrarySettingChange(newSelection: LibraryItemSelection) {
-    props.host.updateData({ ...config, ...newSelection });
+    props.host.updateData({
+      ...config,
+      ...newSelection,
+      librarySetupPending: false
+    });
     props.refreshLibrary(newSelection);
   }
 
@@ -88,7 +92,7 @@ export default function LibraryConfig(props: {
         />
       )}
       <h4 className="settings-heading">{t("settings.heading")}</h4>
-      {config.accessToken && !config.librarySetupPending && (
+      {config.accessToken && (
         <LibraryItemsConfig
           selection={{
             includeLikedSongs: config.includeLikedSongs !== false,

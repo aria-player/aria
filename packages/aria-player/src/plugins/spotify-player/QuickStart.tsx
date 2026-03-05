@@ -7,7 +7,7 @@ import { SpotifyConfig } from "./createSpotifyPlayer";
 import SpotifySetupDialog from "./SpotifySetupDialog";
 
 export default function QuickStart(props: {
-  authenticate: () => void;
+  authenticate: (showLibrarySetupDialog?: boolean) => void;
   config: SpotifyConfig;
   redirectUri: string;
   updateData: (data: SpotifyConfig) => void;
@@ -23,7 +23,7 @@ export default function QuickStart(props: {
   function handleSetupSubmit(clientId: string) {
     props.updateData({ ...props.config, clientId });
     setShowSetupDialog(false);
-    props.authenticate();
+    props.authenticate(true);
   }
 
   return (
