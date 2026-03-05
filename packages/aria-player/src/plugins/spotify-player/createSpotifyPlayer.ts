@@ -250,7 +250,7 @@ export default function createSpotifyPlayer(
     const existingTracks = host.getTracks();
     const albumArtistMapping: Record<string, string[]> = {};
     const artistIds = new Set<string>();
-    const tracksInLibrary: string[] = [];
+    const tracksInLibrary = new Set<string>();
     const tracksLimit = 50;
     const maxConcurrentRequests = 10;
     let progress = 0;
@@ -301,7 +301,7 @@ export default function createSpotifyPlayer(
                 (existingTrack) =>
                   existingTrack.albumUri == track.track.album.uri
               )?.genre;
-              tracksInLibrary.push(track.track.uri);
+              tracksInLibrary.add(track.track.uri);
               const newTrack = getTrackMetadata(
                 track.track,
                 track.track.album,
@@ -356,12 +356,10 @@ export default function createSpotifyPlayer(
               )?.genre;
               const tracksFromResponse = album.album.tracks.items
                 .filter(
-                  (track) =>
-                    !tracksInLibrary.includes(track.uri) &&
-                    !track.restrictions?.reason
+                  (track) => !track.restrictions?.reason
                 )
                 .map((track) => {
-                  tracksInLibrary.push(track.uri);
+                  tracksInLibrary.add(track.uri);
                   return getTrackMetadata(
                     track,
                     album.album,
@@ -386,14 +384,14 @@ export default function createSpotifyPlayer(
       }
     }
     const removedTracks = existingTracks.filter(
-      (track) => !tracksInLibrary.includes(track.uri)
+      (track) => !tracksInLibrary.has(track.uri)
     );
     if (removedTracks.length > 0) {
       host.removeLibraryTracks(removedTracks.map((track) => track.uri));
     }
     const tracks = host
       .getTracks()
-      .filter((track) => tracksInLibrary.includes(track.uri));
+      .filter((track) => tracksInLibrary.has(track.uri));
     const existingArtists = host.getArtists();
     const artists = Array.from(artistIds);
     const artistMetadata: ArtistMetadata[] = [];
