@@ -21,13 +21,13 @@ export default function PluginAlertDialog() {
     <div className={styles.dialogOuter}>
       <div className={styles.dialogInner} onClick={(e) => e.stopPropagation()}>
         <h3 className={styles.heading}>{alert?.heading}</h3>
-        <p>
-          {typeof alert?.message === "string"
-            ? alert.message
-            : alert?.message && <alert.message />}
-        </p>
+        {typeof alert?.message === "string" ? (
+          <p>{alert.message}</p>
+        ) : (
+          alert?.message && <alert.message />
+        )}
         <button
-          className="settings-button"
+          className={`settings-button ${styles.closeButton}`}
           onClick={() => {
             alert?.onClose?.();
             setAlert(null);

@@ -1,4 +1,4 @@
-import LibraryConfig from "./LibraryConfig";
+import LibraryConfig, { showLibrarySetupDialog } from "./LibraryConfig";
 import QuickStart from "./QuickStart";
 import Attribution from "./Attribution";
 import { i18n } from "i18next";
@@ -19,6 +19,11 @@ export type SpotifyConfig = {
   tokenExpiry?: number;
   clientId?: string;
   redirectUri?: string;
+  includeLikedSongs?: boolean;
+  includeSavedAlbums?: boolean;
+  likedSongsCount?: number;
+  savedAlbumsCount?: number;
+  librarySetupPending?: boolean;
 };
 
 export default function createSpotifyPlayer(
@@ -38,35 +43,95 @@ export default function createSpotifyPlayer(
 
   async function initialize() {
     if (getConfig().accessToken) {
-      const script = document.createElement("script");
-      script.id = "spotify";
-      script.src = "https://sdk.scdn.co/spotify-player.js";
-      script.async = true;
-      document.body.appendChild(script);
-
-      window.onSpotifyWebPlaybackSDKReady = async () => {
-        player = new Spotify.Player({
-          name: "Aria",
-          getOAuthToken: async (cb: (token: string) => void) => {
-            cb((await getOrRefreshAccessToken())!);
-          },
-          volume: host.getVolume() / 100
-        });
-
-        player.addListener("ready", ({ device_id }) => {
-          deviceId = device_id;
-        });
-
-        player.addListener("not_ready", ({ device_id }) => {
-          console.error("Device ID has gone offline", device_id);
-        });
-
-        player.connect();
-      };
-
-      await checkForSubscription();
-      loadTracks();
+      setupSpotifyPlayer();
+      const hasSubscription = await checkForSubscription();
+      if (!hasSubscription) return;
+      await fetchAndStoreLibraryInfo();
+      if (getConfig().librarySetupPending) {
+        openLibrarySetupDialog();
+      } else {
+        loadTracks();
+      }
     }
+  }
+
+  function openLibrarySetupDialog() {
+    const config = getConfig();
+    if (!config.accessToken || !config.librarySetupPending) return;
+    showLibrarySetupDialog({
+      host,
+      config,
+      i18n,
+      onSubmit: (includeLikedSongs, includeSavedAlbums) => {
+        host.updateData({
+          ...getConfig(),
+          includeLikedSongs,
+          includeSavedAlbums,
+          librarySetupPending: false
+        });
+        startLibraryLoad();
+      }
+    });
+  }
+
+  function setupSpotifyPlayer() {
+    if (document.getElementById("spotify")) return;
+    const script = document.createElement("script");
+    script.id = "spotify";
+    script.src = "https://sdk.scdn.co/spotify-player.js";
+    script.async = true;
+    document.body.appendChild(script);
+
+    window.onSpotifyWebPlaybackSDKReady = async () => {
+      player = new Spotify.Player({
+        name: "Aria",
+        getOAuthToken: async (cb: (token: string) => void) => {
+          cb((await getOrRefreshAccessToken())!);
+        },
+        volume: host.getVolume() / 100
+      });
+
+      player.addListener("ready", ({ device_id }) => {
+        deviceId = device_id;
+      });
+
+      player.addListener("not_ready", ({ device_id }) => {
+        console.error("Device ID has gone offline", device_id);
+      });
+
+      player.connect();
+    };
+  }
+
+  async function fetchAndStoreLibraryInfo() {
+    const config = getConfig();
+    const includeLikedSongs = config.includeLikedSongs !== false;
+    const includeSavedAlbums = config.includeSavedAlbums !== false;
+    const [tracksResponse, albumsResponse] = await Promise.all([
+      includeLikedSongs
+        ? (spotifyRequest(
+            `/me/tracks?limit=1`
+          ) as Promise<SpotifyApi.UsersSavedTracksResponse>)
+        : Promise.resolve(null),
+      includeSavedAlbums
+        ? (spotifyRequest(
+            `/me/albums?limit=1`
+          ) as Promise<SpotifyApi.UsersSavedAlbumsResponse>)
+        : Promise.resolve(null)
+    ]);
+    host.updateData({
+      ...getConfig(),
+      likedSongsCount: tracksResponse?.total ?? getConfig().likedSongsCount,
+      savedAlbumsCount: albumsResponse?.total ?? getConfig().savedAlbumsCount
+    });
+  }
+
+  function startLibraryLoad() {
+    loadTracks();
+  }
+
+  function refreshLibrary(configOverride?: Partial<SpotifyConfig>) {
+    loadTracks(configOverride);
   }
 
   function getClientId() {
@@ -152,6 +217,7 @@ export default function createSpotifyPlayer(
     const profileResponse = (await spotifyRequest(
       `/me/`
     )) as SpotifyApi.CurrentUsersProfileResponse;
+    if (!profileResponse) return false;
     if ("status" in profileResponse && profileResponse.status === 403) {
       host.showAlert({
         heading: i18n.t("spotify-player:errorDialog.profileErrorHeading"),
@@ -161,8 +227,9 @@ export default function createSpotifyPlayer(
           logout();
         }
       });
-      return;
+      return false;
     }
+    if (!("product" in profileResponse)) return false;
     if (
       profileResponse.product === "free" ||
       profileResponse.product === "open"
@@ -175,10 +242,15 @@ export default function createSpotifyPlayer(
           logout();
         }
       });
+      return false;
     }
+    return true;
   }
 
-  async function loadTracks() {
+  async function loadTracks(configOverride?: Partial<SpotifyConfig>) {
+    const config = { ...getConfig(), ...configOverride };
+    const includeLikedSongs = config.includeLikedSongs !== false;
+    const includeSavedAlbums = config.includeSavedAlbums !== false;
     const existingTracks = host.getTracks();
     const albumArtistMapping: Record<string, string[]> = {};
     const artistIds = new Set<string>();
@@ -186,17 +258,8 @@ export default function createSpotifyPlayer(
     const tracksLimit = 50;
     const maxConcurrentRequests = 10;
     let progress = 0;
-    // TODO: Possibly refactor to make use of initial response data
-    const [totalTracksResponse, totalAlbumsResponse] = await Promise.all([
-      spotifyRequest(
-        `/me/tracks?limit=1`
-      ) as Promise<SpotifyApi.UsersSavedTracksResponse>,
-      spotifyRequest(
-        `/me/albums?limit=1`
-      ) as Promise<SpotifyApi.UsersSavedAlbumsResponse>
-    ]);
-    const totalTracks = totalTracksResponse?.total || 0;
-    const totalAlbums = totalAlbumsResponse?.total || 0;
+    const totalTracks = includeLikedSongs ? (config.likedSongsCount ?? 0) : 0;
+    const totalAlbums = includeSavedAlbums ? (config.savedAlbumsCount ?? 0) : 0;
     const albumProgressMultiplier = 10;
 
     const incrementProgress = (amount: number) => {
@@ -208,118 +271,123 @@ export default function createSpotifyPlayer(
       });
     };
 
-    for (
-      let offset = 0;
-      offset < totalTracks;
-      offset += tracksLimit * maxConcurrentRequests
-    ) {
-      const remaining = totalTracks - offset;
-      const requestsInBatch = Math.min(
-        maxConcurrentRequests,
-        Math.ceil(remaining / tracksLimit)
-      );
-      const promises = [];
-      for (let i = 0; i < requestsInBatch; i++) {
-        const currentOffset = offset + i * tracksLimit;
-        promises.push(
-          spotifyRequest(
-            `/me/tracks?limit=${tracksLimit}&offset=${currentOffset}`
-          ) as Promise<SpotifyApi.UsersSavedTracksResponse>
+    if (includeLikedSongs) {
+      for (
+        let offset = 0;
+        offset < totalTracks;
+        offset += tracksLimit * maxConcurrentRequests
+      ) {
+        const remaining = totalTracks - offset;
+        const requestsInBatch = Math.min(
+          maxConcurrentRequests,
+          Math.ceil(remaining / tracksLimit)
         );
-      }
-      const batchResults = await Promise.all(promises);
-      const tracksToAdd = [];
-      let itemsFetched = 0;
-      for (const tracksResponse of batchResults) {
-        if (tracksResponse && tracksResponse.items) {
-          itemsFetched += tracksResponse.items.length;
-          for (const track of tracksResponse.items) {
-            if (track.track.restrictions?.reason) {
-              continue;
+        const promises = [];
+        for (let i = 0; i < requestsInBatch; i++) {
+          const currentOffset = offset + i * tracksLimit;
+          promises.push(
+            spotifyRequest(
+              `/me/tracks?limit=${tracksLimit}&offset=${currentOffset}`
+            ) as Promise<SpotifyApi.UsersSavedTracksResponse>
+          );
+        }
+        const batchResults = await Promise.all(promises);
+        const tracksToAdd = [];
+        let itemsFetched = 0;
+        for (const tracksResponse of batchResults) {
+          if (tracksResponse && tracksResponse.items) {
+            itemsFetched += tracksResponse.items.length;
+            for (const track of tracksResponse.items) {
+              if (track.track.restrictions?.reason) {
+                continue;
+              }
+              const genres = existingTracks.find(
+                (existingTrack) =>
+                  existingTrack.albumUri == track.track.album.uri
+              )?.genre;
+              tracksInLibrary.push(track.track.uri);
+              const newTrack = getTrackMetadata(
+                track.track,
+                track.track.album,
+                new Date(track.added_at).getTime(),
+                genres
+              );
+              albumArtistMapping[track.track.album.uri] =
+                track.track.album.artists.map((artist) => artist.id);
+              track.track.artists.forEach((artist) => artistIds.add(artist.id));
+              track.track.album.artists.forEach((artist) =>
+                artistIds.add(artist.id)
+              );
+              tracksToAdd.push(newTrack);
             }
-            const genres = existingTracks.find(
-              (existingTrack) => existingTrack.albumUri == track.track.album.uri
-            )?.genre;
-            tracksInLibrary.push(track.track.uri);
-            const newTrack = getTrackMetadata(
-              track.track,
-              track.track.album,
-              new Date(track.added_at).getTime(),
-              genres
-            );
-            albumArtistMapping[track.track.album.uri] =
-              track.track.album.artists.map((artist) => artist.id);
-            track.track.artists.forEach((artist) => artistIds.add(artist.id));
-            track.track.album.artists.forEach((artist) =>
-              artistIds.add(artist.id)
-            );
-            tracksToAdd.push(newTrack);
           }
         }
+        if (!getConfig().accessToken) return;
+        host.updateLibraryTracks(tracksToAdd);
+        incrementProgress(itemsFetched);
       }
-      if (!getConfig().accessToken) return;
-      host.updateLibraryTracks(tracksToAdd);
-      incrementProgress(itemsFetched);
     }
     const albumsLimit = 50;
-    for (
-      let offset = 0;
-      offset < totalAlbums;
-      offset += albumsLimit * maxConcurrentRequests
-    ) {
-      const remaining = totalAlbums - offset;
-      const requestsInBatch = Math.min(
-        maxConcurrentRequests,
-        Math.ceil(remaining / albumsLimit)
-      );
-      const promises = [];
-      for (let i = 0; i < requestsInBatch; i++) {
-        const currentOffset = offset + i * albumsLimit;
-        promises.push(
-          spotifyRequest(
-            `/me/albums?limit=${albumsLimit}&offset=${currentOffset}`
-          ) as Promise<SpotifyApi.UsersSavedAlbumsResponse>
+    if (includeSavedAlbums) {
+      for (
+        let offset = 0;
+        offset < totalAlbums;
+        offset += albumsLimit * maxConcurrentRequests
+      ) {
+        const remaining = totalAlbums - offset;
+        const requestsInBatch = Math.min(
+          maxConcurrentRequests,
+          Math.ceil(remaining / albumsLimit)
         );
-      }
-      const batchResults = await Promise.all(promises);
-      const tracksToAdd = [];
-      let itemsFetched = 0;
-      for (const albumsResponse of batchResults) {
-        if (albumsResponse && albumsResponse.items) {
-          itemsFetched += albumsResponse.items.length;
-          for (const album of albumsResponse.items) {
-            const genres = existingTracks.find(
-              (track) => track.albumUri == album.album.uri
-            )?.genre;
-            const tracksFromResponse = album.album.tracks.items
-              .filter(
-                (track) =>
-                  !tracksInLibrary.includes(track.uri) &&
-                  !track.restrictions?.reason
-              )
-              .map((track) => {
-                tracksInLibrary.push(track.uri);
-                return getTrackMetadata(
-                  track,
-                  album.album,
-                  new Date(album.added_at).getTime(),
-                  genres
-                );
-              });
-            albumArtistMapping[album.album.uri] = album.album.artists.map(
-              (artist) => artist.id
-            );
-            album.album.tracks.items.forEach((track) =>
-              track.artists.forEach((artist) => artistIds.add(artist.id))
-            );
-            album.album.artists.forEach((artist) => artistIds.add(artist.id));
-            tracksToAdd.push(...tracksFromResponse);
+        const promises = [];
+        for (let i = 0; i < requestsInBatch; i++) {
+          const currentOffset = offset + i * albumsLimit;
+          promises.push(
+            spotifyRequest(
+              `/me/albums?limit=${albumsLimit}&offset=${currentOffset}`
+            ) as Promise<SpotifyApi.UsersSavedAlbumsResponse>
+          );
+        }
+        const batchResults = await Promise.all(promises);
+        const tracksToAdd = [];
+        let itemsFetched = 0;
+        for (const albumsResponse of batchResults) {
+          if (albumsResponse && albumsResponse.items) {
+            itemsFetched += albumsResponse.items.length;
+            for (const album of albumsResponse.items) {
+              const genres = existingTracks.find(
+                (track) => track.albumUri == album.album.uri
+              )?.genre;
+              const tracksFromResponse = album.album.tracks.items
+                .filter(
+                  (track) =>
+                    !tracksInLibrary.includes(track.uri) &&
+                    !track.restrictions?.reason
+                )
+                .map((track) => {
+                  tracksInLibrary.push(track.uri);
+                  return getTrackMetadata(
+                    track,
+                    album.album,
+                    new Date(album.added_at).getTime(),
+                    genres
+                  );
+                });
+              albumArtistMapping[album.album.uri] = album.album.artists.map(
+                (artist) => artist.id
+              );
+              album.album.tracks.items.forEach((track) =>
+                track.artists.forEach((artist) => artistIds.add(artist.id))
+              );
+              album.album.artists.forEach((artist) => artistIds.add(artist.id));
+              tracksToAdd.push(...tracksFromResponse);
+            }
           }
         }
+        if (!getConfig().accessToken) return;
+        host.updateLibraryTracks(tracksToAdd);
+        incrementProgress(itemsFetched * albumProgressMultiplier);
       }
-      if (!getConfig().accessToken) return;
-      host.updateLibraryTracks(tracksToAdd);
-      incrementProgress(itemsFetched * albumProgressMultiplier);
     }
     const removedTracks = existingTracks.filter(
       (track) => !tracksInLibrary.includes(track.uri)
@@ -327,13 +395,19 @@ export default function createSpotifyPlayer(
     if (removedTracks.length > 0) {
       host.removeLibraryTracks(removedTracks.map((track) => track.uri));
     }
-    const tracks = host.getTracks();
+    const tracks = host
+      .getTracks()
+      .filter((track) => tracksInLibrary.includes(track.uri));
     const existingArtists = host.getArtists();
     const artists = Array.from(artistIds);
     const artistMetadata: ArtistMetadata[] = [];
     const artistGenreMapping: Record<string, string[]> = {};
     const artistBatchSize = 50;
-    for (let i = 0; i < artists.length; i += artistBatchSize * maxConcurrentRequests) {
+    for (
+      let i = 0;
+      i < artists.length;
+      i += artistBatchSize * maxConcurrentRequests
+    ) {
       const requestsInBatch = Math.min(
         maxConcurrentRequests,
         Math.ceil((artists.length - i) / artistBatchSize)
@@ -344,7 +418,9 @@ export default function createSpotifyPlayer(
           .slice(i + j * artistBatchSize, i + (j + 1) * artistBatchSize)
           .join(",");
         promises.push(
-          spotifyRequest(`/artists?ids=${batchIds}`) as Promise<SpotifyApi.MultipleArtistsResponse>
+          spotifyRequest(
+            `/artists?ids=${batchIds}`
+          ) as Promise<SpotifyApi.MultipleArtistsResponse>
         );
       }
       const batchResults = await Promise.all(promises);
@@ -514,7 +590,12 @@ export default function createSpotifyPlayer(
         refreshToken: responseBody.refresh_token,
         tokenExpiry: Date.now() + responseBody.expires_in * 1000
       });
-      initialize();
+      setupSpotifyPlayer();
+      const hasSubscription = await checkForSubscription();
+      if (!hasSubscription) return;
+      await fetchAndStoreLibraryInfo();
+      host.updateData({ ...getConfig(), librarySetupPending: true });
+      openLibrarySetupDialog();
     } catch (error) {
       console.error("Error exchanging code for token:", error);
     }
@@ -570,6 +651,8 @@ export default function createSpotifyPlayer(
         authenticate,
         logout,
         redirectUri: getRedirectUri(),
+        startLibraryLoad,
+        refreshLibrary,
         i18n
       }),
 

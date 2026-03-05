@@ -71,7 +71,6 @@
 
 .setupDescription {
   margin: 0;
-  color: var(--secondary-text);
   font-size: 0.9rem;
 }
 
@@ -157,6 +156,48 @@
     cursor: pointer;
   }
 }
+
+.libraryItemsConfig {
+  margin: 1rem 0;
+  padding: 1rem;
+  background-color: var(--inset-background);
+  box-shadow: inset 0 2px 2px rgb(0 0 0 / 10%);
+  width: 100%;
+  border-radius: 0.25rem;
+  font-size: 0.9rem;
+  border-collapse: collapse;
+  text-align: left;
+
+  td {
+    padding: 0.6rem;
+    vertical-align: middle;
+  }
+}
+
+.libraryItemLabel {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.libraryItemRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.35rem 0.6rem;
+}
+
+.libraryItemCount {
+  color: var(--secondary-text);
+  font-size: 0.8rem;
+  white-space: nowrap;
+  text-align: right;
+  width: 1%;
+}
+
 
 .attribution {
   display: flex;

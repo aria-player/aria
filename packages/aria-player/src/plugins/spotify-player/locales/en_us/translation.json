@@ -27,5 +27,14 @@
     "profileErrorMessage": "The profile information for this Spotify account couldn't be obtained. You may need to ensure that your Spotify account has access to the application.",
     "logOut": "Log out"
   },
+  "librarySetup": {
+    "heading": "Configure your Spotify library",
+    "description": "Choose which songs from Spotify you'd like to include in your library. You can change this later in Settings.",
+    "includeLikedSongs": "Include songs from Liked Songs",
+    "includeSavedAlbums": "Include songs from Saved Albums",
+    "songCount": "{{count}} songs",
+    "albumCount": "{{count}} albums",
+    "continue": "Continue"
+  },
   "playOnSpotify": "Play on Spotify"
 }

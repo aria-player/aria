@@ -1,11 +1,48 @@
 import { useState, ChangeEvent } from "react";
-import { SpotifyConfig } from "./createSpotifyPlayer";
+import type { SpotifyConfig } from "./createSpotifyPlayer";
 import { SourceCallbacks } from "../../../../types/plugins";
 import SpotifyLogo from "./assets/spotify-brands-solid.svg?react";
 import styles from "./spotify.module.css";
 import { useTranslation } from "react-i18next";
 import { i18n } from "i18next";
 import SpotifySetupDialog from "./SpotifySetupDialog";
+import LibraryItemsConfig, { LibraryItemSelection } from "./LibraryItemsConfig";
+import LibrarySetupDialog from "./LibrarySetupDialog";
+
+export function showLibrarySetupDialog({
+  host,
+  config,
+  i18n: i18nInstance,
+  onSubmit
+}: {
+  host: SourceCallbacks;
+  config: SpotifyConfig;
+  i18n: i18n;
+  onSubmit: (includeLikedSongs: boolean, includeSavedAlbums: boolean) => void;
+}) {
+  let state: LibraryItemSelection = {
+    includeLikedSongs: config.includeLikedSongs !== false,
+    includeSavedAlbums: config.includeSavedAlbums !== false
+  };
+  const { likedSongsCount, savedAlbumsCount } = config;
+
+  host.showAlert({
+    heading: i18nInstance.t("spotify-player:librarySetup.heading"),
+    message: () => (
+      <LibrarySetupDialog
+        initialSelection={state}
+        likedSongsCount={likedSongsCount}
+        savedAlbumsCount={savedAlbumsCount}
+        onChange={(next) => {
+          state = next;
+        }}
+        i18n={i18nInstance}
+      />
+    ),
+    closeLabel: i18nInstance.t("spotify-player:librarySetup.continue"),
+    onClose: () => onSubmit(state.includeLikedSongs, state.includeSavedAlbums)
+  });
+}
 
 export default function LibraryConfig(props: {
   data: object;
@@ -13,6 +50,8 @@ export default function LibraryConfig(props: {
   authenticate: () => void;
   logout: () => void;
   redirectUri: string;
+  startLibraryLoad: () => void;
+  refreshLibrary: (configOverride?: Partial<SpotifyConfig>) => void;
   i18n: i18n;
 }) {
   const config = props.data as SpotifyConfig;
@@ -32,6 +71,11 @@ export default function LibraryConfig(props: {
     props.authenticate();
   }
 
+  function handleLibrarySettingChange(newSelection: LibraryItemSelection) {
+    props.host.updateData({ ...config, ...newSelection });
+    props.refreshLibrary(newSelection);
+  }
+
   return (
     <div>
       {showSetupDialog && (
@@ -44,6 +88,18 @@ export default function LibraryConfig(props: {
         />
       )}
       <h4 className="settings-heading">{t("settings.heading")}</h4>
+      {config.accessToken && !config.librarySetupPending && (
+        <LibraryItemsConfig
+          selection={{
+            includeLikedSongs: config.includeLikedSongs !== false,
+            includeSavedAlbums: config.includeSavedAlbums !== false
+          }}
+          likedSongsCount={config.likedSongsCount}
+          savedAlbumsCount={config.savedAlbumsCount}
+          onChange={handleLibrarySettingChange}
+          i18n={props.i18n}
+        />
+      )}
       {config.accessToken ? (
         <button className="settings-button" onClick={props.logout}>
           {t("settings.logOutFromSpotify")}
