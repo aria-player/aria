@@ -93,6 +93,14 @@ export const playerSlice = createSlice({
     stop: (state) => {
       state.status = Status.Stopped;
     },
+    clearCurrentTrack: (state) => {
+      state.status = Status.Stopped;
+      state.currentTrack = null;
+      state.queue = [];
+      state.queueUnshuffled = [];
+      state.queueIndex = null;
+      state.upNext = [];
+    },
     setVolume: (state, action) => {
       state.volume = Math.min(Math.max(action.payload, 0), 100);
     },
@@ -335,6 +343,7 @@ export const {
   pause,
   resume,
   stop,
+  clearCurrentTrack,
   setVolume,
   setMuted,
   setQueueToNewSource,

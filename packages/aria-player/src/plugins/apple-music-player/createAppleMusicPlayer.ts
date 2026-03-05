@@ -533,7 +533,7 @@ export default function createAppleMusicPlayer(
     await music?.unauthorize();
     host.updateData({ ...getConfig(), loggedIn: false });
     host.setSyncProgress({ synced: 0, total: 0 });
-    host.removeLibraryTracks();
+    host.removeTracks();
     host.removeArtists();
   }
 

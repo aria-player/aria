@@ -1,6 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 import { AlbumId, ArtistId, TrackId } from "../../../../types";
+import { parseTrackId } from "../../app/utils";
+import { PluginId } from "../../../../types/plugins";
 
 const updateAtOffset = <T>(
   currentData: T[] | undefined,
@@ -139,6 +141,43 @@ export const cacheSlice = createSlice({
         albums: {},
         artists: {}
       };
+    },
+    removeCachedTracks: (
+      state,
+      action: PayloadAction<{
+        source: PluginId;
+        tracks?: TrackId[];
+      }>
+    ) => {
+      const trackIdsToRemove = action.payload.tracks
+        ? new Set(action.payload.tracks)
+        : null;
+      const shouldRemoveTrack = (trackId: TrackId) =>
+        trackIdsToRemove
+          ? trackIdsToRemove.has(trackId)
+          : parseTrackId(trackId)?.source === action.payload.source;
+
+      Object.keys(state.artistTopTracks).forEach((artistId) => {
+        const remainingTracks = state.artistTopTracks[artistId].filter(
+          (trackId) => !shouldRemoveTrack(trackId)
+        );
+        if (remainingTracks.length > 0) {
+          state.artistTopTracks[artistId] = remainingTracks;
+        } else {
+          delete state.artistTopTracks[artistId];
+        }
+      });
+
+      Object.keys(state.search.tracks).forEach((key) => {
+        const remainingTracks = state.search.tracks[key].filter(
+          (trackId) => !shouldRemoveTrack(trackId)
+        );
+        if (remainingTracks.length > 0) {
+          state.search.tracks[key] = remainingTracks;
+        } else {
+          delete state.search.tracks[key];
+        }
+      });
     }
   }
 });
@@ -150,7 +189,8 @@ export const {
   updateCachedSearchTracks,
   updateCachedSearchAlbums,
   updateCachedSearchArtists,
-  clearCache
+  clearCache,
+  removeCachedTracks
 } = cacheSlice.actions;
 
 export const selectIsAlbumFetched = (state: RootState, albumId: AlbumId) =>

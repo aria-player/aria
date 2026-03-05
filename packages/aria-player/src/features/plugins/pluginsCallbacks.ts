@@ -113,10 +113,27 @@ function handleRemoveLibraryTracks(source: PluginId, uris?: TrackUri[]) {
       delTracks.push(getTrackId(source, uri));
     });
     store.dispatch(
-      removeTracks({ source, tracks: delTracks, removeFromLibrary: true })
+      removeTracks({
+        source,
+        tracks: delTracks,
+        removeFromLibrary: true
+      })
     );
   } else {
     store.dispatch(removeTracks({ source, removeFromLibrary: true }));
+  }
+}
+
+function handleRemoveTracks(source: PluginId, uris?: TrackUri[]) {
+  if (uris) {
+    store.dispatch(
+      removeTracks({
+        source,
+        tracks: uris.map((uri) => getTrackId(source, uri))
+      })
+    );
+  } else {
+    store.dispatch(removeTracks({ source }));
   }
 }
 
@@ -171,7 +188,9 @@ export const getBaseCallbacks = (pluginId: PluginId): BaseCallbacks => {
         });
         const unlistenPromise = listen("oauth_code", () => {
           authWindow.close();
-          unlistenPromise.then((unlisten) => Promise.resolve(unlisten()).catch(() => {}));
+          unlistenPromise.then((unlisten) =>
+            Promise.resolve(unlisten()).catch(() => {})
+          );
         });
       } else {
         window.open(url, "_blank");
@@ -200,6 +219,7 @@ export const getSourceCallbacks = (pluginId: PluginId): SourceCallbacks => {
       handleAddLibraryTracks(pluginId, metadata),
     removeLibraryTracks: (uris?: TrackUri[]) =>
       handleRemoveLibraryTracks(pluginId, uris),
+    removeTracks: (uris?: TrackUri[]) => handleRemoveTracks(pluginId, uris),
     updateLibraryTracks: (metadata: TrackMetadata[]) =>
       handleUpdateLibraryTracks(pluginId, metadata),
     updateArtists: (metadata: ArtistMetadata[]) =>

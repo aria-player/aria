@@ -6,6 +6,8 @@ import { addTracks, removeTracks, selectAllTracks } from "./tracksSlice";
 import { getUnreferencedTrackIds } from "./tracksUtils.ts";
 import { Track, TrackId } from "../../../../types/tracks";
 import { compareMetadata } from "../../app/sort";
+import { removeCachedTracks } from "../cache/cacheSlice";
+import { clearCurrentTrack } from "../player/playerSlice";
 
 export function setupTracksListeners() {
   listenForAction(isAnyOf(addTracks, removeTracks), (state, action) => {
@@ -16,6 +18,33 @@ export function setupTracksListeners() {
     );
     const plugin = getSourceHandle(payload.source);
     plugin?.onTracksUpdate?.(tracks);
+  });
+
+  listenForAction(isAnyOf(removeTracks), (state, action, dispatch) => {
+    const payload = action.payload as {
+      source: PluginId;
+      tracks?: TrackId[];
+      removeFromLibrary?: boolean;
+    };
+    if (payload.removeFromLibrary) {
+      return;
+    }
+    dispatch(
+      removeCachedTracks({
+        source: payload.source,
+        tracks: payload.tracks
+      })
+    );
+    const currentTrackId = state.player.currentTrack?.trackId;
+    if (
+      currentTrackId != null &&
+      (payload.tracks?.includes(currentTrackId) ||
+        (payload.tracks == null &&
+          state.tracks.tracks?.entities[currentTrackId]?.source ===
+            payload.source))
+    ) {
+      dispatch(clearCurrentTrack());
+    }
   });
 
   listenForChange(

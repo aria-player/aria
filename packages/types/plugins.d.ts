@@ -368,6 +368,12 @@ export interface SourceCallbacks extends BaseCallbacks {
    */
   removeLibraryTracks: (uris?: TrackUri[]) => void;
   /**
+   * Remove information about tracks with the specified URIs.
+   *
+   * If `uris` is null, all tracks for this source will be removed.
+   */
+  removeTracks: (uris?: TrackUri[]) => void;
+  /**
    * Add new tracks to the library and update existing tracks with new metadata.
    */
   updateLibraryTracks: (metadata: TrackMetadata[]) => void;

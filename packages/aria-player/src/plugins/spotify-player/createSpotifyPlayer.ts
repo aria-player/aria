@@ -609,7 +609,7 @@ export default function createSpotifyPlayer(
       player.disconnect();
     }
     host.setSyncProgress({ synced: 0, total: 0 });
-    host.removeLibraryTracks();
+    host.removeTracks();
     host.removeArtists();
     const config = getConfig();
     host.updateData({
