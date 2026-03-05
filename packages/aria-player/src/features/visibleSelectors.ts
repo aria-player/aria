@@ -175,7 +175,7 @@ export const selectVisibleTracks = createSelector(
               ...track,
               itemId: track?.trackId
             })) as TrackListItem[]
-          ).sort((a, b) => b.dateAdded - a.dateAdded)
+          ).sort((a, b) => (b.dateAdded ?? 0) - (a.dateAdded ?? 0))
         : selectVisibleViewType(state) == View.Search
           ? (() => {
               const visibleSource = selectVisibleSearchSource(state);

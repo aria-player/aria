@@ -25,10 +25,8 @@ export interface TrackMetadata {
   metadataLoaded: boolean;
   /**
    * The date this track was added to the source library, in number of milliseconds since epoch.
-   *
-   * If not applicable, set to `Date.now()` when passing new tracks to `addTracks`.
    */
-  dateAdded: number;
+  dateAdded?: number;
   /**
    * The date that the metadata for this track was last modified, in number of milliseconds since epoch.
    */

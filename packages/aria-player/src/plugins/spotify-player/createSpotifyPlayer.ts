@@ -355,9 +355,7 @@ export default function createSpotifyPlayer(
                 (track) => track.albumUri == album.album.uri
               )?.genre;
               const tracksFromResponse = album.album.tracks.items
-                .filter(
-                  (track) => !track.restrictions?.reason
-                )
+                .filter((track) => !track.restrictions?.reason)
                 .map((track) => {
                   tracksInLibrary.add(track.uri);
                   return getTrackMetadata(
@@ -457,14 +455,14 @@ export default function createSpotifyPlayer(
   function getTrackMetadata(
     track: SpotifyApi.TrackObjectSimplified,
     album: SpotifyApi.AlbumObjectSimplified,
-    dateAdded: number,
+    dateAdded: number | undefined,
     genre?: string | string[]
   ): TrackMetadata {
     return {
       uri: track.uri,
       title: track.name,
       metadataLoaded: true,
-      dateAdded,
+      ...(dateAdded !== undefined && { dateAdded }),
       duration: track.duration_ms,
       artist: track.artists.map((artist) => artist.name),
       artistUri: track.artists.map((artist) => artist.uri),
@@ -721,7 +719,7 @@ export default function createSpotifyPlayer(
       return getTrackMetadata(
         trackResponse,
         trackResponse.album,
-        Date.now(),
+        undefined,
         formattedGenres
       );
     },
@@ -763,7 +761,7 @@ export default function createSpotifyPlayer(
         if (tracksResponse?.items) {
           for (const track of tracksResponse.items) {
             if (track.restrictions?.reason) continue;
-            tracks.push(getTrackMetadata(track, albumResponse, Date.now()));
+            tracks.push(getTrackMetadata(track, albumResponse, undefined));
             track.artists.forEach((artist) => artistIds.add(artist.id));
           }
 
@@ -836,7 +834,7 @@ export default function createSpotifyPlayer(
 
       for (const track of requestedTracks) {
         if (track.restrictions?.reason) continue;
-        tracks.push(getTrackMetadata(track, track.album, Date.now()));
+        tracks.push(getTrackMetadata(track, track.album, undefined));
         track.artists.forEach((artist) => artistIds.add(artist.id));
         track.album.artists.forEach((artist) => artistIds.add(artist.id));
       }
@@ -931,7 +929,7 @@ export default function createSpotifyPlayer(
 
         for (const track of searchResponse.tracks.items) {
           if (track.restrictions?.reason) continue;
-          tracks.push(getTrackMetadata(track, track.album, Date.now()));
+          tracks.push(getTrackMetadata(track, track.album, undefined));
           track.artists.forEach((artist) => artistIds.add(artist.id));
           track.album.artists.forEach((artist) => artistIds.add(artist.id));
         }

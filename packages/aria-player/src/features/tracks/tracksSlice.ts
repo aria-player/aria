@@ -15,7 +15,7 @@ import { fetchMissingTrack } from "./tracksUtils";
 
 const tracksAdapter = createEntityAdapter<Track, TrackId>({
   selectId: (track) => track.trackId,
-  sortComparer: (a, b) => b.dateAdded - a.dateAdded
+  sortComparer: (a, b) => (b.dateAdded ?? 0) - (a.dateAdded ?? 0)
 });
 
 interface TracksState {

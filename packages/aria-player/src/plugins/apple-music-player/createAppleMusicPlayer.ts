@@ -216,7 +216,7 @@ export default function createAppleMusicPlayer(
             albumData,
             (albumData.attributes?.dateAdded &&
               new Date(albumData.attributes.dateAdded).getTime()) ||
-              Date.now()
+              undefined
           )
         );
       });
@@ -241,7 +241,7 @@ export default function createAppleMusicPlayer(
         | MusicKit.Albums["attributes"]
         | MusicKit.LibraryAlbums["attributes"];
     },
-    dateAdded: number
+    dateAdded: number | undefined
   ): TrackMetadata {
     return {
       uri: track.id,
@@ -256,7 +256,7 @@ export default function createAppleMusicPlayer(
       artworkUri: track.attributes?.artwork?.url,
       disc: track.attributes?.discNumber,
       track: track.attributes?.trackNumber,
-      dateAdded,
+      ...(dateAdded !== undefined && { dateAdded }),
       year:
         albumData.attributes?.releaseDate &&
         parseInt(albumData.attributes.releaseDate.split("-")[0]),
@@ -580,7 +580,7 @@ export default function createAppleMusicPlayer(
         const track = getTrackMetadata(
           trackData,
           albumData ?? { id: "", attributes: undefined },
-          Date.now()
+          undefined
         );
         const catalogIdMap: Record<string, string> = {};
         catalogIdMap[trackData.id] = trackData.id;
@@ -646,7 +646,7 @@ export default function createAppleMusicPlayer(
               getTrackMetadata(
                 track,
                 { id: albumData.id, attributes: albumAttributes },
-                Date.now()
+                undefined
               )
             );
           });
@@ -720,7 +720,7 @@ export default function createAppleMusicPlayer(
           catalogIdMap[track.id] = track.id;
           const albumData = track.relationships?.albums
             .data[0] as unknown as MusicKit.Albums;
-          tracks.push(getTrackMetadata(track, albumData, Date.now()));
+          tracks.push(getTrackMetadata(track, albumData, undefined));
         });
         await addCatalogArtistsToTracks(tracks, catalogIdMap);
         return tracks;
@@ -833,7 +833,7 @@ export default function createAppleMusicPlayer(
               getTrackMetadata(
                 track,
                 albumData ?? { id: "", attributes: undefined },
-                Date.now()
+                undefined
               )
             );
           });
