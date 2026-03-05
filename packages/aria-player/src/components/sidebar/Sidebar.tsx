@@ -33,6 +33,7 @@ import {
 } from "../../features/visibleSelectors";
 import { View } from "../../app/view";
 import {
+  selectDebouncedSearch,
   selectSelectedSearchSource,
   selectSearch,
   setSearch,
@@ -47,6 +48,8 @@ import ClearIcon from "../../assets/xmark-solid.svg?react";
 import { useLocation } from "react-router-dom";
 import { TreeContext } from "../../contexts/TreeContext";
 
+const SEARCH_DEBOUNCE_MS = 180;
+
 export function Sidebar() {
   const dispatch = useAppDispatch();
   const location = useLocation();
@@ -60,19 +63,18 @@ export function Sidebar() {
   const visibleSearchSource = useAppSelector(selectVisibleSearchSource);
   const selectedSearchSource = useAppSelector(selectSelectedSearchSource);
   const search = useAppSelector(selectSearch);
+  const debouncedSearch = useAppSelector(selectDebouncedSearch);
   const [isComposing, setIsComposing] = useState(false);
   const [localSearch, setLocalSearch] = useState(search);
 
   useEffect(() => {
+    if (visibleViewType !== View.Search) return;
     const pathParts = location.pathname.substring(BASEPATH.length).split("/");
     const searchQueryFromRoute =
-      visibleViewType == View.Search && pathParts.length > 1
-        ? decodeURIComponent(pathParts[1])
-        : "";
-    if (search != searchQueryFromRoute && visibleViewType == View.Search) {
-      dispatch(setSearch(searchQueryFromRoute));
-    }
-  }, [dispatch, location, search, visibleViewType]);
+      pathParts.length > 1 ? decodeURIComponent(pathParts[1]) : "";
+    setLocalSearch(searchQueryFromRoute);
+    dispatch(setSearch(searchQueryFromRoute));
+  }, [dispatch, location.pathname, visibleViewType]);
 
   const { show, hideAll } = useContextMenu();
   const { visibility, setMenuData } = useContext(MenuContext);
@@ -137,15 +139,39 @@ export function Sidebar() {
   }, [search]);
 
   useEffect(() => {
+    if (debouncedSearch === search) {
+      return;
+    }
     const timer = setTimeout(() => {
       dispatch(setDebouncedSearch(search));
-    }, 300);
+    }, SEARCH_DEBOUNCE_MS);
     return () => clearTimeout(timer);
-  }, [search, dispatch]);
+  }, [search, dispatch, debouncedSearch]);
 
-  function goToSearch() {
+  useEffect(() => {
+    if (visibleViewType !== View.Search || isComposing) return;
+    const source = visibleSearchSource ?? selectedSearchSource ?? "library";
+    const nextPath = debouncedSearch.trim()
+      ? BASEPATH +
+        `search/${encodeURIComponent(debouncedSearch)}/${encodeURIComponent(source)}${visibleSearchCategory ? `/${visibleSearchCategory}` : ""}`
+      : BASEPATH + "search";
+    if (location.pathname !== nextPath) {
+      dispatch(replace(nextPath));
+    }
+  }, [
+    debouncedSearch,
+    dispatch,
+    isComposing,
+    location.pathname,
+    selectedSearchSource,
+    visibleSearchCategory,
+    visibleSearchSource,
+    visibleViewType
+  ]);
+
+  function goToSearch(searchValue: string) {
     if (visibleViewType != View.Search || visibleSearchCategory != null) {
-      dispatch(push(BASEPATH + getSearchRoute(localSearch)));
+      dispatch(push(BASEPATH + getSearchRoute(searchValue)));
     }
   }
 
@@ -181,34 +207,28 @@ export function Sidebar() {
           placeholder={t("sidebar.search")}
           onKeyDown={(e) => {
             e.stopPropagation();
-            if (e.key == "Enter" && !isComposing) goToSearch();
+            if (e.key == "Enter" && !isComposing) goToSearch(localSearch);
           }}
           onCompositionStart={() => {
             setIsComposing(true);
           }}
           onCompositionEnd={(e) => {
             setIsComposing(false);
-            goToSearch();
-            dispatch(
-              replace(
-                BASEPATH + getSearchRoute((e.target as HTMLInputElement).value)
-              )
-            );
+            const inputValue = (e.target as HTMLInputElement).value;
+            setLocalSearch(inputValue);
+            dispatch(setSearch(inputValue));
+            goToSearch(inputValue);
           }}
           onChange={(e) => {
-            setLocalSearch((e.target as HTMLInputElement).value);
+            const inputValue = (e.target as HTMLInputElement).value;
+            setLocalSearch(inputValue);
+            dispatch(setSearch(inputValue));
             if (!isComposing) {
-              goToSearch();
-              dispatch(
-                replace(
-                  BASEPATH +
-                    getSearchRoute((e.target as HTMLInputElement).value)
-                )
-              );
+              goToSearch(inputValue);
             }
           }}
           onClick={() => {
-            goToSearch();
+            goToSearch(localSearch);
           }}
           onBlur={(e) => {
             if (
@@ -230,6 +250,7 @@ export function Sidebar() {
             onClick={() => {
               setLocalSearch("");
               dispatch(setSearch(""));
+              dispatch(setDebouncedSearch(""));
               if (visibleViewType == View.Search) {
                 dispatch(push(BASEPATH + "search"));
               }

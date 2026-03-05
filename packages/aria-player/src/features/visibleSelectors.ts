@@ -145,6 +145,7 @@ export const selectVisibleTracks = createSelector(
   [
     (state: RootState) => selectAllTracks(state),
     (state: RootState) => state.search.search,
+    (state: RootState) => state.search.debouncedSearch,
     (state: RootState) => state.router.location?.pathname,
     (state: RootState) => state.undoable.present.playlists.playlists,
     (state: RootState) => selectVisibleSearchSource(state)
@@ -154,7 +155,6 @@ export const selectVisibleTracks = createSelector(
     const visiblePlaylist = selectVisiblePlaylist(state)?.tracks;
     const visibleViewType = selectVisibleViewType(state);
     const visibleSelectedTrackGroup = selectVisibleSelectedTrackGroup(state);
-    const search = selectSearch(state);
 
     if (visibleViewType === View.Artist && visibleSelectedTrackGroup) {
       return selectVisibleArtistTracks(state);
@@ -179,9 +179,16 @@ export const selectVisibleTracks = createSelector(
         : selectVisibleViewType(state) == View.Search
           ? (() => {
               const visibleSource = selectVisibleSearchSource(state);
+              const searchHandle = visibleSource
+                ? getSourceHandle(visibleSource)
+                : null;
+              if (visibleSource && searchHandle?.searchTracks) {
+                return [];
+              }
+              const debouncedSearch = selectDebouncedSearch(state);
               const searchResults = searchTracks(
                 selectLibraryTracks(state),
-                search
+                debouncedSearch
               );
               return (
                 visibleSource
@@ -325,6 +332,7 @@ export const selectVisibleTrackGroups = createSelector(
     (state: RootState) => state.undoable.present.library,
     (state: RootState) => selectAllTracks(state),
     (state: RootState) => state.search.search,
+    (state: RootState) => state.search.debouncedSearch,
     (state: RootState) => selectArtistDelimiter(state),
     (state: RootState) => selectVisibleSearchSource(state),
     (state: RootState) => selectVisibleSearchCategory(state)
@@ -332,10 +340,16 @@ export const selectVisibleTrackGroups = createSelector(
   () => {
     const state = store.getState();
     const delimiter = selectArtistDelimiter(state);
+    const search = selectDebouncedSearch(state);
     if (selectVisibleDisplayMode(state) == DisplayMode.AlbumGrid) {
-      const search = selectSearch(state);
       if (selectVisibleSearchCategory(state) == SearchCategory.Albums) {
         const visibleSource = selectVisibleSearchSource(state);
+        const searchHandle = visibleSource
+          ? getSourceHandle(visibleSource)
+          : null;
+        if (visibleSource && searchHandle?.searchAlbums) {
+          return [];
+        }
         const searchResults = searchAlbums(selectLibraryAlbums(state), search);
         return (
           visibleSource
@@ -348,8 +362,13 @@ export const selectVisibleTrackGroups = createSelector(
         ];
       }
     } else if (selectVisibleSearchCategory(state) == SearchCategory.Artists) {
-      const search = selectSearch(state);
       const visibleSource = selectVisibleSearchSource(state);
+      const searchHandle = visibleSource
+        ? getSourceHandle(visibleSource)
+        : null;
+      if (visibleSource && searchHandle?.searchArtists) {
+        return [];
+      }
       const searchResults = searchArtists(selectLibraryArtists(state), search);
       return (
         visibleSource
@@ -404,6 +423,7 @@ export const selectVisibleAlbums = createSelector(
     (state: RootState) => state.undoable.present.library,
     (state: RootState) => selectAllTracks(state),
     (state: RootState) => state.search.search,
+    (state: RootState) => state.search.debouncedSearch,
     (state: RootState) => selectVisibleSearchSource(state),
     (state: RootState) => selectVisibleSearchCategory(state)
   ],
@@ -411,13 +431,26 @@ export const selectVisibleAlbums = createSelector(
     const state = store.getState();
     const allAlbums = selectAllAlbums(state);
     const search = selectSearch(state);
+    const debouncedSearch = selectDebouncedSearch(state);
     const visibleViewType = selectVisibleViewType(state);
 
     if (visibleViewType === View.Artist) {
       return selectVisibleArtistAlbums(state);
     } else if (search && visibleViewType == View.Search) {
+      if (!debouncedSearch.trim()) {
+        return [];
+      }
       const visibleSource = selectVisibleSearchSource(state);
-      const searchResults = searchAlbums(selectLibraryAlbums(state), search);
+      const searchHandle = visibleSource
+        ? getSourceHandle(visibleSource)
+        : null;
+      if (visibleSource && searchHandle?.searchAlbums) {
+        return [];
+      }
+      const searchResults = searchAlbums(
+        selectLibraryAlbums(state),
+        debouncedSearch
+      );
       return visibleSource
         ? searchResults.filter((album) => album.source == visibleSource)
         : searchResults;
@@ -444,6 +477,7 @@ export const selectVisibleArtists = createSelector(
     (state: RootState) => state.undoable.present.library,
     (state: RootState) => selectAllTracks(state),
     (state: RootState) => state.search.search,
+    (state: RootState) => state.search.debouncedSearch,
     (state: RootState) => selectVisibleSearchSource(state),
     (state: RootState) => selectVisibleSearchCategory(state)
   ],
@@ -451,9 +485,22 @@ export const selectVisibleArtists = createSelector(
     const state = store.getState();
     const allArtists = selectAllArtists(state);
     const search = selectSearch(state);
+    const debouncedSearch = selectDebouncedSearch(state);
     if (search && selectVisibleViewType(state) == View.Search) {
+      if (!debouncedSearch.trim()) {
+        return [];
+      }
       const visibleSource = selectVisibleSearchSource(state);
-      const searchResults = searchArtists(selectLibraryArtists(state), search);
+      const searchHandle = visibleSource
+        ? getSourceHandle(visibleSource)
+        : null;
+      if (visibleSource && searchHandle?.searchArtists) {
+        return [];
+      }
+      const searchResults = searchArtists(
+        selectLibraryArtists(state),
+        debouncedSearch
+      );
       return visibleSource
         ? searchResults.filter((artist) => artist.source == visibleSource)
         : searchResults;
@@ -588,6 +635,7 @@ export const selectVisibleSearchResults = createSelector(
     (state: RootState) => selectVisibleSearchCategory(state),
     (state: RootState) => state.router.location?.pathname,
     (state: RootState) => state.search.search,
+    (state: RootState) => state.search.debouncedSearch,
     (state: RootState) => selectArtistDelimiter(state)
   ],
   () => {
@@ -596,15 +644,31 @@ export const selectVisibleSearchResults = createSelector(
     if (!search.trim()) {
       return null;
     }
+    const debouncedSearch = selectDebouncedSearch(state);
+    if (!debouncedSearch.trim()) {
+      return {
+        tracks: [],
+        artists: [],
+        albums: []
+      };
+    }
+    const visibleSource = selectVisibleSearchSource(state);
+    const searchHandle = visibleSource ? getSourceHandle(visibleSource) : null;
+    if (visibleSource && searchHandle?.searchTracks) {
+      return {
+        tracks: [],
+        artists: [],
+        albums: []
+      };
+    }
     const searchResults = searchAllCategories(
       selectLibraryTracks(state),
       selectLibraryArtists(state),
       selectLibraryAlbums(state),
-      search
+      debouncedSearch
     );
     if (!searchResults) return null;
 
-    const visibleSource = selectVisibleSearchSource(state);
     return {
       tracks: (visibleSource
         ? searchResults.tracks.filter(
@@ -673,7 +737,14 @@ export const selectVisibleSearchTracks = createSelector(
       return visibleCategory == null ? trackList.slice(0, 5) : trackList;
     }
 
-    const searchResults = searchTracks(selectLibraryTracks(state), search);
+    if (!debouncedSearch.trim()) {
+      return [];
+    }
+
+    const searchResults = searchTracks(
+      selectLibraryTracks(state),
+      debouncedSearch
+    );
     const filteredResults = visibleSource
       ? searchResults.filter((track) => track.source == visibleSource)
       : searchResults;
