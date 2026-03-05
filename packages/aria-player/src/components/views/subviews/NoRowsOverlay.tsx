@@ -8,7 +8,8 @@ import {
 import {
   getSourceHandle,
   pluginHandles,
-  selectActivePlugins
+  selectActivePlugins,
+  selectPluginData
 } from "../../../features/plugins/pluginsSlice";
 import styles from "./NoRowsOverlay.module.css";
 import { BASEPATH } from "../../../app/constants";
@@ -24,6 +25,7 @@ export default function NoRowsOverlay() {
   const visibleViewType = useAppSelector(selectVisibleViewType);
   const visibleDisplayMode = useAppSelector(selectVisibleDisplayMode);
   const activePlugins = useAppSelector(selectActivePlugins);
+  useAppSelector(selectPluginData); // Re-render when plugin data changes
   const configurablePlugins = activePlugins
     .filter((plugin) => pluginHandles[plugin]?.QuickStart)
     .sort(sortPlugins);

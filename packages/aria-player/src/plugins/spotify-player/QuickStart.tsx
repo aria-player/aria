@@ -16,6 +16,10 @@ export default function QuickStart(props: {
   const { t } = useTranslation("spotify-player", { i18n: props.i18n });
   const [showSetupDialog, setShowSetupDialog] = useState(false);
 
+  if (props.config.accessToken) {
+    return null;
+  }
+
   function handleSetupSubmit(clientId: string) {
     props.updateData({ ...props.config, clientId });
     setShowSetupDialog(false);
