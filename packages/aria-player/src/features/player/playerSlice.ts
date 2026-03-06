@@ -129,7 +129,9 @@ export const playerSlice = createSlice({
         state.queue = state.queueUnshuffled;
         state.currentTrack = state.queue[state.queueIndex];
       }
-      state.queueSource = action.payload.queueSource;
+      state.queueSource = action.payload.queueSource.startsWith("/")
+        ? action.payload.queueSource.slice(1)
+        : action.payload.queueSource;
       state.queueGrouping = action.payload.queueGrouping;
       state.queueSelectedGroup = action.payload.queueSelectedGroup;
     },
