@@ -23,6 +23,7 @@ export interface AlbumTrackListItem {
   artistUri?: string | string[];
   album?: string;
   albumId?: string;
+  albumUri?: string;
   year?: number;
   artworkUri?: string;
   tracks?: number;
@@ -81,6 +82,7 @@ export const AlbumTrackList = (props: {
             artistUri: track.albumArtistUri || track.artistUri || undefined,
             album: track.album || t("tracks.unknownAlbum"),
             albumId: track.albumId,
+            albumUri: track.albumUri,
             year: track.year || undefined,
             artworkUri: getMostCommonArtworkUri(
               visibleTracks.filter((t) => t.albumId === track.albumId)

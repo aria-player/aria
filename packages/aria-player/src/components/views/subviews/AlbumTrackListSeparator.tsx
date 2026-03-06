@@ -37,7 +37,7 @@ export default function AlbumTrackListSeparator(props: ICellRendererParams) {
           {pluginHandle?.Attribution && (
             <pluginHandle.Attribution
               type="album"
-              id={props.node.data.albumId}
+              id={props.node.data.albumUri}
               compact={false}
             />
           )}

@@ -99,7 +99,7 @@ export default function TopResultItem({ result }: TopResultItemProps) {
           title: album.name,
           subtitle: formatStringArray(album.artist),
           label: t("search.categories.albums.one"),
-          attributionId: album.albumId
+          attributionId: album.uri
         };
       }
       default:
