@@ -92,7 +92,9 @@ export default function createTauriPlayer(
             } as Track;
           })
           .catch((err) => {
-            console.error(`Error fetching metadata for ${track.uri}:`, err);
+            if (err !== "placeholder_file") {
+              console.error(`Error fetching metadata for ${track.uri}:`, err);
+            }
             return {
               ...track,
               metadataLoaded: true
@@ -193,7 +195,9 @@ export default function createTauriPlayer(
         file,
         host.getMuted() ? 0 : host.getVolume() / 100
       );
-      if (actualDuration != null && actualDuration != track.duration) {
+      if (!track.duration) {
+        getMetadata([track]);
+      } else if (actualDuration != null && actualDuration != track.duration) {
         host.updateLibraryTracks([{ ...track, duration: actualDuration }]);
       }
     },

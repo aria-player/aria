@@ -9,6 +9,42 @@ use std::{collections::HashMap, fs};
 use tauri::{AppHandle, Manager};
 use tauri_plugin_opener::OpenerExt;
 
+#[cfg(target_os = "windows")]
+fn is_placeholder_file(path: &Path) -> bool {
+    use std::os::windows::fs::MetadataExt;
+    const FILE_ATTRIBUTE_RECALL_ON_DATA_ACCESS: u32 = 0x00400000;
+    const FILE_ATTRIBUTE_RECALL_ON_OPEN: u32 = 0x00100000;
+    if let Ok(meta) = fs::metadata(path) {
+        let attrs = meta.file_attributes();
+        (attrs & FILE_ATTRIBUTE_RECALL_ON_DATA_ACCESS) != 0
+            || (attrs & FILE_ATTRIBUTE_RECALL_ON_OPEN) != 0
+    } else {
+        false
+    }
+}
+
+#[cfg(target_os = "macos")]
+fn is_placeholder_file(path: &Path) -> bool {
+    use std::ffi::CString;
+    use std::os::unix::ffi::OsStrExt;
+    const UF_DATALESS: u32 = 0x40000000;
+    let c_path = match CString::new(path.as_os_str().as_bytes()) {
+        Ok(p) => p,
+        Err(_) => return false,
+    };
+    let mut stat_buf: libc::stat = unsafe { std::mem::zeroed() };
+    if unsafe { libc::stat(c_path.as_ptr(), &mut stat_buf) } == 0 {
+        (stat_buf.st_flags as u32 & UF_DATALESS) != 0
+    } else {
+        false
+    }
+}
+
+#[cfg(not(any(target_os = "windows", target_os = "macos")))]
+fn is_placeholder_file(_path: &Path) -> bool {
+    false
+}
+
 #[tauri::command]
 pub fn get_audio_files_from_directory(
     app: AppHandle,
@@ -24,8 +60,12 @@ pub fn get_audio_files_from_directory(
                 Ok(e) => e,
                 Err(e) => return Err(e.to_string()),
             };
+            let file_type = match entry.file_type() {
+                Ok(ft) => ft,
+                Err(_) => continue,
+            };
             let path = entry.path();
-            if path.is_dir() {
+            if file_type.is_dir() {
                 let mut sub_files = get_audio_files_from_directory(app.clone(), &path)?;
                 files.append(&mut sub_files);
             } else if let Some(ext) = path.extension().and_then(|e| e.to_str()) {
@@ -44,6 +84,9 @@ pub fn get_audio_files_from_directory(
 #[tauri::command]
 pub fn get_metadata(app: AppHandle, file_path: String) -> Result<HashMap<String, String>, String> {
     let path = Path::new(&file_path);
+    if is_placeholder_file(path) {
+        return Err("placeholder_file".to_string());
+    }
     let file_metadata = metadata(path).map_err(|e| e.to_string())?;
 
     let modified = file_metadata
