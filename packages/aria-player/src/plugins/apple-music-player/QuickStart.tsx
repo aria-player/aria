@@ -1,4 +1,5 @@
 import { i18n } from "i18next";
+import AppleMusicLogo from "./assets/apple-music-icon.svg?react";
 import styles from "./applemusic.module.css";
 import { useTranslation } from "react-i18next";
 import { useState } from "react";
@@ -23,6 +24,7 @@ export default function QuickStart(props: {
         }
       }}
     >
+      <AppleMusicLogo className={styles.appleMusicLogo} />
       {t("settings.logInWithAppleMusic")}
     </button>
   );
