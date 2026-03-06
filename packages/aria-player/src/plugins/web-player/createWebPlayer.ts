@@ -45,7 +45,7 @@ export default function createWebPlayer(
     if (directoryHandle != undefined) {
       loaded = true;
       if (directoryHandle.name != folder) {
-        host.removeLibraryTracks();
+        host.removeTracks();
       }
       folder = directoryHandle.name;
       fileHandles = await getAudioFileHandlesWeb(directoryHandle);

@@ -162,7 +162,7 @@ export default function createTauriPlayer(
       })
     );
     if (!confirmed) return;
-    host.removeLibraryTracks(folders[folderPath]);
+    host.removeTracks(folders[folderPath]);
     delete (folders = { ...folders })[folderPath];
     host.updateData({ folders: folders });
   }
