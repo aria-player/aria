@@ -134,12 +134,20 @@ export default function createTauriPlayer(
   async function rescanFolders() {
     for (const folder in folders) {
       const fileNames = (await getAudioFileNames(folder)) as string[];
+      const removedFileNames = folders[folder].filter(
+        (fileName) => !fileNames.includes(fileName)
+      );
       const newFileNames = fileNames.filter(
         (fileName) => !folders[folder].includes(fileName)
       );
-      if (newFileNames.length > 0) {
-        folders[folder] = [...folders[folder], ...newFileNames];
+      if (removedFileNames.length > 0) {
+        host.removeTracks(removedFileNames);
+      }
+      if (newFileNames.length > 0 || removedFileNames.length > 0) {
+        folders[folder] = fileNames;
         host.updateData({ folders });
+      }
+      if (newFileNames.length > 0) {
         addNewTracks(newFileNames);
       }
     }

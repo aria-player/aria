@@ -44,33 +44,42 @@ export default function createWebPlayer(
     });
     if (directoryHandle != undefined) {
       loaded = true;
+      const oldFileUris = Object.keys(fileHandles);
       if (directoryHandle.name != folder) {
         host.removeTracks();
       }
       folder = directoryHandle.name;
       fileHandles = await getAudioFileHandlesWeb(directoryHandle);
+      const newUris = Object.keys(fileHandles);
+      const removedUris = oldFileUris.filter((uri) => !newUris.includes(uri));
+      if (removedUris.length > 0) {
+        host.removeTracks(removedUris);
+      }
+      const addedUris = newUris.filter((uri) => !new Set(oldFileUris).has(uri));
       host.updateData({
         folder,
         scanned: host.getTracks().filter((track) => track.metadataLoaded)
           .length,
-        total: Object.keys(fileHandles).length
+        total: newUris.length
       });
 
-      const dateAdded = Date.now();
-      const tracks = Object.keys(fileHandles).map((uri: TrackUri) => ({
-        uri,
-        title: fileHandles[uri].name,
-        dateModified: fileHandles[uri].lastModified,
-        dateAdded,
-        filePath: uri,
-        fileFolder: uri.split("/").slice(-2, -1)[0],
-        fileSize: fileHandles[uri].size,
-        fileFormat: fileHandles[uri].name.split(".").pop()?.toUpperCase(),
-        album: uri.split("/").slice(-2, -1)[0],
-        metadataLoaded: false
-      }));
-      host.addLibraryTracks(tracks);
-      updateLibraryTracksMetadata(tracks);
+      if (addedUris.length > 0) {
+        const dateAdded = Date.now();
+        const tracks = addedUris.map((uri: TrackUri) => ({
+          uri,
+          title: fileHandles[uri].name,
+          dateModified: fileHandles[uri].lastModified,
+          dateAdded,
+          filePath: uri,
+          fileFolder: uri.split("/").slice(-2, -1)[0],
+          fileSize: fileHandles[uri].size,
+          fileFormat: fileHandles[uri].name.split(".").pop()?.toUpperCase(),
+          album: uri.split("/").slice(-2, -1)[0],
+          metadataLoaded: false
+        }));
+        host.addLibraryTracks(tracks);
+      }
+      updateLibraryTracksMetadata(host.getTracks());
     }
   }
 
