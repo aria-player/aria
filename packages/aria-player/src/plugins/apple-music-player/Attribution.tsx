@@ -24,6 +24,8 @@ export default function Attribution(
     props.storefrontId
   );
 
+  if (!props.compact && props.type == "track" && !appleMusicUrl) return null;
+
   return appleMusicUrl ? (
     <button
       className={styles.attribution}
