@@ -219,10 +219,9 @@ export const defaultColumnDefinitions: ColDef[] = [
         "div",
         {
           style: {
-            marginTop: "5px",
-            height: "30px",
-            borderRadius: "0.25rem",
-            overflow: "hidden"
+            display: "flex",
+            alignItems: "center",
+            height: "100%"
           }
         },
         createElement(() =>

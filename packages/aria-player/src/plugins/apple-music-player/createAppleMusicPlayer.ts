@@ -3,6 +3,7 @@ import { listen } from "@tauri-apps/api/event";
 import { invoke } from "@tauri-apps/api/core";
 import LibraryConfig from "./LibraryConfig";
 import QuickStart from "./QuickStart";
+import Attribution from "./Attribution";
 import en_us from "./locales/en_us/translation.json";
 import {
   ArtistMetadata,
@@ -546,6 +547,13 @@ export default function createAppleMusicPlayer(
       LibraryConfig({ ...props, host, authenticate, logout, i18n }),
 
     QuickStart: (props) => QuickStart({ ...props, authenticate, i18n }),
+
+    Attribution: (props) =>
+      Attribution({
+        ...props,
+        i18n,
+        storefrontId: music?.storefrontId
+      }),
 
     loadAndPlayTrack: async (track: Track) => {
       if (music) {

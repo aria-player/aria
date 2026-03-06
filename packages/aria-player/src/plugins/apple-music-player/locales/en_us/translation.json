@@ -14,5 +14,7 @@
     "musicKitErrorHeading": "MusicKit Not Available",
     "musicKitErrorMessage": "An error occurred while trying to load MusicKit. This may be due to an invalid developer token. Please check your browser's developer console for any errors.",
     "close": "Close"
-  }
+  },
+  "listenOnAppleMusic": "Listen on Apple Music",
+  "icloudLabel": "iCloud Music Library"
 }

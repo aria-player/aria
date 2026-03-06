@@ -26,3 +26,17 @@
     cursor: pointer;
   }
 }
+
+.attribution {
+  display: flex;
+  justify-content: center;
+  font-weight: 400;
+  border: none;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0;
+}
+
+button.attribution {
+  cursor: pointer;
+}
