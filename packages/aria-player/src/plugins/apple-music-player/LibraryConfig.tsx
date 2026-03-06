@@ -51,17 +51,19 @@ export default function LibraryConfig(props: {
           {t("settings.logOutFromAppleMusic")}
         </button>
       )}
-      <p>
-        <button
-          className={styles.advancedSettingsButton}
-          onClick={() => {
-            setShowAdvancedSettings(!showAdvancedSettings);
-          }}
-        >
-          {t("settings.toggleAdvancedSettings")}
-        </button>
-      </p>
-      {showAdvancedSettings && (
+      {import.meta.env.DEV && (
+        <p>
+          <button
+            className={styles.advancedSettingsButton}
+            onClick={() => {
+              setShowAdvancedSettings(!showAdvancedSettings);
+            }}
+          >
+            {t("settings.toggleAdvancedSettings")}
+          </button>
+        </p>
+      )}
+      {import.meta.env.DEV && showAdvancedSettings && (
         <p>
           {t("settings.tokenEndpoint")}
           <br />
