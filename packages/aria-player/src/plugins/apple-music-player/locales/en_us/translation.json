@@ -1,8 +1,8 @@
 {
   "settings": {
     "heading": "Apple Music settings",
-    "logInWithAppleMusic": "Log in with Apple Music",
-    "logOutFromAppleMusic": "Log out from Apple Music",
+    "logInWithAppleMusic": "Connect to Apple Music",
+    "logOutFromAppleMusic": "Log out of Apple Music",
     "toggleAdvancedSettings": "Toggle advanced settings",
     "tokenEndpoint": "Token Endpoint"
   },

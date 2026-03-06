@@ -1,8 +1,8 @@
 {
   "settings": {
     "heading": "Spotify settings",
-    "logInWithSpotify": "Log in with Spotify",
-    "logOutFromSpotify": "Log out from Spotify",
+    "logInWithSpotify": "Connect to Spotify",
+    "logOutFromSpotify": "Log out of Spotify",
     "toggleAdvancedSettings": "Toggle advanced settings",
     "redirectUri": "Redirect URI"
   },
