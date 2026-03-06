@@ -294,7 +294,8 @@
     "fileFormat": "Format",
     "sampleRate": "Sample Rate",
     "bitRate": "Bit Rate",
-    "source": "Source"
+    "source": "Source",
+    "attribution": "Attribution"
   },
   "viewType": {
     "trackList": "Track List",

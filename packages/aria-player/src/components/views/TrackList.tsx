@@ -73,15 +73,8 @@ import {
   selectSelectedSearchSource
 } from "../../features/search/searchSlice";
 import NoRowsOverlay from "./subviews/NoRowsOverlay";
-import {
-  getSourceHandle,
-  pluginHandles
-} from "../../features/plugins/pluginsSlice";
-import {
-  addTracks,
-  selectLibraryTracks,
-  selectTrackById
-} from "../../features/tracks/tracksSlice";
+import { getSourceHandle } from "../../features/plugins/pluginsSlice";
+import { addTracks, selectTrackById } from "../../features/tracks/tracksSlice";
 import { TrackMetadata } from "../../../../types/tracks";
 import { useLocation } from "react-router-dom";
 import LoadingSpinner from "./subviews/LoadingSpinner";
@@ -119,10 +112,6 @@ export const TrackList = () => {
   const { t } = useTranslation();
   const libraryColumnState = useAppSelector(selectLibraryColumnState);
   const playlistConfig = useAppSelector(selectVisiblePlaylistConfig);
-  const libraryTracks = useAppSelector(selectLibraryTracks);
-  const showAttribution = [
-    ...new Set(libraryTracks.map((track) => track.source))
-  ].some((source) => pluginHandles[source]?.Attribution);
 
   const parsedArtistInfo = useMemo(() => {
     if (visibleViewType !== View.Artist || !selectedArtistGroup) return null;
@@ -212,7 +201,6 @@ export const TrackList = () => {
               : colDef.field
         };
       })
-      .filter((col) => col.field !== "attribution" || showAttribution)
       .sort((colDefA, colDefB) => {
         const orderedColumns =
           playlistConfig?.useCustomLayout && playlistConfig?.columnState
@@ -226,7 +214,7 @@ export const TrackList = () => {
         );
         return (indexA || 2) - (indexB || 1);
       });
-  }, [libraryColumnState, t, visibleViewType, playlistConfig, showAttribution]);
+  }, [libraryColumnState, t, visibleViewType, playlistConfig]);
 
   const defaultColDef = useMemo(
     () => ({
@@ -488,7 +476,7 @@ export const TrackList = () => {
       if (firstFocusableColumn) {
         params.api.setFocusedHeader(firstFocusableColumn);
       }
-    } else if (showAttribution) {
+    } else {
       const lastFocusableColumn = gridRef?.current?.api
         .getAllDisplayedColumns()
         .slice()

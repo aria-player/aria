@@ -113,6 +113,7 @@
           { "id": "columns.sampleRate", "keepopen": true, "checkbox": true },
           { "id": "columns.bitRate", "keepopen": true, "checkbox": true },
           { "id": "columns.source", "keepopen": true, "checkbox": true },
+          { "id": "columns.attribution", "keepopen": true, "checkbox": true },
           { "id": "separator" },
           { "id": "togglePlaylistLayout", "checkbox": true },
           { "id": "separator" },
