@@ -64,7 +64,7 @@ export function AlbumGridItem({ album }: { album: AlbumDetails }) {
             ))}
           </div>
         </div>
-        {album.albumId && pluginHandle?.Attribution && (
+        {pluginHandle?.Attribution && (
           <pluginHandle.Attribution
             type="album"
             id={album.albumId}

@@ -232,7 +232,7 @@ export default function ArtistView() {
           </div>
           <div className={styles.artistInfo}>
             <h1 className={styles.artistName}>{visibleArtist.name}</h1>
-            {visibleArtist.uri && pluginHandle?.Attribution ? (
+            {pluginHandle?.Attribution ? (
               <pluginHandle.Attribution
                 type="artist"
                 id={visibleArtist.uri}

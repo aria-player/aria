@@ -23,7 +23,7 @@ export default function ArtistGridItem({ artist }: { artist: ArtistDetails }) {
         <button className={styles.artistName} onClick={goToArtist}>
           {artist.name}
         </button>
-        {artist.uri && pluginHandle?.Attribution && (
+        {pluginHandle?.Attribution && (
           <div className={styles.attribution}>
             <pluginHandle.Attribution
               type="artist"
