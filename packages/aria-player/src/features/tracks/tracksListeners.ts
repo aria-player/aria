@@ -8,6 +8,7 @@ import { Track, TrackId } from "../../../../types/tracks";
 import { compareMetadata } from "../../app/sort";
 import { removeCachedTracks } from "../cache/cacheSlice";
 import { clearCurrentTrack } from "../player/playerSlice";
+import { parseTrackId } from "../../app/utils.ts";
 
 export function setupTracksListeners() {
   listenForAction(isAnyOf(addTracks, removeTracks), (state, action) => {
@@ -40,8 +41,7 @@ export function setupTracksListeners() {
       currentTrackId != null &&
       (payload.tracks?.includes(currentTrackId) ||
         (payload.tracks == null &&
-          state.tracks.tracks?.entities[currentTrackId]?.source ===
-            payload.source))
+          parseTrackId(currentTrackId)?.source === payload.source))
     ) {
       dispatch(clearCurrentTrack());
     }
