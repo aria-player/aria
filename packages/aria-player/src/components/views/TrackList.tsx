@@ -206,13 +206,16 @@ export const TrackList = () => {
           playlistConfig?.useCustomLayout && playlistConfig?.columnState
             ? playlistConfig.columnState
             : libraryColumnState;
-        const indexA = orderedColumns?.findIndex(
+        if (!orderedColumns) return 0;
+        const indexA = orderedColumns.findIndex(
           (libraryCol) => libraryCol.colId === colDefA.field
         );
-        const indexB = orderedColumns?.findIndex(
+        const indexB = orderedColumns.findIndex(
           (libraryCol) => libraryCol.colId === colDefB.field
         );
-        return (indexA || 2) - (indexB || 1);
+        if (indexA < 0) return 1;
+        if (indexB < 0) return -1;
+        return indexA - indexB;
       });
   }, [libraryColumnState, t, visibleViewType, playlistConfig]);
 
