@@ -1020,7 +1020,10 @@ export default function createAppleMusicPlayer(
     },
 
     setTime: (position: number) => {
-      music?.seekToTime(position / 1000);
+      const hasEnded = music?.playbackState === MusicKit.PlaybackStates.ended;
+      music?.seekToTime(position / 1000).then(() => {
+        if (hasEnded) music?.play();
+      });
     },
 
     onDataUpdate: (data) => {
