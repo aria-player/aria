@@ -14,7 +14,10 @@ export const AlbumArt = ({
   album?: AlbumDetails;
 }) => {
   const { artworkCache, cacheArtwork } = useContext(ArtworkContext);
-  const [fetchedArtwork, setFetchedArtwork] = useState<string | null>(null);
+  const [fetchedArtwork, setFetchedArtwork] = useState<{
+    uri: string;
+    data: string;
+  } | null>(null);
 
   const item = track ?? album;
   const artworkUri = item?.artworkUri;
@@ -22,14 +25,16 @@ export const AlbumArt = ({
 
   const artwork = useMemo(() => {
     if (artworkUri) {
-      return artworkCache[artworkUri] || fetchedArtwork;
+      return (
+        artworkCache[artworkUri] ||
+        (fetchedArtwork?.uri === artworkUri ? fetchedArtwork.data : null)
+      );
     }
     return null;
   }, [artworkUri, artworkCache, fetchedArtwork]);
 
   useEffect(() => {
     if (!artworkUri || !source) {
-      setFetchedArtwork(null);
       return;
     }
     if (artworkCache[artworkUri]) {
@@ -39,7 +44,7 @@ export const AlbumArt = ({
     if (handle?.getTrackArtwork) {
       handle.getTrackArtwork(artworkUri).then((coverArtData) => {
         if (coverArtData) {
-          setFetchedArtwork(coverArtData);
+          setFetchedArtwork({ uri: artworkUri, data: coverArtData });
           cacheArtwork(artworkUri, coverArtData);
         }
       });

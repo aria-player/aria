@@ -8,7 +8,10 @@ import { ArtistDetails } from "../../../features/artists/artistsTypes";
 export const ArtistArt = ({ artist }: { artist: ArtistDetails }) => {
   const { artworkCache, artistArtworkCache, cacheArtwork, cacheArtistArtwork } =
     useContext(ArtworkContext);
-  const [fetchedArtwork, setFetchedArtwork] = useState<string | null>(null);
+  const [fetchedArtwork, setFetchedArtwork] = useState<{
+    uri: string;
+    data: string;
+  } | null>(null);
 
   const artworkUri = artist?.artworkUri;
   const fallbackArtworkUri = artist?.firstTrackArtworkUri;
@@ -16,10 +19,18 @@ export const ArtistArt = ({ artist }: { artist: ArtistDetails }) => {
 
   const artwork = useMemo(() => {
     if (artworkUri) {
-      return artistArtworkCache[artworkUri] || fetchedArtwork;
+      return (
+        artistArtworkCache[artworkUri] ||
+        (fetchedArtwork?.uri === artworkUri ? fetchedArtwork.data : null)
+      );
     }
     if (fallbackArtworkUri) {
-      return artworkCache[fallbackArtworkUri] || fetchedArtwork;
+      return (
+        artworkCache[fallbackArtworkUri] ||
+        (fetchedArtwork?.uri === fallbackArtworkUri
+          ? fetchedArtwork.data
+          : null)
+      );
     }
     return null;
   }, [
@@ -32,7 +43,6 @@ export const ArtistArt = ({ artist }: { artist: ArtistDetails }) => {
 
   useEffect(() => {
     if (!artworkUri || !source) {
-      setFetchedArtwork(null);
       return;
     }
     if (artistArtworkCache[artworkUri]) {
@@ -42,7 +52,7 @@ export const ArtistArt = ({ artist }: { artist: ArtistDetails }) => {
     if (handle?.getArtistArtwork) {
       handle.getArtistArtwork(artworkUri).then((artistArtwork) => {
         if (artistArtwork) {
-          setFetchedArtwork(artistArtwork);
+          setFetchedArtwork({ uri: artworkUri, data: artistArtwork });
           cacheArtistArtwork(artworkUri, artistArtwork);
         }
       });
@@ -55,7 +65,7 @@ export const ArtistArt = ({ artist }: { artist: ArtistDetails }) => {
       if (handle?.getTrackArtwork) {
         handle.getTrackArtwork(fallbackArtworkUri).then((coverArtData) => {
           if (coverArtData) {
-            setFetchedArtwork(coverArtData);
+            setFetchedArtwork({ uri: fallbackArtworkUri, data: coverArtData });
             cacheArtwork(fallbackArtworkUri, coverArtData);
           }
         });

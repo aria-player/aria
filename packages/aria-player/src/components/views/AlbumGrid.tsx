@@ -8,7 +8,7 @@ import {
   selectVisibleViewType,
   selectVisibleArtistSection
 } from "../../features/visibleSelectors";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import {
   getScrollbarWidth,
   parseArtistId,
@@ -45,6 +45,7 @@ type AlbumGridItemProps = CellComponentProps<{
 }>;
 
 const ALBUMS_BATCH_SIZE = 20;
+const OVERSCAN_ROW_COUNT = 20;
 
 export default function AlbumGrid() {
   const dispatch = useAppDispatch();
@@ -58,9 +59,12 @@ export default function AlbumGrid() {
   const visibleArtistSection = useAppSelector(selectVisibleArtistSection);
   const albumsInfo = useAppSelector(selectAlbumsInfo);
 
-  const [overscanRowCount, setOverscanRowCount] = useState(0);
-  const [hasMoreArtistAlbums, setHasMoreArtistAlbums] = useState(true);
-  const [hasMoreSearchAlbums, setHasMoreSearchAlbums] = useState(true);
+  const [artistAlbumsExhausted, setArtistAlbumsExhausted] = useState<
+    Record<string, boolean>
+  >({});
+  const [searchAlbumsExhausted, setSearchAlbumsExhausted] = useState<
+    Record<string, boolean>
+  >({});
 
   const cachedArtistAlbums = useAppSelector((state) =>
     selectCachedArtistAlbums(state, selectedItem || "")
@@ -98,10 +102,6 @@ export default function AlbumGrid() {
     [cachedSearchAlbums]
   );
 
-  useEffect(() => {
-    setOverscanRowCount(20);
-  }, []);
-
   const parsedArtist = useMemo(() => {
     if (visibleViewType != View.Artist || !selectedItem) return null;
     return parseArtistId(selectedItem);
@@ -114,13 +114,28 @@ export default function AlbumGrid() {
     parsedArtist.uri != undefined &&
     getSourceHandle(parsedArtist.source)?.getArtistAlbums != undefined;
 
-  useEffect(() => {
-    setHasMoreArtistAlbums(isExternalArtistView);
-  }, [isExternalArtistView, selectedItem]);
+  const artistAlbumKey =
+    isExternalArtistView && selectedItem ? selectedItem : "";
+  const hasMoreArtistAlbums =
+    !!artistAlbumKey && !artistAlbumsExhausted[artistAlbumKey];
+  const hasMoreSearchAlbums =
+    isExternalSearch &&
+    !!searchCacheKey &&
+    !searchAlbumsExhausted[searchCacheKey];
 
-  useEffect(() => {
-    setHasMoreSearchAlbums(isExternalSearch);
-  }, [isExternalSearch, searchCacheKey]);
+  const markArtistAlbumsExhausted = useCallback(() => {
+    if (!artistAlbumKey) return;
+    setArtistAlbumsExhausted((prev) =>
+      prev[artistAlbumKey] ? prev : { ...prev, [artistAlbumKey]: true }
+    );
+  }, [artistAlbumKey]);
+
+  const markSearchAlbumsExhausted = useCallback(() => {
+    if (!searchCacheKey) return;
+    setSearchAlbumsExhausted((prev) =>
+      prev[searchCacheKey] ? prev : { ...prev, [searchCacheKey]: true }
+    );
+  }, [searchCacheKey]);
 
   const displayAlbums = useMemo(() => {
     if (isExternalSearch) {
@@ -184,7 +199,7 @@ export default function AlbumGrid() {
       );
 
       if (!albumsMetadata?.length) {
-        setHasMoreArtistAlbums(false);
+        markArtistAlbumsExhausted();
         return;
       }
 
@@ -212,13 +227,14 @@ export default function AlbumGrid() {
 
       const requestedCount = fetchStopIndex - startIndex;
       if (albums.length < requestedCount) {
-        setHasMoreArtistAlbums(false);
+        markArtistAlbumsExhausted();
       }
     },
     [
       dispatch,
       hasMoreArtistAlbums,
       isExternalArtistView,
+      markArtistAlbumsExhausted,
       parsedArtist,
       selectedItem
     ]
@@ -246,7 +262,7 @@ export default function AlbumGrid() {
       );
 
       if (!albumsMetadata?.length) {
-        setHasMoreSearchAlbums(false);
+        markSearchAlbumsExhausted();
         return;
       }
 
@@ -274,13 +290,14 @@ export default function AlbumGrid() {
 
       const requestedCount = fetchStopIndex - startIndex;
       if (albums.length < requestedCount) {
-        setHasMoreSearchAlbums(false);
+        markSearchAlbumsExhausted();
       }
     },
     [
       dispatch,
       externalSearchHandle,
       hasMoreSearchAlbums,
+      markSearchAlbumsExhausted,
       search,
       searchCacheKey,
       visibleSearchSource,
@@ -425,7 +442,7 @@ export default function AlbumGrid() {
                   defaultWidth={width}
                   defaultHeight={height}
                   style={{ overflowX: "hidden", width: "100%", height: "100%" }}
-                  overscanCount={overscanRowCount}
+                  overscanCount={OVERSCAN_ROW_COUNT}
                   onResize={() => {
                     if (visibleSelectedIndex < 0) return;
                     gridRef.current?.scrollToRow({

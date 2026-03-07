@@ -5,7 +5,7 @@ import {
   selectVisibleArtists,
   selectVisibleSearchSource
 } from "../../features/visibleSelectors";
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
 import {
   getScrollbarWidth,
   getArtistId,
@@ -32,6 +32,7 @@ import {
 } from "../../features/search/searchSlice";
 
 const ARTISTS_BATCH_SIZE = 20;
+const OVERSCAN_ROW_COUNT = 20;
 
 type ArtistGridItemProps = CellComponentProps<{
   columnCount: number;
@@ -50,8 +51,9 @@ export default function ArtistGrid() {
   const visibleArtists = useAppSelector(selectVisibleArtists);
   const artistsInfo = useAppSelector(selectArtistsInfo);
 
-  const [overscanRowCount, setOverscanRowCount] = useState(0);
-  const [hasMoreSearchArtists, setHasMoreSearchArtists] = useState(true);
+  const [searchArtistsExhausted, setSearchArtistsExhausted] = useState<
+    Record<string, boolean>
+  >({});
 
   const search = useAppSelector(selectSearch);
   const debouncedSearch = useAppSelector(selectDebouncedSearch);
@@ -82,13 +84,16 @@ export default function ArtistGrid() {
     [cachedSearchArtists]
   );
 
-  useEffect(() => {
-    setOverscanRowCount(20);
-  }, []);
+  const hasMoreSearchArtists =
+    !!searchCacheKey && !searchArtistsExhausted[searchCacheKey];
 
-  useEffect(() => {
-    setHasMoreSearchArtists(isExternalSearch);
-  }, [isExternalSearch, searchCacheKey]);
+  const markSearchArtistsExhausted = useCallback(() => {
+    if (!searchCacheKey) return;
+    setSearchArtistsExhausted((previous) => {
+      if (previous[searchCacheKey]) return previous;
+      return { ...previous, [searchCacheKey]: true };
+    });
+  }, [searchCacheKey]);
 
   const displayArtists = useMemo(() => {
     if (isExternalSearch) {
@@ -130,7 +135,7 @@ export default function ArtistGrid() {
       );
 
       if (!artistsMetadata?.length) {
-        setHasMoreSearchArtists(false);
+        markSearchArtistsExhausted();
         return;
       }
 
@@ -153,13 +158,14 @@ export default function ArtistGrid() {
 
       const requestedCount = fetchStopIndex - startIndex;
       if (artists.length < requestedCount) {
-        setHasMoreSearchArtists(false);
+        markSearchArtistsExhausted();
       }
     },
     [
       dispatch,
       externalSearchHandle,
       hasMoreSearchArtists,
+      markSearchArtistsExhausted,
       search,
       searchCacheKey,
       visibleSearchSource,
@@ -281,7 +287,7 @@ export default function ArtistGrid() {
                   defaultWidth={width}
                   defaultHeight={height}
                   style={{ overflowX: "hidden", width: "100%", height: "100%" }}
-                  overscanCount={overscanRowCount}
+                  overscanCount={OVERSCAN_ROW_COUNT}
                   onScroll={(event) => onScroll(event.currentTarget.scrollTop)}
                   onCellsRendered={(_, allCells) => {
                     if (!isExternalSearch) return;

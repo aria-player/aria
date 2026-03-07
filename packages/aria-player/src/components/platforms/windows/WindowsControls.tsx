@@ -15,28 +15,37 @@ const appWindow = isTauri() ? getCurrentWebviewWindow() : null;
 export function WindowsControls() {
   const [isMaximized, setIsMaximized] = useState<boolean | null>(null);
 
-  const updateIsMaximized = useCallback(async () => {
+  const checkIsMaximized = useCallback(async () => {
     if (appWindow) {
-      setIsMaximized(await appWindow.isMaximized());
+      return appWindow.isMaximized();
     }
+    return null;
   }, []);
 
   useEffect(() => {
     if (!isTauri()) return;
 
-    updateIsMaximized();
+    checkIsMaximized().then((maximized) => {
+      if (maximized !== null) {
+        setIsMaximized(maximized);
+      }
+    });
 
     let unsubscribe: (() => void) | undefined = undefined;
 
     const subscribeToWindowChanges = async () => {
       unsubscribe = await appWindow?.onResized(() => {
-        updateIsMaximized();
+        checkIsMaximized().then((maximized) => {
+          if (maximized !== null) {
+            setIsMaximized(maximized);
+          }
+        });
       });
     };
     subscribeToWindowChanges();
 
     return () => unsubscribe && unsubscribe();
-  }, [updateIsMaximized]);
+  }, [checkIsMaximized]);
 
   return (
     <div className={styles.windowsControls}>

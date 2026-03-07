@@ -2,7 +2,7 @@ import { Allotment } from "allotment";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 
 import styles from "./SplitView.module.css";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 import { AlbumTrackList } from "./subviews/AlbumTrackList";
 import {
   selectLibrarySplitViewStates,
@@ -24,7 +24,7 @@ import { useLocation } from "react-router-dom";
 export function SplitView() {
   const location = useLocation();
   const itemRefs = useRef<Record<string, HTMLButtonElement | null>>({});
-  const [lastVisibleView, setLastVisibleView] = useState<string>("");
+  const lastVisibleViewRef = useRef<string>("");
   const visibleItems = useAppSelector(selectVisibleTrackGroups)
     .sort((a, b) => compareMetadata(a, b))
     .map((item) => String(item));
@@ -148,25 +148,17 @@ export function SplitView() {
 
   useEffect(() => {
     const currentView = visiblePlaylist?.id || visibleViewType;
-    if (
-      lastVisibleView !== currentView ||
-      (location?.state as { focusItemId?: string })?.focusItemId
-    ) {
-      setLastVisibleView(currentView);
-      if (selectedItem && itemRefs.current[selectedItem]) {
-        itemRefs.current[selectedItem]?.scrollIntoView({
-          block: "center"
-        });
-      }
+    const focusItemId = (location?.state as { focusItemId?: string })
+      ?.focusItemId;
+    const lastVisibleView = lastVisibleViewRef.current;
+    if (lastVisibleView !== currentView || focusItemId) {
+      if (!selectedItem) return;
+      const selectedItemRef = itemRefs.current[selectedItem];
+      if (!selectedItemRef) return;
+      selectedItemRef.scrollIntoView({ block: "center" });
+      lastVisibleViewRef.current = currentView;
     }
-  }, [
-    visibleViewType,
-    visiblePlaylist?.id,
-    selectedItem,
-    lastVisibleView,
-    setLastVisibleView,
-    location?.state
-  ]);
+  }, [visibleViewType, visiblePlaylist?.id, selectedItem, location?.state]);
 
   return (
     <div className={styles.splitView}>
