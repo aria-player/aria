@@ -16,10 +16,10 @@ import { goBack, push } from "redux-first-history";
 import ChevronLeftIcon from "../../assets/chevron-left-solid.svg?react";
 import { ScrollContext } from "../../contexts/ScrollContext";
 import { useContext } from "react";
-import { useTrackGrid } from "../../hooks/useTrackGrid";
 import { selectMenuState } from "../../app/menu";
 import { BASEPATH } from "../../app/constants";
 import { selectAllAlbums } from "../../features/genericSelectors";
+import { GridContext } from "../../contexts/GridContext";
 
 export default function Header() {
   const dispatch = useAppDispatch();
@@ -40,7 +40,7 @@ export default function Header() {
   );
   const visibleArtist = useAppSelector(selectVisibleArtist);
   const visibleArtistSection = useAppSelector(selectVisibleArtistSection);
-  const { gridRef } = useTrackGrid();
+  const { isGridReady } = useContext(GridContext);
   const menuState = useAppSelector(selectMenuState);
   const backEnabled = !menuState.back?.disabled;
 
@@ -90,7 +90,7 @@ export default function Header() {
             visibility:
               visibleArtistSection != undefined
                 ? "visible"
-                : scrollContext?.scrollY <= 0 || !gridRef?.current?.api
+                : scrollContext?.scrollY <= 0 || !isGridReady
                   ? "hidden"
                   : "visible"
           }}

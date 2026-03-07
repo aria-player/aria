@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { push } from "redux-first-history";
 import { BASEPATH } from "../../../app/constants";
@@ -8,15 +8,15 @@ import {
   selectVisibleSelectedTrackGroup,
   selectVisibleAlbums
 } from "../../../features/visibleSelectors";
-import { useTrackGrid } from "../../../hooks/useTrackGrid";
 import { AlbumTrackList } from "./AlbumTrackList";
 import ChevronLeftIcon from "../../../assets/chevron-left-solid.svg?react";
 import styles from "./AlbumGridOverlay.module.css";
+import { GridContext } from "../../../contexts/GridContext";
 
 export default function AlbumGrid() {
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
-  const { gridRef } = useTrackGrid();
+  const { isGridReady } = useContext(GridContext);
   const [scrollY, setScrollY] = useState(0);
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
   const selectedItem = useAppSelector(selectVisibleSelectedTrackGroup);
@@ -56,8 +56,7 @@ export default function AlbumGrid() {
           </button>
           <h2
             style={{
-              visibility:
-                scrollY <= 0 || !gridRef?.current?.api ? "hidden" : "visible"
+              visibility: scrollY <= 0 || !isGridReady ? "hidden" : "visible"
             }}
           >
             {visibleAlbum?.name}

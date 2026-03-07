@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { Item, Menu, Separator } from "react-contexify";
 import { MenuContext } from "../../contexts/MenuContext";
 import { TreeContext } from "../../contexts/TreeContext";
@@ -13,6 +13,7 @@ export function SidebarLibraryContextMenu() {
   const treeRef = useContext(TreeContext).treeRef;
   const { updateVisibility } = useContext(MenuContext);
   const dispatch = useAppDispatch();
+  const [isEditing, setIsEditing] = useState(false);
 
   return (
     <Menu
@@ -28,12 +29,14 @@ export function SidebarLibraryContextMenu() {
         onClick={() => {
           if (treeRef?.current?.visibilityEditing) {
             treeRef?.current?.setVisibilityEditing(null);
+            setIsEditing(false);
           } else {
             treeRef?.current?.setVisibilityEditing("library");
+            setIsEditing(true);
           }
         }}
       >
-        {treeRef?.current?.visibilityEditing
+        {isEditing
           ? t("sidebar.library.menu.save")
           : t("sidebar.library.menu.edit")}
       </Item>

@@ -12,7 +12,7 @@ import {
 } from "ag-grid-community";
 import { nanoid } from "@reduxjs/toolkit";
 import { t } from "i18next";
-import { useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef } from "react";
 import { replace } from "redux-first-history";
 import { store } from "../app/store";
 import { addTracksToPlaylist } from "../features/playlists/playlistsSlice";
@@ -40,9 +40,8 @@ const rowSelectionOptions: RowSelectionOptions = {
 
 export function useTrackGrid() {
   const dispatch = useAppDispatch();
-  const { gridRef } = useContext(GridContext);
+  const { gridRef, isGridReady, setIsGridReady } = useContext(GridContext);
   const location = useLocation();
-  const [isGridReady, setIsGridReady] = useState(false);
   const selectedTrackGroup = useAppSelector(selectVisibleSelectedTrackGroup);
   const disableAnimationTimeoutRef = useRef<number | null>(null);
 
