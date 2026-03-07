@@ -14,7 +14,6 @@ import {
   TrackUri
 } from "../../../../types";
 import { isTauri } from "../../app/utils";
-import { IS_MAC_LIKE } from "../../app/constants";
 
 export type AppleMusicConfig = {
   loggedIn?: boolean;
@@ -449,7 +448,7 @@ export default function createAppleMusicPlayer(
     let unlistenAuthWindowMessages: (() => void) | undefined;
 
     try {
-      if (isTauri() && IS_MAC_LIKE) {
+      if (isTauri()) {
         let authWindowHref: string | null = null;
 
         unlistenAuthWindowClosed = await listen<void>(

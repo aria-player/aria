@@ -4,12 +4,12 @@ use url::Url;
 const APPLE_MUSIC_AUTH_WINDOW_LABEL: &str = "apple-music-auth-window";
 
 fn auth_window_init_script(main_window_origin: &str) -> String {
-     include_str!("../../scripts/apple_music_login.js")
+    include_str!("../../scripts/apple_music_login.js")
         .replace("__MAIN_WINDOW_ORIGIN__", main_window_origin)
 }
 
 #[command]
-pub fn open_auth_window(
+pub async fn open_auth_window(
     app: AppHandle,
     url: String,
     main_window_origin: String,

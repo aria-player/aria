@@ -1,5 +1,9 @@
 (() => {
   try {
+    if (!window.location.hostname.endsWith("authorize.music.apple.com")) {
+      return;
+    }
+
     window.sessionStorage?.setItem("ac", `__MAIN_WINDOW_ORIGIN__/`);
 
     window.opener = {
