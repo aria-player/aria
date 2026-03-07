@@ -104,41 +104,37 @@ export const SectionTree = React.forwardRef(
       []
     );
 
-    useImperativeHandle(
-      forwardRef,
-      () => {
-        const treeApi = internalTreeRef.current;
-        const sectionApi = {
-          visibilityEditing,
-          setVisibilityEditing: (section: string | null) => {
-            setVisibilityEditingCallback(section);
-          },
-          setOptionsMenuActive: (section: string | null) => {
-            setOptionsMenuActiveCallback(section);
-          },
-          optionsMenuActive,
-          setSelectedItem: (itemId: string) => {
-            const node = treeApi?.root.tree.get(itemId);
-            if (node) {
-              node.tree.select(itemId);
-            } else {
-              treeApi?.root.tree.deselectAll();
-            }
-          },
-          selectedItem: treeApi?.selectedNodes[0]?.id,
-        };
-        return (
-          treeApi ? { ...treeApi, ...sectionApi } : sectionApi
-        ) as SectionTreeApi<SectionTreeItem>;
-      },
-      [
-        internalTreeRef,
+    useImperativeHandle(forwardRef, () => {
+      const treeApi = internalTreeRef.current;
+      const sectionApi = {
         visibilityEditing,
+        setVisibilityEditing: (section: string | null) => {
+          setVisibilityEditingCallback(section);
+        },
+        setOptionsMenuActive: (section: string | null) => {
+          setOptionsMenuActiveCallback(section);
+        },
         optionsMenuActive,
-        setVisibilityEditingCallback,
-        setOptionsMenuActiveCallback,
-      ]
-    );
+        setSelectedItem: (itemId: string) => {
+          const node = treeApi?.root.tree.get(itemId);
+          if (node) {
+            node.tree.select(itemId);
+          } else {
+            treeApi?.root.tree.deselectAll();
+          }
+        },
+        selectedItem: treeApi?.selectedNodes[0]?.id,
+      };
+      return (
+        treeApi ? { ...treeApi, ...sectionApi } : sectionApi
+      ) as SectionTreeApi<SectionTreeItem>;
+    }, [
+      internalTreeRef,
+      visibilityEditing,
+      optionsMenuActive,
+      setVisibilityEditingCallback,
+      setOptionsMenuActiveCallback,
+    ]);
 
     useEffect(() => {
       let checkClickOutside = false;

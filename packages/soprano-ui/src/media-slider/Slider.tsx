@@ -86,11 +86,10 @@ const [SliderProvider, useSliderContext] =
   createSliderContext<SliderContextValue>(SLIDER_NAME);
 
 type SliderElement = SliderHorizontalElement | SliderVerticalElement;
-interface SliderProps
-  extends Omit<
-    SliderHorizontalProps | SliderVerticalProps,
-    keyof SliderOrientationPrivateProps | "defaultValue"
-  > {
+interface SliderProps extends Omit<
+  SliderHorizontalProps | SliderVerticalProps,
+  keyof SliderOrientationPrivateProps | "defaultValue"
+> {
   name?: string;
   disabled?: boolean;
   orientation?: React.AriaAttributes["aria-orientation"];
@@ -303,7 +302,8 @@ type SliderOrientationPrivateProps = {
   onStepKeyDown(step: { event: React.KeyboardEvent; direction: number }): void;
 };
 interface SliderOrientationProps
-  extends Omit<SliderImplProps, keyof SliderImplPrivateProps>,
+  extends
+    Omit<SliderImplProps, keyof SliderImplPrivateProps>,
     SliderOrientationPrivateProps {}
 
 type SliderHorizontalElement = SliderImplElement;
