@@ -40,6 +40,8 @@ export function SplitView() {
   const selectedItem = useAppSelector(selectVisibleSelectedTrackGroup);
   const splitViewStates = useAppSelector(selectLibrarySplitViewStates);
   const visiblePlaylistConfig = useAppSelector(selectVisiblePlaylistConfig);
+  const visiblePlaylistId = visiblePlaylist?.id;
+
   const dispatch = useAppDispatch();
 
   useEffect(() => {
@@ -91,11 +93,11 @@ export function SplitView() {
 
   const setSelectedItem = useCallback(
     (group: string | null) => {
-      if (visiblePlaylist?.id) {
+      if (visiblePlaylistId) {
         dispatch(
           push(
             BASEPATH +
-              `playlist/${visiblePlaylist.id}/${group != null ? encodeURIComponent(group) : ""}`
+              `playlist/${visiblePlaylistId}/${group != null ? encodeURIComponent(group) : ""}`
           )
         );
       } else {
@@ -107,7 +109,7 @@ export function SplitView() {
         );
       }
     },
-    [dispatch, visiblePlaylist?.id, visibleViewType]
+    [dispatch, visiblePlaylistId, visibleViewType]
   );
 
   const handleDragEnd = useCallback(

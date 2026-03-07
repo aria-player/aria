@@ -14,7 +14,11 @@ export function WindowsMenuBarButtons() {
   const buttonRefs = React.useMemo<
     Record<string, React.RefObject<HTMLButtonElement>>
   >(() => {
-    return {};
+    return Object.fromEntries(
+      menus
+        .filter((item) => !item.maconly)
+        .map((category) => [category.id, React.createRef<HTMLButtonElement>()])
+    );
   }, []);
 
   useEffect(() => {
@@ -92,9 +96,6 @@ export function WindowsMenuBarButtons() {
         .filter((item) => !item.maconly)
         .map((category) => {
           const label = t("menu." + category.id);
-          if (!buttonRefs[category.id]) {
-            buttonRefs[category.id] = React.createRef<HTMLButtonElement>();
-          }
           return (
             <React.Fragment key={category.id}>
               <Menu

@@ -314,7 +314,6 @@ export function TrackMenuItems() {
                 })
               );
             }
-            const now = Date.now();
             dispatch(
               addTracks({
                 source: sourceForActions!,
@@ -322,7 +321,7 @@ export function TrackMenuItems() {
                   (track) =>
                     ({
                       ...track,
-                      dateAdded: now
+                      dateAdded: Date.now()
                     }) as TrackMetadata
                 ),
                 addToLibrary: true
