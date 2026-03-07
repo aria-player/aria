@@ -125,19 +125,19 @@ pub fn get_metadata(app: AppHandle, file_path: String) -> Result<HashMap<String,
         }
     };
 
-    let artists: Vec<&str> = tag.get_strings(&ItemKey::TrackArtist).collect();
+    let artists: Vec<&str> = tag.get_strings(ItemKey::TrackArtist).collect();
     let artists_json = serde_json::to_string(&artists).unwrap_or_else(|_| "[]".to_string());
     metadata.insert("artist".to_string(), artists_json);
 
-    let genres: Vec<&str> = tag.get_strings(&ItemKey::Genre).collect();
+    let genres: Vec<&str> = tag.get_strings(ItemKey::Genre).collect();
     let genres_json = serde_json::to_string(&genres).unwrap_or_else(|_| "[]".to_string());
     metadata.insert("genre".to_string(), genres_json);
 
-    let composers: Vec<&str> = tag.get_strings(&ItemKey::Composer).collect();
+    let composers: Vec<&str> = tag.get_strings(ItemKey::Composer).collect();
     let composers_json = serde_json::to_string(&composers).unwrap_or_else(|_| "[]".to_string());
     metadata.insert("composer".to_string(), composers_json);
 
-    let comments: Vec<&str> = tag.get_strings(&ItemKey::Comment).collect();
+    let comments: Vec<&str> = tag.get_strings(ItemKey::Comment).collect();
     let comments_json = serde_json::to_string(&comments).unwrap_or_else(|_| "[]".to_string());
     metadata.insert("comments".to_string(), comments_json);
     metadata.insert(
@@ -149,10 +149,12 @@ pub fn get_metadata(app: AppHandle, file_path: String) -> Result<HashMap<String,
         "album".to_string(),
         tag.album().unwrap_or_default().to_string(),
     );
-    metadata.insert(
-        "year".to_string(),
-        tag.year().unwrap_or_default().to_string(),
-    );
+    if let Some(year) = tag
+        .get_string(ItemKey::RecordingDate)
+        .or_else(|| tag.get_string(ItemKey::Year))
+    {
+        metadata.insert("year".to_string(), year.to_string());
+    }
     metadata.insert(
         "track".to_string(),
         tag.track().unwrap_or_default().to_string(),
@@ -161,10 +163,10 @@ pub fn get_metadata(app: AppHandle, file_path: String) -> Result<HashMap<String,
         "disc".to_string(),
         tag.disk().unwrap_or_default().to_string(),
     );
-    if let Some(value) = tag.get_string(&ItemKey::AlbumArtist) {
+    if let Some(value) = tag.get_string(ItemKey::AlbumArtist) {
         metadata.insert("albumArtist".to_string(), value.to_string());
     }
-    if let Some(date_str) = tag.get_string(&ItemKey::ReleaseDate) {
+    if let Some(date_str) = tag.get_string(ItemKey::ReleaseDate) {
         metadata.insert("dateReleased".to_string(), date_str.to_string());
     }
     if let Some(cover) = tag.pictures().first() {
