@@ -22,7 +22,7 @@ import {
   PlaylistUndoable
 } from "./playlistsTypes";
 import { setupPlaylistsListeners } from "./playlistsListeners";
-import { ColumnState } from "@ag-grid-community/core";
+import { ColumnState } from "ag-grid-community";
 import {
   filterHiddenColumnSort,
   overrideColumnStateSort,

@@ -6,9 +6,8 @@ import { BrowserRouter } from "react-router-dom";
 import { Platform, PlatformContext } from "./contexts/PlatformContext";
 import { TestBackend } from "react-dnd-test-backend";
 import { DndProvider } from "react-dnd";
-import { ModuleRegistry } from "@ag-grid-community/core";
-import { ClientSideRowModelModule } from "@ag-grid-community/client-side-row-model";
-import { InfiniteRowModelModule } from "@ag-grid-community/infinite-row-model";
+import { ModuleRegistry } from "ag-grid-community";
+import { AllCommunityModule } from "ag-grid-community";
 
 test("renders loading state by default", () => {
   class ResizeObserver {
@@ -39,10 +38,7 @@ test("renders search bar when loaded", () => {
     setDecorations: () => {},
     setMinimizeToTray: () => {}
   };
-  ModuleRegistry.registerModules([
-    ClientSideRowModelModule,
-    InfiniteRowModelModule
-  ]);
+  ModuleRegistry.registerModules([AllCommunityModule]);
 
   render(
     <Provider store={store}>

@@ -3,7 +3,7 @@ import { createSelector, nanoid } from "@reduxjs/toolkit";
 import { invoke } from "@tauri-apps/api/core";
 import { push, goBack, goForward } from "redux-first-history";
 import { BASEPATH } from "./constants";
-import { AgGridReact } from "@ag-grid-community/react";
+import { AgGridReact } from "ag-grid-react";
 import {
   resetLibraryColumnState,
   selectLibraryColumnState,

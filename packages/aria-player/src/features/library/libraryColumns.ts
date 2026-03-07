@@ -1,4 +1,4 @@
-import { ColDef } from "@ag-grid-community/core";
+import { ColDef } from "ag-grid-community";
 import { TrackListItem } from "../tracks/tracksTypes";
 import { Track } from "../../../../types/tracks";
 import {

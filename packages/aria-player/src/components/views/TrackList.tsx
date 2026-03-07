@@ -1,5 +1,5 @@
 import { useCallback, useContext, useEffect, useMemo, useState } from "react";
-import { AgGridReact } from "@ag-grid-community/react";
+import { AgGridReact } from "ag-grid-react";
 import {
   BodyScrollEvent,
   CellContextMenuEvent,
@@ -17,7 +17,7 @@ import {
   RowDragEndEvent,
   SortChangedEvent,
   TabToNextHeaderParams
-} from "@ag-grid-community/core";
+} from "ag-grid-community";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   setLibraryColumnState,
@@ -181,8 +181,13 @@ export const TrackList = () => {
           }
         }
 
-        delete colDefOverrides.rowGroup;
-        delete colDefOverrides.pivot;
+        const mutableColDefOverrides = colDefOverrides as Record<
+          string,
+          unknown
+        >;
+        delete mutableColDefOverrides.sortType;
+        delete mutableColDefOverrides.rowGroup;
+        delete mutableColDefOverrides.pivot;
         return {
           ...colDef,
           ...colDefOverrides,

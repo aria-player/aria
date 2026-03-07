@@ -1,4 +1,4 @@
-import { AgGridReact } from "@ag-grid-community/react";
+import { AgGridReact } from "ag-grid-react";
 import { useMemo, useEffect, useRef, useState } from "react";
 import { push } from "redux-first-history";
 import { BASEPATH } from "../../../app/constants";

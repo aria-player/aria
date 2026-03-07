@@ -1,6 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
-import { ColumnState } from "@ag-grid-community/core";
+import { ColumnState } from "ag-grid-community";
 import { Item, moveTreeNode, updateTreeNode } from "soprano-ui";
 import {
   filterHiddenColumnSort,

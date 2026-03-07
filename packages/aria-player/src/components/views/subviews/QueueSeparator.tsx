@@ -1,4 +1,4 @@
-import { ICellRendererParams } from "@ag-grid-community/core";
+import { ICellRendererParams } from "ag-grid-community";
 import { useAppSelector } from "../../../app/hooks";
 import {
   selectQueueGrouping,

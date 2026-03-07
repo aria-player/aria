@@ -94,6 +94,7 @@ body {
     --ag-modal-overlay-background-color: transparent;
     --ag-row-height: 33px;
     --ag-range-selection-border-color: var(--accent-color);
+    --ag-row-drag-indicator-width: 1px;
   }
 
   .ag-root-wrapper {

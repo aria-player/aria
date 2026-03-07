@@ -1,5 +1,5 @@
 import { PluginId } from "../../../types/plugins";
-import { ColumnState } from "@ag-grid-community/core";
+import { ColumnState } from "ag-grid-community";
 import { defaultColumnDefinitions } from "../features/library/libraryColumns";
 import i18n from "../i18n";
 import { defaultPluginInfo } from "../plugins/plugins";

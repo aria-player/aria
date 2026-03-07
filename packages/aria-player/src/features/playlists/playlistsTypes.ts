@@ -1,4 +1,4 @@
-import { ColumnState } from "@ag-grid-community/core";
+import { ColumnState } from "ag-grid-community";
 import { TrackId } from "../../../../types/tracks";
 import { DisplayMode, SplitViewState } from "../../app/view";
 

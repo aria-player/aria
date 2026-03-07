@@ -1,4 +1,4 @@
-import { ICellRendererParams } from "@ag-grid-community/core";
+import { ICellRendererParams } from "ag-grid-community";
 import styles from "./AlbumTrackListSeparator.module.css";
 import { AlbumArt } from "./AlbumArt";
 import { getSourceHandle } from "../../../features/plugins/pluginsSlice";

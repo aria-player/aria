@@ -1,4 +1,4 @@
-import { AgGridReact } from "@ag-grid-community/react";
+import { AgGridReact } from "ag-grid-react";
 import { MutableRefObject, createContext } from "react";
 import { ReactNode, useRef } from "react";
 

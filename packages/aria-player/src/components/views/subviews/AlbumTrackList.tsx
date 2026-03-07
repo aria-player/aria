@@ -2,8 +2,8 @@ import {
   BodyScrollEvent,
   ICellRendererParams,
   RowHeightParams
-} from "@ag-grid-community/core";
-import { AgGridReact } from "@ag-grid-community/react";
+} from "ag-grid-community";
+import { AgGridReact } from "ag-grid-react";
 import { useMemo, useEffect } from "react";
 import { Track } from "../../../../../types/tracks";
 import { useAppSelector } from "../../../app/hooks";

@@ -9,7 +9,7 @@ import {
   IRowDragItem,
   IRowNode,
   GridApi
-} from "@ag-grid-community/core";
+} from "ag-grid-community";
 import { nanoid } from "@reduxjs/toolkit";
 import { t } from "i18next";
 import { useContext, useEffect, useRef, useState } from "react";
@@ -21,7 +21,7 @@ import { setSelectedTracks } from "../features/tracks/tracksSlice";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { GridContext } from "../contexts/GridContext";
 import { useLocation } from "react-router-dom";
-import { AgGridReactProps } from "@ag-grid-community/react";
+import { AgGridReactProps } from "ag-grid-react";
 import { selectVisibleSelectedTrackGroup } from "../features/visibleSelectors";
 import { BASEPATH } from "../app/constants";
 import { AlbumTrackListItem } from "../components/views/subviews/AlbumTrackList";

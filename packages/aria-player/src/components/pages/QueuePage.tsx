@@ -6,11 +6,10 @@ import {
   RowDragEndEvent,
   RowDragLeaveEvent,
   RowDragMoveEvent,
-  RowHighlightPosition,
   RowNode,
   SelectionChangedEvent
-} from "@ag-grid-community/core";
-import { AgGridReact } from "@ag-grid-community/react";
+} from "ag-grid-community";
+import { AgGridReact } from "ag-grid-react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import { useTrackGrid } from "../../hooks/useTrackGrid";
 import { selectCurrentQueueTracks } from "../../features/currentSelectors";
@@ -72,9 +71,7 @@ const fullWidthCellRenderer = (params: ICellRendererParams) =>
   );
 
 function clearRowHighlights(gridApi: GridApi) {
-  gridApi.forEachNode((node) => {
-    (node as RowNode).setHighlighted(null);
-  });
+  gridApi.setRowDropPositionIndicator(null);
 }
 
 function getDropIndex(mouseY: number, overNode?: IRowNode) {
@@ -103,13 +100,13 @@ const handleRowDragMove = (event: RowDragMoveEvent) => {
   clearRowHighlights(event.api);
 
   const dropIndex = getDropIndex(event.y, event.overNode);
-  const highlight =
-    event.overNode?.rowIndex && event.overNode.rowIndex - dropIndex == 0
-      ? RowHighlightPosition.Above
-      : RowHighlightPosition.Below;
-  (
-    event.api.getDisplayedRowAtIndex(dropIndex - highlight) as RowNode
-  )?.setHighlighted(highlight);
+  const targetRow = event.api.getDisplayedRowAtIndex(dropIndex - 1);
+  if (targetRow) {
+    event.api.setRowDropPositionIndicator({
+      row: targetRow,
+      dropIndicatorPosition: "below"
+    });
+  }
 };
 
 export const QueuePage = () => {
