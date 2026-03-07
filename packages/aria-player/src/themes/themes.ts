@@ -39,7 +39,7 @@ export interface Theme {
   disableAccentPicker?: boolean;
 }
 
-export const themeFormatVersion = "0.1.0";
+export const themeFormatVersion = "0.2.0";
 export const defaultStylesheets: Record<string, string> = {};
 export const defaultThemes: Record<string, Theme> = {
   system: { id: "system", name: "System" }
