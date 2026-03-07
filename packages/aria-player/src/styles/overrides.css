@@ -55,7 +55,7 @@ body {
     --rcp-field-label-color: var(--secondary-text);
 
     border: 1px solid var(--primary-border);
-    box-shadow: 1px 4px 16px -4px rgb(0 0 0 / 60%);
+    box-shadow: 1px 4px 16px -4px var(--box-shadow);
   }
 
   .rcp-hue,

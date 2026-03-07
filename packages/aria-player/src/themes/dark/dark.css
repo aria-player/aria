@@ -44,6 +44,9 @@
   --missing-artwork-foreground: rgb(97 97 97);
   --missing-artwork-background: rgb(76 76 76);
 
+  /* Shadows */
+  --box-shadow: rgb(0 0 0 / 40%);
+
   /* Context menus */
   --context-menu-background: rgb(66 66 66);
 }

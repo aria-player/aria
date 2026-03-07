@@ -14,7 +14,7 @@
   padding: 1.25rem 1.5rem;
   max-width: 30rem;
   width: calc(100% - 2rem);
-  box-shadow: 0 5px 15px rgb(0 0 0 / 25%);
+  box-shadow: 0 5px 15px var(--box-shadow);
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
