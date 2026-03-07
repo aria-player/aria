@@ -155,7 +155,9 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
       : null;
     return () => {
       unlistenFunctions?.then((unlistenFns) => {
-        unlistenFns.forEach((unlisten) => Promise.resolve(unlisten()).catch(() => {}));
+        unlistenFns.forEach((unlisten) =>
+          Promise.resolve(unlisten()).catch(() => {})
+        );
       });
     };
   }, [invokeMenuAction]);

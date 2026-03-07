@@ -1,7 +1,7 @@
 .header {
   display: flex;
   padding: 0.5rem 0.75rem;
-  overflow: none;
+  overflow: hidden;
   border-bottom: 1px solid transparent;
 
   h1 {

@@ -249,10 +249,7 @@ export default function ArtistGrid() {
     <div className={`artist-grid ${styles.grid}`}>
       {totalItemCount > 0 ? (
         <AutoSizer
-          renderProp={({
-            height,
-            width
-          }) => {
+          renderProp={({ height, width }) => {
             if (height === undefined || width === undefined) return null;
             const widthWithoutScrollbar = width - (getScrollbarWidth() ?? 0);
             const minItemWidth = 240;

@@ -73,7 +73,10 @@ export default function SearchSourceSwitcher() {
         )
       );
       dispatch(setSelectedSearchSource("library"));
-    } else if (visibleSearchSource !== null && visibleSearchSource !== selectedSearchSource) {
+    } else if (
+      visibleSearchSource !== null &&
+      visibleSearchSource !== selectedSearchSource
+    ) {
       dispatch(setSelectedSearchSource(visibleSearchSource));
     }
   }, [

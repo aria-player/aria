@@ -89,7 +89,7 @@
   }
 
   p {
-    word-wrap: break-word;
+    overflow-wrap: break-word;
     margin: 0;
     margin-top: 0.2rem;
     font-size: 0.9rem;

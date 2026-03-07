@@ -184,21 +184,19 @@ export function useTrackGrid() {
         if (!item?.id) return;
 
         const selectedRowsCount = params.api.getSelectedRows().length ?? 0;
-        let newTracks = [] as PlaylistItem[];
-        if (selectedRowsCount <= 1) {
-          newTracks = [
-            {
-              itemId: nanoid(),
-              trackId: params.node.data.trackId
-            }
-          ];
-        } else {
-          newTracks = getSortedSelectedTracks(params.api)
-            .map((node) => {
-              return { itemId: nanoid(), trackId: node.trackId };
-            })
-            .filter(Boolean) as PlaylistItem[];
-        }
+        const newTracks: PlaylistItem[] =
+          selectedRowsCount <= 1
+            ? [
+                {
+                  itemId: nanoid(),
+                  trackId: params.node.data.trackId
+                }
+              ]
+            : (getSortedSelectedTracks(params.api)
+                .map((node) => {
+                  return { itemId: nanoid(), trackId: node.trackId };
+                })
+                .filter(Boolean) as PlaylistItem[]);
         dispatch(
           addTracksToPlaylist({
             playlistId: item.id,

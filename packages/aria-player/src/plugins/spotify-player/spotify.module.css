@@ -144,9 +144,9 @@
 }
 
 .setupContinueButton {
-    padding: 0.5rem 1rem;
-    font-size: 0.9rem;
-    font-weight: 500;
+  padding: 0.5rem 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
 
   &:disabled {
     opacity: 0.75;
@@ -197,7 +197,6 @@
   text-align: right;
   width: 1%;
 }
-
 
 .attribution {
   display: flex;
