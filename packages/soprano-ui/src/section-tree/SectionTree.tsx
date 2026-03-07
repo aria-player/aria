@@ -240,7 +240,7 @@ export const SectionTree = React.forwardRef(
           className={styles.tree}
           renderCursor={DropCursor}
           renderDragPreview={(previewProps) => (
-            <DragPreview {...previewProps} treeRef={internalTreeRef} />
+            <DragPreview {...previewProps} treeData={filteredData} />
           )}
           renderRow={(rowProps) => (
             <Row

@@ -60,13 +60,17 @@ export function ExampleEnvironment(
     );
   };
 
+  const nextItemIdRef = useRef(0);
+
   const createItem = (sectionId: string, isFolder?: boolean) => {
     const sectionIndex = sections.findIndex(
       (section) => section.id === sectionId
     );
+    const nextId = `new-item-${nextItemIdRef.current}`;
+    nextItemIdRef.current += 1;
     const newTree = createTreeNode(sections[sectionIndex].children, {
       newData: {
-        id: "new-item-" + Math.random(),
+        id: nextId,
         name: "New item",
         children: isFolder ? [] : undefined,
       },

@@ -1,6 +1,7 @@
-import { DragPreviewProps, TreeApi } from "react-arborist";
+import { DragPreviewProps } from "react-arborist";
 import { XYCoord } from "react-dnd";
 import { SectionTreeItem } from "./treeTypes";
+import { findTreeNode } from "./treeUtils";
 import styles from "./DragPreview.module.css";
 
 const getStyle = (offset: XYCoord | null) => {
@@ -13,14 +14,15 @@ export function DragPreview({
   offset,
   id,
   isDragging,
-  treeRef,
-}: DragPreviewProps & { treeRef: React.RefObject<TreeApi<SectionTreeItem>> }) {
-  const node = treeRef.current?.get(id);
-  if (!node || !isDragging) return null;
+  treeData,
+}: DragPreviewProps & { treeData?: SectionTreeItem[] }) {
+  const nodeName =
+    treeData && id ? findTreeNode(treeData, id)?.name : undefined;
+  if (!nodeName || !isDragging) return null;
   return (
     <div className={styles.preview}>
       <div className="row preview" style={getStyle(offset)}>
-        <div className={styles.node}>{node.data.name}</div>
+        <div className={styles.node}>{nodeName}</div>
       </div>
     </div>
   );
