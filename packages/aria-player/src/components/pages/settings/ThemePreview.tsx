@@ -12,7 +12,7 @@ export default function ThemePreview(props: { stylesheet: string }) {
   const primaryBackground = getCSSVariable("primary-background");
   const primaryBorder = `1px solid ${getCSSVariable("primary-border")}`;
   const secondaryText = getCSSVariable("secondary-text");
-  const searchBackground = getCSSVariable("search-background");
+  const searchBackground = getCSSVariable("input-background");
   const tracklistOddRowBackground = getCSSVariable(
     "tracklist-odd-row-background"
   );

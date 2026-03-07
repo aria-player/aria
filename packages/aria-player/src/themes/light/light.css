@@ -22,10 +22,10 @@
   --windows-control-background-hover: rgb(0 0 0 / 5%);
   --windows-control-background-active: rgb(0 0 0 / 3%);
 
-  /* Sidebar */
-  --search-placeholder-text: #797979;
-  --search-background: #f0f0f0;
-  --search-background-active: #ebebeb;
+  /* Inputs */
+  --input-placeholder-text: #797979;
+  --input-background: #f0f0f0;
+  --input-background-active: #ebebeb;
 
   /* Tracks */
   --tracklist-odd-row-background: #f5f5f5;
