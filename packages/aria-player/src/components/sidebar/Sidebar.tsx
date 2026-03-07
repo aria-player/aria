@@ -3,7 +3,7 @@ import { isTauri } from "../../app/utils";
 import { MenuButton } from "../appmenu/MenuButton";
 import { useTranslation } from "react-i18next";
 import { SectionTree, findTreeNode } from "soprano-ui";
-import { useCallback, useContext, useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   moveLibraryItem,
@@ -66,9 +66,11 @@ export function Sidebar() {
   const debouncedSearch = useAppSelector(selectDebouncedSearch);
   const [isComposing, setIsComposing] = useState(false);
   const [localSearch, setLocalSearch] = useState(search);
+  const searchFocusedRef = useRef(false);
 
   useEffect(() => {
     if (visibleViewType !== View.Search) return;
+    if (searchFocusedRef.current) return;
     const pathParts = location.pathname.substring(BASEPATH.length).split("/");
     const searchQueryFromRoute =
       pathParts.length > 1 ? decodeURIComponent(pathParts[1]) : "";
@@ -219,6 +221,9 @@ export function Sidebar() {
             dispatch(setSearch(inputValue));
             goToSearch(inputValue);
           }}
+          onFocus={() => {
+            searchFocusedRef.current = true;
+          }}
           onChange={(e) => {
             const inputValue = (e.target as HTMLInputElement).value;
             setLocalSearch(inputValue);
@@ -240,6 +245,8 @@ export function Sidebar() {
               )?.sourceCapabilities === null
             ) {
               e.target.focus();
+            } else {
+              searchFocusedRef.current = false;
             }
           }}
         />
