@@ -14,8 +14,8 @@
     ".": "./src/soprano-ui.ts"
   },
   "scripts": {
-    "build": "tsc && vite build",
-    "lint": "eslint",
+    "build": "bun run lint && vite build",
+    "lint": "tsc && eslint",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "test": "vitest"
