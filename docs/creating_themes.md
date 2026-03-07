@@ -24,11 +24,11 @@ Create a file called `theme.json` that defines the theme information.
 
 If you're planning on providing separate styles for light/dark mode using media queries, you can omit the `base` property. 
 
-The full theme manifest specification is available as `Theme` in `src/themes/themes.ts`.
+The full theme manifest specification is available as `Theme` in `packages/aria-player/src/themes/themes.ts`.
 
 ## Step 2: Create the theme stylesheet
 
-Create a CSS file with the name previously specified in the plugin manifest, e.g. `theme.css`. The easiest way to create a stylesheet is to copy one of the existing themes in `src/themes/` and modify the variable values to your liking. To ensure the colors apply everywhere, use the `:root` selector:
+Create a CSS file with the name previously specified in the plugin manifest, e.g. `theme.css`. The easiest way to create a stylesheet is to copy one of the existing themes in `packages/aria-player/src/themes/` and modify the variable values to your liking. To ensure the colors apply everywhere, use the `:root` selector:
 
 ```css
 :root {

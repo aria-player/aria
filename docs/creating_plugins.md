@@ -2,8 +2,7 @@
 
 This tutorial describes how to create, package, and install Aria plugins. As an example, we'll create a simple plugin that logs the player state to the console.
 
-> ⚠️ This tutorial uses JavaScript rather than TypeScript for simplicity, as the plugin installation system expects a plain ES Module as an entry point. If you'd like to write your plugin in TypeScript, you can access the relevant types via the `@aria-player/types` npm package.
-
+> ⚠️ This tutorial uses JavaScript rather than TypeScript for simplicity, as the plugin installation system expects a plain ES Module as an entry point. If you'd like to write your plugin in TypeScript, you can use the types defined in the `packages/types/` folder.
 ## Plugin structure
 
 Plugins consist of two files in a zip archive:
