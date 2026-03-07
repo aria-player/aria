@@ -199,6 +199,7 @@
       "appVersion": "Aria v{{version}}",
       "pluginFormatVersion": "Plugin format version: {{version}}",
       "themeFormatVersion": "Theme format version: {{version}}",
+      "checkForUpdates": "Check for updates",
       "reset": "Factory reset",
       "resetApplication": "Reset application",
       "confirmReset": "Are you sure you want to reset? All data and settings will be deleted."
@@ -369,5 +370,9 @@
     "message": "Aria {{newVersion}} is now available -- you have {{currentVersion}}.\n\nWould you like to install it now?\n\nRelease notes:\n{{releaseNotes}}",
     "yes": "Yes",
     "no": "No"
+  },
+  "upToDateDialog": {
+    "title": "Up to date",
+    "message": "You are running the latest version of Aria."
   }
 }

@@ -3,6 +3,8 @@ import styles from "./settings.module.css";
 import localforage from "localforage";
 import { pluginFormatVersion } from "../../../plugins/plugins";
 import { themeFormatVersion } from "../../../themes/themes";
+import { isTauri } from "../../../app/utils";
+import { checkForUpdates } from "../../../app/updater";
 
 export function AboutPage() {
   const { t } = useTranslation();
@@ -30,6 +32,16 @@ export function AboutPage() {
               version: themeFormatVersion
             })}
           </p>
+        </div>
+        <div className={styles.updateButton}>
+          {isTauri() && (
+            <button
+              className="settings-button"
+              onClick={() => checkForUpdates()}
+            >
+              {t("settings.about.checkForUpdates")}
+            </button>
+          )}
         </div>
       </section>
       <section className="settings-section">
