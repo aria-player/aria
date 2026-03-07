@@ -6,6 +6,9 @@ import pluginReactHooks from "eslint-plugin-react-hooks";
 import pluginPrettierRecommended from "eslint-plugin-prettier/recommended";
 
 export default [
+  {
+    ignores: ["postcss.config.cjs"]
+  },
   pluginJs.configs.recommended,
   ...tseslint.configs.recommended,
   pluginReact.configs.flat.recommended,
