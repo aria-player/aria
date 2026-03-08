@@ -3,12 +3,59 @@
   "workspaces": [
     "packages/*"
   ],
+  "devDependencies": {
+    "@aria-player/config": "workspace:*",
+    "@eslint/js": "^10.0.1",
+    "eslint": "^10.0.2",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-plugin-react-refresh": "^0.5.2",
+    "eslint-plugin-storybook": "^10.2.14",
+    "globals": "^17.4.0",
+    "prettier": "3.8.1",
+    "stylelint": "^17.4.0",
+    "stylelint-config-css-modules": "^4.6.0",
+    "stylelint-config-standard": "^40.0.0",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.56.1"
+  },
   "scripts": {
-    "dev": "bun --filter aria-player dev",
-    "build": "bun --filter aria-player build",
-    "preview": "bun --filter aria-player preview",
-    "tauri": "bun --filter aria-player tauri",
-    "test": "bun --filter aria-player test",
-    "lint": "bun --filter aria-player lint"
+    "dev": "bun run --cwd packages/aria-player dev",
+    "build": "bun run lint && bun run --cwd packages/aria-player build",
+    "preview": "bun run --cwd packages/aria-player preview",
+    "tauri": "bun run --cwd packages/aria-player tauri",
+    "test": "bun run --cwd packages/aria-player test",
+    "lint": "bun --filter '*' lint"
+  },
+  "prettier": {
+    "semi": true,
+    "printWidth": 80,
+    "tabWidth": 2,
+    "singleQuote": false,
+    "trailingComma": "es5",
+    "overrides": [
+      {
+        "files": "packages/aria-player/**/*",
+        "options": {
+          "trailingComma": "none"
+        }
+      }
+    ]
+  },
+  "stylelint": {
+    "extends": [
+      "stylelint-config-standard",
+      "stylelint-config-css-modules"
+    ],
+    "ignoreFiles": [
+      "**/dist/**",
+      "**/target/**",
+      "**/src-tauri/gen/**"
+    ],
+    "rules": {
+      "selector-class-pattern": null,
+      "custom-property-pattern": null
+    }
   }
 }

@@ -1,44 +1,11 @@
-import globals from "globals";
-import pluginJs from "@eslint/js";
-import tseslint from "typescript-eslint";
-import pluginReact from "eslint-plugin-react";
-import pluginReactHooks from "eslint-plugin-react-hooks";
-import pluginPrettierRecommended from "eslint-plugin-prettier/recommended";
+import { ignores, base, reactBrowser } from "@aria-player/config/eslint";
 
 export default [
+  ignores,
+  ...base,
+  ...reactBrowser,
   {
-    ignores: ["postcss.config.cjs"]
-  },
-  pluginJs.configs.recommended,
-  ...tseslint.configs.recommended,
-  pluginReact.configs.flat.recommended,
-  pluginPrettierRecommended,
-  {
-    files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"],
-    languageOptions: {
-      globals: globals.browser,
-      parserOptions: {
-        project: ["./tsconfig.json", "./tsconfig.node.json"]
-      }
-    },
-    plugins: {
-      "react-hooks": pluginReactHooks
-    },
-    rules: {
-      ...pluginReactHooks.configs.recommended.rules,
-      "react/react-in-jsx-scope": "off",
-      "@typescript-eslint/no-deprecated": "error"
-    },
-    settings: {
-      react: {
-        version: "18.3"
-      }
-    }
-  },
-  {
-    files: ["eslint.config.js"],
-    parserOptions: {
-      sourceType: "script"
-    }
+    files: ["**/*.{ts,tsx}"],
+    rules: { "@typescript-eslint/no-deprecated": "error" }
   }
 ];

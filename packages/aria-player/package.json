@@ -5,11 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "bun run lint && vite build",
+    "build": "vite build",
     "preview": "vite preview",
     "tauri": "tauri",
     "test": "vitest",
-    "lint": "tsc && eslint ./src && prettier -c . && stylelint \"**/*.css\""
+    "lint": "tsc && eslint . && prettier -c . && stylelint \"**/*.css\""
   },
   "dependencies": {
     "@reduxjs/toolkit": "^2.11.2",
@@ -54,7 +54,7 @@
     "soprano-ui": "workspace:*"
   },
   "devDependencies": {
-    "@eslint/js": "^10.0.1",
+    "@aria-player/types": "workspace:*",
     "@tauri-apps/cli": "2.10.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
@@ -68,21 +68,9 @@
     "@types/wicg-file-system-access": "^2023.10.7",
     "@vitejs/plugin-react": "^5.1.4",
     "autoprefixer": "^10.4.27",
-    "eslint": "^10.0.2",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-prettier": "^5.5.5",
-    "eslint-plugin-react": "^7.37.5",
-    "eslint-plugin-react-hooks": "^7.0.1",
-    "globals": "^17.4.0",
     "jsdom": "^28.1.0",
     "postcss": "^8.5.8",
-    "prettier": "^3.8.1",
     "react-dnd-test-backend": "^16.0.1",
-    "stylelint": "^17.4.0",
-    "stylelint-config-css-modules": "^4.6.0",
-    "stylelint-config-standard": "^40.0.0",
-    "typescript": "^5.9.3",
-    "typescript-eslint": "^8.56.1",
     "vite": "^7.3.1",
     "vite-plugin-svgr": "^4.5.0",
     "vitest": "^4.0.18"
