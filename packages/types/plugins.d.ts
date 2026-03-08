@@ -98,7 +98,7 @@ export interface BaseCallbacks {
   showAlert: (alert: Alert) => void;
   /**
    * Open a URL allowing the user to authenticate with an external service via OAuth.
-   * 
+   *
    * The OAuth code will be sent back to the player via `window.postMessage` in the following format:
    * ```
    * {
@@ -266,7 +266,7 @@ export interface SourceHandle extends BaseHandle {
   getArtistTopTracks?: (
     uri: ArtistUri,
     startIndex: number,
-    stopIndex: number,
+    stopIndex: number
   ) => Promise<TrackMetadata[]>;
   /**
    * Fetch albums for an artist by their URI.
@@ -276,7 +276,7 @@ export interface SourceHandle extends BaseHandle {
   getArtistAlbums?: (
     uri: ArtistUri,
     startIndex: number,
-    stopIndex: number,
+    stopIndex: number
   ) => Promise<AlbumMetadata[]>;
   /**
    * Search for tracks matching a query.
@@ -284,7 +284,7 @@ export interface SourceHandle extends BaseHandle {
   searchTracks?: (
     query: string,
     startIndex: number,
-    stopIndex: number,
+    stopIndex: number
   ) => Promise<TrackMetadata[]>;
   /**
    * Search for albums matching a query.
@@ -292,7 +292,7 @@ export interface SourceHandle extends BaseHandle {
   searchAlbums?: (
     query: string,
     startIndex: number,
-    stopIndex: number,
+    stopIndex: number
   ) => Promise<AlbumMetadata[]>;
   /**
    * Search for artists matching a query.
@@ -300,7 +300,7 @@ export interface SourceHandle extends BaseHandle {
   searchArtists?: (
     query: string,
     startIndex: number,
-    stopIndex: number,
+    stopIndex: number
   ) => Promise<ArtistMetadata[]>;
   /**
    * Called after every update to this source's tracks.
