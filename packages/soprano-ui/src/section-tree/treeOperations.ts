@@ -33,13 +33,9 @@ export function moveTreeNode(
   let offset = 0;
   const originalParent = findParentTreeNode(data, args.id);
   if (originalParent == null || originalParent.id === args.parentId) {
-    let originalIndex = 0;
-    if (originalParent) {
-      originalIndex =
-        originalParent.children?.findIndex((item) => item.id === args.id) ?? 0;
-    } else {
-      originalIndex = data?.findIndex((item) => item.id === args.id);
-    }
+    const originalIndex = originalParent
+      ? (originalParent.children?.findIndex((item) => item.id === args.id) ?? 0)
+      : data.findIndex((item) => item.id === args.id);
 
     // If this node was originally behind its new index, offset the index by 1
     const originalParentId = originalParent?.id ?? null;
