@@ -14,5 +14,5 @@ export enum ArtistDelimiterType {
   Comma = ",",
   Ampersand = "&",
   SpacedSlash = " / ",
-  Custom = "custom"
+  Custom = "custom",
 }

@@ -13,7 +13,7 @@ export function showLibrarySetupDialog({
   host,
   config,
   i18n: i18nInstance,
-  onSubmit
+  onSubmit,
 }: {
   host: SourceCallbacks;
   config: SpotifyConfig;
@@ -22,7 +22,7 @@ export function showLibrarySetupDialog({
 }) {
   let state: LibraryItemSelection = {
     includeLikedSongs: config.includeLikedSongs !== false,
-    includeSavedAlbums: config.includeSavedAlbums !== false
+    includeSavedAlbums: config.includeSavedAlbums !== false,
   };
   const { likedSongsCount, savedAlbumsCount } = config;
 
@@ -40,7 +40,7 @@ export function showLibrarySetupDialog({
       />
     ),
     closeLabel: i18nInstance.t("spotify-player:librarySetup.continue"),
-    onClose: () => onSubmit(state.includeLikedSongs, state.includeSavedAlbums)
+    onClose: () => onSubmit(state.includeLikedSongs, state.includeSavedAlbums),
   });
 }
 
@@ -75,7 +75,7 @@ export default function LibraryConfig(props: {
     props.host.updateData({
       ...config,
       ...newSelection,
-      librarySetupPending: false
+      librarySetupPending: false,
     });
     props.refreshLibrary(newSelection);
   }
@@ -96,7 +96,7 @@ export default function LibraryConfig(props: {
         <LibraryItemsConfig
           selection={{
             includeLikedSongs: config.includeLikedSongs !== false,
-            includeSavedAlbums: config.includeSavedAlbums !== false
+            includeSavedAlbums: config.includeSavedAlbums !== false,
           }}
           likedSongsCount={config.likedSongsCount}
           savedAlbumsCount={config.savedAlbumsCount}

@@ -3,7 +3,7 @@ import { Action } from "redux";
 import {
   moveLibraryItem,
   resetLibraryLayout,
-  updateLibraryItem
+  updateLibraryItem,
 } from "../features/library/librarySlice";
 import {
   addTracksToPlaylist,
@@ -12,7 +12,7 @@ import {
   movePlaylistItem,
   removeTracksFromPlaylist,
   setPlaylistTracks,
-  updatePlaylistItem
+  updatePlaylistItem,
 } from "../features/playlists/playlistsSlice";
 import { UndoableSlices } from "./store";
 import { ActionTypes } from "redux-undo";
@@ -32,7 +32,7 @@ export const undoableActions = [
   deletePlaylistItem,
   addTracksToPlaylist,
   removeTracksFromPlaylist,
-  setPlaylistTracks
+  setPlaylistTracks,
 ];
 
 export const undoableActionTypes: string[] = undoableActions.map(
@@ -53,14 +53,14 @@ export const excludeStateFromUndo =
             library: {
               ...newState.present.library,
               columnState: state.present.library.columnState,
-              splitViewStates: state.present.library.splitViewStates
+              splitViewStates: state.present.library.splitViewStates,
             },
             playlists: {
               ...newState.present.playlists,
               playlistsConfig: state.present.playlists.playlistsConfig,
-              foldersOpen: state.present.playlists.openFolders
-            }
-          }
+              foldersOpen: state.present.playlists.openFolders,
+            },
+          },
         };
       }
       default:
@@ -135,12 +135,12 @@ function getActionLabel(action: Action): string | undefined {
     case "playlists/addTracksToPlaylist":
       return t("actions.addToPlaylist", {
         count: (action as ReturnType<typeof addTracksToPlaylist>).payload
-          .newTracks.length
+          .newTracks.length,
       });
     case "playlists/removeTracksFromPlaylist":
       return t("actions.removeFromPlaylist", {
         count: (action as ReturnType<typeof removeTracksFromPlaylist>).payload
-          .itemIds.length
+          .itemIds.length,
       });
     case "playlists/setPlaylistTracks":
       return t("actions.reorderPlaylist");

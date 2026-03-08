@@ -2,14 +2,14 @@ import {
   EntityState,
   PayloadAction,
   createEntityAdapter,
-  createSlice
+  createSlice,
 } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 import { Artist, ArtistId, PluginId } from "../../../../types";
 
 const artistsAdapter = createEntityAdapter<Artist, ArtistId>({
   selectId: (artist) => artist.artistId,
-  sortComparer: (a, b) => a.name.localeCompare(b.name)
+  sortComparer: (a, b) => a.name.localeCompare(b.name),
 });
 
 interface ArtistsState {
@@ -17,7 +17,7 @@ interface ArtistsState {
 }
 
 const initialState: ArtistsState = {
-  artists: artistsAdapter.getInitialState()
+  artists: artistsAdapter.getInitialState(),
 };
 
 const artistsSlice = createSlice({
@@ -43,15 +43,15 @@ const artistsSlice = createSlice({
         );
         artistsAdapter.removeMany(state.artists, artistsToRemove);
       }
-    }
-  }
+    },
+  },
 });
 
 export const { addArtists, removeArtists } = artistsSlice.actions;
 
 export const {
   selectById: selectArtistInfoById,
-  selectEntities: selectArtistsInfo
+  selectEntities: selectArtistsInfo,
 } = artistsAdapter.getSelectors((state: RootState) => state.artists.artists);
 
 export default artistsSlice.reducer;

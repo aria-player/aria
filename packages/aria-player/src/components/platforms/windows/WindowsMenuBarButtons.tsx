@@ -63,8 +63,8 @@ export function WindowsMenuBarButtons() {
       event: e,
       position: {
         x: divRect.left,
-        y: divRect.bottom + 4
-      }
+        y: divRect.bottom + 4,
+      },
     });
   };
 

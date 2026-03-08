@@ -38,7 +38,7 @@ const initialState: PlayerState = {
   queueSelectedGroup: null,
   upNext: [],
   repeatMode: RepeatMode.Off,
-  shuffle: false
+  shuffle: false,
 };
 
 function shuffleQueue(queue: QueueItem[], queueIndex: number | null) {
@@ -305,7 +305,7 @@ export const playerSlice = createSlice({
           0,
           ...action.payload.tracks.map((track) => ({
             ...track,
-            stray: true
+            stray: true,
           }))
         );
       }
@@ -325,7 +325,7 @@ export const playerSlice = createSlice({
     },
     reorderUpNext: (state, action: PayloadAction<QueueItem[]>) => {
       state.upNext = action.payload;
-    }
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -338,7 +338,7 @@ export const playerSlice = createSlice({
       .addCase(loadAndPlayTrack.fulfilled, (state) => {
         state.status = Status.Playing;
       });
-  }
+  },
 });
 
 export const {
@@ -359,7 +359,7 @@ export const {
   toggleShuffle,
   addStrayTracksToQueue,
   addTracksToUpNext,
-  reorderUpNext
+  reorderUpNext,
 } = playerSlice.actions;
 
 export const selectStatus = (state: RootState) => state.player.status;

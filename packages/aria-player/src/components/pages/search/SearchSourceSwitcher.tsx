@@ -4,16 +4,16 @@ import {
   pluginHandles,
   getSourceHandle,
   selectActivePlugins,
-  selectPluginInfo
+  selectPluginInfo,
 } from "../../../features/plugins/pluginsSlice";
 import {
   selectSelectedSearchSource,
   selectSearch,
-  setSelectedSearchSource
+  setSelectedSearchSource,
 } from "../../../features/search/searchSlice";
 import {
   selectVisibleSearchCategory,
-  selectVisibleSearchSource
+  selectVisibleSearchSource,
 } from "../../../features/visibleSelectors";
 import { sortPlugins } from "../../../app/utils";
 import { PluginId } from "../../../../../types/plugins";
@@ -85,7 +85,7 @@ export default function SearchSourceSwitcher() {
     searchableSourcePlugins,
     dispatch,
     search,
-    visibleSearchCategory
+    visibleSearchCategory,
   ]);
 
   if (

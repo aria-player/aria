@@ -5,7 +5,7 @@ import {
   selectCustomAccentColor,
   selectStylesheets,
   selectTheme,
-  selectThemes
+  selectThemes,
 } from "../features/config/configSlice";
 import { colorIsDark } from "../app/utils";
 import { accentColors } from "../themes/themes";

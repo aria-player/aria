@@ -28,7 +28,7 @@ export const CrashPage = ({ error }: FallbackProps) => {
         </h1>
         <p {...tauriDragRegion}>
           {t("crash.errorMessage", 'Error message: "{{error}}"', {
-            error: error instanceof Error ? error.message : String(error)
+            error: error instanceof Error ? error.message : String(error),
           })}
         </p>
         <div className={styles.details} {...tauriDragRegion}>

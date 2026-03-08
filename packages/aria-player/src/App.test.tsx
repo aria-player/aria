@@ -36,7 +36,7 @@ test("renders search bar when loaded", () => {
     decorations: null,
     minimizeToTray: null,
     setDecorations: () => {},
-    setMinimizeToTray: () => {}
+    setMinimizeToTray: () => {},
   };
   ModuleRegistry.registerModules([AllCommunityModule]);
 

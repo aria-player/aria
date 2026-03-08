@@ -8,7 +8,7 @@ import { useScrollDetection } from "../../hooks/useScrollDetection";
 import { Outlet } from "react-router-dom";
 import {
   selectVisibleSearchCategory,
-  selectVisibleSearchSource
+  selectVisibleSearchSource,
 } from "../../features/visibleSelectors";
 import { useContext } from "react";
 import { ScrollContext } from "../../contexts/ScrollContext";

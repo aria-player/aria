@@ -11,7 +11,7 @@ import {
   SourceHandle,
   Track,
   TrackMetadata,
-  TrackUri
+  TrackUri,
 } from "../../../../types";
 import { isTauri } from "../../app/utils";
 
@@ -61,8 +61,8 @@ export default function createAppleMusicPlayer(
       developerToken,
       app: {
         name: "Aria",
-        build: "1.0.0"
-      }
+        build: "1.0.0",
+      },
     };
     await window.MusicKit.configure(musicKitConfig);
     music = await window.MusicKit.getInstance();
@@ -102,7 +102,7 @@ export default function createAppleMusicPlayer(
       host.updateData({
         ...getConfig(),
         token: data.token,
-        tokenExpiration: data.expiresAt
+        tokenExpiration: data.expiresAt,
       });
       return data.token;
     } catch (error) {
@@ -124,7 +124,7 @@ export default function createAppleMusicPlayer(
 
     host.setSyncProgress({
       synced: 0,
-      total: totalTracks
+      total: totalTracks,
     });
 
     const allTracks: TrackMetadata[] = [];
@@ -158,7 +158,7 @@ export default function createAppleMusicPlayer(
 
             host.setSyncProgress({
               synced: progress,
-              total: totalTracks
+              total: totalTracks,
             });
           }
         }
@@ -263,7 +263,7 @@ export default function createAppleMusicPlayer(
       dateReleased:
         albumData.attributes?.releaseDate &&
         new Date(albumData.attributes.releaseDate).getTime(),
-      metadataLoaded: true
+      metadataLoaded: true,
     } as TrackMetadata;
   }
 
@@ -330,7 +330,7 @@ export default function createAppleMusicPlayer(
 
     const allArtistIds = new Set([
       ...Object.values(songToArtistIds).flat(),
-      ...Object.values(albumToArtistIds).flat()
+      ...Object.values(albumToArtistIds).flat(),
     ]);
 
     /* The artists included in the songs/albums responses don't include the artist names,
@@ -352,7 +352,7 @@ export default function createAppleMusicPlayer(
             artist.attributes as MusicKit.Artists["attributes"] & {
               artwork?: MusicKit.Artwork;
             }
-          ).artwork?.url
+          ).artwork?.url,
         });
       }
     });
@@ -371,7 +371,7 @@ export default function createAppleMusicPlayer(
         artistUri,
         albumArtist: albumArtistUri.map((id) => artistMap[id]).filter(Boolean),
         albumArtistUri,
-        albumUri: albumId
+        albumUri: albumId,
       };
     });
 
@@ -416,7 +416,7 @@ export default function createAppleMusicPlayer(
         message: i18n.t(
           "apple-music-player:errorDialog.tokenEndpointRequiredMessage"
         ),
-        closeLabel: i18n.t("apple-music-player:errorDialog.close")
+        closeLabel: i18n.t("apple-music-player:errorDialog.close"),
       });
       return;
     }
@@ -428,7 +428,7 @@ export default function createAppleMusicPlayer(
         message: i18n.t(
           "apple-music-player:errorDialog.tokenFetchErrorMessage"
         ),
-        closeLabel: i18n.t("apple-music-player:errorDialog.close")
+        closeLabel: i18n.t("apple-music-player:errorDialog.close"),
       });
       return;
     }
@@ -437,7 +437,7 @@ export default function createAppleMusicPlayer(
       host.showAlert({
         heading: i18n.t("apple-music-player:errorDialog.musicKitErrorHeading"),
         message: i18n.t("apple-music-player:errorDialog.musicKitErrorMessage"),
-        closeLabel: i18n.t("apple-music-player:errorDialog.close")
+        closeLabel: i18n.t("apple-music-player:errorDialog.close"),
       });
       return;
     }
@@ -474,7 +474,7 @@ export default function createAppleMusicPlayer(
           window.dispatchEvent(
             new MessageEvent("message", {
               data: parsedData,
-              origin: payload.origin || window.location.origin
+              origin: payload.origin || window.location.origin,
             })
           );
         });
@@ -483,7 +483,7 @@ export default function createAppleMusicPlayer(
           authWindowHref = nextUrl;
           invoke("open_auth_window", {
             url: nextUrl,
-            mainWindowOrigin: window.location.origin
+            mainWindowOrigin: window.location.origin,
           });
         };
 
@@ -506,9 +506,9 @@ export default function createAppleMusicPlayer(
               postMessage: (data: unknown, origin?: string) => {
                 invoke("post_message_to_auth_window", {
                   data: typeof data === "string" ? data : JSON.stringify(data),
-                  origin: origin || window.location.origin
+                  origin: origin || window.location.origin,
                 });
-              }
+              },
             };
 
             return authWindowProxy;
@@ -551,7 +551,7 @@ export default function createAppleMusicPlayer(
       Attribution({
         ...props,
         i18n,
-        storefrontId: music?.storefrontId
+        storefrontId: music?.storefrontId,
       }),
 
     loadAndPlayTrack: async (track: Track) => {
@@ -692,7 +692,7 @@ export default function createAppleMusicPlayer(
         return {
           uri: artistData.id,
           name: artistData.attributes?.name ?? "",
-          artworkUri: undefined
+          artworkUri: undefined,
         };
       } catch (error) {
         console.error("Failed to fetch artist info:", error);
@@ -800,7 +800,7 @@ export default function createAppleMusicPlayer(
             dateReleased: album.attributes?.releaseDate
               ? new Date(album.attributes.releaseDate).getTime()
               : undefined,
-            artworkUri: album.attributes?.artwork?.url
+            artworkUri: album.attributes?.artwork?.url,
           };
         });
       } catch (error) {
@@ -924,7 +924,7 @@ export default function createAppleMusicPlayer(
               dateReleased: album.attributes?.releaseDate
                 ? new Date(album.attributes.releaseDate).getTime()
                 : undefined,
-              artworkUri: album.attributes?.artwork?.url
+              artworkUri: album.attributes?.artwork?.url,
             };
           });
         } catch (error) {
@@ -962,7 +962,7 @@ export default function createAppleMusicPlayer(
               artist.attributes as MusicKit.Artists["attributes"] & {
                 artwork?: MusicKit.Artwork;
               }
-            ).artwork?.url
+            ).artwork?.url,
           }));
         } catch (error) {
           console.error("Failed to search artists:", error);
@@ -989,8 +989,8 @@ export default function createAppleMusicPlayer(
             method: "POST",
             headers: {
               Authorization: `Bearer ${developerToken}`,
-              "Music-User-Token": music.musicUserToken
-            }
+              "Music-User-Token": music.musicUserToken,
+            },
           }
         );
       }
@@ -1038,6 +1038,6 @@ export default function createAppleMusicPlayer(
       }
       document.removeEventListener("musickitloaded", fetchUserLibrary);
       i18n.removeResourceBundle("en-US", "apple-music-player");
-    }
+    },
   };
 }

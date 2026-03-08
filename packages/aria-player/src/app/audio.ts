@@ -76,7 +76,7 @@ export function createWebAudioBackend(props: {
         const buffer = await loadAudioBuffer(file, signal);
         primaryBufferInfo = {
           buffer,
-          fileUrl
+          fileUrl,
         };
         playPrimaryBuffer(0, volume, true);
         return primaryBufferInfo.buffer.duration * 1000;
@@ -98,7 +98,7 @@ export function createWebAudioBackend(props: {
         const buffer = await loadAudioBuffer(file, signal);
         secondaryBufferInfo = {
           buffer,
-          fileUrl
+          fileUrl,
         };
       } catch (error) {
         if (error instanceof DOMException && error.name === "AbortError") {
@@ -142,6 +142,6 @@ export function createWebAudioBackend(props: {
 
     dispose() {
       audioContext?.close();
-    }
+    },
   };
 }

@@ -7,7 +7,7 @@ import {
   formatDuration,
   formatDate,
   formatSampleRate,
-  formatBitRate
+  formatBitRate,
 } from "../../app/utils";
 import { AlbumArt } from "../../components/views/subviews/AlbumArt";
 import { createElement } from "react";
@@ -39,12 +39,12 @@ export const defaultColumnDefinitions: ColDef[] = [
             width: "30px",
             height: "30px",
             borderRadius: "0.25rem",
-            overflow: "hidden"
-          }
+            overflow: "hidden",
+          },
         },
         AlbumArt({ track: params.data })
       );
-    }
+    },
   },
   {
     field: "title",
@@ -54,7 +54,7 @@ export const defaultColumnDefinitions: ColDef[] = [
         return t("tracks.unknownTrack");
       }
       return params.value ?? "";
-    }
+    },
   },
   {
     field: "duration",
@@ -72,22 +72,22 @@ export const defaultColumnDefinitions: ColDef[] = [
         return "-";
       }
       return formatDuration(params.value);
-    }
+    },
   },
   {
     field: "artist",
     valueFormatter: (params: { data: Track; value: string | string[] }) => {
       return formatStringArray(params.value);
-    }
+    },
   },
   {
-    field: "album"
+    field: "album",
   },
   {
     field: "genre",
     valueFormatter: (params: { data: Track; value: string | string[] }) => {
       return formatStringArray(params.value);
-    }
+    },
   },
   { field: "year" },
   {
@@ -95,33 +95,33 @@ export const defaultColumnDefinitions: ColDef[] = [
     hide: true,
     valueFormatter: (params: { data: Track; value: string | string[] }) => {
       return formatStringArray(params.value);
-    }
+    },
   },
   {
     field: "composer",
     hide: true,
     valueFormatter: (params: { data: Track; value: string | string[] }) => {
       return formatStringArray(params.value);
-    }
+    },
   },
   {
     field: "comments",
     hide: true,
     valueFormatter: (params: { data: Track; value: string | string[] }) => {
       return formatStringArray(params.value);
-    }
+    },
   },
   {
     field: "track",
     hide: true,
     filter: false,
-    type: "rightAligned"
+    type: "rightAligned",
   },
   {
     field: "disc",
     hide: true,
     filter: false,
-    type: "rightAligned"
+    type: "rightAligned",
   },
   {
     field: "dateReleased",
@@ -130,7 +130,7 @@ export const defaultColumnDefinitions: ColDef[] = [
       return params.value !== undefined && params.value !== null
         ? formatDate(params.value)
         : "";
-    }
+    },
   },
   {
     field: "dateAdded",
@@ -140,7 +140,7 @@ export const defaultColumnDefinitions: ColDef[] = [
       return params.value !== undefined && params.value !== null
         ? formatDate(params.value)
         : "";
-    }
+    },
   },
   {
     field: "dateModified",
@@ -150,7 +150,7 @@ export const defaultColumnDefinitions: ColDef[] = [
       return params.value !== undefined && params.value !== null
         ? formatDate(params.value)
         : "";
-    }
+    },
   },
   { field: "filePath", hide: true },
   { field: "fileFolder", hide: true },
@@ -163,7 +163,7 @@ export const defaultColumnDefinitions: ColDef[] = [
         ? formatBytes(params.value)
         : "";
     },
-    type: "rightAligned"
+    type: "rightAligned",
   },
   { field: "fileFormat", hide: true, filter: false },
   {
@@ -175,7 +175,7 @@ export const defaultColumnDefinitions: ColDef[] = [
         ? formatSampleRate(params.value)
         : "";
     },
-    type: "rightAligned"
+    type: "rightAligned",
   },
   {
     field: "bitRate",
@@ -186,7 +186,7 @@ export const defaultColumnDefinitions: ColDef[] = [
         ? formatBitRate(params.value)
         : "";
     },
-    type: "rightAligned"
+    type: "rightAligned",
   },
   {
     field: "source",
@@ -196,7 +196,7 @@ export const defaultColumnDefinitions: ColDef[] = [
         getSourceHandle(params.value)?.displayName ??
         selectPluginInfo(store.getState())[params.value]?.name
       );
-    }
+    },
   },
   {
     field: "attribution",
@@ -221,17 +221,17 @@ export const defaultColumnDefinitions: ColDef[] = [
           style: {
             display: "flex",
             alignItems: "center",
-            height: "100%"
-          }
+            height: "100%",
+          },
         },
         createElement(() =>
           getSourceHandle(track.source)?.Attribution?.({
             type: "track",
             id: track.uri,
-            compact: true
+            compact: true,
           })
         )
       );
-    }
-  }
+    },
+  },
 ];

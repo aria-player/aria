@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { addTracks } from "../../features/tracks/tracksSlice";
 import {
   markAlbumFetched,
-  selectIsAlbumFetched
+  selectIsAlbumFetched,
 } from "../../features/cache/cacheSlice";
 import LoadingSpinner from "./subviews/LoadingSpinner";
 import { useAppSelector } from "../../app/hooks";
@@ -41,7 +41,7 @@ export default function AlbumView() {
               addTracks({
                 source: plugin,
                 tracks: tracks,
-                addToLibrary: false
+                addToLibrary: false,
               })
             );
             dispatch(markAlbumFetched(albumId));

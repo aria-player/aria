@@ -1,7 +1,7 @@
 import { i18n } from "i18next";
 import {
   IntegrationCallbacks,
-  IntegrationHandle
+  IntegrationHandle,
 } from "../../../../types/plugins";
 import { Track } from "../../../../types/tracks";
 
@@ -32,7 +32,7 @@ export default function createMediaSession(
         artwork:
           artwork != null && artwork != undefined
             ? [{ src: artwork }]
-            : undefined
+            : undefined,
       });
 
       navigator.mediaSession.playbackState = "playing";
@@ -61,6 +61,6 @@ export default function createMediaSession(
         navigator.mediaSession.setActionHandler("nexttrack", null);
         navigator.mediaSession.setActionHandler("previoustrack", null);
       }
-    }
+    },
   };
 }

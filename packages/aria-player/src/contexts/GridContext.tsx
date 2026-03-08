@@ -4,7 +4,7 @@ import {
   MutableRefObject,
   SetStateAction,
   createContext,
-  useState
+  useState,
 } from "react";
 import { ReactNode, useRef } from "react";
 
@@ -15,7 +15,7 @@ export const GridContext = createContext<{
 }>({
   gridRef: null,
   isGridReady: false,
-  setIsGridReady: () => {}
+  setIsGridReady: () => {},
 });
 
 export function GridProvider({ children }: { children: ReactNode }) {

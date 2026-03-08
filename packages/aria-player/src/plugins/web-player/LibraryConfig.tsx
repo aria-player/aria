@@ -15,7 +15,7 @@ export function LibraryConfig(props: {
 
   function removeFolder() {
     props.host.updateData({
-      folder: ""
+      folder: "",
     } as WebPlayerData);
     props.host.removeLibraryTracks();
   }
@@ -28,7 +28,7 @@ export function LibraryConfig(props: {
       </button>
       <p>
         {t("config.currentFolder", {
-          folder: webPlayerData.folder || t("config.noFolder")
+          folder: webPlayerData.folder || t("config.noFolder"),
         })}
         {webPlayerData?.folder && (
           <button
@@ -43,7 +43,7 @@ export function LibraryConfig(props: {
       {!props.loaded && webPlayerData?.folder && (
         <p>
           {t("config.folderNotLoaded", {
-            folder: webPlayerData.folder
+            folder: webPlayerData.folder,
           })}
         </p>
       )}

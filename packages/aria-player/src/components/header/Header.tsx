@@ -7,7 +7,7 @@ import {
   selectVisibleDisplayMode,
   selectVisiblePlaylist,
   selectVisibleSelectedTrackGroup,
-  selectVisibleViewType
+  selectVisibleViewType,
 } from "../../features/visibleSelectors";
 import { useTranslation } from "react-i18next";
 import { selectPlaylistsLayoutItemById } from "../../features/playlists/playlistsSlice";
@@ -92,7 +92,7 @@ export default function Header() {
                 ? "visible"
                 : scrollContext?.scrollY <= 0 || !isGridReady
                   ? "hidden"
-                  : "visible"
+                  : "visible",
           }}
         >
           {visibleAlbum?.name || visibleArtist?.name}
@@ -106,7 +106,7 @@ export default function Header() {
             : playlistName != undefined
               ? playlistName || "\u00A0"
               : t(`views.${visibleViewType}`, {
-                  defaultValue: t("views.error")
+                  defaultValue: t("views.error"),
                 })}
         </h1>
       )}

@@ -8,7 +8,7 @@ import {
   selectVisibleDisplayMode,
   selectVisiblePlaylist,
   selectVisibleSearchCategory,
-  selectVisibleViewType
+  selectVisibleViewType,
 } from "../../features/visibleSelectors";
 import ArtistGrid from "./ArtistGrid";
 import ErrorPage from "../pages/ErrorPage";
@@ -37,7 +37,7 @@ export default function ViewContainer() {
           style={{
             height: "100%",
             width: "100%",
-            overflow: "auto"
+            overflow: "auto",
           }}
         >
           <AlbumGrid />

@@ -6,6 +6,6 @@ export default [
   ...reactBrowser,
   {
     files: ["**/*.{ts,tsx}"],
-    rules: { "@typescript-eslint/no-deprecated": "error" }
-  }
+    rules: { "@typescript-eslint/no-deprecated": "error" },
+  },
 ];

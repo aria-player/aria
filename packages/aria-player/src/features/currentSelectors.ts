@@ -3,7 +3,7 @@ import { RootState, store } from "../app/store";
 import {
   selectQueueGrouping,
   selectQueueSelectedGroup,
-  selectQueueSource
+  selectQueueSource,
 } from "./player/playerSlice";
 import { selectPlaylistById } from "./playlists/playlistsSlice";
 import { PlaylistItem } from "./playlists/playlistsTypes";
@@ -19,7 +19,7 @@ export const selectCurrentQueueTracks = createSelector(
     (state: RootState) => state.player.currentTrack,
     (state: RootState) => state.player.queue,
     (state: RootState) => state.player.queueIndex,
-    (state: RootState) => state.player.upNext
+    (state: RootState) => state.player.upNext,
   ],
   () => {
     const state = store.getState();
@@ -27,19 +27,19 @@ export const selectCurrentQueueTracks = createSelector(
 
     const currentTrack = {
       ...selectTrackById(state, state.player.currentTrack.trackId),
-      itemId: state.player.currentTrack.itemId
+      itemId: state.player.currentTrack.itemId,
     };
 
     const queue = state.player.queue
       .map((queueTrack) => ({
         ...selectTrackById(state, queueTrack.trackId),
-        itemId: queueTrack.itemId
+        itemId: queueTrack.itemId,
       }))
       .slice(state.player.queueIndex!);
 
     const upNext = state.player.upNext.map((queueTrack) => ({
       ...selectTrackById(state, queueTrack.trackId),
-      itemId: queueTrack.itemId
+      itemId: queueTrack.itemId,
     }));
 
     const queueWithSeparators = [
@@ -51,9 +51,9 @@ export const selectCurrentQueueTracks = createSelector(
       ...(queue.slice(1).length > 0
         ? [
             { itemId: "playingSourceSeparator", separator: true },
-            ...queue.slice(1)
+            ...queue.slice(1),
           ]
-        : [])
+        : []),
     ];
 
     return queueWithSeparators;
@@ -66,7 +66,7 @@ export const selectNextTrack = createSelector(
     (state: RootState) => state.player.queue,
     (state: RootState) => state.player.queueIndex,
     (state: RootState) => state.player.upNext,
-    (state: RootState) => state.player.repeatMode
+    (state: RootState) => state.player.repeatMode,
   ],
   () => {
     const state = store.getState();
@@ -97,7 +97,7 @@ export const selectCurrentPlaylist = (state: RootState) => {
 export const selectCurrentTrack = createSelector(
   [
     (state: RootState) => state.player.currentTrack,
-    (state: RootState) => selectAllTracks(state)
+    (state: RootState) => selectAllTracks(state),
   ],
   () => {
     const state = store.getState();
@@ -107,7 +107,7 @@ export const selectCurrentTrack = createSelector(
     }
     return {
       ...selectTrackById(state, currentTrack.trackId),
-      itemId: currentTrack.itemId
+      itemId: currentTrack.itemId,
     } as TrackListItem;
   }
 );
@@ -127,6 +127,6 @@ export const selectCurrentGroupFilteredTrackList = (
     selectCurrentPlaylist(state)?.id
   ).map((track) => ({
     itemId: track.itemId,
-    trackId: track.trackId
+    trackId: track.trackId,
   }));
 };

@@ -4,13 +4,13 @@ export enum Status {
   Stopped,
   Loading,
   Playing,
-  Paused
+  Paused,
 }
 
 export enum RepeatMode {
   Off,
   All,
-  One
+  One,
 }
 
 export type QueueItem = PlaylistItem & {

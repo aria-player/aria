@@ -1,7 +1,7 @@
 import { RootState } from "../app/store";
 import {
   selectPlaylistById,
-  selectPlaylistConfigById
+  selectPlaylistConfigById,
 } from "./playlists/playlistsSlice";
 import { TrackListItem } from "./tracks/tracksTypes";
 import { isLibraryView, LibraryView, TrackGrouping, View } from "../app/view";
@@ -10,18 +10,18 @@ import { selectLibraryColumnState } from "./library/librarySlice";
 import {
   getMostCommonArtworkUri,
   normalizeArtists,
-  overrideColumnStateSort
+  overrideColumnStateSort,
 } from "../app/utils";
 import { compareMetadata } from "../app/sort";
 import {
   selectAllTracks,
   selectTrackById,
-  selectLibraryTracks
+  selectLibraryTracks,
 } from "./tracks/tracksSlice";
 import { createSelector } from "@reduxjs/toolkit";
 import {
   selectArtistInfoById,
-  selectArtistsInfo
+  selectArtistsInfo,
 } from "./artists/artistsSlice";
 import { ArtistDetails } from "./artists/artistsTypes";
 import { selectArtistDelimiter } from "./config/configSlice";
@@ -42,17 +42,17 @@ export const selectTrackListMetadata = (
     ? playlist.tracks.map((track) => {
         return {
           ...track,
-          ...selectTrackById(state, track.trackId)
+          ...selectTrackById(state, track.trackId),
         } as TrackListItem;
       })
     : isLibraryView(view)
       ? (selectLibraryTracks(state).map((track) => ({
           ...track,
-          itemId: track?.trackId
+          itemId: track?.trackId,
         })) as TrackListItem[])
       : (selectAllTracks(state).map((track) => ({
           ...track,
-          itemId: track?.trackId
+          itemId: track?.trackId,
         })) as TrackListItem[]);
 };
 
@@ -103,7 +103,7 @@ export const selectSortedTrackList = (
   }
   return tracksCopy.map((track) => ({
     itemId: track.itemId,
-    trackId: track.trackId
+    trackId: track.trackId,
   }));
 };
 
@@ -175,7 +175,7 @@ const selectArtistsFromTracks = (
         track.albumArtistUri,
         track.source,
         delimiter
-      )
+      ),
     ].forEach((artist) => {
       if (!artistsMap.has(artist.id)) {
         artistsMap.set(artist.id, {
@@ -184,7 +184,7 @@ const selectArtistsFromTracks = (
           uri: artist.uri,
           name: artist.name,
           source: track.source,
-          firstTrackArtworkUri: track.artworkUri
+          firstTrackArtworkUri: track.artworkUri,
         });
       }
     });
@@ -213,7 +213,7 @@ const selectAlbumsFromTracks = (
         artistUri: track.albumArtistUri || track.artistUri,
         source: track.source,
         dateReleased: track.dateReleased,
-        artworkUri: getMostCommonArtworkUri(albumTracks)
+        artworkUri: getMostCommonArtworkUri(albumTracks),
       });
     }
   });
@@ -228,7 +228,7 @@ export const selectAllArtists = createSelector(
     (state: RootState) => selectAllTracks(state),
     (state: RootState) => state,
     (state: RootState) => selectArtistDelimiter(state),
-    (state: RootState) => selectArtistsInfo(state)
+    (state: RootState) => selectArtistsInfo(state),
   ],
   (tracks, state, delimiter, artistsInfo) => {
     const artistsMap = new Map<ArtistId, ArtistDetails>(
@@ -250,7 +250,7 @@ export const selectAllAlbums = createSelector(
   [
     (state: RootState) => selectAllTracks(state),
     (state: RootState) => state,
-    (state: RootState) => selectAlbumsInfo(state)
+    (state: RootState) => selectAlbumsInfo(state),
   ],
   (tracks, state, albumsInfo) => {
     const albumsMap = new Map<AlbumId, AlbumDetails>(
@@ -272,7 +272,7 @@ export const selectLibraryArtists = createSelector(
   [
     (state: RootState) => selectLibraryTracks(state),
     (state: RootState) => state,
-    (state: RootState) => selectArtistDelimiter(state)
+    (state: RootState) => selectArtistDelimiter(state),
   ],
   selectArtistsFromTracks
 );
@@ -280,7 +280,7 @@ export const selectLibraryArtists = createSelector(
 export const selectLibraryAlbums = createSelector(
   [
     (state: RootState) => selectLibraryTracks(state),
-    (state: RootState) => state
+    (state: RootState) => state,
   ],
   selectAlbumsFromTracks
 );

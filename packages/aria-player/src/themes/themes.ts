@@ -42,13 +42,13 @@ export interface Theme {
 export const themeFormatVersion = "0.2.0";
 export const defaultStylesheets: Record<string, string> = {};
 export const defaultThemes: Record<string, Theme> = {
-  system: { id: "system", name: "System" }
+  system: { id: "system", name: "System" },
 };
 
 const themeManifests = import.meta.glob("./*/theme.json", { eager: true });
 const stylesheets = import.meta.glob("./*/*.css", {
   query: "?inline",
-  eager: true
+  eager: true,
 });
 const orderedThemes = ["light", "dark", "midnight"];
 for (const path of Object.keys(themeManifests).sort((a, b) => {
@@ -76,5 +76,5 @@ export const accentColors: Record<string, string> = {
   pink: "#c2255c",
   grape: "#9c36b5",
   violet: "#6741d9",
-  indigo: "#3b5bdb"
+  indigo: "#3b5bdb",
 };

@@ -1,7 +1,7 @@
 import {
   BaseHandle,
   IntegrationHandle,
-  SourceHandle
+  SourceHandle,
 } from "../../../../types/plugins";
 
 export type AnyPluginHandle = BaseHandle & IntegrationHandle & SourceHandle;

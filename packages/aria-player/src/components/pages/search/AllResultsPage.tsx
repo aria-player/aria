@@ -5,11 +5,11 @@ import { BASEPATH } from "../../../app/constants";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import {
   selectSearch,
-  selectDebouncedSearch
+  selectDebouncedSearch,
 } from "../../../features/search/searchSlice";
 import {
   selectVisibleSearchResults,
-  selectVisibleSearchSource
+  selectVisibleSearchSource,
 } from "../../../features/visibleSelectors";
 import { useTrackGrid } from "../../../hooks/useTrackGrid";
 import { AlbumGridItem } from "../../views/subviews/AlbumGridItem";
@@ -19,7 +19,7 @@ import { useTranslation } from "react-i18next";
 import ArtistGridItem from "../../views/subviews/ArtistGridItem";
 import {
   getExternalSearchCacheKey,
-  getScrollbarWidth
+  getScrollbarWidth,
 } from "../../../app/utils";
 import { TrackListItem } from "../../../features/tracks/tracksTypes";
 import TopResultItem from "./TopResultItem";
@@ -31,20 +31,20 @@ import {
   selectCachedSearchAlbums,
   selectCachedSearchArtists,
   updateCachedSearchAlbums,
-  updateCachedSearchArtists
+  updateCachedSearchArtists,
 } from "../../../features/cache/cacheSlice";
 import { store } from "../../../app/store";
 import {
   addTracks,
-  selectTrackById
+  selectTrackById,
 } from "../../../features/tracks/tracksSlice";
 import {
   addAlbums,
-  selectAlbumsInfo
+  selectAlbumsInfo,
 } from "../../../features/albums/albumsSlice";
 import {
   addArtists,
-  selectArtistsInfo
+  selectArtistsInfo,
 } from "../../../features/artists/artistsSlice";
 import { getSourceHandle } from "../../../features/plugins/pluginsSlice";
 import { updateCachedSearchTracks } from "../../../features/cache/cacheSlice";
@@ -120,7 +120,7 @@ export default function AllResultsPage() {
         if (!track) return null;
         return {
           ...track,
-          itemId: trackId
+          itemId: trackId,
         } as TrackListItem;
       })
       .filter(Boolean) as TrackListItem[];
@@ -157,7 +157,7 @@ export default function AllResultsPage() {
           addTracks({
             source: visibleSearchSource,
             tracks,
-            addToLibrary: false
+            addToLibrary: false,
           })
         );
 
@@ -169,7 +169,7 @@ export default function AllResultsPage() {
           updateCachedSearchTracks({
             key: externalSearchCacheKey,
             trackIds,
-            offset: 0
+            offset: 0,
           })
         );
       } finally {
@@ -185,7 +185,7 @@ export default function AllResultsPage() {
     externalSearchHandle,
     isExternalSearchSource,
     debouncedSearch,
-    visibleSearchSource
+    visibleSearchSource,
   ]);
 
   useEffect(() => {
@@ -220,7 +220,7 @@ export default function AllResultsPage() {
             album.artist,
             album.uri
           ),
-          source: visibleSearchSource
+          source: visibleSearchSource,
         }));
 
         dispatch(addAlbums({ source: visibleSearchSource, albums }));
@@ -231,7 +231,7 @@ export default function AllResultsPage() {
           updateCachedSearchAlbums({
             key: externalSearchCacheKey,
             albumIds,
-            offset: 0
+            offset: 0,
           })
         );
       } catch (error) {
@@ -247,7 +247,7 @@ export default function AllResultsPage() {
     externalSearchHandle,
     isExternalSearchSource,
     debouncedSearch,
-    visibleSearchSource
+    visibleSearchSource,
   ]);
 
   useEffect(() => {
@@ -277,7 +277,7 @@ export default function AllResultsPage() {
         const artists = artistsMetadata.map((artist) => ({
           ...artist,
           artistId: getArtistId(visibleSearchSource, artist.name, artist.uri),
-          source: visibleSearchSource
+          source: visibleSearchSource,
         }));
 
         dispatch(addArtists({ source: visibleSearchSource, artists }));
@@ -288,7 +288,7 @@ export default function AllResultsPage() {
           updateCachedSearchArtists({
             key: externalSearchCacheKey,
             artistIds,
-            offset: 0
+            offset: 0,
           })
         );
       } catch (error) {
@@ -304,7 +304,7 @@ export default function AllResultsPage() {
     externalSearchHandle,
     isExternalSearchSource,
     debouncedSearch,
-    visibleSearchSource
+    visibleSearchSource,
   ]);
 
   const cachedAlbumResults = useMemo(() => {
@@ -333,7 +333,7 @@ export default function AllResultsPage() {
     isExternalSearchSource,
     isDebouncingExternalSearch,
     cachedSongResults,
-    searchResults?.tracks
+    searchResults?.tracks,
   ]);
 
   const artistResults = useMemo(() => {
@@ -348,7 +348,7 @@ export default function AllResultsPage() {
     isExternalSearchSource,
     isDebouncingExternalSearch,
     cachedArtistResults,
-    searchResults?.artists
+    searchResults?.artists,
   ]);
 
   const albumResults = useMemo(() => {
@@ -363,7 +363,7 @@ export default function AllResultsPage() {
     isExternalSearchSource,
     isDebouncingExternalSearch,
     cachedAlbumResults,
-    searchResults?.albums
+    searchResults?.albums,
   ]);
 
   const topResults = useMemo(() => {
@@ -391,7 +391,7 @@ export default function AllResultsPage() {
     const allResults = [
       ...searchResults.tracks,
       ...searchResults.artists,
-      ...searchResults.albums
+      ...searchResults.albums,
     ];
 
     return allResults.sort((a, b) => a.score - b.score);
@@ -401,7 +401,7 @@ export default function AllResultsPage() {
     isExternalSearchSource,
     artistResults,
     albumResults,
-    songResults
+    songResults,
   ]);
 
   useEffect(() => {
@@ -526,7 +526,7 @@ export default function AllResultsPage() {
                 className={styles.gridRow}
                 style={{
                   gridTemplateColumns: `repeat(${gridLayout.columnCount}, 1fr)`,
-                  height: gridLayout.columnWidth + 40
+                  height: gridLayout.columnWidth + 40,
                 }}
               >
                 {artistResults
@@ -561,7 +561,7 @@ export default function AllResultsPage() {
                 className={styles.gridRow}
                 style={{
                   gridTemplateColumns: `repeat(${gridLayout.columnCount}, 1fr)`,
-                  height: gridLayout.columnWidth + 40
+                  height: gridLayout.columnWidth + 40,
                 }}
               >
                 {albumResults.slice(0, gridLayout.columnCount).map((album) => (

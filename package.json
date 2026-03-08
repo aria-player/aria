@@ -33,15 +33,7 @@
     "printWidth": 80,
     "tabWidth": 2,
     "singleQuote": false,
-    "trailingComma": "es5",
-    "overrides": [
-      {
-        "files": "packages/aria-player/**/*",
-        "options": {
-          "trailingComma": "none"
-        }
-      }
-    ]
+    "trailingComma": "es5"
   },
   "stylelint": {
     "extends": [

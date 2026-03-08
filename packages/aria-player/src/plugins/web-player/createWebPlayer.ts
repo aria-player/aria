@@ -24,7 +24,7 @@ export default function createWebPlayer(
   const webAudioBackend = createWebAudioBackend({
     onFinishedPlayback: () => {
       host.finishPlayback();
-    }
+    },
   });
   const metadataWorker = new Worker(
     new URL("./metadataWorker.ts", import.meta.url),
@@ -40,7 +40,7 @@ export default function createWebPlayer(
   async function pickDirectory() {
     const directoryHandle = await window.showDirectoryPicker({
       id: "libraryDirectory",
-      startIn: "music"
+      startIn: "music",
     });
     if (directoryHandle != undefined) {
       loaded = true;
@@ -60,7 +60,7 @@ export default function createWebPlayer(
         folder,
         scanned: host.getTracks().filter((track) => track.metadataLoaded)
           .length,
-        total: newUris.length
+        total: newUris.length,
       });
 
       if (addedUris.length > 0) {
@@ -75,7 +75,7 @@ export default function createWebPlayer(
           fileSize: fileHandles[uri].size,
           fileFormat: fileHandles[uri].name.split(".").pop()?.toUpperCase(),
           album: uri.split("/").slice(-2, -1)[0],
-          metadataLoaded: false
+          metadataLoaded: false,
         }));
         host.addLibraryTracks(tracks);
       }
@@ -113,7 +113,7 @@ export default function createWebPlayer(
       } else if (entry.kind === "directory") {
         localFileHandles = {
           ...localFileHandles,
-          ...(await getAudioFileHandlesWeb(entry, entryRelativePath))
+          ...(await getAudioFileHandlesWeb(entry, entryRelativePath)),
         };
       }
     }
@@ -195,6 +195,6 @@ export default function createWebPlayer(
     dispose() {
       i18n.removeResourceBundle("en-US", "web-player");
       webAudioBackend?.dispose();
-    }
+    },
   };
 }

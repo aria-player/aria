@@ -1,7 +1,7 @@
 export enum DisplayMode {
   TrackList = "trackList",
   AlbumGrid = "albumGrid",
-  SplitView = "splitView"
+  SplitView = "splitView",
 }
 
 export enum View {
@@ -11,7 +11,7 @@ export enum View {
   Settings = "settings",
   Error = "error",
   Album = "album",
-  Artist = "artist"
+  Artist = "artist",
 }
 
 export enum LibraryView {
@@ -21,7 +21,7 @@ export enum LibraryView {
   Genres = "genres",
   Composers = "composers",
   Years = "years",
-  Folders = "folders"
+  Folders = "folders",
 }
 
 export enum TrackGrouping {
@@ -31,7 +31,7 @@ export enum TrackGrouping {
   Genre = "genre",
   Composer = "composer",
   Year = "year",
-  FileFolder = "fileFolder"
+  FileFolder = "fileFolder",
 }
 
 export enum SettingsSection {
@@ -39,18 +39,18 @@ export enum SettingsSection {
   Appearance = "appearance",
   Library = "library",
   Plugins = "plugins",
-  About = "about"
+  About = "about",
 }
 
 export enum ArtistSection {
   Songs = "songs",
-  Albums = "albums"
+  Albums = "albums",
 }
 
 export enum SearchCategory {
   Songs = "songs",
   Artists = "artists",
-  Albums = "albums"
+  Albums = "albums",
 }
 
 export type SplitViewState = {

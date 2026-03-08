@@ -3,7 +3,7 @@ import {
   PayloadAction,
   createEntityAdapter,
   createSelector,
-  createSlice
+  createSlice,
 } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 import {
@@ -12,21 +12,21 @@ import {
   deleteTreeNode,
   findTreeNode,
   moveTreeNode,
-  updateTreeNode
+  updateTreeNode,
 } from "soprano-ui";
 import {
   PlaylistConfig,
   PlaylistId,
   PlaylistItem,
   PlaylistItemId,
-  PlaylistUndoable
+  PlaylistUndoable,
 } from "./playlistsTypes";
 import { setupPlaylistsListeners } from "./playlistsListeners";
 import { ColumnState } from "ag-grid-community";
 import {
   filterHiddenColumnSort,
   overrideColumnStateSort,
-  resetColumnStateExceptSort
+  resetColumnStateExceptSort,
 } from "../../app/utils";
 import { DisplayMode, SplitViewState, TrackGrouping } from "../../app/view";
 
@@ -44,7 +44,7 @@ const initialState: PlaylistsState = {
   playlists: playlistsAdapter.getInitialState(),
   playlistsConfig: playlistsConfigAdapter.getInitialState(),
   layout: [],
-  openFolders: []
+  openFolders: [],
 };
 
 export const playlistsSlice = createSlice({
@@ -84,14 +84,14 @@ export const playlistsSlice = createSlice({
       if (action.payload.newData.children == undefined) {
         playlistsAdapter.addOne(state.playlists, {
           id: action.payload.newData.id,
-          tracks: []
+          tracks: [],
         });
         playlistsConfigAdapter.addOne(state.playlistsConfig, {
           id: action.payload.newData.id,
           columnState: null,
           useCustomLayout: false,
           displayMode: DisplayMode.TrackList,
-          splitViewState: { trackGrouping: TrackGrouping.Artist }
+          splitViewState: { trackGrouping: TrackGrouping.Artist },
         });
       }
     },
@@ -226,11 +226,11 @@ export const playlistsSlice = createSlice({
       if (playlistConfig) {
         playlistConfig.splitViewState = {
           ...playlistConfig.splitViewState,
-          ...action.payload.splitState
+          ...action.payload.splitState,
         };
       }
-    }
-  }
+    },
+  },
 });
 
 export const {
@@ -248,7 +248,7 @@ export const {
   updatePlaylistColumnState,
   togglePlaylistUsesCustomLayout,
   setPlaylistDisplayMode,
-  updatePlaylistSplitViewState
+  updatePlaylistSplitViewState,
 } = playlistsSlice.actions;
 
 export const selectPlaylistsLayout = (state: RootState) =>
@@ -264,7 +264,7 @@ export const selectPlaylistsLayoutItemById = createSelector(
 export const {
   selectIds: selectPlaylistIds,
   selectAll: selectAllPlaylists,
-  selectById: selectPlaylistById
+  selectById: selectPlaylistById,
 } = playlistsAdapter.getSelectors(
   (state: RootState) => state.undoable.present.playlists.playlists
 );

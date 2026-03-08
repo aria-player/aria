@@ -9,7 +9,7 @@ export async function checkForUpdates({ silent = false } = {}) {
     if (!silent) {
       await message(t("upToDateDialog.message"), {
         title: t("upToDateDialog.title"),
-        kind: "info"
+        kind: "info",
       });
     }
     return;
@@ -18,13 +18,13 @@ export async function checkForUpdates({ silent = false } = {}) {
     t("updateDialog.message", {
       newVersion: update.version,
       currentVersion: import.meta.env.PACKAGE_VERSION,
-      releaseNotes: update.body
+      releaseNotes: update.body,
     }),
     {
       title: t("updateDialog.title"),
       kind: "info",
       okLabel: t("updateDialog.yes"),
-      cancelLabel: t("updateDialog.no")
+      cancelLabel: t("updateDialog.no"),
     }
   );
   if (confirmed) {

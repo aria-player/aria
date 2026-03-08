@@ -5,7 +5,7 @@ import { Item, SectionTreeApi } from "soprano-ui";
 export const TreeContext = createContext<{
   treeRef: MutableRefObject<SectionTreeApi<Item> | null> | null;
 }>({
-  treeRef: null
+  treeRef: null,
 });
 
 export function TreeProvider({ children }: { children: ReactNode }) {

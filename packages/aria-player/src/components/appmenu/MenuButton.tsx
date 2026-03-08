@@ -31,8 +31,8 @@ export function MenuButton() {
       event: e,
       position: {
         x: divRect.left,
-        y: divRect.bottom
-      }
+        y: divRect.bottom,
+      },
     });
   };
 

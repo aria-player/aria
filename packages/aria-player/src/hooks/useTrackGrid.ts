@@ -8,7 +8,7 @@ import {
   GetRowIdParams,
   IRowDragItem,
   IRowNode,
-  GridApi
+  GridApi,
 } from "ag-grid-community";
 import { nanoid } from "@reduxjs/toolkit";
 import { t } from "i18next";
@@ -35,7 +35,7 @@ const rowSelectionOptions: RowSelectionOptions = {
   checkboxes: false,
   enableClickSelection: true,
   isRowSelectable: (node: IRowNode) =>
-    !(node.data as AlbumTrackListItem | QueueListItem)?.separator
+    !(node.data as AlbumTrackListItem | QueueListItem)?.separator,
 };
 
 export function useTrackGrid() {
@@ -97,7 +97,7 @@ export function useTrackGrid() {
     gridRef,
     isGridReady,
     location.pathname,
-    location.state?.focusItemId
+    location.state?.focusItemId,
   ]);
 
   const handleGridReady = (params: GridReadyEvent) => {
@@ -126,11 +126,11 @@ export function useTrackGrid() {
           ? selectedRowsCount <= 1
             ? t("tracks.addNamedTrackToPlaylist", {
                 title: trackTitle,
-                playlist
+                playlist,
               })
             : t("tracks.addTracksToPlaylist", {
                 count: selectedRowsCount,
-                playlist
+                playlist,
               })
           : selectedRowsCount <= 1
             ? trackTitle
@@ -188,8 +188,8 @@ export function useTrackGrid() {
             ? [
                 {
                   itemId: nanoid(),
-                  trackId: params.node.data.trackId
-                }
+                  trackId: params.node.data.trackId,
+                },
               ]
             : (getSortedSelectedTracks(params.api)
                 .map((node) => {
@@ -199,10 +199,10 @@ export function useTrackGrid() {
         dispatch(
           addTracksToPlaylist({
             playlistId: item.id,
-            newTracks
+            newTracks,
           })
         );
-      }
+      },
     };
 
     params.api.addRowDropZone(playlistDropZone);
@@ -216,7 +216,7 @@ export function useTrackGrid() {
       setSelectedTracks(
         getSortedSelectedTracks(event.api).map((node) => ({
           itemId: node.itemId,
-          trackId: node.trackId
+          trackId: node.trackId,
         }))
       )
     );
@@ -226,7 +226,7 @@ export function useTrackGrid() {
     params.rowNodes?.length == 1
       ? params.rowNode?.data.title
       : t("tracks.selectedCount", {
-          count: params.rowNodes?.length
+          count: params.rowNodes?.length,
         });
 
   const enableRowAnimation = () => {
@@ -271,13 +271,13 @@ export function useTrackGrid() {
     rowDragMultiRow: true,
     suppressScrollOnNewData: true,
     preventDefaultOnContextMenu: true,
-    alwaysShowVerticalScroll: true
+    alwaysShowVerticalScroll: true,
   };
 
   return {
     gridRef,
     gridProps,
     isGridReady,
-    setIsGridReady
+    setIsGridReady,
   };
 }

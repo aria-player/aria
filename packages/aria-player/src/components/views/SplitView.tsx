@@ -6,7 +6,7 @@ import { useCallback, useEffect, useRef } from "react";
 import { AlbumTrackList } from "./subviews/AlbumTrackList";
 import {
   selectLibrarySplitViewStates,
-  updateLibrarySplitState
+  updateLibrarySplitState,
 } from "../../features/library/librarySlice";
 import { updatePlaylistSplitViewState } from "../../features/playlists/playlistsSlice";
 import {
@@ -14,7 +14,7 @@ import {
   selectVisiblePlaylist,
   selectVisibleViewType,
   selectVisiblePlaylistConfig,
-  selectVisibleSelectedTrackGroup
+  selectVisibleSelectedTrackGroup,
 } from "../../features/visibleSelectors";
 import { compareMetadata } from "../../app/sort";
 import { push, replace } from "redux-first-history";
@@ -52,14 +52,14 @@ export function SplitView() {
       dispatch(
         updatePlaylistSplitViewState({
           playlistId: visiblePlaylist?.id,
-          splitState: { selectedGroup: selectedItem }
+          splitState: { selectedGroup: selectedItem },
         })
       );
     } else if (visibleLibrarySplitViewConfig?.selectedGroup != selectedItem) {
       dispatch(
         updateLibrarySplitState({
           view: visibleViewType,
-          splitState: { selectedGroup: selectedItem }
+          splitState: { selectedGroup: selectedItem },
         })
       );
     }
@@ -88,7 +88,7 @@ export function SplitView() {
     selectedItem,
     visiblePlaylistConfig,
     visibleLibrarySplitViewConfig?.selectedGroup,
-    visiblePlaylist
+    visiblePlaylist,
   ]);
 
   const setSelectedItem = useCallback(
@@ -118,14 +118,14 @@ export function SplitView() {
         dispatch(
           updatePlaylistSplitViewState({
             playlistId: visiblePlaylist?.id,
-            splitState: { paneSizes: sizes }
+            splitState: { paneSizes: sizes },
           })
         );
       } else {
         dispatch(
           updateLibrarySplitState({
             view: visibleViewType,
-            splitState: { paneSizes: sizes }
+            splitState: { paneSizes: sizes },
           })
         );
       }

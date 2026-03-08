@@ -8,7 +8,7 @@ import {
   resetLibraryColumnState,
   selectLibraryColumnState,
   selectLibrarySplitViewStates,
-  updateLibrarySplitState
+  updateLibrarySplitState,
 } from "../features/library/librarySlice";
 import { defaultColumnDefinitions } from "../features/library/libraryColumns";
 import { Status } from "../features/player/playerTypes";
@@ -20,7 +20,7 @@ import {
   resume,
   setMuted,
   setVolume,
-  toggleShuffle
+  toggleShuffle,
 } from "../features/player/playerSlice";
 import { restartOrPreviousTrack } from "../features/player/playerTime";
 import { ActionCreators } from "redux-undo";
@@ -30,14 +30,14 @@ import {
   resetPlaylistColumnState,
   setPlaylistDisplayMode,
   togglePlaylistUsesCustomLayout,
-  updatePlaylistSplitViewState
+  updatePlaylistSplitViewState,
 } from "../features/playlists/playlistsSlice";
 import { copySelectedTracks } from "../features/tracks/tracksSlice";
 import { PlaylistItem } from "../features/playlists/playlistsTypes";
 import { View, DisplayMode, LibraryView, TrackGrouping } from "./view";
 import {
   selectCurrentTrack,
-  selectCurrentTrackItemId
+  selectCurrentTrackItemId,
 } from "../features/currentSelectors";
 import {
   selectVisiblePlaylist,
@@ -46,7 +46,7 @@ import {
   selectVisibleDisplayMode,
   selectVisibleSelectedTrackGroup,
   selectVisibleArtistSection,
-  selectVisibleSearchCategory
+  selectVisibleSearchCategory,
 } from "../features/visibleSelectors";
 import { t } from "i18next";
 import { getRedoActionLabel, getUndoActionLabel } from "./undo";
@@ -140,7 +140,7 @@ export function handleMenuAction(
         if (currentTrack) {
           dispatch(
             push(BASEPATH + queueSource, {
-              focusItemId: currentTrack.itemId
+              focusItemId: currentTrack.itemId,
             })
           );
         }
@@ -164,7 +164,7 @@ export function handleMenuAction(
           dispatch(
             removeTracksFromPlaylist({
               playlistId: visiblePlaylist,
-              itemIds: state.tracks.selectedTracks.map((track) => track.itemId)
+              itemIds: state.tracks.selectedTracks.map((track) => track.itemId),
             })
           );
         } else if (visibleView == View.Queue) {
@@ -184,7 +184,7 @@ export function handleMenuAction(
         dispatch(
           removeTracksFromPlaylist({
             playlistId: visiblePlaylist,
-            itemIds: state.tracks.selectedTracks.map((track) => track.itemId)
+            itemIds: state.tracks.selectedTracks.map((track) => track.itemId),
           })
         );
       } else if (visibleView == View.Queue) {
@@ -207,14 +207,14 @@ export function handleMenuAction(
             .map((node) => {
               return {
                 itemId: nanoid(),
-                trackId: node.trackId
+                trackId: node.trackId,
               };
             })
             .filter(Boolean) as PlaylistItem[];
           dispatch(
             addTracksToPlaylist({
               playlistId: visiblePlaylist.id,
-              newTracks
+              newTracks,
             })
           );
         }
@@ -226,7 +226,7 @@ export function handleMenuAction(
         dispatch(
           togglePlaylistUsesCustomLayout({
             playlistId: visiblePlaylist.id,
-            libraryColumnState: selectLibraryColumnState(state)
+            libraryColumnState: selectLibraryColumnState(state),
           })
         );
       }
@@ -247,8 +247,8 @@ export function handleMenuAction(
         updatePlaylistSplitViewState({
           playlistId: visiblePlaylist?.id,
           splitState: {
-            trackGrouping: action.split(".")[1] as TrackGrouping
-          }
+            trackGrouping: action.split(".")[1] as TrackGrouping,
+          },
         })
       );
     } else {
@@ -260,8 +260,8 @@ export function handleMenuAction(
           updateLibrarySplitState({
             view: visibleLibraryView,
             splitState: {
-              trackGrouping: action.split(".")[1] as TrackGrouping
-            }
+              trackGrouping: action.split(".")[1] as TrackGrouping,
+            },
           })
         );
       }
@@ -273,7 +273,7 @@ export function handleMenuAction(
       dispatch(
         setPlaylistDisplayMode({
           playlistId: visiblePlaylist?.id,
-          displayMode: action.split(".")[1] as DisplayMode
+          displayMode: action.split(".")[1] as DisplayMode,
         })
       );
     }
@@ -293,7 +293,7 @@ export const selectMenuState = createSelector(
     (state: RootState) => state.player.status,
     (state: RootState) => state.player.queue,
     (state: RootState) => state.player.queueIndex,
-    (state: RootState) => state.player.muted
+    (state: RootState) => state.player.muted,
   ],
   () => {
     const state = store.getState();
@@ -317,14 +317,14 @@ export const selectMenuState = createSelector(
       const hidden = columnState?.find((col) => c.field == col.colId)?.hide;
       columnVisibility["columns." + c.field] = {
         selected: hidden != undefined ? !hidden : !c.hide,
-        disabled: selectVisibleDisplayMode(state) != DisplayMode.TrackList
+        disabled: selectVisibleDisplayMode(state) != DisplayMode.TrackList,
       };
     });
     Object.values(DisplayMode).forEach((displayMode) => {
       columnVisibility["viewType." + displayMode] = {
         selected:
           selectVisiblePlaylistConfig(state)?.displayMode == displayMode,
-        disabled: !selectVisiblePlaylist(state)
+        disabled: !selectVisiblePlaylist(state),
       };
     });
     Object.values(TrackGrouping).forEach((grouping) => {
@@ -342,7 +342,7 @@ export const selectMenuState = createSelector(
             selectVisibleViewType(state) == LibraryView.Artists &&
             (grouping == TrackGrouping.AlbumArtist ||
               grouping == TrackGrouping.Artist)
-          )
+          ),
       };
     });
 
@@ -372,13 +372,13 @@ export const selectMenuState = createSelector(
 
     return {
       back: {
-        disabled: !(window.history.length > 1 && window.history.state.idx > 0)
+        disabled: !(window.history.length > 1 && window.history.state.idx > 0),
       },
       forward: {
         disabled: !(
           window.history.length > 1 &&
           window.history.length - 1 != window.history.state.idx
-        )
+        ),
       },
       selectAll: {
         disabled:
@@ -389,19 +389,19 @@ export const selectMenuState = createSelector(
             !selectVisibleSearchCategory(state)) ||
           selectVisibleViewType(state) == View.Queue ||
           (selectVisibleDisplayMode(state) == DisplayMode.AlbumGrid &&
-            !selectVisibleSelectedTrackGroup(state))
+            !selectVisibleSelectedTrackGroup(state)),
       },
       columns: {
-        disabled: selectVisibleDisplayMode(state) != DisplayMode.TrackList
+        disabled: selectVisibleDisplayMode(state) != DisplayMode.TrackList,
       },
       resetColumns: {
-        disabled: selectVisibleDisplayMode(state) != DisplayMode.TrackList
+        disabled: selectVisibleDisplayMode(state) != DisplayMode.TrackList,
       },
       groupBy: {
         disabled:
           selectVisibleDisplayMode(state) != DisplayMode.SplitView ||
           (!selectVisiblePlaylist(state) &&
-            selectVisibleViewType(state) != LibraryView.Artists)
+            selectVisibleViewType(state) != LibraryView.Artists),
       },
       ...columnVisibility,
       togglePlay: {
@@ -410,51 +410,51 @@ export const selectMenuState = createSelector(
           state.player.status == Status.Loading
             ? t("menu.togglePlay.pause")
             : t("menu.togglePlay.play"),
-        disabled: state.player.status == Status.Stopped
+        disabled: state.player.status == Status.Stopped,
       },
       next: {
-        disabled: state.player.status == Status.Stopped
+        disabled: state.player.status == Status.Stopped,
       },
       previous: {
-        disabled: state.player.status == Status.Stopped
+        disabled: state.player.status == Status.Stopped,
       },
       toggleMute: {
         label: state.player.muted
           ? t("menu.toggleMute.unmute")
-          : t("menu.toggleMute.mute")
+          : t("menu.toggleMute.mute"),
       },
       goToCurrent: {
-        disabled: !state.player.currentTrack
+        disabled: !state.player.currentTrack,
       },
       undo: {
         label: getUndoActionLabel(),
-        disabled: !state.undoable.past.length
+        disabled: !state.undoable.past.length,
       },
       redo: {
         label: getRedoActionLabel(),
-        disabled: !state.undoable.future.length
+        disabled: !state.undoable.future.length,
       },
       delete: {
-        disabled: !canDelete
+        disabled: !canDelete,
       },
       cut: {
-        disabled: !canDelete
+        disabled: !canDelete,
       },
       copy: {
         disabled:
-          !selectableTracksVisible || !state.tracks.selectedTracks.length
+          !selectableTracksVisible || !state.tracks.selectedTracks.length,
       },
       paste: {
         disabled:
-          !selectVisiblePlaylist(state) || !state.tracks.clipboard.length
+          !selectVisiblePlaylist(state) || !state.tracks.clipboard.length,
       },
       togglePlaylistLayout: {
         disabled: !selectVisiblePlaylist(state),
-        selected: selectVisiblePlaylistConfig(state)?.useCustomLayout
+        selected: selectVisiblePlaylistConfig(state)?.useCustomLayout,
       },
       viewType: {
-        disabled: !selectVisiblePlaylist(state)
-      }
+        disabled: !selectVisiblePlaylist(state),
+      },
     };
   }
 );

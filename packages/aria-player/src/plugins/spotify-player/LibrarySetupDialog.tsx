@@ -9,7 +9,7 @@ export default function LibrarySetupDialog({
   likedSongsCount,
   savedAlbumsCount,
   onChange,
-  i18n: i18nInstance
+  i18n: i18nInstance,
 }: {
   initialSelection: LibraryItemSelection;
   likedSongsCount?: number;

@@ -6,7 +6,7 @@ import {
   pluginHandles,
   selectActivePlugins,
   selectPluginData,
-  selectPluginInfo
+  selectPluginInfo,
 } from "../../../features/plugins/pluginsSlice";
 import { selectLibraryTracks } from "../../../features/tracks/tracksSlice";
 import { sortPlugins } from "../../../app/utils";
@@ -16,7 +16,7 @@ import {
   selectArtistDelimiterType,
   selectCustomArtistDelimiter,
   setArtistDelimiterType,
-  setCustomArtistDelimiter
+  setCustomArtistDelimiter,
 } from "../../../features/config/configSlice";
 import { ArtistDelimiterType } from "../../../features/artists/artistsTypes";
 

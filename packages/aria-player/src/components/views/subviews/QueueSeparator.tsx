@@ -3,7 +3,7 @@ import { useAppSelector } from "../../../app/hooks";
 import {
   selectQueueGrouping,
   selectQueueSelectedGroup,
-  selectQueueSource
+  selectQueueSource,
 } from "../../../features/player/playerSlice";
 import styles from "./QueueSeparator.module.css";
 import { selectCurrentPlaylist } from "../../../features/currentSelectors";
@@ -12,7 +12,7 @@ import { useTranslation } from "react-i18next";
 import { isLibraryView, TrackGrouping, View } from "../../../app/view";
 import {
   selectAlbumTitle,
-  selectAllArtists
+  selectAllArtists,
 } from "../../../features/genericSelectors";
 
 export default function QueueSeparator(props: ICellRendererParams) {
@@ -55,7 +55,7 @@ export default function QueueSeparator(props: ICellRendererParams) {
                 ? t(`views.${queueSource}`)
                 : queueSource && queueSource.startsWith("search")
                   ? t("search.resultsFor", {
-                      search: queueSource.split("/")[1]
+                      search: queueSource.split("/")[1],
                     })
                   : t("queue.deletedPlaylist"))}
             {playlistName && formattedGroup && ` / ${formattedGroup}`}

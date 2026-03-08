@@ -10,7 +10,7 @@ import { PlatformProvider } from "./contexts/PlatformContext";
 import { BASEPATH } from "./app/constants";
 import {
   AllCommunityModule,
-  provideGlobalGridOptions
+  provideGlobalGridOptions,
 } from "ag-grid-community";
 import { ModuleRegistry } from "ag-grid-community";
 import { MenuProvider } from "./contexts/MenuContext";
@@ -38,7 +38,7 @@ import "./styles/overrides.css";
 import { ScrollProvider } from "./contexts/ScrollContext";
 
 provideGlobalGridOptions({
-  theme: "legacy"
+  theme: "legacy",
 });
 
 ModuleRegistry.registerModules([AllCommunityModule]);
@@ -84,7 +84,7 @@ if (window.location.search.includes("code")) {
     {
       type: "OAuthCode",
       code: params.get("code"),
-      state: params.get("state")
+      state: params.get("state"),
     },
     window.location.origin
   );
@@ -99,7 +99,7 @@ if (isTauri()) {
       {
         type: "OAuthCode",
         code: code,
-        state: state
+        state: state,
       },
       window.location.origin
     );

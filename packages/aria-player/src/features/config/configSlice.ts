@@ -2,7 +2,7 @@ import {
   createAsyncThunk,
   createSelector,
   createSlice,
-  PayloadAction
+  PayloadAction,
 } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 import { LibraryView } from "../../app/view";
@@ -11,7 +11,7 @@ import {
   defaultStylesheets,
   Theme,
   defaultThemes,
-  themeFormatVersion
+  themeFormatVersion,
 } from "../../themes/themes";
 import { checkCompatibility } from "../../app/utils";
 import { t } from "i18next";
@@ -46,7 +46,7 @@ const initialState: ConfigState = {
   initialView: LibraryView.Songs,
   lastView: "/",
   artistDelimiterType: ArtistDelimiterType.None,
-  customArtistDelimiter: ""
+  customArtistDelimiter: "",
 };
 
 export const installThemesFromFiles = createAsyncThunk(
@@ -144,8 +144,8 @@ export const configSlice = createSlice({
     },
     setCustomArtistDelimiter: (state, action: PayloadAction<string>) => {
       state.customArtistDelimiter = action.payload;
-    }
-  }
+    },
+  },
 });
 
 export const {
@@ -160,7 +160,7 @@ export const {
   setInitialView,
   setLastView,
   setArtistDelimiterType,
-  setCustomArtistDelimiter
+  setCustomArtistDelimiter,
 } = configSlice.actions;
 
 export const selectTheme = (state: RootState) => state.config.theme;
@@ -185,14 +185,14 @@ export const selectThemes = createSelector(
   (state: RootState) => state.config.installedThemes,
   (installedThemes) => ({
     ...defaultThemes,
-    ...installedThemes
+    ...installedThemes,
   })
 );
 export const selectStylesheets = createSelector(
   (state: RootState) => state.config.installedStylesheets,
   (installedStylesheets) => ({
     ...defaultStylesheets,
-    ...installedStylesheets
+    ...installedStylesheets,
   })
 );
 

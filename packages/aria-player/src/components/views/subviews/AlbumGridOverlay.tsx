@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import {
   selectVisiblePlaylist,
   selectVisibleSelectedTrackGroup,
-  selectVisibleAlbums
+  selectVisibleAlbums,
 } from "../../../features/visibleSelectors";
 import { AlbumTrackList } from "./AlbumTrackList";
 import ChevronLeftIcon from "../../../assets/chevron-left-solid.svg?react";
@@ -56,7 +56,7 @@ export default function AlbumGrid() {
           </button>
           <h2
             style={{
-              visibility: scrollY <= 0 || !isGridReady ? "hidden" : "visible"
+              visibility: scrollY <= 0 || !isGridReady ? "hidden" : "visible",
             }}
           >
             {visibleAlbum?.name}

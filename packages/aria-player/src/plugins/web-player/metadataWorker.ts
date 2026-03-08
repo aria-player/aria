@@ -9,7 +9,7 @@ type IComment = {
 };
 
 const artworkStore = localforage.createInstance({
-  storeName: "webPlayerArtwork"
+  storeName: "webPlayerArtwork",
 });
 
 async function resizeArtwork(
@@ -31,7 +31,7 @@ async function resizeArtwork(
 
   const resizedBlob = await canvas.convertToBlob({
     type: "image/jpeg",
-    quality: 0.92
+    quality: 0.92,
   });
   return new Promise<string>((resolve) => {
     const reader = new FileReader();
@@ -45,7 +45,7 @@ function chunkedUint8ArrayToBase64(uint8Array: Uint8Array) {
   const chunkSize = 32768;
   for (let i = 0; i < uint8Array.length; i += chunkSize) {
     binaryString += String.fromCharCode.apply(null, [
-      ...uint8Array.subarray(i, i + chunkSize)
+      ...uint8Array.subarray(i, i + chunkSize),
     ]);
   }
   return btoa(binaryString);
@@ -154,5 +154,5 @@ export async function parseMetadata(track: TrackMetadata, file: File) {
 
 expose({
   fetchCoverArt,
-  parseMetadata
+  parseMetadata,
 });

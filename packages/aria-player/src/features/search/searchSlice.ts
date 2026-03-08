@@ -12,7 +12,7 @@ const initialState: SearchState = {
   search: "",
   debouncedSearch: "",
   searchHistory: [],
-  selectedSearchSource: null
+  selectedSearchSource: null,
 };
 
 const searchSlice = createSlice({
@@ -38,8 +38,8 @@ const searchSlice = createSlice({
     },
     setSelectedSearchSource: (state, action) => {
       state.selectedSearchSource = action.payload;
-    }
-  }
+    },
+  },
 });
 
 export const {
@@ -47,7 +47,7 @@ export const {
   setDebouncedSearch,
   addToSearchHistory,
   removeFromSearchHistory,
-  setSelectedSearchSource
+  setSelectedSearchSource,
 } = searchSlice.actions;
 
 export const selectSearch = (state: RootState) => state.search.search;

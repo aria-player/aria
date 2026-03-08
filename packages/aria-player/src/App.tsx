@@ -13,7 +13,7 @@ import { useAppDispatch, useAppSelector } from "./app/hooks";
 import {
   selectSidebarCollapsed,
   selectSidebarWidth,
-  setSidebarConfig
+  setSidebarConfig,
 } from "./features/config/configSlice";
 import { ContextMenuContainer } from "./components/contextmenu/ContextMenuContainer";
 import ErrorPage from "./components/pages/ErrorPage";

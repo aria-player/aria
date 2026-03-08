@@ -7,7 +7,7 @@ import {
   createPlaylistItem,
   deletePlaylistItem,
   openPlaylistFolder,
-  selectPlaylistsLayoutItemById
+  selectPlaylistsLayoutItemById,
 } from "../../features/playlists/playlistsSlice";
 import { nanoid } from "@reduxjs/toolkit";
 import { useTranslation } from "react-i18next";
@@ -32,7 +32,7 @@ export function SidebarItemContextMenu() {
     if (!menuData) return;
     dispatch(
       openPlaylistFolder({
-        id: menuData.itemId
+        id: menuData.itemId,
       })
     );
     treeRef?.current?.root.tree.open(menuData.itemId);
@@ -44,9 +44,9 @@ export function SidebarItemContextMenu() {
           name: isFolder
             ? t("sidebar.playlists.defaultFolder")
             : t("sidebar.playlists.defaultPlaylist"),
-          children: isFolder ? [] : undefined
+          children: isFolder ? [] : undefined,
         },
-        parentId: menuData.itemId
+        parentId: menuData.itemId,
       })
     );
     treeRef?.current?.root.tree.edit(newItemId);
@@ -89,7 +89,7 @@ export function SidebarItemContextMenu() {
                   queueSource: "playlist/" + menuData.itemId,
                   queueIndex: 0,
                   queueGrouping: null,
-                  queueSelectedGroup: null
+                  queueSelectedGroup: null,
                 })
               );
             }}
@@ -120,7 +120,7 @@ export function SidebarItemContextMenu() {
               );
               showToast(
                 t("toasts.deletedPlaylistItem", {
-                  name: item?.name
+                  name: item?.name,
                 })
               );
             }
@@ -128,12 +128,12 @@ export function SidebarItemContextMenu() {
             dispatch(
               deletePlaylistItem({
                 id: menuData.itemId,
-                isFolder: item?.children != undefined
+                isFolder: item?.children != undefined,
               })
             );
             showToast(
               t("toasts.deletedPlaylistItem", {
-                name: item?.name
+                name: item?.name,
               })
             );
           }

@@ -2,7 +2,7 @@ import {
   UnknownAction,
   TypedStartListening,
   TypedStopListening,
-  createListenerMiddleware
+  createListenerMiddleware,
 } from "@reduxjs/toolkit";
 import { AppDispatch, RootState } from "./store";
 
@@ -36,7 +36,7 @@ export const listenForChange = (
     },
     effect: (action, api) => {
       effect(api.getState(), action, api.dispatch);
-    }
+    },
   });
 };
 
@@ -52,6 +52,6 @@ export const listenForAction = (
     matcher,
     effect: (action, api) => {
       effect(api.getState(), action as UnknownAction, api.dispatch);
-    }
+    },
   });
 };

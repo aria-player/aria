@@ -10,7 +10,7 @@ import {
   setVolume,
   selectMuted,
   selectVolume,
-  setMuted
+  setMuted,
 } from "../../features/player/playerSlice";
 import { useDebounce } from "react-use";
 import QueueIcon from "../../assets/list-solid.svg?react";
@@ -63,7 +63,7 @@ export function AuxiliaryControls() {
           <MediaSlider disabled value={[scannedTracks]} max={totalTracks} />
           {t("footer.scanProgress", {
             scannedTracks,
-            totalTracks
+            totalTracks,
           })}
         </div>
       )}

@@ -5,11 +5,11 @@ export const ScrollContext = createContext<{
   setScrollY: (value: number) => void;
 }>({
   scrollY: 0,
-  setScrollY: () => {}
+  setScrollY: () => {},
 });
 
 export const ScrollProvider: React.FC<{ children: React.ReactNode }> = ({
-  children
+  children,
 }) => {
   const [scrollY, setScrollY] = useState(0);
 

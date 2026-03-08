@@ -4,7 +4,7 @@ import { MediaSlider } from "soprano-ui";
 import {
   getElapsedPlayerTime,
   restartOrNextTrack,
-  seek
+  seek,
 } from "../../features/player/playerTime";
 import { selectStatus } from "../../features/player/playerSlice";
 import { Status } from "../../features/player/playerTypes";
@@ -85,7 +85,7 @@ export function ProgressBar(props: {
             "ArrowUp",
             "ArrowDown",
             "PageUp",
-            "PageDown"
+            "PageDown",
           ].includes(e.key)
         ) {
           seek(progressValue);

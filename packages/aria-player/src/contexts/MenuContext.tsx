@@ -19,7 +19,7 @@ export const MenuContext = createContext<{
   visibility: {},
   updateVisibility: () => {},
   menuData: null,
-  setMenuData: () => {}
+  setMenuData: () => {},
 });
 
 export function MenuProvider({ children }: { children: ReactNode }) {

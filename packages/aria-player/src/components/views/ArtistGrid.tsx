@@ -3,13 +3,13 @@ import styles from "./ArtistGrid.module.css";
 import { useTranslation } from "react-i18next";
 import {
   selectVisibleArtists,
-  selectVisibleSearchSource
+  selectVisibleSearchSource,
 } from "../../features/visibleSelectors";
 import { useCallback, useMemo, useRef, useState } from "react";
 import {
   getScrollbarWidth,
   getArtistId,
-  getExternalSearchCacheKey
+  getExternalSearchCacheKey,
 } from "../../app/utils";
 import { CellComponentProps, Grid, GridImperativeAPI } from "react-window";
 import { AutoSizer } from "react-virtualized-auto-sizer";
@@ -19,16 +19,16 @@ import { useInfiniteLoader } from "react-window-infinite-loader";
 import { getSourceHandle } from "../../features/plugins/pluginsSlice";
 import {
   addArtists,
-  selectArtistsInfo
+  selectArtistsInfo,
 } from "../../features/artists/artistsSlice";
 import LoadingSpinner from "./subviews/LoadingSpinner";
 import {
   selectCachedSearchArtists,
-  updateCachedSearchArtists
+  updateCachedSearchArtists,
 } from "../../features/cache/cacheSlice";
 import {
   selectSearch,
-  selectDebouncedSearch
+  selectDebouncedSearch,
 } from "../../features/search/searchSlice";
 
 const ARTISTS_BATCH_SIZE = 20;
@@ -142,7 +142,7 @@ export default function ArtistGrid() {
       const artists = artistsMetadata.map((artist) => ({
         ...artist,
         artistId: getArtistId(visibleSearchSource, artist.name, artist.uri),
-        source: visibleSearchSource
+        source: visibleSearchSource,
       }));
 
       dispatch(addArtists({ source: visibleSearchSource, artists }));
@@ -152,7 +152,7 @@ export default function ArtistGrid() {
         updateCachedSearchArtists({
           key: searchCacheKey,
           artistIds: newArtistIds,
-          offset: startIndex
+          offset: startIndex,
         })
       );
 
@@ -169,7 +169,7 @@ export default function ArtistGrid() {
       search,
       searchCacheKey,
       visibleSearchSource,
-      isExternalSearch
+      isExternalSearch,
     ]
   );
 
@@ -198,7 +198,7 @@ export default function ArtistGrid() {
     loadMoreRows,
     rowCount: Math.max(totalItemCount, 0),
     minimumBatchSize: ARTISTS_BATCH_SIZE,
-    threshold: 10
+    threshold: 10,
   });
 
   const itemRenderer = ({
@@ -209,7 +209,7 @@ export default function ArtistGrid() {
     columnWidth,
     loadingSpinnerRowIndex,
     displayArtistLimit,
-    displayArtists
+    displayArtists,
   }: ArtistGridItemProps) => {
     const index = rowIndex * columnCount + columnIndex;
     const shouldRenderArtist = index < displayArtistLimit;
@@ -225,7 +225,7 @@ export default function ArtistGrid() {
               style={{
                 ...style,
                 width: columnWidth * columnCount,
-                height: (style.height as number) * 2
+                height: (style.height as number) * 2,
               }}
             >
               <div className={styles.gridLoadingRow}>
@@ -306,7 +306,7 @@ export default function ArtistGrid() {
                     columnWidth,
                     loadingSpinnerRowIndex,
                     displayArtistLimit,
-                    displayArtists
+                    displayArtists,
                   }}
                 />
               </div>

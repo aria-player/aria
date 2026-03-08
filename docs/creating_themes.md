@@ -22,7 +22,7 @@ Create a file called `theme.json` that defines the theme information.
 }
 ```
 
-If you're planning on providing separate styles for light/dark mode using media queries, you can omit the `base` property. 
+If you're planning on providing separate styles for light/dark mode using media queries, you can omit the `base` property.
 
 The full theme manifest specification is available as `Theme` in `packages/aria-player/src/themes/themes.ts`.
 
@@ -70,7 +70,6 @@ If you find that the app's built-in accent color options clash with your theme, 
 
 To use your theme in Aria, package it into a .zip file and install it via the app.
 
-
 ### Packaging the theme
 
 1. Ensure that your theme manifest and stylesheet are in the same directory. The manifest must be named `theme.json` and the stylesheet filename must match the name specified in the manifest.
@@ -91,7 +90,6 @@ If you're using the desktop app and your theme uses the .ariatheme extension, op
 1. Open the theme settings page in Aria by going to the menu bar/button and choosing "File" -> "Settings...", then switching to the "Appearance" tab.
 2. Click "Install from file..." and locate the theme .zip/.ariatheme file.
 3. If the installation was successful, your theme should appear in the list of themes. You can click the theme preview to apply it.
-
 
 ## Current limitations
 

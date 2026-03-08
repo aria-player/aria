@@ -4,7 +4,7 @@ import { ColumnState } from "ag-grid-community";
 import { Item, moveTreeNode, updateTreeNode } from "soprano-ui";
 import {
   filterHiddenColumnSort,
-  resetColumnStateExceptSort
+  resetColumnStateExceptSort,
 } from "../../app/utils";
 import { SplitViewState, TrackGrouping } from "../../app/view";
 
@@ -23,15 +23,15 @@ const initialState: LibraryState = {
     { id: "genres", name: "genres" },
     { id: "composers", name: "composers", hidden: true },
     { id: "years", name: "years", hidden: true },
-    { id: "folders", name: "folders", hidden: true }
+    { id: "folders", name: "folders", hidden: true },
   ],
   splitViewStates: {
     artists: { trackGrouping: TrackGrouping.Artist },
     genres: { trackGrouping: TrackGrouping.Genre },
     composers: { trackGrouping: TrackGrouping.Composer },
     years: { trackGrouping: TrackGrouping.Year },
-    folders: { trackGrouping: TrackGrouping.FileFolder }
-  }
+    folders: { trackGrouping: TrackGrouping.FileFolder },
+  },
 };
 
 const librarySlice = createSlice({
@@ -72,10 +72,10 @@ const librarySlice = createSlice({
     ) => {
       state.splitViewStates[action.payload.view] = {
         ...state.splitViewStates[action.payload.view],
-        ...action.payload.splitState
+        ...action.payload.splitState,
       };
-    }
-  }
+    },
+  },
 });
 
 export const {
@@ -84,7 +84,7 @@ export const {
   moveLibraryItem,
   updateLibraryItem,
   resetLibraryLayout,
-  updateLibrarySplitState
+  updateLibrarySplitState,
 } = librarySlice.actions;
 
 export const selectLibraryColumnState = (state: RootState) =>

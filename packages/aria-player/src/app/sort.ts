@@ -20,7 +20,7 @@ export const compareMetadata = (
     return (sortCache[cacheKey] =
       valueA.localeCompare(valueB, undefined, {
         sensitivity: "base",
-        ignorePunctuation: true
+        ignorePunctuation: true,
       }) * order);
   }
 

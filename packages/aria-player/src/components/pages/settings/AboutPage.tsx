@@ -19,17 +19,17 @@ export function AboutPage() {
         <div className={styles.versionCard}>
           <h4 className={styles.title}>
             {t("settings.about.appVersion", {
-              version: import.meta.env.PACKAGE_VERSION
+              version: import.meta.env.PACKAGE_VERSION,
             })}
           </h4>
           <p className={styles.subtitle}>
             {t("settings.about.pluginFormatVersion", {
-              version: pluginFormatVersion
+              version: pluginFormatVersion,
             })}
           </p>
           <p className={styles.subtitle}>
             {t("settings.about.themeFormatVersion", {
-              version: themeFormatVersion
+              version: themeFormatVersion,
             })}
           </p>
         </div>

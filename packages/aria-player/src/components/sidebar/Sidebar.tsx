@@ -8,7 +8,7 @@ import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   moveLibraryItem,
   selectLibraryLayout,
-  updateLibraryItem
+  updateLibraryItem,
 } from "../../features/library/librarySlice";
 import {
   movePlaylistItem,
@@ -16,7 +16,7 @@ import {
   selectOpenFolders,
   openPlaylistFolder,
   closePlaylistFolder,
-  updatePlaylistItem
+  updatePlaylistItem,
 } from "../../features/playlists/playlistsSlice";
 import { useContextMenu } from "react-contexify";
 import { MenuContext } from "../../contexts/MenuContext";
@@ -29,7 +29,7 @@ import {
   selectVisibleViewType,
   selectVisiblePlaylist,
   selectVisibleSearchCategory,
-  selectVisibleSearchSource
+  selectVisibleSearchSource,
 } from "../../features/visibleSelectors";
 import { View } from "../../app/view";
 import {
@@ -37,7 +37,7 @@ import {
   selectSelectedSearchSource,
   selectSearch,
   setSearch,
-  setDebouncedSearch
+  setDebouncedSearch,
 } from "../../features/search/searchSlice";
 
 import FolderOpenIcon from "../../assets/chevron-down-solid.svg?react";
@@ -90,15 +90,15 @@ export function Sidebar() {
       emptyMessage: t("sidebar.library.empty"),
       children: libraryLayout.map((item) => ({
         ...item,
-        name: t("views." + item.id)
-      }))
+        name: t("views." + item.id),
+      })),
     },
     {
       id: "playlists",
       name: t("sidebar.playlists.title"),
       emptyMessage: t("sidebar.playlists.empty"),
-      children: playlistsLayout
-    }
+      children: playlistsLayout,
+    },
   ];
 
   useEffect(() => {
@@ -125,7 +125,7 @@ export function Sidebar() {
         treeRef?.current?.root.tree.setSelection({
           ids: [routeAsId],
           anchor: null,
-          mostRecent: null
+          mostRecent: null,
         });
       }
     },
@@ -168,7 +168,7 @@ export function Sidebar() {
     selectedSearchSource,
     visibleSearchCategory,
     visibleSearchSource,
-    visibleViewType
+    visibleViewType,
   ]);
 
   function goToSearch(searchValue: string) {
@@ -295,7 +295,7 @@ export function Sidebar() {
               id: args.movedItemId,
               parentId: args.newParentId,
               index: args.newIndex,
-              isFolder: isFolder(args.movedItemId)
+              isFolder: isFolder(args.movedItemId),
             })
           );
         }}
@@ -308,7 +308,7 @@ export function Sidebar() {
               updatePlaylistItem({
                 id: itemId,
                 changes: { name: newName },
-                isFolder: isFolder(itemId)
+                isFolder: isFolder(itemId),
               })
             );
         }}
@@ -321,8 +321,8 @@ export function Sidebar() {
               event,
               position: {
                 x: buttonPosition?.left ?? 0,
-                y: buttonPosition?.bottom ?? 0
-              }
+                y: buttonPosition?.bottom ?? 0,
+              },
             });
           } else {
             hideAll();

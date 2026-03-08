@@ -1,7 +1,7 @@
 import {
   MatchFunction,
   listenForAction,
-  listenForChange
+  listenForChange,
 } from "../../app/listener";
 import { push } from "redux-first-history";
 import { BASEPATH } from "../../app/constants";
@@ -11,18 +11,18 @@ import {
   addTracksToPlaylist,
   cleanupPlaylistConfigs,
   deletePlaylistItem,
-  selectPlaylistsLayoutItemById
+  selectPlaylistsLayoutItemById,
 } from "./playlistsSlice";
 import { ActionTypes } from "redux-undo";
 import { updateQueueAfterChange } from "../player/playerSlice";
 import {
   selectCurrentPlaylist,
-  selectCurrentGroupFilteredTrackList
+  selectCurrentGroupFilteredTrackList,
 } from "../currentSelectors";
 import { selectSortedTrackList } from "../genericSelectors";
 import {
   selectVisiblePlaylist,
-  selectVisibleViewType
+  selectVisibleViewType,
 } from "../visibleSelectors";
 import { View } from "../../app/view";
 import { showToast } from "../../app/toasts";
@@ -41,14 +41,14 @@ export function setupPlaylistsListeners() {
       showToast(
         t("toasts.addedNamedTrackToPlaylist", {
           title: track?.title,
-          playlist: playlistName
+          playlist: playlistName,
         })
       );
     } else {
       showToast(
         t("toasts.addedTracksToPlaylist", {
           count: payload.newTracks.length,
-          playlist: playlistName
+          playlist: playlistName,
         })
       );
     }

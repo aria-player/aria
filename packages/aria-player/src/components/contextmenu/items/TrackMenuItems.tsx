@@ -6,7 +6,7 @@ import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import {
   addTracksToPlaylist,
   createPlaylistItem,
-  selectPlaylistsLayout
+  selectPlaylistsLayout,
 } from "../../../features/playlists/playlistsSlice";
 import { Item as TreeItem } from "soprano-ui";
 import { nanoid } from "@reduxjs/toolkit";
@@ -15,20 +15,20 @@ import {
   addTracks,
   removeTracks,
   selectSelectedTracks,
-  selectTrackById
+  selectTrackById,
 } from "../../../features/tracks/tracksSlice";
 import { View } from "../../../app/view";
 import { addTracksToUpNext } from "../../../features/player/playerSlice";
 import {
   selectVisibleViewType,
-  selectVisibleSelectedTrackGroup
+  selectVisibleSelectedTrackGroup,
 } from "../../../features/visibleSelectors";
 import { BASEPATH } from "../../../app/constants";
 import { push } from "redux-first-history";
 import { showToast } from "../../../app/toasts";
 import {
   pluginHandles,
-  selectPluginInfo
+  selectPluginInfo,
 } from "../../../features/plugins/pluginsSlice";
 import { normalizeArtists } from "../../../app/utils";
 import { selectArtistDelimiter } from "../../../features/config/configSlice";
@@ -81,7 +81,7 @@ export function TrackMenuItems() {
     dispatch(
       addTracksToPlaylist({
         playlistId,
-        newTracks: newItems
+        newTracks: newItems,
       })
     );
   };
@@ -122,7 +122,7 @@ export function TrackMenuItems() {
       menuData?.metadata?.albumArtistUri,
       menuData?.metadata?.source,
       delimiter
-    )
+    ),
   ];
   const uniqueArtists = Array.from(
     new Map(artists.map((artist) => [artist.id, artist])).values()
@@ -152,9 +152,9 @@ export function TrackMenuItems() {
               createPlaylistItem({
                 newData: {
                   id: newPlaylistId,
-                  name: t("sidebar.playlists.defaultPlaylist")
+                  name: t("sidebar.playlists.defaultPlaylist"),
                 },
-                parentId
+                parentId,
               })
             );
             addToPlaylist(newPlaylistId);
@@ -239,20 +239,20 @@ export function TrackMenuItems() {
               dropIndex: 0,
               tracks: tracksForActions.map((track) => ({
                 trackId: track.trackId,
-                itemId: nanoid()
-              }))
+                itemId: nanoid(),
+              })),
             })
           );
           if (tracksForActions.length == 1) {
             showToast(
               t("toasts.addedNamedTrackToQueueFront", {
-                title: menuData?.metadata?.title
+                title: menuData?.metadata?.title,
               })
             );
           } else {
             showToast(
               t("toasts.addedTracksToQueueFront", {
-                count: tracksForActions.length
+                count: tracksForActions.length,
               })
             );
           }
@@ -266,20 +266,20 @@ export function TrackMenuItems() {
             addTracksToUpNext({
               tracks: tracksForActions.map((track) => ({
                 trackId: track.trackId,
-                itemId: nanoid()
-              }))
+                itemId: nanoid(),
+              })),
             })
           );
           if (tracksForActions.length == 1) {
             showToast(
               t("toasts.addedNamedTrackToQueue", {
-                title: menuData?.metadata?.title
+                title: menuData?.metadata?.title,
               })
             );
           } else {
             showToast(
               t("toasts.addedTracksToQueue", {
-                count: tracksForActions.length
+                count: tracksForActions.length,
               })
             );
           }
@@ -303,14 +303,14 @@ export function TrackMenuItems() {
               showToast(
                 t("toasts.addedNamedTrackToRemoteLibrary", {
                   title: menuData?.metadata?.title,
-                  source: sourceDisplayName!
+                  source: sourceDisplayName!,
                 })
               );
             } else {
               showToast(
                 t("toasts.addedTracksToRemoteLibrary", {
                   count: tracksForActions.length,
-                  source: sourceDisplayName!
+                  source: sourceDisplayName!,
                 })
               );
             }
@@ -321,16 +321,16 @@ export function TrackMenuItems() {
                   (track) =>
                     ({
                       ...track,
-                      dateAdded: Date.now()
+                      dateAdded: Date.now(),
                     }) as TrackMetadata
                 ),
-                addToLibrary: true
+                addToLibrary: true,
               })
             );
           }}
         >
           {t("tracks.addToRemoteLibrary", {
-            source: sourceDisplayName
+            source: sourceDisplayName,
           })}
         </Item>
       )}
@@ -345,14 +345,14 @@ export function TrackMenuItems() {
               showToast(
                 t("toasts.removedNamedTrackFromRemoteLibrary", {
                   title: menuData?.metadata?.title,
-                  source: sourceDisplayName!
+                  source: sourceDisplayName!,
                 })
               );
             } else {
               showToast(
                 t("toasts.removedTracksFromRemoteLibrary", {
                   count: tracksForActions.length,
-                  source: sourceDisplayName!
+                  source: sourceDisplayName!,
                 })
               );
             }
@@ -360,7 +360,7 @@ export function TrackMenuItems() {
               removeTracks({
                 source: sourceForActions!,
                 tracks: tracksForActions.map((track) => track.trackId),
-                removeFromLibrary: true
+                removeFromLibrary: true,
               })
             );
           }}

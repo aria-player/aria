@@ -11,7 +11,7 @@ import {
   selectThemes,
   setAccentColor,
   setCustomAccentColor,
-  setTheme
+  setTheme,
 } from "../../../features/config/configSlice";
 import styles from "./settings.module.css";
 import { useContext, useEffect, useRef, useState } from "react";
@@ -139,7 +139,7 @@ export function AppearancePage() {
                   onClick={async () => {
                     const confirmed = await confirm(
                       t("settings.appearance.confirmDelete", {
-                        theme: themes[theme].name
+                        theme: themes[theme].name,
                       })
                     );
                     if (!confirmed) return;
@@ -205,7 +205,7 @@ export function AppearancePage() {
             title={t("settings.appearance.customAccent")}
             style={{
               backgroundColor: localCustomAccentColor.hex,
-              color: colorIsDark(localCustomAccentColor.hex) ? "#fff" : "#000"
+              color: colorIsDark(localCustomAccentColor.hex) ? "#fff" : "#000",
             }}
             className={`${styles.accentButton} ${accentColor === "custom" ? styles.selected : ""}`}
             onClick={() => {

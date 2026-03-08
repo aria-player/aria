@@ -13,7 +13,7 @@ const fuseOptions = {
   threshold: 0.3,
   includeScore: true,
   shouldSort: true,
-  useExtendedSearch: true
+  useExtendedSearch: true,
 };
 
 const tracksOptions = {
@@ -24,22 +24,22 @@ const tracksOptions = {
     "album",
     "genre",
     "composer",
-    "comments"
+    "comments",
   ],
-  ...fuseOptions
+  ...fuseOptions,
 };
 
 const artistsOptions = {
   keys: [{ name: "name", weight: 5 }],
-  ...fuseOptions
+  ...fuseOptions,
 };
 
 const albumsOptions = {
   keys: [
     { name: "album", weight: 5 },
-    { name: "artist", weight: 3 }
+    { name: "artist", weight: 3 },
   ],
-  ...fuseOptions
+  ...fuseOptions,
 };
 
 let tracksFuse: Fuse<Track> | null = null;
@@ -103,17 +103,17 @@ export const searchAllCategories = (
     tracks: tracksFuse.search(search).map((result) => ({
       type: "track",
       item: result.item,
-      score: result.score ?? 0
+      score: result.score ?? 0,
     })),
     artists: artistsFuse.search(search).map((result) => ({
       type: "artist",
       item: result.item,
-      score: result.score ?? 0
+      score: result.score ?? 0,
     })),
     albums: albumsFuse.search(search).map((result) => ({
       type: "album",
       item: result.item,
-      score: result.score ?? 0
-    }))
+      score: result.score ?? 0,
+    })),
   };
 };

@@ -25,7 +25,7 @@ export default function createSamplePlugin(
             className="settings-button"
             onClick={() => {
               host.updateData({
-                pings: currentData?.pings >= 0 ? currentData?.pings + 1 : 1
+                pings: currentData?.pings >= 0 ? currentData?.pings + 1 : 1,
               });
             }}
           >
@@ -38,6 +38,6 @@ export default function createSamplePlugin(
 
     dispose() {
       i18n.removeResourceBundle("en-US", "sample-plugin");
-    }
+    },
   };
 }

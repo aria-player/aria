@@ -12,7 +12,7 @@ export default defineConfig(async () => ({
     "import.meta.env.PACKAGE_VERSION": JSON.stringify(packageJson.version),
     "import.meta.env.TYPES_PACKAGE_VERSION": JSON.stringify(
       typesPackageJson.version
-    )
+    ),
   },
   // Vite options tailored for Tauri development and only applied in `tauri dev` or `tauri build`
   //
@@ -21,7 +21,7 @@ export default defineConfig(async () => ({
   // 2. tauri expects a fixed port, fail if that port is not available
   server: {
     port: 1420,
-    strictPort: true
+    strictPort: true,
   },
   // 3. to make use of `TAURI_DEBUG` and other env variables
   // https://tauri.app/v1/api/config#buildconfig.beforedevcommand
@@ -29,16 +29,16 @@ export default defineConfig(async () => ({
   test: {
     globals: true,
     server: {
-      deps: { inline: ["soprano-ui"] }
+      deps: { inline: ["soprano-ui"] },
     },
     environment: "jsdom",
-    setupFiles: "src/setupTests"
+    setupFiles: "src/setupTests",
   },
   worker: {
     rollupOptions: {
       output: {
-        inlineDynamicImports: true
-      }
-    }
-  }
+        inlineDynamicImports: true,
+      },
+    },
+  },
 }));

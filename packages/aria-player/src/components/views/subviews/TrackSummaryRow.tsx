@@ -2,7 +2,7 @@ import { ICellRendererParams } from "ag-grid-community";
 import {
   formatStringArray,
   formatDuration,
-  getRelativePath
+  getRelativePath,
 } from "../../../app/utils";
 import { useContextMenu } from "react-contexify";
 import { useContext } from "react";
@@ -11,7 +11,7 @@ import { MenuContext } from "../../../contexts/MenuContext";
 import {
   skipQueueIndexes,
   setQueueToNewSource,
-  selectQueueSource
+  selectQueueSource,
 } from "../../../features/player/playerSlice";
 import { PlaylistItem } from "../../../features/playlists/playlistsTypes";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
@@ -20,7 +20,7 @@ import styles from "./TrackSummaryRow.module.css";
 import { store } from "../../../app/store";
 import {
   selectCurrentQueueTracks,
-  selectCurrentTrack
+  selectCurrentTrack,
 } from "../../../features/currentSelectors";
 import {
   selectVisiblePlaylist,
@@ -29,20 +29,20 @@ import {
   selectVisibleSelectedTrackGroup,
   selectVisibleGroupFilteredTrackList,
   selectVisibleSearchTracks,
-  selectVisibleArtistTracks
+  selectVisibleArtistTracks,
 } from "../../../features/visibleSelectors";
 import { getSourceHandle } from "../../../features/plugins/pluginsSlice";
 import { AlbumArt } from "./AlbumArt";
 import {
   addToSearchHistory,
-  selectSearch
+  selectSearch,
 } from "../../../features/search/searchSlice";
 import { QueueListItem } from "../../pages/QueuePage";
 import { useLocation } from "react-router-dom";
 
 export const TrackSummaryRow = (props: ICellRendererParams) => {
   const { show: showCellContextMenu } = useContextMenu({
-    id: "tracklistitem"
+    id: "tracklistitem",
   });
   const { setMenuData } = useContext(MenuContext);
   const dispatch = useAppDispatch();
@@ -88,7 +88,7 @@ export const TrackSummaryRow = (props: ICellRendererParams) => {
             (track) => track.itemId == rowProps.node.data.itemId
           ) ?? undefined,
         metadata: rowProps.node.data,
-        type: "tracklistitem"
+        type: "tracklistitem",
       });
     }
     showCellContextMenu({ event });
@@ -104,7 +104,7 @@ export const TrackSummaryRow = (props: ICellRendererParams) => {
       selectVisibleSearchTracks(state).forEach((track) => {
         queue.push({
           itemId: track.itemId,
-          trackId: track.trackId
+          trackId: track.trackId,
         });
       });
     } else {
@@ -112,7 +112,7 @@ export const TrackSummaryRow = (props: ICellRendererParams) => {
         if (!node.data.separator) {
           queue.push({
             itemId: node.data.itemId,
-            trackId: node.data.trackId
+            trackId: node.data.trackId,
           });
         }
       });
@@ -137,7 +137,7 @@ export const TrackSummaryRow = (props: ICellRendererParams) => {
           queue.findIndex((item) => rowProps.node.id == item.itemId) ?? 0,
         queueSource: getRelativePath(location.pathname),
         queueGrouping: selectVisibleTrackGrouping(state) ?? null,
-        queueSelectedGroup: selectVisibleSelectedTrackGroup(state) ?? null
+        queueSelectedGroup: selectVisibleSelectedTrackGroup(state) ?? null,
       })
     );
   };

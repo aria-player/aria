@@ -38,7 +38,7 @@ export const ArtistArt = ({ artist }: { artist: ArtistDetails }) => {
     artistArtworkCache,
     fallbackArtworkUri,
     artworkCache,
-    fetchedArtwork
+    fetchedArtwork,
   ]);
 
   useEffect(() => {
@@ -78,7 +78,7 @@ export const ArtistArt = ({ artist }: { artist: ArtistDetails }) => {
     artworkCache,
     artistArtworkCache,
     cacheArtwork,
-    cacheArtistArtwork
+    cacheArtistArtwork,
   ]);
 
   return artwork ? (

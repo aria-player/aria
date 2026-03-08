@@ -32,8 +32,8 @@ export function SidebarPlaylistsContextMenu() {
             createPlaylistItem({
               newData: {
                 id: newItemId,
-                name: t("sidebar.playlists.defaultPlaylist")
-              }
+                name: t("sidebar.playlists.defaultPlaylist"),
+              },
             })
           );
           treeRef?.current?.root.tree.edit(newItemId);
@@ -49,8 +49,8 @@ export function SidebarPlaylistsContextMenu() {
               newData: {
                 id: newItemId,
                 name: t("sidebar.playlists.defaultFolder"),
-                children: []
-              }
+                children: [],
+              },
             })
           );
           treeRef?.current?.root.tree.edit(newItemId);

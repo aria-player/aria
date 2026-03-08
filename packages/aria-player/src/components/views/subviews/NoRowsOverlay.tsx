@@ -3,13 +3,13 @@ import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import { DisplayMode, View } from "../../../app/view";
 import {
   selectVisibleDisplayMode,
-  selectVisibleViewType
+  selectVisibleViewType,
 } from "../../../features/visibleSelectors";
 import {
   getSourceHandle,
   pluginHandles,
   selectActivePlugins,
-  selectPluginData
+  selectPluginData,
 } from "../../../features/plugins/pluginsSlice";
 import styles from "./NoRowsOverlay.module.css";
 import { BASEPATH } from "../../../app/constants";
@@ -82,7 +82,7 @@ export default function NoRowsOverlay() {
                           }
                           className={styles.link}
                         />
-                      )
+                      ),
                     }}
                   />
                 </p>

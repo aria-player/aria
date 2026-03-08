@@ -15,7 +15,7 @@ import {
   selectRepeatMode,
   selectShuffle,
   selectStatus,
-  toggleShuffle
+  toggleShuffle,
 } from "../../features/player/playerSlice";
 import { restartOrPreviousTrack } from "../../features/player/playerTime";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
@@ -25,7 +25,7 @@ import { ProgressBar } from "./ProgressBar";
 import { useState } from "react";
 import {
   selectDisplayRemainingTime,
-  setDisplayRemainingTime
+  setDisplayRemainingTime,
 } from "../../features/config/configSlice";
 import { selectCurrentTrack } from "../../features/currentSelectors";
 import { useTranslation } from "react-i18next";

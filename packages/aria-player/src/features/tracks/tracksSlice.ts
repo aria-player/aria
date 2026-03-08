@@ -3,7 +3,7 @@ import {
   PayloadAction,
   createEntityAdapter,
   createSelector,
-  createSlice
+  createSlice,
 } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 import { setupTracksListeners } from "./tracksListeners";
@@ -15,7 +15,7 @@ import { fetchMissingTrack } from "./tracksUtils";
 
 const tracksAdapter = createEntityAdapter<Track, TrackId>({
   selectId: (track) => track.trackId,
-  sortComparer: (a, b) => (b.dateAdded ?? 0) - (a.dateAdded ?? 0)
+  sortComparer: (a, b) => (b.dateAdded ?? 0) - (a.dateAdded ?? 0),
 });
 
 interface TracksState {
@@ -27,7 +27,7 @@ interface TracksState {
 const initialState: TracksState = {
   tracks: tracksAdapter.getInitialState(),
   selectedTracks: [],
-  clipboard: []
+  clipboard: [],
 };
 
 const tracksSlice = createSlice({
@@ -52,7 +52,7 @@ const tracksSlice = createSlice({
             ...track,
             trackId,
             source,
-            isInLibrary: addToLibrary || existingTrack?.isInLibrary || false
+            isInLibrary: addToLibrary || existingTrack?.isInLibrary || false,
           };
         }) ?? []
       );
@@ -86,15 +86,15 @@ const tracksSlice = createSlice({
     },
     copySelectedTracks: (state) => {
       state.clipboard = state.selectedTracks;
-    }
-  }
+    },
+  },
 });
 
 export const {
   addTracks,
   removeTracks,
   setSelectedTracks,
-  copySelectedTracks
+  copySelectedTracks,
 } = tracksSlice.actions;
 
 export const selectSelectedTracks = (state: RootState) =>
@@ -114,7 +114,7 @@ export const selectTrackById = (state: RootState, trackId: TrackId) => {
       track.album || "",
       track.albumArtist,
       track.albumUri
-    )
+    ),
   };
 };
 
@@ -128,7 +128,7 @@ export const selectAllTracks = createSelector(
         track.album || "",
         track.albumArtist,
         track.albumUri
-      )
+      ),
     }))
 );
 

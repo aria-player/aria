@@ -8,7 +8,7 @@ export function setupSearchListeners() {
       selectArtistDelimiter(state),
       state.tracks.tracks,
       state.artists.artists,
-      state.albums.albums
+      state.albums.albums,
     ],
     () => {
       invalidateSearchCache();

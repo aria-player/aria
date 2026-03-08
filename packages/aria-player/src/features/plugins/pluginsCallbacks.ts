@@ -4,7 +4,7 @@ import {
   getArtistId,
   getAsArray,
   getTrackId,
-  isTauri
+  isTauri,
 } from "../../app/utils";
 import { WebviewWindow } from "@tauri-apps/api/webviewWindow";
 import { listen } from "@tauri-apps/api/event";
@@ -13,18 +13,18 @@ import {
   removeTracks,
   selectAllTracks,
   selectLibraryTracks,
-  selectTrackById
+  selectTrackById,
 } from "../tracks/tracksSlice";
 import {
   selectActivePlugins,
   selectPluginInfo,
   setPluginData,
-  setSourceSyncProgress
+  setSourceSyncProgress,
 } from "./pluginsSlice";
 import { nextTrack, pause, resume, stop } from "../player/playerSlice";
 import {
   restartOrNextTrack,
-  restartOrPreviousTrack
+  restartOrPreviousTrack,
 } from "../player/playerTime";
 import { showAlert } from "./pluginsAlerts";
 import { addArtists, removeArtists } from "../artists/artistsSlice";
@@ -44,7 +44,7 @@ import {
   IntegrationCallbacks,
   PluginId,
   SourceCallbacks,
-  SyncProgress
+  SyncProgress,
 } from "../../../../types";
 
 function validateTrackMetadata(track: TrackMetadata): void {
@@ -100,7 +100,7 @@ function handleUpdateLibraryTracks(
   const newTracks = metadata.map((track: TrackMetadata) => ({
     ...track,
     trackId: getTrackId(source, track.uri),
-    source: source
+    source: source,
   }));
 
   store.dispatch(addTracks({ source, tracks: newTracks, addToLibrary: true }));
@@ -116,7 +116,7 @@ function handleRemoveLibraryTracks(source: PluginId, uris?: TrackUri[]) {
       removeTracks({
         source,
         tracks: delTracks,
-        removeFromLibrary: true
+        removeFromLibrary: true,
       })
     );
   } else {
@@ -129,7 +129,7 @@ function handleRemoveTracks(source: PluginId, uris?: TrackUri[]) {
     store.dispatch(
       removeTracks({
         source,
-        tracks: uris.map((uri) => getTrackId(source, uri))
+        tracks: uris.map((uri) => getTrackId(source, uri)),
       })
     );
   } else {
@@ -142,7 +142,7 @@ function handleUpdateArtists(source: PluginId, metadata: ArtistMetadata[]) {
   const artists: Artist[] = metadata.map((artist) => ({
     ...artist,
     source,
-    artistId: getArtistId(source, artist.name, artist.uri)
+    artistId: getArtistId(source, artist.name, artist.uri),
   }));
   store.dispatch(addArtists({ source, artists }));
 }
@@ -157,7 +157,7 @@ function handleUpdateAlbums(source: PluginId, metadata: AlbumMetadata[]) {
   const albums: Album[] = metadata.map((album) => ({
     ...album,
     source,
-    albumId: getAlbumId(source, album.name, album.artist, album.uri)
+    albumId: getAlbumId(source, album.name, album.artist, album.uri),
   }));
   store.dispatch(addAlbums({ source, albums }));
 }
@@ -184,7 +184,7 @@ export const getBaseCallbacks = (pluginId: PluginId): BaseCallbacks => {
           title: pluginName ? `${pluginName} Login` : "Login",
           width: 500,
           height: 700,
-          center: true
+          center: true,
         });
         const unlistenPromise = listen("oauth_code", () => {
           authWindow.close();
@@ -195,7 +195,7 @@ export const getBaseCallbacks = (pluginId: PluginId): BaseCallbacks => {
       } else {
         window.open(url, "_blank");
       }
-    }
+    },
   };
 };
 
@@ -208,7 +208,7 @@ export const getIntegrationCallbacks = (
     resume: () => store.dispatch(resume()),
     stop: () => store.dispatch(stop()),
     next: () => store.dispatch(nextTrack()),
-    previous: () => restartOrPreviousTrack()
+    previous: () => restartOrPreviousTrack(),
   };
 };
 
@@ -255,6 +255,6 @@ export const getSourceCallbacks = (pluginId: PluginId): SourceCallbacks => {
       return selectTrackById(store.getState(), getTrackId(pluginId, uri));
     },
     getVolume: () => store.getState().player.volume,
-    getMuted: () => store.getState().player.muted
+    getMuted: () => store.getState().player.muted,
   };
 };

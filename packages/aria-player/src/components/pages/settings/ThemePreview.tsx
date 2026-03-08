@@ -34,7 +34,7 @@ export default function ThemePreview(props: { stylesheet: string }) {
             className={styles.sidebarItem}
             style={{
               background: accentColor ?? primaryText,
-              opacity: accentColor ? 1.0 : 0.25
+              opacity: accentColor ? 1.0 : 0.25,
             }}
           ></div>
           {Array.from({ length: 3 }, (_, index) => (

@@ -12,7 +12,7 @@ export default function LibraryItemsConfig({
   likedSongsCount,
   savedAlbumsCount,
   onChange,
-  i18n: i18nInstance
+  i18n: i18nInstance,
 }: {
   selection: LibraryItemSelection;
   likedSongsCount?: number;
@@ -34,7 +34,7 @@ export default function LibraryItemsConfig({
                 onChange={(e) =>
                   onChange({
                     ...selection,
-                    includeLikedSongs: e.target.checked
+                    includeLikedSongs: e.target.checked,
                   })
                 }
               />
@@ -56,7 +56,7 @@ export default function LibraryItemsConfig({
                 onChange={(e) =>
                   onChange({
                     ...selection,
-                    includeSavedAlbums: e.target.checked
+                    includeSavedAlbums: e.target.checked,
                   })
                 }
               />

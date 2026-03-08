@@ -5,7 +5,7 @@ import { t } from "i18next";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   removeTracksFromPlaylist,
-  selectPlaylistById
+  selectPlaylistById,
 } from "../../features/playlists/playlistsSlice";
 import { selectSelectedTracks } from "../../features/tracks/tracksSlice";
 import { store } from "../../app/store";
@@ -13,7 +13,7 @@ import { DisplayMode, LibraryView, View } from "../../app/view";
 import {
   removeFromQueue,
   setQueueToNewSource,
-  skipQueueIndexes
+  skipQueueIndexes,
 } from "../../features/player/playerSlice";
 import { selectSortedTrackList } from "../../features/genericSelectors";
 import {
@@ -24,11 +24,11 @@ import {
   selectVisibleTrackGrouping,
   selectVisibleSelectedTrackGroup,
   selectVisibleSearchTracks,
-  selectVisibleArtistTracks
+  selectVisibleArtistTracks,
 } from "../../features/visibleSelectors";
 import {
   addToSearchHistory,
-  selectSearch
+  selectSearch,
 } from "../../features/search/searchSlice";
 import { TrackMenuItems } from "./items/TrackMenuItems";
 
@@ -53,7 +53,7 @@ export function TrackListItemContextMenu() {
     >
       <Item disabled>
         {t("tracks.selectedCount", {
-          count: selectedTracks.length
+          count: selectedTracks.length,
         })}
       </Item>
       <Separator />
@@ -87,14 +87,14 @@ export function TrackListItemContextMenu() {
                 queueIndex: menuData.itemIndex ?? 0,
                 queueGrouping: selectVisibleTrackGrouping(state) ?? null,
                 queueSelectedGroup:
-                  selectVisibleSelectedTrackGroup(state) ?? null
+                  selectVisibleSelectedTrackGroup(state) ?? null,
               })
             );
           }
         }}
       >
         {t("tracks.playNamedTrack", {
-          title: menuData?.metadata?.title
+          title: menuData?.metadata?.title,
         })}
       </Item>
       <Separator />
@@ -109,7 +109,7 @@ export function TrackListItemContextMenu() {
             dispatch(
               removeTracksFromPlaylist({
                 playlistId: visiblePlaylist.id,
-                itemIds: selectedTracks.map((track) => track.itemId)
+                itemIds: selectedTracks.map((track) => track.itemId),
               })
             );
           }}

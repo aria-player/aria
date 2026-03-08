@@ -33,7 +33,7 @@ export function setupTracksListeners() {
     dispatch(
       removeCachedTracks({
         source: payload.source,
-        tracks: payload.tracks
+        tracks: payload.tracks,
       })
     );
     const currentTrackId = state.player.currentTrack?.trackId;

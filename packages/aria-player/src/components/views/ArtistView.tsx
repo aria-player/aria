@@ -8,7 +8,7 @@ import {
   getAlbumId,
   getScrollbarWidth,
   getTrackId,
-  parseArtistId
+  parseArtistId,
 } from "../../app/utils";
 import { useTrackGrid } from "../../hooks/useTrackGrid";
 import { TrackSummaryRow } from "./subviews/TrackSummaryRow";
@@ -18,7 +18,7 @@ import {
   selectVisibleSelectedTrackGroup,
   selectVisibleArtist,
   selectVisibleArtistTracks,
-  selectVisibleArtistAlbums
+  selectVisibleArtistAlbums,
 } from "../../features/visibleSelectors";
 import { useScrollDetection } from "../../hooks/useScrollDetection";
 import { ArtistArt } from "./subviews/ArtistArt";
@@ -31,7 +31,7 @@ import {
   selectCachedArtistAlbums,
   selectCachedArtistTopTracks,
   updateCachedArtistAlbums,
-  updateCachedArtistTopTracks
+  updateCachedArtistTopTracks,
 } from "../../features/cache/cacheSlice";
 
 const OVERSCROLL_BUFFER = 5;
@@ -129,7 +129,7 @@ export default function ArtistView() {
             addTracks({
               source,
               tracks,
-              addToLibrary: false
+              addToLibrary: false,
             })
           );
           const trackIds = tracks.map((t) => getTrackId(source, t.uri));
@@ -137,7 +137,7 @@ export default function ArtistView() {
             updateCachedArtistTopTracks({
               artistId,
               trackIds,
-              offset: 0
+              offset: 0,
             })
           );
         }
@@ -169,7 +169,7 @@ export default function ArtistView() {
         const albumsWithIds = albums.map((album) => ({
           ...album,
           albumId: getAlbumId(source, album.name, album.artist, album.uri),
-          source
+          source,
         }));
         dispatch(addAlbums({ source, albums: albumsWithIds }));
         const newAlbumIds = albumsWithIds.map((a) => a.albumId);
@@ -177,7 +177,7 @@ export default function ArtistView() {
           updateCachedArtistAlbums({
             artistId,
             albumIds: newAlbumIds,
-            offset: orderedAlbums.length
+            offset: orderedAlbums.length,
           })
         );
       }
@@ -188,7 +188,7 @@ export default function ArtistView() {
     artistId,
     orderedAlbums.length,
     gridLayout.columnCount,
-    isExternalArtistView
+    isExternalArtistView,
   ]);
 
   const rowData = useMemo(() => {
@@ -197,7 +197,7 @@ export default function ArtistView() {
     return orderedTracks
       .map((trackId) => ({
         ...selectTrackById(state, trackId),
-        itemId: trackId
+        itemId: trackId,
       }))
       .slice(0, 5);
   }, [artistTracks, orderedTracks]);
@@ -308,7 +308,7 @@ export default function ArtistView() {
                   className={styles.gridRow}
                   style={{
                     gridTemplateColumns: `repeat(${gridLayout.columnCount}, 1fr)`,
-                    height: gridLayout.columnWidth + 80
+                    height: gridLayout.columnWidth + 80,
                   }}
                 >
                   {displayAlbums

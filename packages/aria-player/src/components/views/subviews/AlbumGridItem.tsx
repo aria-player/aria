@@ -6,7 +6,7 @@ import { BASEPATH } from "../../../app/constants";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import {
   selectVisiblePlaylist,
-  selectVisibleViewType
+  selectVisibleViewType,
 } from "../../../features/visibleSelectors";
 import { LibraryView } from "../../../app/view";
 import { normalizeArtists } from "../../../app/utils";

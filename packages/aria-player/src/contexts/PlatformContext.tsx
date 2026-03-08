@@ -2,7 +2,7 @@ import { convertFileSrc, invoke } from "@tauri-apps/api/core";
 import { type } from "@tauri-apps/plugin-os";
 import {
   getCurrentWebviewWindow,
-  WebviewWindow
+  WebviewWindow,
 } from "@tauri-apps/api/webviewWindow";
 import { ReactNode, createContext, useEffect, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
@@ -16,7 +16,7 @@ import {
   installThemesFromFiles,
   selectInitialView,
   selectLastView,
-  setLastView
+  setLastView,
 } from "../features/config/configSlice";
 import { store } from "../app/store";
 import { useLocation } from "react-router-dom";
@@ -30,7 +30,7 @@ export enum Platform {
   Web = "Web",
   Windows = "Windows",
   Mac = "Mac",
-  Linux = "Linux"
+  Linux = "Linux",
 }
 
 export const PlatformContext = createContext<{
@@ -46,7 +46,7 @@ export const PlatformContext = createContext<{
   decorations: null,
   minimizeToTray: null,
   setDecorations: () => {},
-  setMinimizeToTray: () => {}
+  setMinimizeToTray: () => {},
 });
 
 export function PlatformProvider({ children }: { children: ReactNode }) {
@@ -97,7 +97,7 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
       }
       setMinimizeToTray(
         await invoke("get_app_config", {
-          configItem: "minimizetotray"
+          configItem: "minimizetotray",
         })
       );
       setReady(true);
@@ -214,7 +214,7 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
   const setMinimizeToTrayConfig = async (minimizeToTray: boolean) => {
     invoke("update_app_config", {
       configItem: "minimizetotray",
-      newValue: minimizeToTray
+      newValue: minimizeToTray,
     });
     setMinimizeToTray(minimizeToTray);
   };
@@ -227,7 +227,7 @@ export function PlatformProvider({ children }: { children: ReactNode }) {
         decorations,
         minimizeToTray,
         setDecorations: setDecorationsConfig,
-        setMinimizeToTray: setMinimizeToTrayConfig
+        setMinimizeToTray: setMinimizeToTrayConfig,
       }}
     >
       {children}

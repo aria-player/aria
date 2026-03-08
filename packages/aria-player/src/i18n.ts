@@ -7,12 +7,12 @@ import en_gb from "../shared/locales/en_gb/translation.json";
 export const supportedLanguages = {
   "en-US": {
     title: "English (United States)",
-    translation: en_us
+    translation: en_us,
   },
   "en-GB": {
     title: "English (United Kingdom)",
-    translation: en_gb
-  }
+    translation: en_gb,
+  },
 };
 
 i18n
@@ -23,9 +23,9 @@ i18n
     fallbackLng: "en-US",
     debug: import.meta.env.VITE_ENABLE_I18N_DEBUG_MODE == "true",
     interpolation: {
-      escapeValue: false
+      escapeValue: false,
     },
-    showSupportNotice: false
+    showSupportNotice: false,
   });
 
 export default i18n;

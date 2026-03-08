@@ -16,18 +16,18 @@ import {
   RowClassParams,
   RowDragEndEvent,
   SortChangedEvent,
-  TabToNextHeaderParams
+  TabToNextHeaderParams,
 } from "ag-grid-community";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   setLibraryColumnState,
-  selectLibraryColumnState
+  selectLibraryColumnState,
 } from "../../features/library/librarySlice";
 import { defaultColumnDefinitions } from "../../features/library/libraryColumns";
 import {
   selectQueueSource,
   setQueueToNewSource,
-  updateQueueAfterChange
+  updateQueueAfterChange,
 } from "../../features/player/playerSlice";
 
 import { useTranslation } from "react-i18next";
@@ -36,7 +36,7 @@ import { MenuContext } from "../../contexts/MenuContext";
 import {
   selectPlaylistConfigById,
   setPlaylistTracks,
-  updatePlaylistColumnState
+  updatePlaylistColumnState,
 } from "../../features/playlists/playlistsSlice";
 import { PlaylistItem } from "../../features/playlists/playlistsTypes";
 import { ArtistSection, LibraryView, View } from "../../app/view";
@@ -47,13 +47,13 @@ import {
   parseArtistId,
   overrideColumnStateSort,
   getExternalSearchCacheKey,
-  getAlbumId
+  getAlbumId,
 } from "../../app/utils";
 import { store } from "../../app/store";
 import { useTrackGrid } from "../../hooks/useTrackGrid";
 import {
   selectCurrentTrack,
-  selectCurrentPlaylist
+  selectCurrentPlaylist,
 } from "../../features/currentSelectors";
 import { selectSortedTrackList } from "../../features/genericSelectors";
 import {
@@ -63,14 +63,14 @@ import {
   selectVisiblePlaylistConfig,
   selectVisibleSelectedTrackGroup,
   selectVisibleArtistSection,
-  selectVisibleSearchTracks
+  selectVisibleSearchTracks,
 } from "../../features/visibleSelectors";
 import { compareMetadata } from "../../app/sort";
 import {
   addToSearchHistory,
   selectSearch,
   selectDebouncedSearch,
-  selectSelectedSearchSource
+  selectSelectedSearchSource,
 } from "../../features/search/searchSlice";
 import NoRowsOverlay from "./subviews/NoRowsOverlay";
 import { getSourceHandle } from "../../features/plugins/pluginsSlice";
@@ -82,7 +82,7 @@ import {
   selectCachedArtistTopTracks,
   selectCachedSearchTracks,
   updateCachedArtistTopTracks,
-  updateCachedSearchTracks
+  updateCachedSearchTracks,
 } from "../../features/cache/cacheSlice";
 
 const EXTERNAL_TRACKS_BATCH_SIZE = 20;
@@ -102,10 +102,10 @@ export const TrackList = () => {
   const queueSource = useAppSelector(selectQueueSource);
   const { setMenuData } = useContext(MenuContext);
   const { show: showHeaderContextMenu } = useContextMenu({
-    id: "tracklistheader"
+    id: "tracklistheader",
   });
   const { show: showCellContextMenu } = useContextMenu({
-    id: "tracklistitem"
+    id: "tracklistitem",
   });
   const visibleView = visiblePlaylist?.id ?? visibleViewType;
   const [scrollY, setScrollY] = useState(0);
@@ -150,7 +150,7 @@ export const TrackList = () => {
     return defaultColumnDefinitions
       .map((colDef) => {
         let colDefOverrides = {
-          ...libraryColumnState?.find((col) => col.colId == colDef.field)
+          ...libraryColumnState?.find((col) => col.colId == colDef.field),
         } as ColDef;
 
         let sort =
@@ -165,7 +165,7 @@ export const TrackList = () => {
           const playlistColDefOverrides = {
             ...playlistConfig?.columnState?.find(
               (col) => col.colId == colDef.field
-            )
+            ),
           } as ColDef;
           sort = !playlistColDefOverrides.hide
             ? playlistColDefOverrides.sort
@@ -203,7 +203,7 @@ export const TrackList = () => {
             colDef.field != "uri" &&
             colDef.field != "attribution"
               ? t(`columns.${colDef.field}`)
-              : colDef.field
+              : colDef.field,
         };
       })
       .sort((colDefA, colDefB) => {
@@ -239,9 +239,9 @@ export const TrackList = () => {
             queueSource == getRelativePath(location.pathname)
               ? 700
               : 400,
-          fontStyle: !params.data?.metadataLoaded ? "italic" : "normal"
+          fontStyle: !params.data?.metadataLoaded ? "italic" : "normal",
         };
-      }
+      },
     }),
     [queueSource, location]
   );
@@ -256,7 +256,7 @@ export const TrackList = () => {
       dispatch(
         updatePlaylistColumnState({
           playlistId: visiblePlaylist.id,
-          columnState: newColumnState
+          columnState: newColumnState,
         })
       );
     }
@@ -274,7 +274,7 @@ export const TrackList = () => {
             columnState: overrideColumnStateSort(
               newColumnState,
               currentPlaylistConfig?.columnState ?? []
-            )
+            ),
           })
         );
       }
@@ -301,7 +301,7 @@ export const TrackList = () => {
       event.api.forEachNodeAfterFilterAndSort((node) => {
         queue.push({
           itemId: node.data.itemId,
-          trackId: node.data.trackId
+          trackId: node.data.trackId,
         });
       });
     } else {
@@ -310,7 +310,7 @@ export const TrackList = () => {
         selectVisibleSearchTracks(state).forEach((track) => {
           queue.push({
             itemId: track.itemId,
-            trackId: track.trackId
+            trackId: track.trackId,
           });
         });
       } else {
@@ -319,7 +319,7 @@ export const TrackList = () => {
         for (const trackId of cachedTracks) {
           queue.push({
             itemId: trackId,
-            trackId: trackId
+            trackId: trackId,
           });
         }
       }
@@ -333,7 +333,7 @@ export const TrackList = () => {
         queueIndex: event.rowIndex ?? 0,
         queueSource: getRelativePath(location.pathname),
         queueGrouping: null,
-        queueSelectedGroup: null
+        queueSelectedGroup: null,
       })
     );
   };
@@ -386,7 +386,7 @@ export const TrackList = () => {
       dispatch(
         updatePlaylistColumnState({
           playlistId: visiblePlaylist.id,
-          columnState: params.api.getColumnState()
+          columnState: params.api.getColumnState(),
         })
       );
     } else {
@@ -416,7 +416,7 @@ export const TrackList = () => {
   useEffect(() => {
     if (gridRef?.current?.api)
       gridRef.current.api.refreshCells({
-        force: true
+        force: true,
       });
   }, [gridRef, currentTrack, rowData]);
 
@@ -425,7 +425,7 @@ export const TrackList = () => {
     const handleContextMenu = (e: Event) => {
       e.preventDefault();
       showHeaderContextMenu({
-        event: e as TriggerEvent
+        event: e as TriggerEvent,
       });
     };
 
@@ -449,7 +449,7 @@ export const TrackList = () => {
         itemSource: getRelativePath(location.pathname),
         itemIndex: event.rowIndex ?? undefined,
         metadata: event.node.data,
-        type: "tracklistitem"
+        type: "tracklistitem",
       });
     }
     showCellContextMenu({ event: event.event as TriggerEvent });
@@ -466,7 +466,7 @@ export const TrackList = () => {
       if (node.data) {
         newOrder.push({
           itemId: node.data.itemId,
-          trackId: node.data.trackId
+          trackId: node.data.trackId,
         });
       }
     });
@@ -545,7 +545,7 @@ export const TrackList = () => {
         getCachedTrackIds,
         fetchTracks,
         source,
-        onCacheUpdate
+        onCacheUpdate,
       }: {
         getCachedTrackIds: () => string[];
         fetchTracks: (
@@ -569,7 +569,7 @@ export const TrackList = () => {
                 ? {
                     ...track,
                     itemId: trackId,
-                    metadataLoaded: true
+                    metadataLoaded: true,
                   }
                 : null;
             })
@@ -588,7 +588,7 @@ export const TrackList = () => {
             addTracks({
               source,
               tracks,
-              addToLibrary: false
+              addToLibrary: false,
             })
           );
           const newTrackIds = tracks.map((track) =>
@@ -606,7 +606,7 @@ export const TrackList = () => {
               track.albumArtist,
               track.albumUri
             ),
-            itemId: getTrackId(source, track.uri)
+            itemId: getTrackId(source, track.uri),
           }));
           if (showCachedTracks) {
             const nodesToUpdate: IRowNode[] = [];
@@ -642,7 +642,7 @@ export const TrackList = () => {
         }
 
         api.setGridOption("loading", false);
-      }
+      },
     }),
     [dispatch]
   );
@@ -684,9 +684,9 @@ export const TrackList = () => {
           updateCachedArtistTopTracks({
             artistId: selectedArtistGroup!,
             trackIds,
-            offset
+            offset,
           })
-        )
+        ),
     });
 
     api.setGridOption("datasource", datasource);
@@ -700,7 +700,7 @@ export const TrackList = () => {
     selectedArtistGroup,
     useInfiniteRowModelForSearch,
     useInfiniteRowModelForArtist,
-    createDatasource
+    createDatasource,
   ]);
 
   useEffect(() => {
@@ -745,9 +745,9 @@ export const TrackList = () => {
           updateCachedSearchTracks({
             key: cacheKey,
             trackIds,
-            offset
+            offset,
           })
-        )
+        ),
     });
 
     api.setGridOption("datasource", datasource);
@@ -760,7 +760,7 @@ export const TrackList = () => {
     visibleSearchSource,
     useInfiniteRowModelForArtist,
     useInfiniteRowModelForSearch,
-    createDatasource
+    createDatasource,
   ]);
 
   const infiniteModelProps = useMemo(() => {
@@ -768,7 +768,7 @@ export const TrackList = () => {
     return {
       cacheBlockSize: EXTERNAL_TRACKS_BATCH_SIZE,
       cacheOverflowSize: EXTERNAL_TRACKS_CACHE_OVERFLOW,
-      maxConcurrentDatasourceRequests: EXTERNAL_TRACKS_CONCURRENT_REQUESTS
+      maxConcurrentDatasourceRequests: EXTERNAL_TRACKS_CONCURRENT_REQUESTS,
     };
   }, [useInfiniteRowModel]);
 

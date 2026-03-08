@@ -44,8 +44,8 @@ const initialState: CacheState = {
   search: {
     tracks: {},
     albums: {},
-    artists: {}
-  }
+    artists: {},
+  },
 };
 
 export const cacheSlice = createSlice({
@@ -139,7 +139,7 @@ export const cacheSlice = createSlice({
       state.search = {
         tracks: {},
         albums: {},
-        artists: {}
+        artists: {},
       };
     },
     removeCachedTracks: (
@@ -178,8 +178,8 @@ export const cacheSlice = createSlice({
           delete state.search.tracks[key];
         }
       });
-    }
-  }
+    },
+  },
 });
 
 export const {
@@ -190,7 +190,7 @@ export const {
   updateCachedSearchAlbums,
   updateCachedSearchArtists,
   clearCache,
-  removeCachedTracks
+  removeCachedTracks,
 } = cacheSlice.actions;
 
 export const selectIsAlbumFetched = (state: RootState, albumId: AlbumId) =>

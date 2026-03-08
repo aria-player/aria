@@ -7,7 +7,7 @@ import {
   RowDragLeaveEvent,
   RowDragMoveEvent,
   RowNode,
-  SelectionChangedEvent
+  SelectionChangedEvent,
 } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
@@ -19,7 +19,7 @@ import {
   addTracksToUpNext,
   reorderUpNext,
   reorderQueue,
-  selectUpNext
+  selectUpNext,
 } from "../../features/player/playerSlice";
 import { TrackListItem } from "../../features/tracks/tracksTypes";
 import { store } from "../../app/store";
@@ -45,8 +45,8 @@ const copyTracksToUpNext = (tracks: QueueItem[], dropIndex?: number) => {
       dropIndex,
       tracks: tracks.map((track) => ({
         trackId: track.trackId,
-        itemId: nanoid()
-      }))
+        itemId: nanoid(),
+      })),
     })
   );
 };
@@ -57,8 +57,8 @@ const copyStrayTracksToQueue = (tracks: QueueItem[], dropIndex: number) => {
       dropIndex,
       tracks: tracks.map((track) => ({
         trackId: track.trackId,
-        itemId: nanoid()
-      }))
+        itemId: nanoid(),
+      })),
     })
   );
 };
@@ -104,7 +104,7 @@ const handleRowDragMove = (event: RowDragMoveEvent) => {
   if (targetRow) {
     event.api.setRowDropPositionIndicator({
       row: targetRow,
-      dropIndicatorPosition: "below"
+      dropIndicatorPosition: "below",
     });
   }
 };
@@ -134,7 +134,7 @@ export const QueuePage = () => {
     (track, index) => {
       return {
         ...track,
-        track: index - getTrackSection(index)
+        track: index - getTrackSection(index),
       };
     }
   ) as QueueListItem[];
@@ -219,7 +219,7 @@ export const QueuePage = () => {
                 .filter((track) => !track.separator)
                 .map((track) => ({
                   trackId: track.trackId,
-                  itemId: track.itemId
+                  itemId: track.itemId,
                 }))
             )
           );
@@ -230,7 +230,7 @@ export const QueuePage = () => {
                 .filter((track) => !track.separator)
                 .map((track) => ({
                   trackId: track.trackId,
-                  itemId: track.itemId
+                  itemId: track.itemId,
                 }))
             )
           );
@@ -240,13 +240,13 @@ export const QueuePage = () => {
         if (movingTracks.length == 1) {
           showToast(
             t("toasts.addedNamedTrackToQueue", {
-              title: movingTracks[0].title
+              title: movingTracks[0].title,
             })
           );
         } else {
           showToast(
             t("toasts.addedTracksToQueue", {
-              count: movingTracks.length
+              count: movingTracks.length,
             })
           );
         }
@@ -264,7 +264,7 @@ export const QueuePage = () => {
       getTrackSection,
       visibleTracks,
       queueSourceSeparatorIndex,
-      upNext
+      upNext,
     ]
   );
 
@@ -283,7 +283,7 @@ export const QueuePage = () => {
         setSelectedTracks(
           params.api.getSelectedRows().map((node) => ({
             itemId: node.itemId,
-            trackId: node.trackId
+            trackId: node.trackId,
           }))
         )
       );

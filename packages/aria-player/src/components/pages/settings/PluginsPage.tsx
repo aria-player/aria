@@ -12,7 +12,7 @@ import {
   selectPluginData,
   selectPluginInfo,
   setPluginEnabled,
-  uninstallPlugin
+  uninstallPlugin,
 } from "../../../features/plugins/pluginsSlice";
 import { defaultPluginInfo } from "../../../plugins/plugins";
 import RemoveIcon from "../../../assets/trash-can-solid.svg?react";
@@ -83,7 +83,7 @@ export function PluginsPage() {
                       if (enabledPlugins.includes(plugin)) {
                         const confirmed = await confirm(
                           t("settings.plugins.confirmDisable", {
-                            plugin: plugins[plugin].name
+                            plugin: plugins[plugin].name,
                           })
                         );
                         if (!confirmed) {
@@ -93,7 +93,7 @@ export function PluginsPage() {
                       dispatch(
                         setPluginEnabled({
                           plugin: plugin,
-                          enabled: !enabledPlugins.includes(plugin)
+                          enabled: !enabledPlugins.includes(plugin),
                         })
                       );
                     }}
@@ -104,7 +104,7 @@ export function PluginsPage() {
                       onClick={async () => {
                         const confirmed = await confirm(
                           t("settings.plugins.confirmUninstall", {
-                            plugin: plugins[plugin].name
+                            plugin: plugins[plugin].name,
                           })
                         );
                         if (!confirmed) return;

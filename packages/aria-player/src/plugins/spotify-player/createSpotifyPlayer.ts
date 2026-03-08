@@ -10,7 +10,7 @@ import {
   SourceCallbacks,
   SourceHandle,
   TrackMetadata,
-  TrackUri
+  TrackUri,
 } from "../../../../types";
 
 export type SpotifyConfig = {
@@ -63,10 +63,10 @@ export default function createSpotifyPlayer(
           ...getConfig(),
           includeLikedSongs,
           includeSavedAlbums,
-          librarySetupPending: false
+          librarySetupPending: false,
         });
         startLibraryLoad();
-      }
+      },
     });
   }
 
@@ -84,7 +84,7 @@ export default function createSpotifyPlayer(
         getOAuthToken: async (cb: (token: string) => void) => {
           cb((await getOrRefreshAccessToken())!);
         },
-        volume: host.getVolume() / 100
+        volume: host.getVolume() / 100,
       });
 
       player.addListener("ready", ({ device_id }) => {
@@ -113,12 +113,12 @@ export default function createSpotifyPlayer(
         ? (spotifyRequest(
             `/me/albums?limit=1`
           ) as Promise<SpotifyApi.UsersSavedAlbumsResponse>)
-        : Promise.resolve(null)
+        : Promise.resolve(null),
     ]);
     host.updateData({
       ...getConfig(),
       likedSongsCount: tracksResponse?.total ?? getConfig().likedSongsCount,
-      savedAlbumsCount: albumsResponse?.total ?? getConfig().savedAlbumsCount
+      savedAlbumsCount: albumsResponse?.total ?? getConfig().savedAlbumsCount,
     });
   }
 
@@ -162,9 +162,9 @@ export default function createSpotifyPlayer(
     const response = await fetch("https://accounts.spotify.com/api/token", {
       method: "POST",
       headers: {
-        "Content-Type": "application/x-www-form-urlencoded"
+        "Content-Type": "application/x-www-form-urlencoded",
       },
-      body: `grant_type=refresh_token&refresh_token=${refresh_token}&client_id=${getClientId()}`
+      body: `grant_type=refresh_token&refresh_token=${refresh_token}&client_id=${getClientId()}`,
     });
     const responseBody = await response.json();
     if (!response.ok) {
@@ -175,7 +175,7 @@ export default function createSpotifyPlayer(
       ...getConfig(),
       accessToken: responseBody.access_token,
       refreshToken: responseBody.refresh_token,
-      tokenExpiry: Date.now() + responseBody.expires_in * 1000
+      tokenExpiry: Date.now() + responseBody.expires_in * 1000,
     });
   }
 
@@ -191,9 +191,9 @@ export default function createSpotifyPlayer(
         method,
         headers: {
           Authorization: `Bearer ${token}`,
-          "Content-Type": "application/json"
+          "Content-Type": "application/json",
         },
-        body: body ? JSON.stringify(body) : undefined
+        body: body ? JSON.stringify(body) : undefined,
       });
       if (response.status === 429) {
         const retryAfter = response.headers.get("Retry-After");
@@ -221,7 +221,7 @@ export default function createSpotifyPlayer(
         closeLabel: i18n.t("spotify-player:errorDialog.logOut"),
         onClose: () => {
           logout();
-        }
+        },
       });
       return false;
     }
@@ -236,7 +236,7 @@ export default function createSpotifyPlayer(
         closeLabel: i18n.t("spotify-player:errorDialog.logOut"),
         onClose: () => {
           logout();
-        }
+        },
       });
       return false;
     }
@@ -263,7 +263,7 @@ export default function createSpotifyPlayer(
       host.setSyncProgress({
         synced: progress,
         total:
-          totalTracks + totalAlbums * albumProgressMultiplier + artistIds.size
+          totalTracks + totalAlbums * albumProgressMultiplier + artistIds.size,
       });
     };
 
@@ -423,7 +423,7 @@ export default function createSpotifyPlayer(
             artistMetadata.push({
               uri: artist.uri,
               name: artist.name,
-              artworkUri: artist.images?.[0]?.url
+              artworkUri: artist.images?.[0]?.url,
             });
           }
           incrementProgress(artistResponse.artists.length);
@@ -445,7 +445,7 @@ export default function createSpotifyPlayer(
       const artistIds = albumArtistMapping[track.albumUri];
       return {
         ...track,
-        genre: getUniqueGenresFromArtists(artistIds, artistGenreMapping)
+        genre: getUniqueGenresFromArtists(artistIds, artistGenreMapping),
       };
     });
     if (!getConfig().accessToken) return;
@@ -475,7 +475,7 @@ export default function createSpotifyPlayer(
       dateReleased: new Date(album.release_date).getTime(),
       track: track.track_number,
       disc: track.disc_number,
-      artworkUri: album.images[0]?.url
+      artworkUri: album.images[0]?.url,
     };
   }
 
@@ -573,18 +573,18 @@ export default function createSpotifyPlayer(
       const response = await fetch("https://accounts.spotify.com/api/token", {
         method: "POST",
         headers: {
-          "Content-Type": "application/x-www-form-urlencoded"
+          "Content-Type": "application/x-www-form-urlencoded",
         },
         body: `grant_type=authorization_code&code=${code}&redirect_uri=${encodeURIComponent(
           getRedirectUri()
-        )}&client_id=${getClientId()}&code_verifier=${codeVerifier}`
+        )}&client_id=${getClientId()}&code_verifier=${codeVerifier}`,
       });
       const responseBody = await response.json();
       host.updateData({
         ...getConfig(),
         accessToken: responseBody.access_token,
         refreshToken: responseBody.refresh_token,
-        tokenExpiry: Date.now() + responseBody.expires_in * 1000
+        tokenExpiry: Date.now() + responseBody.expires_in * 1000,
       });
       setupSpotifyPlayer();
       const hasSubscription = await checkForSubscription();
@@ -615,7 +615,7 @@ export default function createSpotifyPlayer(
       refreshToken: undefined,
       tokenExpiry: undefined,
       clientId: config.clientId,
-      redirectUri: config.redirectUri
+      redirectUri: config.redirectUri,
     });
   }
 
@@ -623,7 +623,7 @@ export default function createSpotifyPlayer(
     requestingTrack = true;
     await player?.pause();
     await spotifyRequest(`/me/player/play?device_id=${deviceId}`, "PUT", {
-      uris: [track.uri]
+      uris: [track.uri],
     });
     return new Promise<void>((resolve) => {
       const onPlaybackStateChanged = (event: Spotify.PlaybackState) => {
@@ -654,7 +654,7 @@ export default function createSpotifyPlayer(
         redirectUri: getRedirectUri(),
         startLibraryLoad,
         refreshLibrary,
-        i18n
+        i18n,
       }),
 
     QuickStart: (props) =>
@@ -664,7 +664,7 @@ export default function createSpotifyPlayer(
         config: getConfig(),
         redirectUri: getRedirectUri(),
         updateData: (data) => host.updateData(data),
-        i18n
+        i18n,
       }),
 
     Attribution: (props) => Attribution({ ...props, i18n }),
@@ -672,7 +672,7 @@ export default function createSpotifyPlayer(
     async loadAndPlayTrack(track: TrackMetadata) {
       if (!hasTransferredPlayback && deviceId) {
         await spotifyRequest("/me/player", "PUT", {
-          device_ids: [deviceId]
+          device_ids: [deviceId],
         }).catch((error) => {
           console.error("Error setting device ID:", error);
         });
@@ -782,7 +782,7 @@ export default function createSpotifyPlayer(
 
       return tracks.map((track) => ({
         ...track,
-        genre: formattedGenres
+        genre: formattedGenres,
       }));
     },
 
@@ -803,7 +803,7 @@ export default function createSpotifyPlayer(
       return {
         uri: artistResponse.uri,
         name: artistResponse.name,
-        artworkUri: artistResponse.images?.[0]?.url
+        artworkUri: artistResponse.images?.[0]?.url,
       };
     },
 
@@ -853,7 +853,7 @@ export default function createSpotifyPlayer(
         );
         return {
           ...track,
-          genre: formattedGenres
+          genre: formattedGenres,
         };
       });
     },
@@ -884,7 +884,7 @@ export default function createSpotifyPlayer(
         dateReleased: album.release_date
           ? new Date(album.release_date).getTime()
           : undefined,
-        artworkUri: album.images?.[0]?.url
+        artworkUri: album.images?.[0]?.url,
       }));
     },
 
@@ -948,7 +948,7 @@ export default function createSpotifyPlayer(
           );
           return {
             ...track,
-            genre: formattedGenres
+            genre: formattedGenres,
           };
         });
       };
@@ -977,7 +977,7 @@ export default function createSpotifyPlayer(
           dateReleased: album.release_date
             ? new Date(album.release_date).getTime()
             : undefined,
-          artworkUri: album.images?.[0]?.url
+          artworkUri: album.images?.[0]?.url,
         }));
       };
     },
@@ -997,7 +997,7 @@ export default function createSpotifyPlayer(
         return searchResponse.artists.items.map((artist) => ({
           uri: artist.uri,
           name: artist.name,
-          artworkUri: artist.images?.[0]?.url
+          artworkUri: artist.images?.[0]?.url,
         }));
       };
     },
@@ -1029,6 +1029,6 @@ export default function createSpotifyPlayer(
       const script = document.getElementById("spotify");
       script?.remove();
       i18n.removeResourceBundle("en-US", "spotify-player");
-    }
+    },
   };
 }

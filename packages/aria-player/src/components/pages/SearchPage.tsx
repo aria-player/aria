@@ -2,7 +2,7 @@ import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import {
   selectSearchHistory,
   removeFromSearchHistory,
-  selectSelectedSearchSource
+  selectSelectedSearchSource,
 } from "../../features/search/searchSlice";
 import styles from "./SearchPage.module.css";
 import ClearIcon from "../../assets/xmark-solid.svg?react";

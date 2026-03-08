@@ -3,7 +3,7 @@ import { useAppSelector } from "../../app/hooks";
 import {
   pluginHandles,
   selectPluginInfo,
-  selectSourceSyncProgress
+  selectSourceSyncProgress,
 } from "../../features/plugins/pluginsSlice";
 import styles from "./SyncProgress.module.css";
 
@@ -26,7 +26,7 @@ export const SyncProgress = (props: { percentage: number }) => {
     <div
       className={styles.syncProgress}
       title={t("footer.syncInProgress", {
-        source: syncingSources.join("/")
+        source: syncingSources.join("/"),
       })}
     >
       <svg width={50} height={50}>

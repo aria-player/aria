@@ -3,13 +3,13 @@ import {
   useState,
   ReactNode,
   useEffect,
-  useCallback
+  useCallback,
 } from "react";
 import { useAppSelector } from "../app/hooks";
 import { selectAllTracks } from "../features/tracks/tracksSlice";
 import {
   getSourceHandle,
-  selectActivePlugins
+  selectActivePlugins,
 } from "../features/plugins/pluginsSlice";
 import { Track } from "../../../types/tracks";
 import { useDebounce } from "react-use";
@@ -25,7 +25,7 @@ export const ArtworkContext = createContext<{
   artworkCache: {},
   cacheArtwork: () => {},
   artistArtworkCache: {},
-  cacheArtistArtwork: () => {}
+  cacheArtistArtwork: () => {},
 });
 
 function filterByUniqueArtwork(array: Track[]) {
@@ -85,7 +85,7 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
       if (prev[uri]) return prev;
       return {
         ...prev,
-        [uri]: data
+        [uri]: data,
       };
     });
   }, []);
@@ -96,7 +96,7 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
       if (prev[uri]) return prev;
       return {
         ...prev,
-        [uri]: data
+        [uri]: data,
       };
     });
   }, []);
@@ -125,7 +125,7 @@ export const ArtworkProvider = ({ children }: { children: ReactNode }) => {
         artworkCache,
         cacheArtwork,
         artistArtworkCache,
-        cacheArtistArtwork
+        cacheArtistArtwork,
       }}
     >
       {children}

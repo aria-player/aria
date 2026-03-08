@@ -1,7 +1,7 @@
 import {
   BodyScrollEvent,
   ICellRendererParams,
-  RowHeightParams
+  RowHeightParams,
 } from "ag-grid-community";
 import { AgGridReact } from "ag-grid-react";
 import { useMemo, useEffect } from "react";
@@ -72,7 +72,7 @@ export const AlbumTrackList = (props: {
               separator: true,
               tracks: currentAlbumTracks,
               source: track.source,
-              itemId: `album-separator-${track.albumId}`
+              itemId: `album-separator-${track.albumId}`,
             });
             currentAlbumTracks = 0;
           }
@@ -89,7 +89,7 @@ export const AlbumTrackList = (props: {
             ),
             source: track.source,
             separator: true,
-            itemId: `album-header-${track.albumId}`
+            itemId: `album-header-${track.albumId}`,
           });
           currentAlbum = track.albumId ?? null;
           currentAlbumDiscs = Math.max(
@@ -108,7 +108,7 @@ export const AlbumTrackList = (props: {
           processedTracks.push({
             title: t("albumTrackList.disc", { number: track.disc }),
             separator: true,
-            itemId: `disc-separator-${track.albumId}-${currentDisc}`
+            itemId: `disc-separator-${track.albumId}-${currentDisc}`,
           });
         }
         processedTracks.push(track);
@@ -119,7 +119,7 @@ export const AlbumTrackList = (props: {
         processedTracks.push({
           separator: true,
           tracks: currentAlbumTracks,
-          itemId: `album-separator`
+          itemId: `album-separator`,
         });
       return processedTracks;
     };

@@ -2,14 +2,14 @@ import {
   createAsyncThunk,
   createSelector,
   createSlice,
-  PayloadAction
+  PayloadAction,
 } from "@reduxjs/toolkit";
 import { AnyPluginHandle } from "./pluginsTypes";
 import {
   PluginId,
   PluginInfo,
   SourceHandle,
-  SyncProgress
+  SyncProgress,
 } from "../../../../types/plugins";
 import { setupPluginListeners } from "./pluginsListeners";
 import { RootState, store } from "../../app/store";
@@ -36,11 +36,11 @@ const initialState: PluginsState = {
     "media-session",
     isTauri() ? "tauri-player" : "web-player",
     "spotify-player",
-    "apple-music-player"
+    "apple-music-player",
   ],
   activePlugins: [],
   pluginData: {},
-  sourceSyncProgress: {}
+  sourceSyncProgress: {},
 };
 
 export function getSourceHandle(pluginId: PluginId): SourceHandle | undefined {
@@ -128,7 +128,7 @@ export const pluginsSlice = createSlice({
       const { plugin, data } = action.payload;
       state.pluginData[plugin] = {
         ...state.pluginData[plugin],
-        ...data
+        ...data,
       };
     },
     setSourceSyncProgress(
@@ -137,8 +137,8 @@ export const pluginsSlice = createSlice({
     ) {
       const { pluginId, syncProgress } = action.payload;
       state.sourceSyncProgress[pluginId] = syncProgress;
-    }
-  }
+    },
+  },
 });
 
 export const {
@@ -147,7 +147,7 @@ export const {
   setPluginEnabled,
   setPluginActive,
   setPluginData,
-  setSourceSyncProgress
+  setSourceSyncProgress,
 } = pluginsSlice.actions;
 
 export const selectEnabledPlugins = (state: RootState) =>
@@ -162,7 +162,7 @@ export const selectPluginInfo = createSelector(
   (state: RootState) => state.plugins.installedPluginInfo,
   (installedPluginInfo) => ({
     ...defaultPluginInfo,
-    ...installedPluginInfo
+    ...installedPluginInfo,
   })
 );
 

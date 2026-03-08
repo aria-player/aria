@@ -18,7 +18,7 @@ import {
   REGISTER,
   REHYDRATE,
   persistReducer,
-  persistStore
+  persistStore,
 } from "redux-persist";
 import { Reducer, combineReducers } from "redux";
 import { createReduxHistoryContext } from "redux-first-history";
@@ -28,7 +28,7 @@ import undoable, { includeAction } from "redux-undo";
 import {
   excludeStateFromUndo,
   recordUndoableActions,
-  undoableActions
+  undoableActions,
 } from "./undo";
 
 const storage = localforage;
@@ -36,18 +36,18 @@ const storage = localforage;
 const { createReduxHistory, routerMiddleware, routerReducer } =
   createReduxHistoryContext({
     history: createBrowserHistory(),
-    reduxTravelling: true
+    reduxTravelling: true,
   });
 
 const undoableSlices = undoable(
   combineReducers({
     library: persistReducer({ key: "library", storage }, libraryReducer),
-    playlists: persistReducer({ key: "playlists", storage }, playlistsReducer)
+    playlists: persistReducer({ key: "playlists", storage }, playlistsReducer),
   }),
   {
     filter: includeAction(undoableActions.map((action) => action.type)),
     ignoreInitialState: true,
-    syncFilter: true
+    syncFilter: true,
   }
 );
 
@@ -58,7 +58,7 @@ const reducer = combineReducers({
     {
       key: "player",
       storage,
-      blacklist: ["status"]
+      blacklist: ["status"],
     },
     playerReducer
   ),
@@ -66,7 +66,7 @@ const reducer = combineReducers({
     {
       key: "plugins",
       storage,
-      blacklist: ["activePlugins", "sourceSyncProgress"]
+      blacklist: ["activePlugins", "sourceSyncProgress"],
     },
     pluginsReducer
   ),
@@ -74,21 +74,21 @@ const reducer = combineReducers({
     {
       key: "tracks",
       storage,
-      blacklist: ["selectedTracks", "clipboard"]
+      blacklist: ["selectedTracks", "clipboard"],
     },
     tracksReducer
   ),
   artists: persistReducer(
     {
       key: "artists",
-      storage
+      storage,
     },
     artistsReducer
   ),
   albums: persistReducer(
     {
       key: "albums",
-      storage
+      storage,
     },
     albumsReducer
   ),
@@ -96,7 +96,7 @@ const reducer = combineReducers({
     {
       key: "search",
       storage,
-      blacklist: ["search"]
+      blacklist: ["search"],
     },
     searchReducer
   ),
@@ -104,13 +104,13 @@ const reducer = combineReducers({
     {
       key: "cache",
       storage,
-      blacklist: ["search"]
+      blacklist: ["search"],
     },
     cacheReducer
   ),
   undoable: recordUndoableActions(
     excludeStateFromUndo(undoableSlices)
-  ) as Reducer<UndoableSlices>
+  ) as Reducer<UndoableSlices>,
 });
 
 export const store = configureStore({
@@ -118,9 +118,9 @@ export const store = configureStore({
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
-        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER]
-      }
-    }).concat([routerMiddleware, listenerMiddleware.middleware])
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+    }).concat([routerMiddleware, listenerMiddleware.middleware]),
 });
 
 export type AppStore = typeof store;

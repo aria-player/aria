@@ -5,7 +5,7 @@ import { AlbumDetails } from "../../../features/albums/albumsTypes";
 import { Track } from "../../../../../types/tracks";
 import {
   addToSearchHistory,
-  selectSearch
+  selectSearch,
 } from "../../../features/search/searchSlice";
 import { useAppSelector } from "../../../app/hooks";
 import { AlbumArt } from "../../views/subviews/AlbumArt";
@@ -32,7 +32,7 @@ export default function TopResultItem({ result }: TopResultItemProps) {
   const search = useAppSelector(selectSearch);
   const { setMenuData } = useContext(MenuContext);
   const { show: showTrackContextMenu } = useContextMenu({
-    id: "track"
+    id: "track",
   });
 
   const handleClick = () => {
@@ -43,7 +43,7 @@ export default function TopResultItem({ result }: TopResultItemProps) {
         if (track.albumId) {
           dispatch(
             push(BASEPATH + `album/${encodeURIComponent(track.albumId)}`, {
-              focusItemId: track.trackId
+              focusItemId: track.trackId,
             })
           );
         }
@@ -80,7 +80,7 @@ export default function TopResultItem({ result }: TopResultItemProps) {
             ? track.artist.join("/")
             : track.artist,
           label: t("search.categories.songs.one"),
-          attributionId: track.uri
+          attributionId: track.uri,
         };
       }
       case "artist": {
@@ -89,7 +89,7 @@ export default function TopResultItem({ result }: TopResultItemProps) {
           id: artist.artistId,
           title: artist.name,
           label: t("search.categories.artists.one"),
-          attributionId: artist.uri
+          attributionId: artist.uri,
         };
       }
       case "album": {
@@ -99,7 +99,7 @@ export default function TopResultItem({ result }: TopResultItemProps) {
           title: album.name,
           subtitle: formatStringArray(album.artist),
           label: t("search.categories.albums.one"),
-          attributionId: album.uri
+          attributionId: album.uri,
         };
       }
       default:
@@ -124,7 +124,7 @@ export default function TopResultItem({ result }: TopResultItemProps) {
             itemSource: getRelativePath(location.pathname),
             itemIndex: undefined,
             metadata: track,
-            type: "track"
+            type: "track",
           });
           showTrackContextMenu({ event: event as TriggerEvent });
         }}

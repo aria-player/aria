@@ -25,7 +25,7 @@ export function fetchMissingTrack(trackId: TrackId): void {
           addTracks({
             source: track.source,
             tracks: [trackMetadata],
-            addToLibrary: false
+            addToLibrary: false,
           })
         );
       }

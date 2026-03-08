@@ -8,7 +8,7 @@ import { AlbumDetails } from "../../../features/albums/albumsTypes";
 
 export const AlbumArt = ({
   track,
-  album
+  album,
 }: {
   track?: Track;
   album?: AlbumDetails;

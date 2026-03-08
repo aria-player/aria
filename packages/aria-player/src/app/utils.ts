@@ -10,7 +10,7 @@ import {
   TrackId,
   TrackUri,
   AlbumUri,
-  AlbumId
+  AlbumId,
 } from "../../../types";
 import { BASEPATH } from "./constants";
 
@@ -62,7 +62,7 @@ export function formatDate(date: number) {
     month: "2-digit",
     day: "2-digit",
     hour: "2-digit",
-    minute: "2-digit"
+    minute: "2-digit",
   });
 }
 
@@ -88,7 +88,7 @@ export function parseTrackId(trackId: TrackId):
   if (parts.length >= 2) {
     return {
       source: parts[0],
-      uri: parts.slice(1).join(":")
+      uri: parts.slice(1).join(":"),
     };
   }
 }
@@ -103,7 +103,7 @@ export function parseArtistId(artistId: ArtistId):
   if (parts[1] === "uri") {
     return {
       source: parts[0],
-      uri: parts.slice(2).join(":")
+      uri: parts.slice(2).join(":"),
     };
   }
 }
@@ -129,7 +129,7 @@ export function parseAlbumId(albumId: AlbumId):
   if (parts[1] === "uri") {
     return {
       source: parts[0],
-      uri: parts.slice(2).join(":")
+      uri: parts.slice(2).join(":"),
     };
   }
 }
@@ -161,7 +161,7 @@ export function filterHiddenColumnSort(columnState: ColumnState[]) {
     return {
       ...column,
       sort: column.hide ? null : column?.sort,
-      sortIndex: column.hide ? null : column?.sortIndex
+      sortIndex: column.hide ? null : column?.sortIndex,
     };
   });
 }
@@ -177,7 +177,7 @@ export function overrideColumnStateSort(
     return {
       ...column,
       sort: column.hide ? null : overrideCol?.sort,
-      sortIndex: column.hide ? null : overrideCol?.sortIndex
+      sortIndex: column.hide ? null : overrideCol?.sortIndex,
     };
   });
 }
@@ -190,7 +190,7 @@ export function resetColumnStateExceptSort(columnState: ColumnState[] | null) {
     return {
       colId: colDef.field,
       sort: colDef.hide ? null : overrideCol?.sort,
-      sortIndex: colDef.hide ? null : overrideCol?.sortIndex
+      sortIndex: colDef.hide ? null : overrideCol?.sortIndex,
     } as ColumnState;
   });
 }

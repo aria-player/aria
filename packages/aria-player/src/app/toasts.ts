@@ -12,8 +12,8 @@ export function showToast(message: string) {
       paddingLeft: "1rem",
       fontSize: "0.75rem",
       justifyContent: "space-between",
-      textOverflow: "clip"
+      textOverflow: "clip",
     },
-    action: CloseToastButton(() => toast.dismiss())
+    action: CloseToastButton(() => toast.dismiss()),
   });
 }

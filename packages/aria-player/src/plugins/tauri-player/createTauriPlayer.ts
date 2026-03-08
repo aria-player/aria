@@ -23,7 +23,7 @@ export default function createTauriPlayer(
   const webAudioBackend = createWebAudioBackend({
     onFinishedPlayback: () => {
       host.finishPlayback();
-    }
+    },
   });
   let folders = { ...initialConfig.folders };
   rescanFolders();
@@ -43,7 +43,7 @@ export default function createTauriPlayer(
     try {
       const selectedDirectory = (await open({
         directory: true,
-        title: t("tauri-player:chooseFolder")
+        title: t("tauri-player:chooseFolder"),
       })) as string | null | undefined;
 
       if (!selectedDirectory) return;
@@ -51,7 +51,7 @@ export default function createTauriPlayer(
 
       return {
         path: selectedDirectory,
-        items: fileNames as string[]
+        items: fileNames as string[],
       };
     } catch (error) {
       console.error("Error picking directory:", error);
@@ -88,7 +88,7 @@ export default function createTauriPlayer(
               fileSize: parseNumber(metadata.fileSize),
               sampleRate: parseNumber(metadata.sampleRate),
               bitRate: parseNumber(metadata.bitRate),
-              dateModified: parseNumber(metadata.dateModified)
+              dateModified: parseNumber(metadata.dateModified),
             } as Track;
           })
           .catch((err) => {
@@ -97,7 +97,7 @@ export default function createTauriPlayer(
             }
             return {
               ...track,
-              metadataLoaded: true
+              metadataLoaded: true,
             } as Track;
           })
       );
@@ -126,7 +126,7 @@ export default function createTauriPlayer(
           filePath: fileName,
           fileFolder: fileName.split("\\").slice(-2, -1)[0],
           fileFormat: fileName.split(".").pop()?.toUpperCase(),
-          metadataLoaded: false
+          metadataLoaded: false,
         }) as Track
     );
     host.addLibraryTracks(tracks);
@@ -168,7 +168,7 @@ export default function createTauriPlayer(
   async function removeFolder(folderPath: string) {
     const confirmed = await confirm(
       t("tauri-player:config.confirmRemove", {
-        folder: folderPath
+        folder: folderPath,
       })
     );
     if (!confirmed) return;
@@ -247,14 +247,14 @@ export default function createTauriPlayer(
           label: t("tauri-player:showInFileManager"),
           onClick: () => {
             invoke("show_file_in_manager", { uri: track.uri });
-          }
-        }
+          },
+        },
       ];
     },
 
     dispose() {
       i18n.removeResourceBundle("en-US", "tauri-player");
       webAudioBackend?.dispose();
-    }
+    },
   };
 }

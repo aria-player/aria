@@ -23,7 +23,7 @@ export function Footer() {
   const { invokeMenuAction } = useMenuActions();
   const { setMenuData } = useContext(MenuContext);
   const { show: showTrackContextMenu } = useContextMenu({
-    id: "track"
+    id: "track",
   });
   const pluginHandle = metadata && getSourceHandle(metadata?.source);
   const displayAttribution = pluginHandle?.Attribution != null;
@@ -63,7 +63,7 @@ export function Footer() {
                     itemSource: undefined,
                     itemIndex: undefined,
                     metadata: metadata,
-                    type: "track"
+                    type: "track",
                   });
                   showTrackContextMenu({ event: event as TriggerEvent });
                 }}

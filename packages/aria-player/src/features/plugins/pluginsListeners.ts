@@ -4,12 +4,12 @@ import {
   selectPluginInfo,
   setPluginActive,
   setPluginData,
-  uninstallPlugin
+  uninstallPlugin,
 } from "./pluginsSlice";
 import {
   getBaseCallbacks,
   getIntegrationCallbacks,
-  getSourceCallbacks
+  getSourceCallbacks,
 } from "./pluginsCallbacks";
 import { listenForAction, listenForChange } from "../../app/listener";
 import { removeTracks } from "../tracks/tracksSlice";

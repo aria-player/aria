@@ -3,6 +3,7 @@
 This tutorial describes how to create, package, and install Aria plugins. As an example, we'll create a simple plugin that logs the player state to the console.
 
 > ⚠️ This tutorial uses JavaScript rather than TypeScript for simplicity, as the plugin installation system expects a plain ES Module as an entry point. If you'd like to write your plugin in TypeScript, you can use the types defined in the `packages/types/` folder.
+
 ## Plugin structure
 
 Plugins consist of two files in a zip archive:
@@ -42,7 +43,7 @@ export default function createLogPlugin() {
   return {
     dispose() {
       console.log("Plugin disposed!");
-    }
+    },
   };
 }
 ```
@@ -72,7 +73,7 @@ export default function createLogPlugin() {
     },
     onStop() {
       console.log("Stopped playback");
-    }
+    },
     // ...
   };
 }
@@ -99,7 +100,7 @@ export default function createLogPlugin() {
           className: "settings-button",
           onClick: () => {
             console.log("Button clicked!");
-          }
+          },
         },
         "Example button"
       ),
@@ -131,7 +132,7 @@ export default function createLogPlugin(host) {
           onClick: () => {
             console.log("Button clicked, skipping to next track");
             host.next();
-          }
+          },
         },
         "Example button"
       ),

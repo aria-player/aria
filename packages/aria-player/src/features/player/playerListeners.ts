@@ -4,7 +4,7 @@ import {
   getSourceHandle,
   pluginHandles,
   selectActivePlugins,
-  selectPluginInfo
+  selectPluginInfo,
 } from "../plugins/pluginsSlice";
 import { SourceHandle } from "../../../../types/plugins";
 import { loadAndPlayTrack, selectStatus } from "./playerSlice";
@@ -14,7 +14,7 @@ import { isAnyOf } from "@reduxjs/toolkit";
 import {
   selectCurrentTrack,
   selectCurrentTrackItemId,
-  selectNextTrack
+  selectNextTrack,
 } from "../currentSelectors";
 
 const getCurrentSource = (state: RootState): SourceHandle | undefined => {

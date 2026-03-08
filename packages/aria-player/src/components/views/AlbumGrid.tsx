@@ -6,14 +6,14 @@ import {
   selectVisibleSelectedTrackGroup,
   selectVisibleAlbums,
   selectVisibleViewType,
-  selectVisibleArtistSection
+  selectVisibleArtistSection,
 } from "../../features/visibleSelectors";
 import { useCallback, useMemo, useRef, useState } from "react";
 import {
   getScrollbarWidth,
   parseArtistId,
   getAlbumId,
-  getExternalSearchCacheKey
+  getExternalSearchCacheKey,
 } from "../../app/utils";
 import { AutoSizer } from "react-virtualized-auto-sizer";
 import { useScrollDetection } from "../../hooks/useScrollDetection";
@@ -27,12 +27,12 @@ import {
   selectCachedArtistAlbums,
   selectCachedSearchAlbums,
   updateCachedArtistAlbums,
-  updateCachedSearchAlbums
+  updateCachedSearchAlbums,
 } from "../../features/cache/cacheSlice";
 import {
   selectDebouncedSearch,
   selectSearch,
-  selectSelectedSearchSource
+  selectSelectedSearchSource,
 } from "../../features/search/searchSlice";
 import { CellComponentProps, Grid, GridImperativeAPI } from "react-window";
 
@@ -151,7 +151,7 @@ export default function AlbumGrid() {
     searchAlbumOrder,
     isExternalArtistView,
     isExternalSearch,
-    visibleAlbums
+    visibleAlbums,
   ]);
 
   const placeholderCount =
@@ -211,7 +211,7 @@ export default function AlbumGrid() {
           album.artist,
           album.uri
         ),
-        source: parsedArtist.source
+        source: parsedArtist.source,
       }));
 
       dispatch(addAlbums({ source: parsedArtist.source, albums }));
@@ -221,7 +221,7 @@ export default function AlbumGrid() {
         updateCachedArtistAlbums({
           artistId: selectedItem!,
           albumIds: newAlbumIds,
-          offset: startIndex
+          offset: startIndex,
         })
       );
 
@@ -236,7 +236,7 @@ export default function AlbumGrid() {
       isExternalArtistView,
       markArtistAlbumsExhausted,
       parsedArtist,
-      selectedItem
+      selectedItem,
     ]
   );
 
@@ -274,7 +274,7 @@ export default function AlbumGrid() {
           album.artist,
           album.uri
         ),
-        source: visibleSearchSource
+        source: visibleSearchSource,
       }));
 
       dispatch(addAlbums({ source: visibleSearchSource, albums }));
@@ -284,7 +284,7 @@ export default function AlbumGrid() {
         updateCachedSearchAlbums({
           key: searchCacheKey,
           albumIds: newAlbumIds,
-          offset: startIndex
+          offset: startIndex,
         })
       );
 
@@ -301,7 +301,7 @@ export default function AlbumGrid() {
       search,
       searchCacheKey,
       visibleSearchSource,
-      isExternalSearch
+      isExternalSearch,
     ]
   );
 
@@ -321,7 +321,7 @@ export default function AlbumGrid() {
       isExternalArtistView,
       searchAlbumOrder.length,
       isExternalSearch,
-      visibleAlbums.length
+      visibleAlbums.length,
     ]
   );
 
@@ -342,7 +342,7 @@ export default function AlbumGrid() {
     loadMoreRows,
     rowCount: Math.max(totalItemCount, 0),
     minimumBatchSize: ALBUMS_BATCH_SIZE,
-    threshold: 10
+    threshold: 10,
   });
 
   const itemRenderer = ({
@@ -353,7 +353,7 @@ export default function AlbumGrid() {
     columnWidth,
     loadingSpinnerRowIndex,
     displayAlbumLimit,
-    displayAlbums
+    displayAlbums,
   }: AlbumGridItemProps) => {
     const index = rowIndex * columnCount + columnIndex;
     const shouldRenderAlbum = index < displayAlbumLimit;
@@ -369,7 +369,7 @@ export default function AlbumGrid() {
               style={{
                 ...style,
                 width: columnWidth * columnCount,
-                height: (style.height as number) * 2
+                height: (style.height as number) * 2,
               }}
             >
               <div className={styles.gridLoadingRow}>
@@ -447,7 +447,7 @@ export default function AlbumGrid() {
                     if (visibleSelectedIndex < 0) return;
                     gridRef.current?.scrollToRow({
                       index: initialRowIndex,
-                      align: "center"
+                      align: "center",
                     });
                   }}
                   onScroll={(event) => onScroll(event.currentTarget.scrollTop)}
@@ -468,7 +468,7 @@ export default function AlbumGrid() {
                     columnWidth,
                     loadingSpinnerRowIndex,
                     displayAlbumLimit,
-                    displayAlbums
+                    displayAlbums,
                   }}
                 />
               </div>

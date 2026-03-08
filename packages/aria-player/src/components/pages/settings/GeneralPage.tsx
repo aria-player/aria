@@ -10,7 +10,7 @@ import {
   selectLanguage,
   setInitialView,
   setLanguage,
-  setLastView
+  setLastView,
 } from "../../../features/config/configSlice";
 import { invoke } from "@tauri-apps/api/core";
 import { LibraryView } from "../../../app/view";
@@ -43,7 +43,7 @@ export function GeneralPage() {
     if (isTauri()) {
       invoke("update_app_config", {
         configItem: "language",
-        newValue: newLanguage
+        newValue: newLanguage,
       });
     }
   };
