@@ -4,10 +4,10 @@ import { TreeProps } from "react-arborist/dist/module/types/tree-props";
 
 export type SectionTreeProps = TreeProps<SectionTreeItem> & {
   sections?: Section[];
-  FolderOpenIcon: () => JSX.Element;
-  FolderClosedIcon: () => JSX.Element;
-  OptionsButtonIcon: () => JSX.Element;
-  DoneButtonIcon: () => JSX.Element;
+  FolderOpenIcon: () => React.JSX.Element;
+  FolderClosedIcon: () => React.JSX.Element;
+  OptionsButtonIcon: () => React.JSX.Element;
+  DoneButtonIcon: () => React.JSX.Element;
   optionsButtonTooltip?: string;
   doneButtonTooltip?: string;
   onMoveWithinSection?: (args: {

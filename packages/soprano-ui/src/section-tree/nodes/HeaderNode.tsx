@@ -5,8 +5,8 @@ import styles from "./HeaderNode.module.css";
 
 export function HeaderNode(
   props: NodeRendererProps<SectionTreeItem> & {
-    OptionsButtonIcon: () => JSX.Element;
-    DoneButtonIcon: () => JSX.Element;
+    OptionsButtonIcon: () => React.JSX.Element;
+    DoneButtonIcon: () => React.JSX.Element;
     optionsButtonTooltip?: string;
     doneButtonTooltip?: string;
     optionsMenuActive: string | null;

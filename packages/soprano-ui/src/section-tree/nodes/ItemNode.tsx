@@ -7,8 +7,8 @@ import { useRef, useEffect } from "react";
 
 export function ItemNode(
   props: NodeRendererProps<SectionTreeItem> & {
-    FolderOpenIcon: () => JSX.Element;
-    FolderClosedIcon: () => JSX.Element;
+    FolderOpenIcon: () => React.JSX.Element;
+    FolderClosedIcon: () => React.JSX.Element;
     onItemVisibilityChange?: (
       sectionId: string,
       itemId: string,

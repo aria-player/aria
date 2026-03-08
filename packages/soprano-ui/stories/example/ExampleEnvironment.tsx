@@ -19,10 +19,10 @@ import "allotment/dist/style.css";
 
 export function ExampleEnvironment(
   props: TreeProps<SectionTreeItem> & {
-    FolderOpenIcon: () => JSX.Element;
-    FolderClosedIcon: () => JSX.Element;
-    OptionsButtonIcon: () => JSX.Element;
-    DoneButtonIcon: () => JSX.Element;
+    FolderOpenIcon: () => React.JSX.Element;
+    FolderClosedIcon: () => React.JSX.Element;
+    OptionsButtonIcon: () => React.JSX.Element;
+    DoneButtonIcon: () => React.JSX.Element;
   }
 ) {
   const [sections, setSections] = React.useState([

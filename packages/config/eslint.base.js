@@ -44,5 +44,8 @@ export const reactBrowser = [
     languageOptions: {
       parserOptions: { project: true },
     },
+    rules: {
+      "@typescript-eslint/no-deprecated": "error",
+    },
   },
 ];
