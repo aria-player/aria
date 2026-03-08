@@ -1,13 +1,16 @@
-# Simple workflow for deploying static content to GitHub Pages
-name: Deploy web app to GitHub Pages
+name: Build and deploy web app
 
 on:
   push:
     tags:
       - v*
 
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+    inputs:
+      publish:
+        type: boolean
+        required: false
+        default: false
 
 # Sets the GITHUB_TOKEN permissions to allow deployment to GitHub Pages
 permissions:
@@ -23,6 +26,8 @@ concurrency:
 jobs:
   # Single deploy job since we're just deploying
   deploy:
+    env:
+      PUBLISH: ${{ github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v') && 'true' || inputs.publish }}
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -46,12 +51,15 @@ jobs:
           VITE_APPLE_MUSIC_TOKEN_ENDPOINT: ${{ vars.VITE_APPLE_MUSIC_TOKEN_ENDPOINT }}
         run: bun run --filter aria-player build
       - name: Setup Pages
+        if: env.PUBLISH == 'true'
         uses: actions/configure-pages@v4
       - name: Upload artifact
+        if: env.PUBLISH == 'true'
         uses: actions/upload-pages-artifact@v3
         with:
           # Upload dist folder
           path: "./packages/aria-player/dist"
       - name: Deploy to GitHub Pages
+        if: env.PUBLISH == 'true'
         id: deployment
         uses: actions/deploy-pages@v4
