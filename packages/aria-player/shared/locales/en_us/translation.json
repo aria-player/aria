@@ -105,6 +105,7 @@
     "noResults": "No results",
     "landingTitle": "Start typing to search",
     "landingSubtitle": "Search for songs, artists, and albums",
+    "landingSubtitleSources": "Search for songs, artists, and albums in:",
     "recentSearches": "Recent searches",
     "clear": "Clear",
     "remove": "Remove from list",

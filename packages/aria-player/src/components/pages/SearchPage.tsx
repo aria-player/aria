@@ -10,6 +10,8 @@ import { useTranslation } from "react-i18next";
 import { push } from "redux-first-history";
 import { BASEPATH } from "../../app/constants";
 import { useScrollDetection } from "../../hooks/useScrollDetection";
+import SearchSourceSwitcher from "./search/SearchSourceSwitcher";
+import { useHasMultipleSearchSources } from "../../hooks/useHasMultipleSearchSources";
 
 export default function SearchPage() {
   const dispatch = useAppDispatch();
@@ -17,6 +19,7 @@ export default function SearchPage() {
   const searchHistory = useAppSelector(selectSearchHistory);
   const selectedSearchSource = useAppSelector(selectSelectedSearchSource);
   const { onScroll } = useScrollDetection();
+  const hasMultipleSources = useHasMultipleSearchSources();
 
   return (
     <div
@@ -26,7 +29,16 @@ export default function SearchPage() {
       <div className={styles.container}>
         <>
           <h1 className={styles.title}>{t("search.landingTitle")}</h1>
-          <p className={styles.subtitle}>{t("search.landingSubtitle")}</p>
+          <p className={styles.subtitle}>
+            {t(
+              hasMultipleSources
+                ? "search.landingSubtitleSources"
+                : "search.landingSubtitle"
+            )}
+          </p>
+          <div className={styles.sourceSwitcher}>
+            <SearchSourceSwitcher />
+          </div>
         </>
         {searchHistory.length > 0 && (
           <div className={styles.historyPanel}>

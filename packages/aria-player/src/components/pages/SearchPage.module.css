@@ -16,19 +16,23 @@
 .title {
   font-size: 1.5rem;
   font-weight: 600;
-  margin: 4rem 0 0.5rem;
+  margin: 4rem 0 0.75rem;
   color: var(--primary-text);
 }
 
 .subtitle {
   line-height: 1.5;
   margin: 0 0 1rem;
-  color: var(--empty-list-text);
+  color: var(--secondary-text);
+}
+
+.sourceSwitcher {
+  margin-bottom: 0.5rem;
 }
 
 .historyPanel {
   width: 100%;
-  margin-top: 0.5rem;
+  margin-top: 0.75rem;
   background-color: var(--inset-background);
   border-radius: 0.5rem;
   overflow: hidden;

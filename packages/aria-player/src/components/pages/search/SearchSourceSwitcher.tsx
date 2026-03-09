@@ -23,7 +23,13 @@ import { BASEPATH } from "../../../app/constants";
 import { useEffect } from "react";
 import { selectLibraryTracks } from "../../../features/tracks/tracksSlice";
 
-export default function SearchSourceSwitcher() {
+interface SearchSourceSwitcherProps {
+  shouldNavigate?: boolean;
+}
+
+export default function SearchSourceSwitcher({
+  shouldNavigate,
+}: SearchSourceSwitcherProps = {}) {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
   const activePlugins = useAppSelector(selectActivePlugins);
@@ -103,7 +109,15 @@ export default function SearchSourceSwitcher() {
     );
   };
 
+  const activeSource = shouldNavigate
+    ? visibleSearchSource
+    : selectedSearchSource;
+
   const switchToSource = (source: string) => {
+    if (!shouldNavigate) {
+      dispatch(setSelectedSearchSource(source === "library" ? null : source));
+      return;
+    }
     dispatch(
       push(
         BASEPATH +
@@ -116,7 +130,7 @@ export default function SearchSourceSwitcher() {
   return (
     <div className={styles.switcher}>
       <button
-        className={`${styles.option} ${visibleSearchSource === null ? styles.selected : ""}`}
+        className={`${styles.option} ${activeSource === null ? styles.selected : ""}`}
         onClick={() => switchToSource("library")}
       >
         {t("search.sources.library")}
@@ -124,7 +138,7 @@ export default function SearchSourceSwitcher() {
       {searchableSourcePlugins.map((pluginId) => (
         <button
           key={pluginId}
-          className={`${styles.option} ${visibleSearchSource === pluginId ? styles.selected : ""}`}
+          className={`${styles.option} ${activeSource === pluginId ? styles.selected : ""}`}
           onClick={() => switchToSource(pluginId)}
         >
           {getDisplayName(pluginId)}

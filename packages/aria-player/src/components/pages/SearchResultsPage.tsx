@@ -55,7 +55,7 @@ export default function SearchResultsPage() {
             </button>
           ))}
         </div>
-        <SearchSourceSwitcher />
+        <SearchSourceSwitcher shouldNavigate />
       </div>
 
       <div
