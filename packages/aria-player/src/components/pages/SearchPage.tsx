@@ -3,6 +3,8 @@ import {
   selectSearchHistory,
   removeFromSearchHistory,
   selectSelectedSearchSource,
+  setSearch,
+  setDebouncedSearch,
 } from "../../features/search/searchSlice";
 import styles from "./SearchPage.module.css";
 import ClearIcon from "../../assets/xmark-solid.svg?react";
@@ -53,6 +55,8 @@ export default function SearchPage() {
                 >
                   <button
                     onClick={() => {
+                      dispatch(setSearch(item));
+                      dispatch(setDebouncedSearch(item));
                       dispatch(
                         push(
                           BASEPATH +
