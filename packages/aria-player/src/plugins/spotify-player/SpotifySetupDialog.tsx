@@ -4,6 +4,7 @@ import { Trans, useTranslation } from "react-i18next";
 import { i18n } from "i18next";
 import { isTauri } from "../../app/utils";
 import { open } from "@tauri-apps/plugin-shell";
+import CopyIcon from "../../assets/copy-regular.svg?react";
 
 const DEVELOPER_URL = "https://developer.spotify.com";
 
@@ -16,6 +17,8 @@ export default function SpotifySetupDialog(props: {
 }) {
   const { t } = useTranslation("spotify-player", { i18n: props.i18n });
   const [clientId, setClientId] = useState(props.initialClientId);
+  const [copied, setCopied] = useState(false);
+  const bold = { b: <strong /> };
 
   function handleContinue() {
     const trimmed = clientId.trim();
@@ -31,12 +34,12 @@ export default function SpotifySetupDialog(props: {
         <div className={styles.setupDescription}>{t("setup.description")}</div>
         <ol className={styles.setupSteps}>
           <li>
-            <strong>{t("setup.stepLabel", { number: 1 })}</strong>{" "}
             <Trans
               i18nKey="setup.step1"
               i18n={props.i18n}
               ns="spotify-player"
               components={{
+                ...bold,
                 a: (
                   <a
                     href={DEVELOPER_URL}
@@ -55,30 +58,77 @@ export default function SpotifySetupDialog(props: {
             />
           </li>
           <li>
-            <strong>{t("setup.stepLabel", { number: 2 })}</strong>{" "}
-            {t("setup.step2")}
-          </li>
-          <li>
-            <strong>{t("setup.stepLabel", { number: 3 })}</strong>{" "}
-            {t("setup.step3")}
-          </li>
-          <li>
-            <strong>{t("setup.stepLabel", { number: 4 })}</strong>{" "}
-            {t("setup.step4")}
-            <br />
-            <input
-              type="text"
-              className={styles.uriBlock}
-              readOnly
-              value={props.redirectUri}
-              size={props.redirectUri.length || 1}
+            <Trans
+              i18nKey="setup.step2"
+              i18n={props.i18n}
+              ns="spotify-player"
+              components={bold}
             />
           </li>
           <li>
-            <strong>{t("setup.stepLabel", { number: 5 })}</strong>{" "}
-            {t("setup.step5")}
+            <Trans
+              i18nKey="setup.step3"
+              i18n={props.i18n}
+              ns="spotify-player"
+              components={bold}
+            />
+          </li>
+          <li>
+            <Trans
+              i18nKey="setup.step4"
+              i18n={props.i18n}
+              ns="spotify-player"
+              components={bold}
+            />
+          </li>
+          <li>
+            <Trans
+              i18nKey="setup.step5"
+              i18n={props.i18n}
+              ns="spotify-player"
+              components={bold}
+            />
+            <br />
+            <span className={styles.uriBlockWrapper}>
+              <input
+                type="text"
+                className={styles.uriBlock}
+                readOnly
+                value={props.redirectUri}
+                size={props.redirectUri.length || 1}
+              />
+              <button
+                className={styles.uriCopyButton}
+                onClick={() => {
+                  navigator.clipboard.writeText(props.redirectUri);
+                  setCopied(true);
+                }}
+                title={t("setup.copyUri")}
+              >
+                <CopyIcon />
+              </button>
+            </span>
+            {copied && (
+              <span className={styles.copiedLabel}>{t("setup.copied")}</span>
+            )}
+          </li>
+          <li>
+            <Trans
+              i18nKey="setup.step6"
+              i18n={props.i18n}
+              ns="spotify-player"
+              components={bold}
+            />
           </li>
         </ol>
+        <label className={styles.clientIdLabel}>
+          <Trans
+            i18nKey="setup.clientIdLabel"
+            i18n={props.i18n}
+            ns="spotify-player"
+            components={bold}
+          />
+        </label>
         <input
           type="text"
           className={styles.clientIdInput}
@@ -92,7 +142,6 @@ export default function SpotifySetupDialog(props: {
             if (e.key === "Enter") handleContinue();
           }}
         />
-        <div className={styles.setupNotice}>{t("setup.notice")}</div>
         <div className={styles.setupButtons}>
           <button className="settings-button" onClick={props.onClose}>
             {t("setup.cancel")}

@@ -72,31 +72,78 @@
 .setupDescription {
   margin: 0;
   font-size: 0.9rem;
+  margin-bottom: 0.5rem;
 }
 
 .setupSteps {
   margin: 0;
   padding-left: 0;
-  list-style: none;
+  list-style-position: inside;
   font-size: 0.9rem;
 
   li + li {
-    margin-top: 0.75rem;
+    margin-top: 0.8rem;
+
+    &:last-child {
+      margin-top: 0.6rem;
+    }
   }
+}
+
+.uriBlockWrapper {
+  display: inline-flex;
+  align-items: center;
+  margin: 0.5rem 0 0;
+  background-color: var(--inset-background);
+  border-radius: 0.25rem;
+  padding: 0 0.5rem;
+  height: 1.65rem;
 }
 
 .uriBlock {
   font-family: "Courier New", Courier, monospace;
-  background-color: var(--inset-background);
-  padding: 0.2rem 0.4rem;
-  border-radius: 0.25rem;
+  background: none;
+  padding: 0;
+  margin: 0;
   font-size: 0.85rem;
-  display: inline-block;
-  margin: 0.2rem 0 0;
   border: none;
   outline: none;
   color: inherit;
   cursor: text;
+  height: 100%;
+}
+
+.uriCopyButton {
+  cursor: pointer;
+  color: inherit;
+  padding: 0;
+  margin-left: 0.25rem;
+  height: 100%;
+  display: inline-flex;
+  align-items: center;
+  opacity: 0.6;
+
+  &:hover {
+    opacity: 1;
+  }
+
+  svg {
+    display: block;
+    width: 0.9rem;
+    height: 0.9rem;
+    position: relative;
+    bottom: 1px;
+  }
+
+  &:active svg {
+    transform: scale(0.9);
+  }
+}
+
+.copiedLabel {
+  color: var(--secondary-text);
+  font-size: 0.8rem;
+  margin-left: 0.5rem;
 }
 
 .clientIdInput {
@@ -121,6 +168,11 @@
   }
 }
 
+.clientIdLabel {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+}
+
 .setupLink {
   color: var(--accent-color);
   text-decoration: none;
@@ -129,12 +181,6 @@
     text-decoration: underline;
     cursor: pointer;
   }
-}
-
-.setupNotice {
-  font-size: 0.75rem;
-  color: var(--secondary-text);
-  line-height: 1.4;
 }
 
 .setupButtons {
