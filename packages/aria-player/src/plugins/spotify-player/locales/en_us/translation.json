@@ -34,6 +34,7 @@
     "includeSavedAlbums": "Include songs from Saved Albums",
     "songCount": "{{count}} songs",
     "albumCount": "{{count}} albums",
+    "fetchGenres": "Include artist genre information",
     "continue": "Continue"
   },
   "playOnSpotify": "Play on Spotify"

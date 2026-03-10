@@ -5,6 +5,7 @@ import styles from "./spotify.module.css";
 export type LibraryItemSelection = {
   includeLikedSongs: boolean;
   includeSavedAlbums: boolean;
+  fetchGenres: boolean;
 };
 
 export default function LibraryItemsConfig({
@@ -23,6 +24,7 @@ export default function LibraryItemsConfig({
   const { t } = useTranslation("spotify-player", { i18n: i18nInstance });
 
   return (
+    <div>
     <table className={styles.libraryItemsConfig}>
       <tbody>
         <tr>
@@ -71,5 +73,19 @@ export default function LibraryItemsConfig({
         </tr>
       </tbody>
     </table>
+    <label className={`${styles.libraryItemLabel} ${styles.libraryExtraOptions}`}>
+      <input
+        type="checkbox"
+        checked={selection.fetchGenres}
+        onChange={(e) =>
+          onChange({
+            ...selection,
+            fetchGenres: e.target.checked,
+          })
+        }
+      />
+      {t("librarySetup.fetchGenres")}
+    </label>
+    </div>
   );
 }

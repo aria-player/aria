@@ -21,6 +21,7 @@ export type SpotifyConfig = {
   redirectUri?: string;
   includeLikedSongs?: boolean;
   includeSavedAlbums?: boolean;
+  fetchGenres?: boolean;
   likedSongsCount?: number;
   savedAlbumsCount?: number;
   librarySetupPending?: boolean;
@@ -58,11 +59,12 @@ export default function createSpotifyPlayer(
       host,
       config,
       i18n,
-      onSubmit: (includeLikedSongs, includeSavedAlbums) => {
+      onSubmit: (includeLikedSongs, includeSavedAlbums, fetchGenres) => {
         host.updateData({
           ...getConfig(),
           includeLikedSongs,
           includeSavedAlbums,
+          fetchGenres,
           librarySetupPending: false,
         });
         startLibraryLoad();
@@ -247,6 +249,7 @@ export default function createSpotifyPlayer(
     const config = { ...getConfig(), ...configOverride };
     const includeLikedSongs = config.includeLikedSongs !== false;
     const includeSavedAlbums = config.includeSavedAlbums !== false;
+    const fetchGenres = config.fetchGenres !== false;
     const existingTracks = host.getTracks();
     const albumArtistMapping: Record<string, string[]> = {};
     const artistIds = new Set<string>();
@@ -263,7 +266,9 @@ export default function createSpotifyPlayer(
       host.setSyncProgress({
         synced: progress,
         total:
-          totalTracks + totalAlbums * albumProgressMultiplier + artistIds.size,
+          totalTracks +
+          totalAlbums * albumProgressMultiplier +
+          (fetchGenres ? artistIds.size : 0),
       });
     };
 
@@ -387,69 +392,71 @@ export default function createSpotifyPlayer(
     if (removedTracks.length > 0) {
       host.removeLibraryTracks(removedTracks.map((track) => track.uri));
     }
-    const tracks = host
-      .getTracks()
-      .filter((track) => tracksInLibrary.has(track.uri));
-    const existingArtists = host.getArtists();
-    const artists = Array.from(artistIds);
-    const artistMetadata: ArtistMetadata[] = [];
-    const artistGenreMapping: Record<string, string[]> = {};
-    const artistBatchSize = 50;
-    for (
-      let i = 0;
-      i < artists.length;
-      i += artistBatchSize * maxConcurrentRequests
-    ) {
-      const requestsInBatch = Math.min(
-        maxConcurrentRequests,
-        Math.ceil((artists.length - i) / artistBatchSize)
-      );
-      const promises = [];
-      for (let j = 0; j < requestsInBatch; j++) {
-        const batchIds = artists
-          .slice(i + j * artistBatchSize, i + (j + 1) * artistBatchSize)
-          .join(",");
-        promises.push(
-          spotifyRequest(
-            `/artists?ids=${batchIds}`
-          ) as Promise<SpotifyApi.MultipleArtistsResponse>
+    if (fetchGenres) {
+      const tracks = host
+        .getTracks()
+        .filter((track) => tracksInLibrary.has(track.uri));
+      const existingArtists = host.getArtists();
+      const artists = Array.from(artistIds);
+      const artistMetadata: ArtistMetadata[] = [];
+      const artistGenreMapping: Record<string, string[]> = {};
+      const artistBatchSize = 50;
+      for (
+        let i = 0;
+        i < artists.length;
+        i += artistBatchSize * maxConcurrentRequests
+      ) {
+        const requestsInBatch = Math.min(
+          maxConcurrentRequests,
+          Math.ceil((artists.length - i) / artistBatchSize)
         );
-      }
-      const batchResults = await Promise.all(promises);
-      for (const artistResponse of batchResults) {
-        if (artistResponse && artistResponse.artists) {
-          for (const artist of artistResponse.artists) {
-            artistGenreMapping[artist.id] = artist.genres;
-            artistMetadata.push({
-              uri: artist.uri,
-              name: artist.name,
-              artworkUri: artist.images?.[0]?.url,
-            });
+        const promises = [];
+        for (let j = 0; j < requestsInBatch; j++) {
+          const batchIds = artists
+            .slice(i + j * artistBatchSize, i + (j + 1) * artistBatchSize)
+            .join(",");
+          promises.push(
+            spotifyRequest(
+              `/artists?ids=${batchIds}`
+            ) as Promise<SpotifyApi.MultipleArtistsResponse>
+          );
+        }
+        const batchResults = await Promise.all(promises);
+        for (const artistResponse of batchResults) {
+          if (artistResponse && artistResponse.artists) {
+            for (const artist of artistResponse.artists) {
+              artistGenreMapping[artist.id] = artist.genres;
+              artistMetadata.push({
+                uri: artist.uri,
+                name: artist.name,
+                artworkUri: artist.images?.[0]?.url,
+              });
+            }
+            incrementProgress(artistResponse.artists.length);
           }
-          incrementProgress(artistResponse.artists.length);
         }
       }
-    }
-    host.updateArtists(artistMetadata);
-    const currentArtistUris = new Set(artistMetadata.map((a) => a.uri));
-    const removedArtists = existingArtists
-      .filter((artist) => !currentArtistUris.has(artist.uri))
-      .map((artist) => artist.uri);
-    if (removedArtists.length > 0) {
-      host.removeArtists(removedArtists);
-    }
-    const updatedTracks = tracks.map((track) => {
-      if (!track.albumUri) {
-        return track;
+      host.updateArtists(artistMetadata);
+      const currentArtistUris = new Set(artistMetadata.map((a) => a.uri));
+      const removedArtists = existingArtists
+        .filter((artist) => !currentArtistUris.has(artist.uri))
+        .map((artist) => artist.uri);
+      if (removedArtists.length > 0) {
+        host.removeArtists(removedArtists);
       }
-      const artistIds = albumArtistMapping[track.albumUri];
-      return {
-        ...track,
-        genre: getUniqueGenresFromArtists(artistIds, artistGenreMapping),
-      };
-    });
-    if (!getConfig().accessToken) return;
-    host.updateLibraryTracks(updatedTracks);
+      const updatedTracks = tracks.map((track) => {
+        if (!track.albumUri) {
+          return track;
+        }
+        const artistIds = albumArtistMapping[track.albumUri];
+        return {
+          ...track,
+          genre: getUniqueGenresFromArtists(artistIds, artistGenreMapping),
+        };
+      });
+      if (!getConfig().accessToken) return;
+      host.updateLibraryTracks(updatedTracks);
+    }
   }
 
   function getTrackMetadata(
@@ -703,18 +710,21 @@ export default function createSpotifyPlayer(
         return undefined;
       }
 
-      const artistIds = new Set<string>();
-      trackResponse.artists.forEach((artist) => artistIds.add(artist.id));
-      trackResponse.album.artists.forEach((artist) => artistIds.add(artist.id));
+      let formattedGenres: string[] | undefined;
+      if (getConfig().fetchGenres !== false) {
+        const artistIds = new Set<string>();
+        trackResponse.artists.forEach((artist) => artistIds.add(artist.id));
+        trackResponse.album.artists.forEach((artist) => artistIds.add(artist.id));
 
-      const artistGenreMapping = await fetchArtistGenres(Array.from(artistIds));
-      const albumArtistIds = trackResponse.album.artists.map(
-        (artist) => artist.id
-      );
-      const formattedGenres = getUniqueGenresFromArtists(
-        albumArtistIds,
-        artistGenreMapping
-      );
+        const artistGenreMapping = await fetchArtistGenres(Array.from(artistIds));
+        const albumArtistIds = trackResponse.album.artists.map(
+          (artist) => artist.id
+        );
+        formattedGenres = getUniqueGenresFromArtists(
+          albumArtistIds,
+          artistGenreMapping
+        );
+      }
 
       return getTrackMetadata(
         trackResponse,
@@ -772,18 +782,22 @@ export default function createSpotifyPlayer(
         }
       }
 
-      const artists = Array.from(artistIds);
-      const artistGenreMapping = await fetchArtistGenres(artists);
-      const albumArtistIds = albumResponse.artists.map((artist) => artist.id);
-      const formattedGenres = getUniqueGenresFromArtists(
-        albumArtistIds,
-        artistGenreMapping
-      );
+      if (getConfig().fetchGenres !== false) {
+        const artists = Array.from(artistIds);
+        const artistGenreMapping = await fetchArtistGenres(artists);
+        const albumArtistIds = albumResponse.artists.map((artist) => artist.id);
+        const formattedGenres = getUniqueGenresFromArtists(
+          albumArtistIds,
+          artistGenreMapping
+        );
 
-      return tracks.map((track) => ({
-        ...track,
-        genre: formattedGenres,
-      }));
+        return tracks.map((track) => ({
+          ...track,
+          genre: formattedGenres,
+        }));
+      }
+
+      return tracks;
     },
 
     async getArtistInfo(uri: string) {
@@ -839,23 +853,27 @@ export default function createSpotifyPlayer(
         track.album.artists.forEach((artist) => artistIds.add(artist.id));
       }
 
-      const artists = Array.from(artistIds);
-      const artistGenreMapping = await fetchArtistGenres(artists);
+      if (getConfig().fetchGenres !== false) {
+        const artists = Array.from(artistIds);
+        const artistGenreMapping = await fetchArtistGenres(artists);
 
-      return tracks.map((track) => {
-        const albumArtistIds =
-          topTracksResponse.tracks
-            .find((t) => t.uri === track.uri)
-            ?.album.artists.map((artist) => artist.id) ?? [];
-        const formattedGenres = getUniqueGenresFromArtists(
-          albumArtistIds,
-          artistGenreMapping
-        );
-        return {
-          ...track,
-          genre: formattedGenres,
-        };
-      });
+        return tracks.map((track) => {
+          const albumArtistIds =
+            topTracksResponse.tracks
+              .find((t) => t.uri === track.uri)
+              ?.album.artists.map((artist) => artist.id) ?? [];
+          const formattedGenres = getUniqueGenresFromArtists(
+            albumArtistIds,
+            artistGenreMapping
+          );
+          return {
+            ...track,
+            genre: formattedGenres,
+          };
+        });
+      }
+
+      return tracks;
     },
 
     async getArtistAlbums(uri: string, startIndex: number, stopIndex: number) {
@@ -934,23 +952,27 @@ export default function createSpotifyPlayer(
           track.album.artists.forEach((artist) => artistIds.add(artist.id));
         }
 
-        const artists = Array.from(artistIds);
-        const artistGenreMapping = await fetchArtistGenres(artists);
+        if (getConfig().fetchGenres !== false) {
+          const artists = Array.from(artistIds);
+          const artistGenreMapping = await fetchArtistGenres(artists);
 
-        return tracks.map((track) => {
-          const albumArtistIds =
-            searchResponse.tracks?.items
-              .find((t) => t.uri === track.uri)
-              ?.album.artists.map((artist) => artist.id) ?? [];
-          const formattedGenres = getUniqueGenresFromArtists(
-            albumArtistIds,
-            artistGenreMapping
-          );
-          return {
-            ...track,
-            genre: formattedGenres,
-          };
-        });
+          return tracks.map((track) => {
+            const albumArtistIds =
+              searchResponse.tracks?.items
+                .find((t) => t.uri === track.uri)
+                ?.album.artists.map((artist) => artist.id) ?? [];
+            const formattedGenres = getUniqueGenresFromArtists(
+              albumArtistIds,
+              artistGenreMapping
+            );
+            return {
+              ...track,
+              genre: formattedGenres,
+            };
+          });
+        }
+
+        return tracks;
       };
     },
 
