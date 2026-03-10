@@ -404,6 +404,8 @@ export default function AllResultsPage() {
     songResults,
   ]);
 
+  const showLoadingSpinner = isLoading || isDebouncingExternalSearch;
+
   useEffect(() => {
     const resizeObserver = new ResizeObserver(() => {
       if (containerRef.current) {
@@ -417,7 +419,7 @@ export default function AllResultsPage() {
     }
 
     return () => resizeObserver.disconnect();
-  }, []);
+  }, [showLoadingSpinner]);
 
   const gridLayout = useMemo(() => {
     if (!containerWidth) return { columnCount: 0, columnWidth: 0 };
@@ -442,8 +444,6 @@ export default function AllResultsPage() {
   const viewAllSongs = () => dispatch(push(buildSearchRoute("songs")));
   const viewAllArtists = () => dispatch(push(buildSearchRoute("artists")));
   const viewAllAlbums = () => dispatch(push(buildSearchRoute("albums")));
-
-  const showLoadingSpinner = isLoading || isDebouncingExternalSearch;
 
   return (
     <div
