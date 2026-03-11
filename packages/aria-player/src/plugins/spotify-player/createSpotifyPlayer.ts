@@ -86,7 +86,7 @@ export default function createSpotifyPlayer(
         getOAuthToken: async (cb: (token: string) => void) => {
           cb((await getOrRefreshAccessToken())!);
         },
-        volume: host.getVolume() / 100,
+        volume: host.getMuted() ? 0 : host.getVolume() / 100,
       });
 
       player.addListener("ready", ({ device_id }) => {
@@ -1035,7 +1035,7 @@ export default function createSpotifyPlayer(
     },
 
     setVolume(volume: number) {
-      player?.setVolume(volume / 100);
+      player?.setVolume(host.getMuted() ? 0 : volume / 100);
     },
 
     setMuted(muted: boolean) {
