@@ -31,7 +31,7 @@ export default function QuickStart(props: {
       {showSetupDialog && (
         <SpotifySetupDialog
           redirectUri={props.redirectUri}
-          initialClientId={props.config.clientId ?? ""}
+          initialClientId={props.config.clientId ?? import.meta.env.VITE_SPOTIFY_CLIENT_ID ?? ""}
           onSubmit={handleSetupSubmit}
           onClose={() => setShowSetupDialog(false)}
           i18n={props.i18n}

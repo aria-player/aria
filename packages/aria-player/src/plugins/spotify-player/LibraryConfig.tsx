@@ -86,7 +86,7 @@ export default function LibraryConfig(props: {
       {showSetupDialog && (
         <SpotifySetupDialog
           redirectUri={props.redirectUri}
-          initialClientId={config.clientId ?? ""}
+          initialClientId={config.clientId ?? import.meta.env.VITE_SPOTIFY_CLIENT_ID ?? ""}
           onSubmit={handleSetupSubmit}
           onClose={() => setShowSetupDialog(false)}
           i18n={props.i18n}
