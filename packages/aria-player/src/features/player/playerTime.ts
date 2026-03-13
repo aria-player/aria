@@ -1,6 +1,11 @@
 import { RootState, store } from "../../app/store";
 import { selectCurrentTrack } from "../currentSelectors";
-import { getSourceHandle } from "../plugins/pluginsSlice";
+import {
+  getSourceHandle,
+  pluginHandles,
+  selectActivePlugins,
+  selectPluginInfo,
+} from "../plugins/pluginsSlice";
 import { nextTrack, previousTrack, selectRepeatMode } from "./playerSlice";
 import { RepeatMode } from "./playerTypes";
 
@@ -30,11 +35,24 @@ export function resetTimer() {
 export function seek(position: number) {
   lastStartPosition = position;
   lastStartTimestamp = Date.now();
-  const currentTrack = selectCurrentTrack(store.getState() as RootState);
+  const state = store.getState() as RootState;
+  const currentTrack = selectCurrentTrack(state);
   if (!currentTrack) return;
 
   const plugin = getSourceHandle(currentTrack.source);
   plugin?.setTime(position);
+
+  const plugins = selectPluginInfo(state);
+  const activePlugins = selectActivePlugins(state);
+  for (const pluginId of activePlugins) {
+    if (plugins[pluginId].capabilities?.includes("integration")) {
+      try {
+        pluginHandles[pluginId]?.onSeek?.(position, currentTrack.duration);
+      } catch (e) {
+        console.error(`Error invoking onSeek for ${pluginId}:`, e);
+      }
+    }
+  }
 }
 
 export function restartOrPreviousTrack() {

@@ -126,7 +126,11 @@ export interface IntegrationHandle extends BaseHandle {
   /**
    * Called when playback is resumed.
    */
-  onResume?: () => void;
+  onResume?: (position: number, duration?: number | null) => void;
+  /**
+   * Called when seeking to a new position in the current track.
+   */
+  onSeek?: (position: number, duration?: number | null) => void;
   /**
    * Called when playback is stopped, e.g. after reaching the end of the queue.
    */
@@ -157,6 +161,18 @@ export interface IntegrationCallbacks extends BaseCallbacks {
    * Skip to the previous track, or restart the current track if more than 2 seconds have elapsed.
    */
   previous: () => void;
+  /**
+   * Seek to a specific position in the current track, in milliseconds.
+   */
+  seek: (position: number) => void;
+  /**
+   * Returns the current playback position, in milliseconds.
+   */
+  getPosition: () => number;
+  /**
+   * Returns information about the current track, or null if no track is playing.
+   */
+  getCurrentTrack: () => Track | null;
 }
 
 export type AttributionProps = {

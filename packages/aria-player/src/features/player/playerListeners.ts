@@ -9,7 +9,12 @@ import {
 import { SourceHandle } from "../../../../types/plugins";
 import { loadAndPlayTrack, selectStatus } from "./playerSlice";
 import { Status } from "./playerTypes";
-import { resetTimer, startTimer, stopTimer } from "./playerTime";
+import {
+  getElapsedPlayerTime,
+  resetTimer,
+  startTimer,
+  stopTimer,
+} from "./playerTime";
 import { isAnyOf } from "@reduxjs/toolkit";
 import {
   selectCurrentTrack,
@@ -96,10 +101,15 @@ export function setupPlayerListeners() {
       if (status === Status.Playing) {
         currentSource?.resume();
         startTimer();
+        const resumePosition = getElapsedPlayerTime();
+        const currentTrack = selectCurrentTrack(state);
         for (const plugin of activePlugins) {
           if (plugins[plugin].capabilities?.includes("integration")) {
             try {
-              pluginHandles[plugin]?.onResume?.();
+              pluginHandles[plugin]?.onResume?.(
+                resumePosition,
+                currentTrack?.duration
+              );
             } catch (e) {
               console.error(`Error invoking onResume for ${plugin}:`, e);
             }

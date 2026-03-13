@@ -1,4 +1,5 @@
 import { store } from "../../app/store";
+import { selectCurrentTrack } from "../currentSelectors";
 import {
   getAlbumId,
   getArtistId,
@@ -25,6 +26,8 @@ import { nextTrack, pause, resume, stop } from "../player/playerSlice";
 import {
   restartOrNextTrack,
   restartOrPreviousTrack,
+  seek,
+  getElapsedPlayerTime,
 } from "../player/playerTime";
 import { showAlert } from "./pluginsAlerts";
 import { addArtists, removeArtists } from "../artists/artistsSlice";
@@ -209,6 +212,9 @@ export const getIntegrationCallbacks = (
     stop: () => store.dispatch(stop()),
     next: () => store.dispatch(nextTrack()),
     previous: () => restartOrPreviousTrack(),
+    seek: (positionMs: number) => seek(positionMs),
+    getPosition: () => getElapsedPlayerTime(),
+    getCurrentTrack: () => selectCurrentTrack(store.getState()) ?? null,
   };
 };
 
