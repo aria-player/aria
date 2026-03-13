@@ -15,18 +15,31 @@ export default function createMediaSession(
     return null;
   }
 
+  // This ensures that the media session remains active even when the player is paused/stopped
+  function createSilentAudio(): HTMLAudioElement {
+    const audio = document.createElement("audio");
+    audio.src =
+      "data:audio/wav;base64,UklGRiUAAABXQVZFZm10IBAAAAABAAEAgD4AAAB9AAABAAEAZGF0YQEAAACA";
+    audio.loop = true;
+    return audio;
+  }
+
+  const silentAudio = createSilentAudio();
   navigator.mediaSession.metadata = null;
   navigator.mediaSession.setActionHandler("play", () => {
     host.resume();
     navigator.mediaSession.playbackState = "playing";
+    silentAudio.play().catch(() => {});
   });
   navigator.mediaSession.setActionHandler("pause", () => {
     host.pause();
     navigator.mediaSession.playbackState = "paused";
+    silentAudio.pause();
   });
   navigator.mediaSession.setActionHandler("stop", () => {
     host.stop();
     navigator.mediaSession.playbackState = "none";
+    silentAudio.pause();
   });
   navigator.mediaSession.setActionHandler("nexttrack", host.next);
   navigator.mediaSession.setActionHandler("previoustrack", host.previous);
@@ -82,21 +95,28 @@ export default function createMediaSession(
     onPlay: (track: Track, artwork?: string) => {
       updateMetadata(track, artwork);
       updatePosition(0, track.duration);
+      silentAudio.play().catch(() => {});
     },
     onPause: () => {
       navigator.mediaSession.playbackState = "paused";
+      silentAudio.pause();
     },
     onResume: (positionMs: number, duration?: number | null) => {
       navigator.mediaSession.playbackState = "playing";
       updatePosition(positionMs, duration);
+      silentAudio.play().catch(() => {});
     },
     onSeek: (positionMs: number, duration?: number | null) => {
       updatePosition(positionMs, duration);
     },
     onStop: () => {
+      navigator.mediaSession.metadata = null;
       navigator.mediaSession.playbackState = "none";
+      silentAudio.pause();
     },
     dispose: () => {
+      silentAudio.pause();
+      silentAudio.removeAttribute("src");
       if ("mediaSession" in navigator) {
         navigator.mediaSession.metadata = null;
         navigator.mediaSession.setActionHandler("play", null);
