@@ -30,8 +30,26 @@ const getCurrentSource = (state: RootState): SourceHandle | undefined => {
 };
 
 export function setupPlayerListeners() {
-  listenForAction(isAnyOf(loadAndPlayTrack.fulfilled), () => {
+  listenForAction(isAnyOf(loadAndPlayTrack.fulfilled), async (state) => {
     startTimer();
+    const currentTrack = selectCurrentTrack(state);
+    if (!currentTrack) return;
+    const plugins = selectPluginInfo(state);
+    const activePlugins = selectActivePlugins(state);
+    const artwork = currentTrack.artworkUri
+      ? await getCurrentSource(state)?.getTrackArtwork?.(
+          currentTrack.artworkUri
+        )
+      : undefined;
+    for (const plugin of activePlugins) {
+      if (plugins[plugin].capabilities?.includes("integration")) {
+        try {
+          pluginHandles[plugin]?.onPlay?.(currentTrack, artwork);
+        } catch (e) {
+          console.error(`Error invoking onPlay for ${plugin}:`, e);
+        }
+      }
+    }
   });
 
   listenForChange(
@@ -54,23 +72,6 @@ export function setupPlayerListeners() {
       });
       if (state.player.currentTrack != null) {
         dispatch(loadAndPlayTrack(state.player.currentTrack.trackId));
-      }
-      const currentTrack = selectCurrentTrack(state);
-      if (!currentTrack) return;
-      const plugins = selectPluginInfo(state);
-      const artwork = currentTrack.artworkUri
-        ? await getCurrentSource(state)?.getTrackArtwork?.(
-            currentTrack.artworkUri
-          )
-        : undefined;
-      for (const plugin of activePlugins) {
-        if (plugins[plugin].capabilities?.includes("integration")) {
-          try {
-            pluginHandles[plugin]?.onPlay?.(currentTrack, artwork);
-          } catch (e) {
-            console.error(`Error invoking onPlay for ${plugin}:`, e);
-          }
-        }
       }
     }
   );
