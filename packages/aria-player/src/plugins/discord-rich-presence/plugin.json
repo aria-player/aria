@@ -1,0 +1,7 @@
+{
+  "id": "discord-rich-presence",
+  "name": "Discord Rich Presence",
+  "needsTauri": true,
+  "main": "createDiscordRichPresence.ts",
+  "capabilities": ["integration"]
+}

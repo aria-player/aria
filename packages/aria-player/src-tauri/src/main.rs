@@ -12,6 +12,7 @@ mod utils;
 use serde_json::json;
 use std::env::consts::OS;
 use std::path::PathBuf;
+use std::sync::Mutex;
 use tauri::{
     tray::{TrayIconBuilder, TrayIconEvent},
     Emitter, Manager, WindowEvent, Wry,
@@ -118,6 +119,9 @@ fn main() {
             }
             _ => {}
         })
+        .manage(Mutex::new(
+            crate::plugins::discord_rich_presence::DiscordWorker::new(),
+        ))
         .invoke_handler(tauri::generate_handler![
             commands::greet,
             commands::ready,
@@ -135,7 +139,10 @@ fn main() {
             crate::plugins::apple_music_player::open_auth_window,
             crate::plugins::apple_music_player::close_auth_window,
             crate::plugins::apple_music_player::post_message_to_auth_window,
-            crate::plugins::apple_music_player::post_message_to_main_window
+            crate::plugins::apple_music_player::post_message_to_main_window,
+            crate::plugins::discord_rich_presence::connect_discord_rich_presence,
+            crate::plugins::discord_rich_presence::set_discord_activity,
+            crate::plugins::discord_rich_presence::clear_discord_activity,
         ]);
     if OS != "windows" {
         app_builder = app_builder.menu(|handle| {

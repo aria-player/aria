@@ -173,6 +173,14 @@ export interface IntegrationCallbacks extends BaseCallbacks {
    * Returns information about the current track, or null if no track is playing.
    */
   getCurrentTrack: () => Track | null;
+  /**
+   * Returns the artwork URL for the current track, or undefined if unavailable.
+   */
+  getCurrentArtwork: () => Promise<string | undefined>;
+  /**
+   * Returns the display name for the given source plugin, or undefined if unavailable.
+   */
+  getSourceDisplayName: (source: string) => string | undefined;
 }
 
 export type AttributionProps = {

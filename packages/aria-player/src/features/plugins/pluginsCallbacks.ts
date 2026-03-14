@@ -17,6 +17,8 @@ import {
   selectTrackById,
 } from "../tracks/tracksSlice";
 import {
+  getSourceHandle,
+  pluginHandles,
   selectActivePlugins,
   selectPluginInfo,
   setPluginData,
@@ -215,6 +217,16 @@ export const getIntegrationCallbacks = (
     seek: (positionMs: number) => seek(positionMs),
     getPosition: () => getElapsedPlayerTime(),
     getCurrentTrack: () => selectCurrentTrack(store.getState()) ?? null,
+    getCurrentArtwork: async () => {
+      const currentTrack = selectCurrentTrack(store.getState());
+      if (!currentTrack?.artworkUri) return undefined;
+      return getSourceHandle(currentTrack.source)?.getTrackArtwork?.(
+        currentTrack.artworkUri
+      );
+    },
+    getSourceDisplayName: (source: string) =>
+      pluginHandles[source]?.displayName ??
+      selectPluginInfo(store.getState())[source]?.name,
   };
 };
 
