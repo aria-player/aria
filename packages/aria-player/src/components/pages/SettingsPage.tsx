@@ -15,10 +15,7 @@ export default function SettingsPage() {
   const { onScroll } = useScrollDetection();
 
   return (
-    <div
-      className={styles.settings}
-      onScroll={(e) => onScroll(e.currentTarget.scrollTop)}
-    >
+    <div className={styles.settings}>
       <div className={styles.links}>
         {Object.values(SettingsSection).map((section) => (
           <button
@@ -38,8 +35,13 @@ export default function SettingsPage() {
           </button>
         ))}
       </div>
-      <div className={styles.outlet}>
-        <Outlet />
+      <div
+        className={styles.outlet}
+        onScroll={(e) => onScroll(e.currentTarget.scrollTop)}
+      >
+        <div className={styles.outletInner}>
+          <Outlet />
+        </div>
       </div>
     </div>
   );

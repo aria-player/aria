@@ -1,22 +1,30 @@
 .settings {
   display: flex;
-  justify-content: center;
-  overflow-y: auto;
+  overflow: hidden;
+  height: 100%;
 }
 
 .outlet {
-  width: 100%;
-  flex-grow: 1;
-  padding: 1rem 2rem;
+  flex: 1;
+  max-width: calc(50% + 20rem);
+  min-width: 0;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+
+.outletInner {
   max-width: 40rem;
-  margin-right: 5%;
+  padding: 0 2rem;
 }
 
 .links {
   display: flex;
   flex-direction: column;
-  padding: 1rem;
+  flex-shrink: 0;
+  padding: 0.5rem;
   width: 12rem;
+  margin-left: auto;
+  overflow-y: auto;
 }
 
 .link {
