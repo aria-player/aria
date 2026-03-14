@@ -13,11 +13,9 @@ use tauri_plugin_opener::OpenerExt;
 fn is_placeholder_file(path: &Path) -> bool {
     use std::os::windows::fs::MetadataExt;
     const FILE_ATTRIBUTE_RECALL_ON_DATA_ACCESS: u32 = 0x00400000;
-    const FILE_ATTRIBUTE_RECALL_ON_OPEN: u32 = 0x00100000;
     if let Ok(meta) = fs::metadata(path) {
         let attrs = meta.file_attributes();
         (attrs & FILE_ATTRIBUTE_RECALL_ON_DATA_ACCESS) != 0
-            || (attrs & FILE_ATTRIBUTE_RECALL_ON_OPEN) != 0
     } else {
         false
     }
