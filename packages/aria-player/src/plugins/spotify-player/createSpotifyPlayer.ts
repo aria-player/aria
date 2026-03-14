@@ -714,9 +714,13 @@ export default function createSpotifyPlayer(
       if (getConfig().fetchGenres !== false) {
         const artistIds = new Set<string>();
         trackResponse.artists.forEach((artist) => artistIds.add(artist.id));
-        trackResponse.album.artists.forEach((artist) => artistIds.add(artist.id));
+        trackResponse.album.artists.forEach((artist) =>
+          artistIds.add(artist.id)
+        );
 
-        const artistGenreMapping = await fetchArtistGenres(Array.from(artistIds));
+        const artistGenreMapping = await fetchArtistGenres(
+          Array.from(artistIds)
+        );
         const albumArtistIds = trackResponse.album.artists.map(
           (artist) => artist.id
         );

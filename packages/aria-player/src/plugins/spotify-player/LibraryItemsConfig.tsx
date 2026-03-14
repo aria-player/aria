@@ -25,67 +25,69 @@ export default function LibraryItemsConfig({
 
   return (
     <div>
-    <table className={styles.libraryItemsConfig}>
-      <tbody>
-        <tr>
-          <td>
-            <label className={styles.libraryItemLabel}>
-              <input
-                type="checkbox"
-                checked={selection.includeLikedSongs}
-                onChange={(e) =>
-                  onChange({
-                    ...selection,
-                    includeLikedSongs: e.target.checked,
-                  })
-                }
-              />
-              {t("librarySetup.includeLikedSongs")}
-            </label>
-          </td>
-          <td className={styles.libraryItemCount}>
-            {likedSongsCount !== undefined
-              ? t("librarySetup.songCount", { count: likedSongsCount })
-              : ""}
-          </td>
-        </tr>
-        <tr>
-          <td>
-            <label className={styles.libraryItemLabel}>
-              <input
-                type="checkbox"
-                checked={selection.includeSavedAlbums}
-                onChange={(e) =>
-                  onChange({
-                    ...selection,
-                    includeSavedAlbums: e.target.checked,
-                  })
-                }
-              />
-              {t("librarySetup.includeSavedAlbums")}
-            </label>
-          </td>
-          <td className={styles.libraryItemCount}>
-            {savedAlbumsCount !== undefined
-              ? t("librarySetup.albumCount", { count: savedAlbumsCount })
-              : ""}
-          </td>
-        </tr>
-      </tbody>
-    </table>
-    <label className={`${styles.libraryItemLabel} ${styles.libraryExtraOptions}`}>
-      <input
-        type="checkbox"
-        checked={selection.fetchGenres}
-        onChange={(e) =>
-          onChange({
-            ...selection,
-            fetchGenres: e.target.checked,
-          })
-        }
-      />
-      {t("librarySetup.fetchGenres")}
-    </label>
+      <table className={styles.libraryItemsConfig}>
+        <tbody>
+          <tr>
+            <td>
+              <label className={styles.libraryItemLabel}>
+                <input
+                  type="checkbox"
+                  checked={selection.includeLikedSongs}
+                  onChange={(e) =>
+                    onChange({
+                      ...selection,
+                      includeLikedSongs: e.target.checked,
+                    })
+                  }
+                />
+                {t("librarySetup.includeLikedSongs")}
+              </label>
+            </td>
+            <td className={styles.libraryItemCount}>
+              {likedSongsCount !== undefined
+                ? t("librarySetup.songCount", { count: likedSongsCount })
+                : ""}
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label className={styles.libraryItemLabel}>
+                <input
+                  type="checkbox"
+                  checked={selection.includeSavedAlbums}
+                  onChange={(e) =>
+                    onChange({
+                      ...selection,
+                      includeSavedAlbums: e.target.checked,
+                    })
+                  }
+                />
+                {t("librarySetup.includeSavedAlbums")}
+              </label>
+            </td>
+            <td className={styles.libraryItemCount}>
+              {savedAlbumsCount !== undefined
+                ? t("librarySetup.albumCount", { count: savedAlbumsCount })
+                : ""}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <label
+        className={`${styles.libraryItemLabel} ${styles.libraryExtraOptions}`}
+      >
+        <input
+          type="checkbox"
+          checked={selection.fetchGenres}
+          onChange={(e) =>
+            onChange({
+              ...selection,
+              fetchGenres: e.target.checked,
+            })
+          }
+        />
+        {t("librarySetup.fetchGenres")}
+      </label>
     </div>
   );
 }

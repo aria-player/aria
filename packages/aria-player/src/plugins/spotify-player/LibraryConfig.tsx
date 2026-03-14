@@ -18,7 +18,11 @@ export function showLibrarySetupDialog({
   host: SourceCallbacks;
   config: SpotifyConfig;
   i18n: i18n;
-  onSubmit: (includeLikedSongs: boolean, includeSavedAlbums: boolean, fetchGenres: boolean) => void;
+  onSubmit: (
+    includeLikedSongs: boolean,
+    includeSavedAlbums: boolean,
+    fetchGenres: boolean
+  ) => void;
 }) {
   let state: LibraryItemSelection = {
     includeLikedSongs: config.includeLikedSongs !== false,
@@ -41,7 +45,12 @@ export function showLibrarySetupDialog({
       />
     ),
     closeLabel: i18nInstance.t("spotify-player:librarySetup.continue"),
-    onClose: () => onSubmit(state.includeLikedSongs, state.includeSavedAlbums, state.fetchGenres),
+    onClose: () =>
+      onSubmit(
+        state.includeLikedSongs,
+        state.includeSavedAlbums,
+        state.fetchGenres
+      ),
   });
 }
 
@@ -86,7 +95,9 @@ export default function LibraryConfig(props: {
       {showSetupDialog && (
         <SpotifySetupDialog
           redirectUri={props.redirectUri}
-          initialClientId={config.clientId ?? import.meta.env.VITE_SPOTIFY_CLIENT_ID ?? ""}
+          initialClientId={
+            config.clientId ?? import.meta.env.VITE_SPOTIFY_CLIENT_ID ?? ""
+          }
           onSubmit={handleSetupSubmit}
           onClose={() => setShowSetupDialog(false)}
           i18n={props.i18n}
