@@ -78,12 +78,15 @@ window.React = React;
 window.ReactDOM = ReactDOM;
 
 // Allow plugins to authenticate with OAuth
-if (window.location.search.includes("code")) {
+if (
+  window.location.search.includes("code") ||
+  window.location.search.includes("token")
+) {
   const params = new URLSearchParams(window.location.search);
   window.opener.postMessage(
     {
       type: "OAuthCode",
-      code: params.get("code"),
+      code: params.get("code") ?? params.get("token"),
       state: params.get("state"),
     },
     window.location.origin

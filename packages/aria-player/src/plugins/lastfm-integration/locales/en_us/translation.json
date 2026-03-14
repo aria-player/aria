@@ -1,0 +1,11 @@
+{
+  "settings": {
+    "connectButton": "Connect to Last.fm",
+    "connected": "Connected as {{username}}",
+    "disconnectButton": "Disconnect from Last.fm"
+  },
+  "error": {
+    "authFailed": "Login failed",
+    "authFailedMessage": "Could not connect to Last.fm."
+  }
+}

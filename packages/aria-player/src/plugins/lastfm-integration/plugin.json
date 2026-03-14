@@ -1,0 +1,6 @@
+{
+  "id": "lastfm-integration",
+  "name": "Last.fm",
+  "main": "createLastfmIntegration.tsx",
+  "capabilities": ["integration"]
+}
