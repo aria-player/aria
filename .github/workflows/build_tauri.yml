@@ -117,6 +117,9 @@ jobs:
           TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
           VITE_APPLE_MUSIC_TOKEN_ENDPOINT: ${{ vars.VITE_APPLE_MUSIC_TOKEN_ENDPOINT }}
+          VITE_DISCORD_CLIENT_ID: ${{ vars.VITE_DISCORD_CLIENT_ID }}
+          VITE_LASTFM_API_KEY: ${{ vars.VITE_LASTFM_API_KEY }}
+          VITE_LASTFM_API_SECRET: ${{ vars.VITE_LASTFM_API_SECRET }}
         with:
           tagName: ${{ steps.release_args.outputs.tagName }}
           releaseName: ${{ steps.release_args.outputs.releaseName }}
