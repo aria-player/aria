@@ -14,7 +14,7 @@ import {
   setPluginEnabled,
   uninstallPlugin,
 } from "../../../features/plugins/pluginsSlice";
-import { defaultPluginInfo } from "../../../plugins/plugins";
+import { defaultPluginInfo, optionalPlugins } from "../../../plugins/plugins";
 import RemoveIcon from "../../../assets/trash-can-solid.svg?react";
 
 export function PluginsPage() {
@@ -25,10 +25,6 @@ export function PluginsPage() {
   const activePlugins = useAppSelector(selectActivePlugins);
   const plugins = useAppSelector(selectPluginInfo);
   const pluginData = useAppSelector(selectPluginData);
-
-  function shouldShowPlugin(plugin: PluginId) {
-    return !(plugins[plugin].needsTauri && !isTauri());
-  }
 
   const showPluginFilePicker = async () => {
     try {
@@ -57,8 +53,10 @@ export function PluginsPage() {
 
   const availablePlugins = Object.keys(plugins).filter(
     (plugin) =>
-      !Object.keys(defaultPluginInfo).includes(plugin) ||
-      import.meta.env.VITE_ALLOW_MANAGING_DEFAULT_PLUGINS == "true"
+      !(plugins[plugin].needsTauri && !isTauri()) &&
+      (!Object.keys(defaultPluginInfo).includes(plugin) ||
+        optionalPlugins.includes(plugin) ||
+        import.meta.env.VITE_ALLOW_MANAGING_DEFAULT_PLUGINS == "true")
   );
 
   return (
@@ -70,56 +68,53 @@ export function PluginsPage() {
         <h4 className="settings-heading">
           {t("settings.plugins.availablePlugins")}
         </h4>
-        {availablePlugins.map(
-          (plugin, index) =>
-            shouldShowPlugin(plugin) && (
-              <React.Fragment key={index}>
-                <div className={styles.plugin}>
-                  <input
-                    type="checkbox"
-                    readOnly
-                    checked={enabledPlugins.includes(plugin)}
-                    onClick={async () => {
-                      if (enabledPlugins.includes(plugin)) {
-                        const confirmed = await confirm(
-                          t("settings.plugins.confirmDisable", {
-                            plugin: plugins[plugin].name,
-                          })
-                        );
-                        if (!confirmed) {
-                          return;
-                        }
-                      }
-                      dispatch(
-                        setPluginEnabled({
-                          plugin: plugin,
-                          enabled: !enabledPlugins.includes(plugin),
-                        })
-                      );
-                    }}
-                  />
-                  {plugins[plugin].name}
-                  {!Object.keys(defaultPluginInfo).includes(plugin) && (
-                    <button
-                      onClick={async () => {
-                        const confirmed = await confirm(
-                          t("settings.plugins.confirmUninstall", {
-                            plugin: plugins[plugin].name,
-                          })
-                        );
-                        if (!confirmed) return;
-                        dispatch(uninstallPlugin(plugin));
-                      }}
-                      className={styles.removeButton}
-                      title={t("settings.plugins.uninstall")}
-                    >
-                      <RemoveIcon />
-                    </button>
-                  )}
-                </div>
-              </React.Fragment>
-            )
-        )}
+        {availablePlugins.map((plugin, index) => (
+          <React.Fragment key={index}>
+            <div className={styles.plugin}>
+              <input
+                type="checkbox"
+                readOnly
+                checked={enabledPlugins.includes(plugin)}
+                onClick={async () => {
+                  if (enabledPlugins.includes(plugin)) {
+                    const confirmed = await confirm(
+                      t("settings.plugins.confirmDisable", {
+                        plugin: plugins[plugin].name,
+                      })
+                    );
+                    if (!confirmed) {
+                      return;
+                    }
+                  }
+                  dispatch(
+                    setPluginEnabled({
+                      plugin: plugin,
+                      enabled: !enabledPlugins.includes(plugin),
+                    })
+                  );
+                }}
+              />
+              {plugins[plugin].name}
+              {!Object.keys(defaultPluginInfo).includes(plugin) && (
+                <button
+                  onClick={async () => {
+                    const confirmed = await confirm(
+                      t("settings.plugins.confirmUninstall", {
+                        plugin: plugins[plugin].name,
+                      })
+                    );
+                    if (!confirmed) return;
+                    dispatch(uninstallPlugin(plugin));
+                  }}
+                  className={styles.removeButton}
+                  title={t("settings.plugins.uninstall")}
+                >
+                  <RemoveIcon />
+                </button>
+              )}
+            </div>
+          </React.Fragment>
+        ))}
         {availablePlugins.length == 0 ? (
           <div className={styles.alert}>
             <i>{t("settings.plugins.noPlugins")}</i>

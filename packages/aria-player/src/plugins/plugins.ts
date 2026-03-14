@@ -1,6 +1,7 @@
 import { PluginInfo } from "../../../types/plugins";
 
 export const pluginFormatVersion = import.meta.env.TYPES_PACKAGE_VERSION;
+export const optionalPlugins = ["discord-rich-presence"];
 export const defaultPluginInfo: Record<string, PluginInfo> = {};
 export const defaultPluginScripts: Record<string, unknown> = {};
 
