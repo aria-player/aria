@@ -8,6 +8,7 @@
     "remove": "Remove",
     "currentFolder": "Folder: {{folder}}",
     "noFolder": "None set",
-    "folderNotLoaded": "Folder not currently loaded. Please locate the '{{folder}}' folder."
+    "folderNotLoaded": "Folder not currently loaded. Please locate the '{{folder}}' folder.",
+    "showAttribution": "Show icons to distinguish local files"
   }
 }

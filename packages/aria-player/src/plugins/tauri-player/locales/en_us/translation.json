@@ -10,7 +10,8 @@
     "path": "Path",
     "tracks": "Tracks",
     "actions": "Actions",
-    "noFolders": "No folders added"
+    "noFolders": "No folders added",
+    "showAttribution": "Show icons to distinguish local files"
   },
   "showInFileManager": "Show in file manager"
 }

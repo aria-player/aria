@@ -59,4 +59,16 @@ body {
     background-color: var(--settings-select-background);
     font-size: 0.9rem;
   }
+
+  .settings-checkbox-container {
+    display: flex;
+    align-items: center;
+  }
+
+  .settings-checkbox {
+    width: 1.25rem;
+    height: 1.25rem;
+    margin-right: 0.75rem;
+    cursor: pointer;
+  }
 }

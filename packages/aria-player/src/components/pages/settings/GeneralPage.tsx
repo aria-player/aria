@@ -107,9 +107,9 @@ export function GeneralPage() {
       {isTauri() && platform != Platform.Mac && (
         <section className="settings-section">
           <h4 className="settings-heading">{t("settings.general.behavior")}</h4>
-          <div>
+          <div className="settings-checkbox-container">
             <input
-              className={styles.checkbox}
+              className="settings-checkbox"
               type="checkbox"
               checked={minimizeToTray ?? false}
               onChange={handleCheckboxChange}

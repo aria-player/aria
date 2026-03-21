@@ -1,6 +1,7 @@
 import { Track, TrackMetadata, TrackUri } from "../../../../types/tracks";
 import { SourceCallbacks, SourceHandle } from "../../../../types/plugins";
 import { LibraryConfig } from "./LibraryConfig";
+import Attribution from "./Attribution";
 import { wrap } from "comlink";
 import { i18n } from "i18next";
 import en_us from "./locales/en_us/translation.json";
@@ -9,6 +10,7 @@ import { createWebAudioBackend } from "../../app/audio";
 
 export type WebPlayerData = {
   folder: string;
+  showAttribution?: boolean;
 };
 
 export default function createWebPlayer(
@@ -124,6 +126,14 @@ export default function createWebPlayer(
     displayName: t("web-player:localFiles"),
 
     disableAutomaticTrackSkip: true,
+
+    Attribution: (props) =>
+      Attribution({
+        ...props,
+        i18n,
+        showAttribution:
+          (host.getData() as WebPlayerData).showAttribution ?? false,
+      }),
 
     LibraryConfig: (props) =>
       LibraryConfig({ ...props, host, loaded, pickDirectory, i18n }),

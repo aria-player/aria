@@ -4,11 +4,14 @@ import { i18n } from "i18next";
 import { useTranslation } from "react-i18next";
 
 export function LibraryConfig(props: {
+  data: object;
   folders: Record<string, string[]>;
   addFolder: () => void;
   removeFolder: (folder: string) => void;
+  updateData: (data: object) => void;
   i18n: i18n;
 }) {
+  const tauriData = props.data as { showAttribution?: boolean };
   const { t } = useTranslation("tauri-player", { i18n: props.i18n });
 
   return (
@@ -54,6 +57,19 @@ export function LibraryConfig(props: {
       <button className="settings-button" onClick={props.addFolder}>
         {t("config.addFolder")}
       </button>
+      <p>
+        <div className="settings-checkbox-container">
+          <input
+            type="checkbox"
+            className="settings-checkbox"
+            checked={tauriData.showAttribution ?? false}
+            onChange={(e) =>
+              props.updateData({ showAttribution: e.target.checked })
+            }
+          />{" "}
+          {t("config.showAttribution")}
+        </div>
+      </p>
     </>
   );
 }

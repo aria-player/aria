@@ -173,9 +173,9 @@ export function AppearancePage() {
           <h4 className="settings-heading">
             {t("settings.appearance.window")}
           </h4>
-          <div>
+          <div className="settings-checkbox-container">
             <input
-              className={styles.checkbox}
+              className="settings-checkbox"
               type="checkbox"
               checked={decorations ?? false}
               onChange={handleDecorationsChange}
@@ -188,9 +188,9 @@ export function AppearancePage() {
         <h4 className="settings-heading">
           {t("settings.appearance.navigation")}
         </h4>
-        <div>
+        <div className="settings-checkbox-container">
           <input
-            className={styles.checkbox}
+            className="settings-checkbox"
             type="checkbox"
             checked={alwaysShowNavigation}
             onChange={handleNavigationChange}

@@ -7,10 +7,12 @@ import { i18n } from "i18next";
 import en_us from "./locales/en_us/translation.json";
 import QuickStart from "./QuickStart";
 import { LibraryConfig } from "./LibraryConfig";
+import Attribution from "./Attribution";
 import { createWebAudioBackend } from "../../app/audio";
 
 export type TauriPlayerData = {
   folders: Record<string, string[]>;
+  showAttribution?: boolean;
 };
 
 export default function createTauriPlayer(
@@ -182,8 +184,23 @@ export default function createTauriPlayer(
 
     disableAutomaticTrackSkip: true,
 
+    Attribution: (props) =>
+      Attribution({
+        ...props,
+        i18n,
+        showAttribution:
+          (host.getData() as TauriPlayerData).showAttribution ?? false,
+      }),
+
     LibraryConfig: (props) =>
-      LibraryConfig({ ...props, folders, addFolder, removeFolder, i18n }),
+      LibraryConfig({
+        ...props,
+        folders,
+        addFolder,
+        removeFolder,
+        i18n,
+        updateData: host.updateData,
+      }),
 
     QuickStart: (props) => QuickStart({ ...props, addFolder, i18n }),
 
