@@ -1,0 +1,29 @@
+.folderSettings {
+  display: flex;
+  align-items: center;
+}
+
+.folderLabel {
+  margin-left: 1rem;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+}
+
+.removeButton {
+  margin-left: 0.25rem;
+  width: 1.5rem;
+  height: 1.5rem;
+  border-radius: 0.25rem;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+
+  @media (hover: hover) {
+    &:hover {
+      background-color: var(--button-background-hover);
+    }
+  }
+
+  &:active svg {
+    transform: scale(0.95);
+  }
+}

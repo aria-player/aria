@@ -2,6 +2,8 @@ import { i18n } from "i18next";
 import { SourceCallbacks } from "../../../../types/plugins";
 import { WebPlayerData } from "./createWebPlayer";
 import { useTranslation } from "react-i18next";
+import ClearIcon from "../../assets/xmark-solid.svg?react";
+import styles from "./LibraryConfig.module.css";
 
 export function LibraryConfig(props: {
   data: object;
@@ -23,23 +25,28 @@ export function LibraryConfig(props: {
   return (
     <>
       <h4 className="settings-heading">{t("config.folder")}</h4>
-      <button className="settings-button" onClick={() => props.pickDirectory()}>
-        {t("config.chooseFolder")}
-      </button>
-      <p>
-        {t("config.currentFolder", {
-          folder: webPlayerData.folder || t("config.noFolder"),
-        })}
+      <div className={styles.folderSettings}>
+        <button
+          className="settings-button"
+          onClick={() => props.pickDirectory()}
+        >
+          {t("config.chooseFolder")}
+        </button>
+        {webPlayerData?.folder && (
+          <span className={styles.folderLabel}>
+            {t("config.currentFolder", { folder: webPlayerData.folder })}
+          </span>
+        )}
         {webPlayerData?.folder && (
           <button
-            className="settings-button"
-            style={{ margin: "0 1rem" }}
+            className={styles.removeButton}
+            title={t("config.remove")}
             onClick={removeFolder}
           >
-            {t("config.remove")}
+            <ClearIcon />
           </button>
         )}
-      </p>
+      </div>
       {!props.loaded && webPlayerData?.folder && (
         <p>
           {t("config.folderNotLoaded", {
