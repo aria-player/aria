@@ -1,9 +1,9 @@
 import { Menu, useContextMenu } from "react-contexify";
-import menus from "../../../shared/menus.json";
-import MenuIcon from "../../assets/bars-solid.svg?react";
+import menus from "../../../../shared/menus.json";
+import MenuIcon from "../../../assets/bars-solid.svg?react";
 import styles from "./MenuButton.module.css";
 import { useState } from "react";
-import { AppMenu } from "./AppMenu";
+import { AppMenu } from "../../appmenu/AppMenu";
 import { useTranslation } from "react-i18next";
 
 const MENU_ID = "menubar";

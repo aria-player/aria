@@ -9,6 +9,15 @@
   user-select: none;
 }
 
+.appIcon {
+  width: 1.25rem;
+  height: 1.25rem;
+  margin-right: 0.3rem;
+  align-self: center;
+  flex-shrink: 0;
+  padding: 2rem 0;
+}
+
 .menuBarSmall {
   height: 1.75rem;
 }
