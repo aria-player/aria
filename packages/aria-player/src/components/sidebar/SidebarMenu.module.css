@@ -1,0 +1,40 @@
+.sidebarMenu {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: calc(100% - 0.25rem);
+  padding: 0.5rem;
+  padding-right: 0.825rem;
+  height: 1.75rem;
+  border-radius: 0.25rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  margin-top: 0.25rem;
+
+  &:hover {
+    background-color: var(--button-background-hover);
+  }
+}
+
+.appIcon {
+  width: 1.1rem;
+  height: 1.1rem;
+  fill: var(--accent-color);
+  flex-shrink: 0;
+  margin-right: 0.4rem;
+}
+
+.appName {
+  flex: 1;
+  text-align: left;
+  line-height: 1;
+}
+
+.chevron {
+  width: 0.65rem;
+  height: 0.65rem;
+  fill: var(--secondary-text);
+  transition: transform 0.15s ease;
+  flex-shrink: 0;
+}

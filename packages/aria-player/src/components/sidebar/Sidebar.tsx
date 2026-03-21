@@ -1,6 +1,5 @@
 import styles from "./Sidebar.module.css";
 import { isTauri } from "../../app/utils";
-import { MenuButton } from "../appmenu/MenuButton";
 import { useTranslation } from "react-i18next";
 import { SectionTree, findTreeNode } from "soprano-ui";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
@@ -47,6 +46,7 @@ import DoneButtonIcon from "../../assets/check-solid.svg?react";
 import ClearIcon from "../../assets/xmark-solid.svg?react";
 import { useLocation } from "react-router-dom";
 import { TreeContext } from "../../contexts/TreeContext";
+import { SidebarMenu } from "./SidebarMenu";
 
 const SEARCH_DEBOUNCE_MS = 180;
 
@@ -196,7 +196,7 @@ export function Sidebar() {
     <div className={`sidebar ${styles.sideBar}`}>
       {!isTauri() && (
         <div className={styles.webMenu}>
-          <MenuButton />
+          <SidebarMenu />
         </div>
       )}
       <div

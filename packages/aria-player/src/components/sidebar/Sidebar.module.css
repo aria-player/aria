@@ -8,8 +8,9 @@
 
 .webMenu {
   height: 2rem;
-  padding-top: 0.3rem;
-  padding-left: 0.3rem;
+  padding-left: 0.25rem;
+  display: flex;
+  align-items: center;
 }
 
 .search {

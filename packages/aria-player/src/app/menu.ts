@@ -57,6 +57,7 @@ export interface MenuItem {
   submenu?: MenuItem[];
   maconly?: boolean;
   winlinuxonly?: boolean;
+  webonly?: boolean;
   keepopen?: boolean;
   checkbox?: boolean;
 }
@@ -230,6 +231,14 @@ export function handleMenuAction(
           })
         );
       }
+      break;
+    }
+    case "viewOnGithub": {
+      window.open(
+        "https://github.com/aria-player/aria",
+        "_blank",
+        "noopener,noreferrer"
+      );
       break;
     }
     default:

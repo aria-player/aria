@@ -1,5 +1,6 @@
 {
   "sidebar": {
+    "appName": "Aria",
     "search": "Search",
     "options": "Options",
     "library": {
@@ -267,7 +268,8 @@
     "toggleMute": {
       "mute": "Mute",
       "unmute": "Unmute"
-    }
+    },
+    "viewOnGithub": "View Aria on GitHub"
   },
   "tray": {
     "show": "Show",

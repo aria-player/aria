@@ -237,5 +237,13 @@
         "id": "about"
       }
     ]
+  },
+  {
+    "id": "separator",
+    "webonly": true
+  },
+  {
+    "id": "viewOnGithub",
+    "webonly": true
   }
 ]

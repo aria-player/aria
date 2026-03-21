@@ -18,7 +18,10 @@ export function AppMenu(props: {
   const { invokeMenuAction } = useMenuActions();
 
   const platformItems = props.items.filter(
-    (item) => !item.maconly && (!item.winlinuxonly || isTauri())
+    (item) =>
+      !item.maconly &&
+      (!item.winlinuxonly || isTauri()) &&
+      (!item.webonly || !isTauri())
   );
 
   function shouldAddSeparator(

@@ -12,6 +12,7 @@ pub struct MenuItem {
     pub submenu: Option<Vec<MenuItem>>,
     pub maconly: Option<bool>,
     pub winlinuxonly: Option<bool>,
+    pub webonly: Option<bool>,
     pub keepopen: Option<bool>,
     pub checkbox: Option<bool>,
 }
@@ -51,6 +52,9 @@ fn should_include_item(item: &MenuItem) -> bool {
     }
     if item.winlinuxonly.map_or(false, |v| v.to_owned()) {
         return OS == "windows" || OS == "linux";
+    }
+    if item.webonly.map_or(false, |v| v.to_owned()) {
+        return false;
     }
     true
 }

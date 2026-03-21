@@ -16,7 +16,7 @@ export function WindowsMenuBarButtons() {
   >(() => {
     return Object.fromEntries(
       menus
-        .filter((item) => !item.maconly)
+        .filter((item) => !item.maconly && !item.webonly)
         .map((category) => [category.id, React.createRef<HTMLButtonElement>()])
     );
   }, []);
@@ -27,7 +27,7 @@ export function WindowsMenuBarButtons() {
         setAltHeld(true);
       } else if (event.key != "Alt" && event.altKey) {
         menus
-          .filter((item) => !item.maconly)
+          .filter((item) => !item.maconly && !item.webonly)
           .forEach((category) => {
             if (
               event.key.toLowerCase() ===
@@ -93,7 +93,7 @@ export function WindowsMenuBarButtons() {
   return (
     <>
       {menus
-        .filter((item) => !item.maconly)
+        .filter((item) => !item.maconly && !item.webonly)
         .map((category) => {
           const label = t("menu." + category.id);
           return (
@@ -104,7 +104,7 @@ export function WindowsMenuBarButtons() {
                 onVisibilityChange={handleVisibilityChange}
               >
                 <AppMenu
-                  items={category.submenu}
+                  items={category.submenu!}
                   onItemClick={() => {
                     hideAll();
                     setOpen(false);
