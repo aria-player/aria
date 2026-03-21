@@ -14,6 +14,7 @@ import { selectPlaylistsLayoutItemById } from "../../features/playlists/playlist
 import { selectSearch } from "../../features/search/searchSlice";
 import { goBack, push } from "redux-first-history";
 import ChevronLeftIcon from "../../assets/chevron-left-solid.svg?react";
+import MenuIcon from "../../assets/bars-solid.svg?react";
 import { ScrollContext } from "../../contexts/ScrollContext";
 import { useContext } from "react";
 import { selectMenuState } from "../../app/menu";
@@ -21,7 +22,11 @@ import { BASEPATH } from "../../app/constants";
 import { selectAllAlbums } from "../../features/genericSelectors";
 import { GridContext } from "../../contexts/GridContext";
 
-export default function Header() {
+export default function Header({
+  onMobileSidebarToggle,
+}: {
+  onMobileSidebarToggle?: () => void;
+}) {
   const dispatch = useAppDispatch();
   const visibleDisplayMode = useAppSelector(selectVisibleDisplayMode);
   const visibleViewType = useAppSelector(selectVisibleViewType);
@@ -55,6 +60,14 @@ export default function Header() {
           : styles.border
       }`}
     >
+      {onMobileSidebarToggle && (
+        <button
+          className={styles.mobileMenuButton}
+          onClick={onMobileSidebarToggle}
+        >
+          <MenuIcon />
+        </button>
+      )}
       {(visibleViewType == View.Album || visibleViewType == View.Artist) && (
         <button
           title={t("labels.back")}

@@ -50,7 +50,7 @@ import { SidebarMenu } from "./SidebarMenu";
 
 const SEARCH_DEBOUNCE_MS = 180;
 
-export function Sidebar() {
+export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
   const dispatch = useAppDispatch();
   const location = useLocation();
   const { t } = useTranslation();
@@ -362,6 +362,7 @@ export function Sidebar() {
           } else {
             dispatch(push(BASEPATH + "playlist/" + itemId));
           }
+          onNavigate?.();
         }}
         onScroll={(e) => {
           setScrollY(e.scrollOffset);

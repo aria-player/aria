@@ -51,6 +51,7 @@ import {
 } from "../../app/utils";
 import { store } from "../../app/store";
 import { useTrackGrid } from "../../hooks/useTrackGrid";
+import { useIsMobileBrowser } from "../../hooks/useIsMobileBrowser";
 import {
   selectCurrentTrack,
   selectCurrentPlaylist,
@@ -112,6 +113,7 @@ export const TrackList = () => {
   const { t } = useTranslation();
   const libraryColumnState = useAppSelector(selectLibraryColumnState);
   const playlistConfig = useAppSelector(selectVisiblePlaylistConfig);
+  const isMobileBrowser = useIsMobileBrowser();
 
   const parsedArtistInfo = useMemo(() => {
     if (visibleViewType !== View.Artist || !selectedArtistGroup) return null;
@@ -147,7 +149,7 @@ export const TrackList = () => {
   useEffect(() => setIsGridReady(false), [setIsGridReady, useInfiniteRowModel]);
 
   const columnDefs = useMemo<ColDef[]>(() => {
-    return defaultColumnDefinitions
+    const defs = defaultColumnDefinitions
       .map((colDef) => {
         let colDefOverrides = {
           ...libraryColumnState?.find((col) => col.colId == colDef.field),
@@ -222,7 +224,26 @@ export const TrackList = () => {
         if (indexB < 0) return -1;
         return indexA - indexB;
       });
-  }, [libraryColumnState, t, visibleViewType, playlistConfig]);
+
+    if (isMobileBrowser && !libraryColumnState) {
+      const mobileOrder = ["art", "title", "artist", "duration"];
+      const mobileVisible = new Set(mobileOrder);
+      const mapped = defs.map((colDef) => ({
+        ...colDef,
+        hide: !mobileVisible.has(colDef.field as string),
+        ...(colDef.field === "duration" ? { flex: 0.35 } : {}),
+      }));
+      return mapped.sort((a, b) => {
+        const ia = mobileOrder.indexOf(a.field as string);
+        const ib = mobileOrder.indexOf(b.field as string);
+        if (ia < 0 && ib < 0) return 0;
+        if (ia < 0) return 1;
+        if (ib < 0) return -1;
+        return ia - ib;
+      });
+    }
+    return defs;
+  }, [libraryColumnState, t, visibleViewType, playlistConfig, isMobileBrowser]);
 
   const defaultColDef = useMemo(
     () => ({

@@ -31,3 +31,44 @@
     cursor: pointer;
   }
 }
+
+.splash {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.splashCard {
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 4px var(--box-shadow);
+  border: 1px solid var(--primary-border);
+  padding: 1rem 1.5rem;
+  min-width: 10rem;
+  margin: 1rem 4rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.splashIcon {
+  width: 4rem;
+  height: 4rem;
+  margin-bottom: 0.5rem;
+}
+
+.splashTitle {
+  font-size: 1.5rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  margin-bottom: 0.5rem;
+}
+
+.splashLink {
+  font-size: 0.8rem;
+  color: var(--accent-color);
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

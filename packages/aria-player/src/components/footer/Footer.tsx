@@ -8,16 +8,21 @@ import { normalizeArtists } from "../../app/utils";
 import { selectCurrentTrack } from "../../features/currentSelectors";
 import { useTranslation } from "react-i18next";
 import { TriggerEvent, useContextMenu } from "react-contexify";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { MenuContext } from "../../contexts/MenuContext";
 import { getSourceHandle } from "../../features/plugins/pluginsSlice";
 import { push } from "redux-first-history";
 import { BASEPATH } from "../../app/constants";
 import { selectArtistDelimiter } from "../../features/config/configSlice";
+import { useIsMobileBrowser } from "../../hooks/useIsMobileBrowser";
+import EllipsisIcon from "../../assets/ellipsis-solid.svg?react";
+import CloseIcon from "../../assets/xmark-solid.svg?react";
 
 export function Footer() {
   const { t } = useTranslation();
   const dispatch = useAppDispatch();
+  const isMobileBrowser = useIsMobileBrowser();
+  const [mobileAuxOpen, setMobileAuxOpen] = useState(false);
   const metadata = useAppSelector(selectCurrentTrack);
   const currentTrack = useAppSelector(selectCurrentTrack);
   const { invokeMenuAction } = useMenuActions();
@@ -42,68 +47,90 @@ export function Footer() {
 
   return (
     <footer className={`footer ${styles.footer}`}>
+      {isMobileBrowser && mobileAuxOpen && (
+        <div className={styles.mobileAuxOverlay}>
+          <AuxiliaryControls />
+          <button
+            className={styles.mobileAuxToggle}
+            onClick={() => setMobileAuxOpen(false)}
+          >
+            <CloseIcon />
+          </button>
+        </div>
+      )}
       <section className={styles.left}>
         <div className={`footer-art ${styles.art}`}>
           <AlbumArt track={currentTrack ?? undefined} />
         </div>
-        <div
-          className={`${styles.metadata} ${displayAttribution ? styles.compact : ""}`}
-        >
-          <div className={styles.metadataRow}>
-            {metadata && (
-              <button
-                className={`footer-title ${styles.title}`}
-                onClick={() => {
-                  if (!metadata) return;
-                  invokeMenuAction("goToCurrent");
-                }}
-                onContextMenu={(event) => {
-                  setMenuData({
-                    itemId: metadata.itemId,
-                    itemSource: undefined,
-                    itemIndex: undefined,
-                    metadata: metadata,
-                    type: "track",
-                  });
-                  showTrackContextMenu({ event: event as TriggerEvent });
-                }}
-                title={t("menu.goToCurrent")}
-              >
-                {metadata.title}
-              </button>
+        {!isMobileBrowser && (
+          <div
+            className={`${styles.metadata} ${displayAttribution ? styles.compact : ""}`}
+          >
+            <div className={styles.metadataRow}>
+              {metadata && (
+                <button
+                  className={`footer-title ${styles.title}`}
+                  onClick={() => {
+                    if (!metadata) return;
+                    invokeMenuAction("goToCurrent");
+                  }}
+                  onContextMenu={(event) => {
+                    setMenuData({
+                      itemId: metadata.itemId,
+                      itemSource: undefined,
+                      itemIndex: undefined,
+                      metadata: metadata,
+                      type: "track",
+                    });
+                    showTrackContextMenu({ event: event as TriggerEvent });
+                  }}
+                  title={t("menu.goToCurrent")}
+                >
+                  {metadata.title}
+                </button>
+              )}
+            </div>
+            <div className={styles.metadataRow}>
+              <div className={`footer-artist ${styles.artistButtons}`}>
+                {artists.map((artist, index) => (
+                  <span key={index} className={styles.artistButtonContainer}>
+                    <button
+                      className={styles.artist}
+                      onClick={() => goToArtist(artist.id)}
+                    >
+                      {artists[index].name}
+                    </button>
+                    {index < artists.length - 1 && "/"}
+                  </span>
+                ))}
+              </div>
+            </div>
+            {metadata && pluginHandle?.Attribution && (
+              <div className={styles.metadataRow}>
+                <pluginHandle.Attribution
+                  type="track"
+                  id={metadata.uri}
+                  compact={false}
+                />
+              </div>
             )}
           </div>
-          <div className={styles.metadataRow}>
-            <div className={`footer-artist ${styles.artistButtons}`}>
-              {artists.map((artist, index) => (
-                <span key={index} className={styles.artistButtonContainer}>
-                  <button
-                    className={styles.artist}
-                    onClick={() => goToArtist(artist.id)}
-                  >
-                    {artists[index].name}
-                  </button>
-                  {index < artists.length - 1 && "/"}
-                </span>
-              ))}
-            </div>
-          </div>
-          {metadata && pluginHandle?.Attribution && (
-            <div className={styles.metadataRow}>
-              <pluginHandle.Attribution
-                type="track"
-                id={metadata.uri}
-                compact={false}
-              />
-            </div>
-          )}
-        </div>
+        )}
       </section>
       <section>
         <PlaybackControls />
       </section>
       <section className={styles.right}>
-        <AuxiliaryControls />
+        {isMobileBrowser ? (
+          <button
+            className={styles.mobileAuxToggle}
+            onClick={() => setMobileAuxOpen(true)}
+          >
+            <EllipsisIcon />
+          </button>
+        ) : (
+          <AuxiliaryControls />
+        )}
       </section>
     </footer>
   );

@@ -84,6 +84,8 @@
     "librarySettingsShortcut": "Additional sources can be managed in <a>library settings</a>",
     "localFilesNotSupported": "Local files are not currently supported for this browser.",
     "localFilesNotSupportedSubtitle": "You can try using a Chromium-based browser or the desktop app.",
+    "mobileBrowserSplash": "For the best experience, open Aria in a desktop browser.",
+    "viewOnGitHub": "View on GitHub",
     "unknownAlbum": "Unknown Album",
     "unknownArtist": "Unknown Artist",
     "unknownTrack": "Unknown Track"

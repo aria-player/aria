@@ -22,6 +22,7 @@ import { useTranslation } from "react-i18next";
 import { selectLibraryTracks } from "../../features/tracks/tracksSlice";
 import { SyncProgress } from "./SyncProgress";
 import { selectAggregateSyncProgress } from "../../features/plugins/pluginsSlice";
+import { useIsMobileBrowser } from "../../hooks/useIsMobileBrowser";
 
 export function AuxiliaryControls() {
   const dispatch = useAppDispatch();
@@ -32,6 +33,7 @@ export function AuxiliaryControls() {
   const visibleViewType = useAppSelector(selectVisibleViewType);
   const libraryTracks = useAppSelector(selectLibraryTracks);
   const aggregateProgress = useAppSelector(selectAggregateSyncProgress);
+  const isMobileBrowser = useIsMobileBrowser();
   const scannedTracks = libraryTracks.filter(
     (track) => track.metadataLoaded
   ).length;
@@ -57,7 +59,7 @@ export function AuxiliaryControls() {
 
   return (
     <>
-      {scannedTracks != totalTracks && (
+      {!isMobileBrowser && scannedTracks != totalTracks && (
         <div className={styles.scanProgress}>
           {t("footer.scanProgressLabel")} <br />
           <MediaSlider disabled value={[scannedTracks]} max={totalTracks} />
@@ -67,9 +69,11 @@ export function AuxiliaryControls() {
           })}
         </div>
       )}
-      {aggregateProgress != null && aggregateProgress < 100 && (
-        <SyncProgress percentage={aggregateProgress} />
-      )}
+      {!isMobileBrowser &&
+        aggregateProgress != null &&
+        aggregateProgress < 100 && (
+          <SyncProgress percentage={aggregateProgress} />
+        )}
       <div className={styles.volume}>
         <MediaSlider
           min={0}

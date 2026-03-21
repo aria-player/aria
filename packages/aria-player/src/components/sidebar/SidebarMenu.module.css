@@ -12,8 +12,10 @@
   cursor: pointer;
   margin-top: 0.25rem;
 
-  &:hover {
-    background-color: var(--button-background-hover);
+  @media (hover: hover) {
+    &:hover {
+      background-color: var(--button-background-hover);
+    }
   }
 }
 

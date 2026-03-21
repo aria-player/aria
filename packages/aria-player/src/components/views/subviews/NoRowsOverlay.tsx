@@ -17,11 +17,14 @@ import { push } from "redux-first-history";
 import { useContext } from "react";
 import { Platform, PlatformContext } from "../../../contexts/PlatformContext";
 import { sortPlugins } from "../../../app/utils";
+import AppIcon from "../../../../app-icon.svg?react";
+import { useIsMobileBrowser } from "../../../hooks/useIsMobileBrowser";
 
 export default function NoRowsOverlay() {
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
   const { platform } = useContext(PlatformContext);
+  const isMobileBrowser = useIsMobileBrowser();
   const visibleViewType = useAppSelector(selectVisibleViewType);
   const visibleDisplayMode = useAppSelector(selectVisibleDisplayMode);
   const activePlugins = useAppSelector(selectActivePlugins);
@@ -50,6 +53,32 @@ export default function NoRowsOverlay() {
       } else {
         return (
           <div className={styles.quickStart}>
+            {isMobileBrowser && (
+              <div className={styles.splash}>
+                <div className={styles.splashCard}>
+                  <a
+                    href="https://github.com/aria-player/aria"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.splashLink}
+                  >
+                    <AppIcon className={styles.splashIcon} />
+                  </a>
+                  <span className={styles.splashTitle}>
+                    {t("sidebar.appName")}
+                  </span>
+                  <p>{t("tracks.mobileBrowserSplash")}</p>
+                  <a
+                    href="https://github.com/aria-player/aria"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className={styles.splashLink}
+                  >
+                    {t("tracks.viewOnGitHub")}
+                  </a>
+                </div>
+              </div>
+            )}
             {configurablePlugins.length == 0 &&
               platform == Platform.Web &&
               !("showDirectoryPicker" in window) && (
@@ -71,21 +100,23 @@ export default function NoRowsOverlay() {
                     )
                   );
                 })}
-                <p>
-                  <Trans
-                    i18nKey="tracks.librarySettingsShortcut"
-                    components={{
-                      a: (
-                        <button
-                          onClick={() =>
-                            dispatch(push(BASEPATH + "settings/library"))
-                          }
-                          className={styles.link}
-                        />
-                      ),
-                    }}
-                  />
-                </p>
+                {!isMobileBrowser && (
+                  <p>
+                    <Trans
+                      i18nKey="tracks.librarySettingsShortcut"
+                      components={{
+                        a: (
+                          <button
+                            onClick={() =>
+                              dispatch(push(BASEPATH + "settings/library"))
+                            }
+                            className={styles.link}
+                          />
+                        ),
+                      }}
+                    />
+                  </p>
+                )}
               </>
             )}
           </div>
