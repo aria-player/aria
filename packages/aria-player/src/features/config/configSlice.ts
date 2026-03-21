@@ -31,6 +31,7 @@ export interface ConfigState {
   lastView: string;
   artistDelimiterType: ArtistDelimiterType;
   customArtistDelimiter: string;
+  alwaysShowNavigation: boolean;
 }
 
 const initialState: ConfigState = {
@@ -47,6 +48,7 @@ const initialState: ConfigState = {
   lastView: "/",
   artistDelimiterType: ArtistDelimiterType.None,
   customArtistDelimiter: "",
+  alwaysShowNavigation: false,
 };
 
 export const installThemesFromFiles = createAsyncThunk(
@@ -145,6 +147,9 @@ export const configSlice = createSlice({
     setCustomArtistDelimiter: (state, action: PayloadAction<string>) => {
       state.customArtistDelimiter = action.payload;
     },
+    setAlwaysShowNavigation: (state, action: PayloadAction<boolean>) => {
+      state.alwaysShowNavigation = action.payload;
+    },
   },
 });
 
@@ -161,6 +166,7 @@ export const {
   setLastView,
   setArtistDelimiterType,
   setCustomArtistDelimiter,
+  setAlwaysShowNavigation,
 } = configSlice.actions;
 
 export const selectTheme = (state: RootState) => state.config.theme;
@@ -180,6 +186,8 @@ export const selectArtistDelimiterType = (state: RootState) =>
   state.config.artistDelimiterType;
 export const selectCustomArtistDelimiter = (state: RootState) =>
   state.config.customArtistDelimiter;
+export const selectAlwaysShowNavigation = (state: RootState) =>
+  state.config.alwaysShowNavigation;
 
 export const selectThemes = createSelector(
   (state: RootState) => state.config.installedThemes,

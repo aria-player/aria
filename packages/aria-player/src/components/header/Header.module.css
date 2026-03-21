@@ -3,11 +3,13 @@
   padding: 0.5rem 0.75rem;
   overflow: hidden;
   border-bottom: 1px solid transparent;
+  align-items: center;
 
   h1 {
     margin: 0;
     font-size: 1.5rem;
     font-weight: 500;
+    line-height: 2.25rem;
   }
 }
 
@@ -52,9 +54,10 @@
   flex-shrink: 0;
 }
 
-.backButton {
+.navButton {
   width: 2.25rem;
   height: 2.25rem;
+  padding: 0.5rem;
   border-radius: 0.25rem;
   margin-right: 0.5rem;
   transition: transform 0.1s ease;
@@ -69,7 +72,7 @@
     background-color: var(--button-background-hover);
   }
 
-  &:active svg {
+  &:active:not(:disabled) svg {
     transform: scale(0.9);
   }
 }
@@ -87,7 +90,7 @@
     background-color: var(--button-background-hover);
   }
 
-  &:active svg {
+  &:active:not(:disabled) svg {
     transform: scale(0.9);
   }
 }

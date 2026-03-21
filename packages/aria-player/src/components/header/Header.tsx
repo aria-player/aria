@@ -12,8 +12,9 @@ import {
 import { useTranslation } from "react-i18next";
 import { selectPlaylistsLayoutItemById } from "../../features/playlists/playlistsSlice";
 import { selectSearch } from "../../features/search/searchSlice";
-import { goBack, push } from "redux-first-history";
+import { goBack, push, goForward } from "redux-first-history";
 import ChevronLeftIcon from "../../assets/chevron-left-solid.svg?react";
+import ChevronRightIcon from "../../assets/chevron-right-solid.svg?react";
 import MenuIcon from "../../assets/bars-solid.svg?react";
 import { ScrollContext } from "../../contexts/ScrollContext";
 import { useContext } from "react";
@@ -21,6 +22,7 @@ import { selectMenuState } from "../../app/menu";
 import { BASEPATH } from "../../app/constants";
 import { selectAllAlbums } from "../../features/genericSelectors";
 import { GridContext } from "../../contexts/GridContext";
+import { selectAlwaysShowNavigation } from "../../features/config/configSlice";
 
 export default function Header({
   onMobileSidebarToggle,
@@ -48,6 +50,12 @@ export default function Header({
   const { isGridReady } = useContext(GridContext);
   const menuState = useAppSelector(selectMenuState);
   const backEnabled = !menuState.back?.disabled;
+  const forwardEnabled = !menuState.forward?.disabled;
+  const alwaysShowNavigation = useAppSelector(selectAlwaysShowNavigation);
+  const showNavButtons =
+    alwaysShowNavigation ||
+    visibleViewType === View.Album ||
+    visibleViewType === View.Artist;
 
   return (
     <header
@@ -68,16 +76,28 @@ export default function Header({
           <MenuIcon />
         </button>
       )}
-      {(visibleViewType == View.Album || visibleViewType == View.Artist) && (
+      {showNavButtons && (
         <button
           title={t("labels.back")}
-          className={styles.backButton}
+          className={styles.navButton}
           disabled={!backEnabled}
           onClick={() => {
             if (backEnabled) dispatch(goBack());
           }}
         >
           <ChevronLeftIcon />
+        </button>
+      )}
+      {alwaysShowNavigation && (
+        <button
+          title={t("labels.forward")}
+          className={styles.navButton}
+          disabled={!forwardEnabled}
+          onClick={() => {
+            if (forwardEnabled) dispatch(goForward());
+          }}
+        >
+          <ChevronRightIcon />
         </button>
       )}
       {visibleArtistSection != undefined ? (

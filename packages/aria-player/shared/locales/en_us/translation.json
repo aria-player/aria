@@ -181,6 +181,8 @@
       "confirmDelete": "Are you sure you want to delete '{{theme}}'?",
       "window": "Window",
       "windowsControls": "Use system window controls",
+      "navigation": "Navigation",
+      "alwaysShowNavigation": "Always show navigation buttons",
       "accent": "Accent color",
       "customAccent": "Pick custom accent color",
       "confirmInstallIncompatibleTheme": "This theme is not compatible with the current version of Aria and may not appear correctly. Are you sure you want to install it?"

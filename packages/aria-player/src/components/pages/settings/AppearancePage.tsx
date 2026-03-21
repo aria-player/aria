@@ -5,11 +5,13 @@ import {
   installThemesFromFiles,
   removeTheme,
   selectAccentColor,
+  selectAlwaysShowNavigation,
   selectCustomAccentColor,
   selectStylesheets,
   selectTheme,
   selectThemes,
   setAccentColor,
+  setAlwaysShowNavigation,
   setCustomAccentColor,
   setTheme,
 } from "../../../features/config/configSlice";
@@ -32,6 +34,7 @@ export function AppearancePage() {
   const themes = useAppSelector(selectThemes);
   const stylesheets = useAppSelector(selectStylesheets);
   const { platform, decorations, setDecorations } = useContext(PlatformContext);
+  const alwaysShowNavigation = useAppSelector(selectAlwaysShowNavigation);
   const [showAccentPicker, setShowAccentPicker] = useState(false);
   const [localCustomAccentColor, setLocalCustomAccentColor] =
     useColor(customAccentColor);
@@ -102,10 +105,16 @@ export function AppearancePage() {
     dispatch(setCustomAccentColor(color.hex));
   };
 
-  const handleCheckboxChange = async (
+  const handleDecorationsChange = async (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setDecorations(event.target.checked);
+  };
+
+  const handleNavigationChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    dispatch(setAlwaysShowNavigation(event.target.checked));
   };
 
   const accentsEnabled = !themes[currentTheme]?.disableAccentPicker;
@@ -169,12 +178,26 @@ export function AppearancePage() {
               className={styles.checkbox}
               type="checkbox"
               checked={decorations ?? false}
-              onChange={handleCheckboxChange}
+              onChange={handleDecorationsChange}
             />
             {t("settings.appearance.windowsControls")}
           </div>
         </section>
       )}
+      <section className="settings-section">
+        <h4 className="settings-heading">
+          {t("settings.appearance.navigation")}
+        </h4>
+        <div>
+          <input
+            className={styles.checkbox}
+            type="checkbox"
+            checked={alwaysShowNavigation}
+            onChange={handleNavigationChange}
+          />
+          {t("settings.appearance.alwaysShowNavigation")}
+        </div>
+      </section>
       <section className="settings-section">
         <h4
           className={`settings-heading ${!accentsEnabled ? styles.disabledSection : ""}`}
