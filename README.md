@@ -1,7 +1,7 @@
 # Aria
 
 A modern music player for the desktop and browser
-![Screenshot of app](image.png)
+![Screenshot of app](docs/screenshot.png)
 Aria is a cross-platform music player featuring:
 
 - **Configurable views** so you can group tracks by album, artist, and more
