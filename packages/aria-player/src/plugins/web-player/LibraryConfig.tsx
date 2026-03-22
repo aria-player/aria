@@ -54,18 +54,16 @@ export function LibraryConfig(props: {
           })}
         </p>
       )}
-      <p>
-        <div className="settings-checkbox-container">
-          <input
-            type="checkbox"
-            checked={webPlayerData.showAttribution ?? false}
-            onChange={(e) =>
-              props.host.updateData({ showAttribution: e.target.checked })
-            }
-          />{" "}
-          {t("config.showAttribution")}
-        </div>
-      </p>
+      <div className="settings-checkbox-container">
+        <input
+          type="checkbox"
+          checked={webPlayerData.showAttribution ?? false}
+          onChange={(e) =>
+            props.host.updateData({ showAttribution: e.target.checked })
+          }
+        />{" "}
+        {t("config.showAttribution")}
+      </div>
     </>
   );
 }

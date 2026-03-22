@@ -54,22 +54,23 @@ export function LibraryConfig(props: {
           ) : null}
         </tbody>
       </table>
-      <button className="settings-button" onClick={props.addFolder}>
+      <button
+        className={`${styles.addButton} settings-button`}
+        onClick={props.addFolder}
+      >
         {t("config.addFolder")}
       </button>
-      <p>
-        <div className="settings-checkbox-container">
-          <input
-            type="checkbox"
-            className="settings-checkbox"
-            checked={tauriData.showAttribution ?? false}
-            onChange={(e) =>
-              props.updateData({ showAttribution: e.target.checked })
-            }
-          />{" "}
-          {t("config.showAttribution")}
-        </div>
-      </p>
+      <div className="settings-checkbox-container">
+        <input
+          type="checkbox"
+          className="settings-checkbox"
+          checked={tauriData.showAttribution ?? false}
+          onChange={(e) =>
+            props.updateData({ showAttribution: e.target.checked })
+          }
+        />{" "}
+        {t("config.showAttribution")}
+      </div>
     </>
   );
 }

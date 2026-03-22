@@ -40,6 +40,10 @@
   }
 }
 
+.addButton {
+  margin-bottom: 1rem;
+}
+
 .removeButton {
   display: flex;
   color: var(--button-destructive);
