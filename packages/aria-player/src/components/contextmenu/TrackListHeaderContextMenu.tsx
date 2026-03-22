@@ -13,7 +13,7 @@ export function TrackListHeaderContextMenu() {
   const columns = (
     menus
       .find((menu: MenuItem) => menu.id === "view")
-      ?.submenu.find(
+      ?.submenu?.find(
         (submenu: MenuItem) => submenu.id === "columns"
       ) as MenuItem
   )?.submenu;
