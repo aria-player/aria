@@ -9,6 +9,7 @@ import {
   IRowDragItem,
   IRowNode,
   GridApi,
+  getGridElement,
 } from "ag-grid-community";
 import { nanoid } from "@reduxjs/toolkit";
 import { t } from "i18next";
@@ -102,6 +103,15 @@ export function useTrackGrid() {
 
   const handleGridReady = (params: GridReadyEvent) => {
     dispatch(setSelectedTracks([]));
+
+    const gridEl = getGridElement(params.api);
+    gridEl?.addEventListener(
+      "contextmenu",
+      (e) => {
+        if ((e as MouseEvent).shiftKey) e.stopPropagation();
+      },
+      true
+    );
 
     let lastHoveredItem: HTMLElement | null = null;
     const treeElement = document.querySelector('[role="tree"]') as HTMLElement;

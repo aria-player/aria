@@ -7,7 +7,8 @@ import { useMenuActions } from "../../hooks/useMenuActions";
 import { normalizeArtists } from "../../app/utils";
 import { selectCurrentTrack } from "../../features/currentSelectors";
 import { useTranslation } from "react-i18next";
-import { TriggerEvent, useContextMenu } from "react-contexify";
+import { TriggerEvent } from "react-contexify";
+import { useNativeContextMenu } from "../../hooks/useNativeContextMenu";
 import { useContext, useState } from "react";
 import { MenuContext } from "../../contexts/MenuContext";
 import { getSourceHandle } from "../../features/plugins/pluginsSlice";
@@ -27,7 +28,7 @@ export function Footer() {
   const currentTrack = useAppSelector(selectCurrentTrack);
   const { invokeMenuAction } = useMenuActions();
   const { setMenuData } = useContext(MenuContext);
-  const { show: showTrackContextMenu } = useContextMenu({
+  const { show: showTrackContextMenu } = useNativeContextMenu({
     id: "track",
   });
   const pluginHandle = metadata && getSourceHandle(metadata?.source);

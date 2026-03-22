@@ -74,7 +74,9 @@ export function ItemNode(
         props.onNodeClick(node, e);
       }}
       onContextMenu={(e) => {
-        e.preventDefault();
+        if (!e.shiftKey) {
+          e.preventDefault();
+        }
         e.stopPropagation();
         props.onItemContextMenu?.(findSectionFromNode(node), node.id, e);
       }}

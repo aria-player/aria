@@ -10,7 +10,8 @@ import {
 import { useAppSelector } from "../../../app/hooks";
 import { AlbumArt } from "../../views/subviews/AlbumArt";
 import styles from "./TopResultItem.module.css";
-import { TriggerEvent, useContextMenu } from "react-contexify";
+import { TriggerEvent } from "react-contexify";
+import { useNativeContextMenu } from "../../../hooks/useNativeContextMenu";
 import { useContext } from "react";
 import { MenuContext } from "../../../contexts/MenuContext";
 import { SearchResult } from "../../../app/search";
@@ -31,7 +32,7 @@ export default function TopResultItem({ result }: TopResultItemProps) {
   const { t } = useTranslation();
   const search = useAppSelector(selectSearch);
   const { setMenuData } = useContext(MenuContext);
-  const { show: showTrackContextMenu } = useContextMenu({
+  const { show: showTrackContextMenu } = useNativeContextMenu({
     id: "track",
   });
 

@@ -17,7 +17,7 @@ import {
   closePlaylistFolder,
   updatePlaylistItem,
 } from "../../features/playlists/playlistsSlice";
-import { useContextMenu } from "react-contexify";
+import { useNativeContextMenu } from "../../hooks/useNativeContextMenu";
 import { MenuContext } from "../../contexts/MenuContext";
 import { useMenuActions } from "../../hooks/useMenuActions";
 import { store } from "../../app/store";
@@ -78,7 +78,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
     dispatch(setSearch(searchQueryFromRoute));
   }, [dispatch, location.pathname, visibleViewType]);
 
-  const { show, hideAll } = useContextMenu();
+  const { show, hideAll } = useNativeContextMenu();
   const { visibility, setMenuData } = useContext(MenuContext);
   const { invokeMenuAction } = useMenuActions();
   const dragDropManager = useDragDropManager();
