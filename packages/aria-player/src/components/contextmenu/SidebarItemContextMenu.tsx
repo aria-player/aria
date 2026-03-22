@@ -55,8 +55,10 @@ export function SidebarItemContextMenu() {
   return (
     <Menu
       onContextMenu={(e) => {
-        e.preventDefault();
-        return false;
+        if (!e.shiftKey) {
+          e.preventDefault();
+          return false;
+        }
       }}
       id={id}
       animation={false}
