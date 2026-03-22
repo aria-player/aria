@@ -52,7 +52,7 @@ Aria uses [Tauri](https://v1.tauri.app/) to provide a cross-platform desktop wra
 
 To build the web app, you will need to:
 
-1. Install [Node.js](https://nodejs.org/) (any version newer than v18.0.0).
+1. Install [Node.js](https://nodejs.org/) (any version newer than v20.0.0).
 2. Clone or download this repository.
 3. Install [Bun](https://bun.sh/).
 4. Navigate to the downloaded folder and run `bun install`.
