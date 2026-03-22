@@ -13,7 +13,7 @@ import {
   setMuted,
 } from "../../features/player/playerSlice";
 import { useDebounce } from "react-use";
-import QueueIcon from "../../assets/list-solid.svg?react";
+import QueueIcon from "../../assets/queue-list-solid.svg?react";
 import { BASEPATH } from "../../app/constants";
 import { goBack, push } from "redux-first-history";
 import { View } from "../../app/view";
