@@ -58,6 +58,12 @@ function App() {
     dispatch(setSidebarConfig({ width: sizes[0], collapsed: sizes[0] === 0 }));
   };
 
+  const handleContextMenu = (e: React.MouseEvent) => {
+    if (!e.shiftKey && !(e.target as HTMLElement).closest("input, textarea")) {
+      e.preventDefault();
+    }
+  };
+
   if (platform === Platform.Unknown)
     return <div className={styles.loading}></div>;
 
@@ -103,7 +109,7 @@ function App() {
   );
 
   return (
-    <div className={styles.window}>
+    <div className={styles.window} onContextMenu={handleContextMenu}>
       <ContextMenuContainer />
       <Toaster
         visibleToasts={1}
