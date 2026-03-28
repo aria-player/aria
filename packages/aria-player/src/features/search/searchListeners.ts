@@ -1,6 +1,6 @@
-import { listenForChange } from "./listener";
-import { invalidateSearchCache } from "./search";
-import { selectArtistDelimiter } from "../features/config/configSlice";
+import { listenForChange } from "../../app/listener";
+import { invalidateSearchCache } from "../../app/search";
+import { selectArtistDelimiter } from "../config/configSlice";
 
 export function setupSearchListeners() {
   listenForChange(
