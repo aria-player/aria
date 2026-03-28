@@ -29,6 +29,7 @@ export default function createAppleMusicPlayer(
   i18n.addResourceBundle("en-US", "apple-music-player", en_us);
 
   let music: MusicKit.MusicKitInstance | undefined;
+  let isInitializing = false;
   let musicKitReadyResolve: (() => void) | undefined;
   const musicKitReady = new Promise<void>((resolve) => {
     musicKitReadyResolve = resolve;
@@ -50,32 +51,52 @@ export default function createAppleMusicPlayer(
   script.async = true;
   document.body.appendChild(script);
 
+  function initializeWhenReady() {
+    if (window.MusicKit) {
+      initialize();
+    } else {
+      document.addEventListener("musickitloaded", initialize);
+    }
+  }
+
   if (getConfig().loggedIn) {
-    document.addEventListener("musickitloaded", initialize);
+    initializeWhenReady();
   }
 
   async function initialize() {
-    const developerToken = await getDeveloperToken();
-    if (!developerToken) return;
-    const musicKitConfig = {
-      developerToken,
-      app: {
-        name: "Aria",
-        build: "1.0.0",
-      },
-    };
-    await window.MusicKit.configure(musicKitConfig);
-    music = await window.MusicKit.getInstance();
-    musicKitReadyResolve?.();
-    if (music.isAuthorized) {
-      fetchUserLibrary();
-    }
-
-    music?.addEventListener("playbackStateDidChange", () => {
-      if (music?.playbackState === MusicKit.PlaybackStates.ended) {
-        host.finishPlayback();
+    if (isInitializing || music) return;
+    isInitializing = true;
+    try {
+      const developerToken = await getDeveloperToken();
+      if (!developerToken) return;
+      const musicKitConfig = {
+        developerToken,
+        app: {
+          name: "Aria",
+          build: "1.0.0",
+        },
+      };
+      await window.MusicKit.configure(musicKitConfig);
+      music = await window.MusicKit.getInstance();
+      musicKitReadyResolve?.();
+      if (music.isAuthorized) {
+        fetchUserLibrary();
       }
-    });
+
+      music.addEventListener("playbackStateDidChange", () => {
+        if (music?.playbackState === MusicKit.PlaybackStates.ended) {
+          host.finishPlayback();
+        }
+      });
+
+      music.addEventListener("userTokenDidChange", () => {
+        if (!music?.isAuthorized) {
+          music = undefined;
+        }
+      });
+    } finally {
+      isInitializing = false;
+    }
   }
 
   function getTokenEndpoint() {
@@ -1027,7 +1048,7 @@ export default function createAppleMusicPlayer(
 
     onDataUpdate: (data) => {
       if (!music && (data as AppleMusicConfig).tokenEndpoint) {
-        initialize();
+        initializeWhenReady();
       }
     },
 
