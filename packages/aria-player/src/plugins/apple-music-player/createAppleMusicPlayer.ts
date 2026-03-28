@@ -1036,7 +1036,7 @@ export default function createAppleMusicPlayer(
       if (script.parentNode) {
         script.parentNode.removeChild(script);
       }
-      document.removeEventListener("musickitloaded", fetchUserLibrary);
+      document.removeEventListener("musickitloaded", initialize);
       i18n.removeResourceBundle("en-US", "apple-music-player");
     },
   };
