@@ -97,6 +97,23 @@ export default function createSpotifyPlayer(
         console.error("Device ID has gone offline", device_id);
       });
 
+      player.addListener("authentication_error", ({ message }) => {
+        console.error("Spotify authentication error:", message);
+      });
+
+      player.addListener("account_error", () => {
+        host.showAlert({
+          heading: i18n.t("spotify-player:errorDialog.premiumRequiredHeading"),
+          message: i18n.t("spotify-player:errorDialog.premiumRequiredMessage"),
+          closeLabel: i18n.t("spotify-player:errorDialog.logOut"),
+          onClose: logout,
+        });
+      });
+
+      player.addListener("playback_error", ({ message }) => {
+        console.error("Spotify playback error:", message);
+      });
+
       player.connect();
     };
   }
