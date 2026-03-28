@@ -37,14 +37,27 @@ export default function createSpotifyPlayer(
   let requestTimeout: NodeJS.Timeout | null;
   let requestingTrack = false;
   let hasTransferredPlayback = false;
+  let tokenRefreshInterval: NodeJS.Timeout | null = null;
 
   const getConfig = () => host.getData() as SpotifyConfig;
 
   initialize();
 
+  function startTokenRefreshInterval() {
+    if (tokenRefreshInterval) return;
+    tokenRefreshInterval = setInterval(() => {
+      if (getConfig().refreshToken) {
+        refreshToken().catch((error) =>
+          console.error("Spotify token refresh failed:", error)
+        );
+      }
+    }, 55 * 60 * 1000);
+  }
+
   async function initialize() {
     if (getConfig().accessToken) {
       setupSpotifyPlayer();
+      startTokenRefreshInterval();
       const hasSubscription = await checkForSubscription();
       if (!hasSubscription) return;
       await fetchAndStoreLibraryInfo();
@@ -611,6 +624,7 @@ export default function createSpotifyPlayer(
         tokenExpiry: Date.now() + responseBody.expires_in * 1000,
       });
       setupSpotifyPlayer();
+      startTokenRefreshInterval();
       const hasSubscription = await checkForSubscription();
       if (!hasSubscription) return;
       await fetchAndStoreLibraryInfo();
@@ -627,6 +641,10 @@ export default function createSpotifyPlayer(
   }
 
   function logout() {
+    if (tokenRefreshInterval) {
+      clearInterval(tokenRefreshInterval);
+      tokenRefreshInterval = null;
+    }
     if (player) {
       player.disconnect();
     }
