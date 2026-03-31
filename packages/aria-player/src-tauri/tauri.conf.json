@@ -33,7 +33,12 @@
         "description": "Aria Theme",
         "mimeType": "application/zip"
       }
-    ]
+    ],
+    "macOS": {
+      "files": {
+        "Resources/Assets.car": "resources/Assets.car"
+      }
+    }
   },
   "productName": "Aria",
   "mainBinaryName": "Aria",
