@@ -170,7 +170,7 @@ pub fn get_metadata(app: AppHandle, file_path: String) -> Result<HashMap<String,
     if let Some(cover) = tag.pictures().first() {
         let mut hasher = Sha256::new();
         hasher.update(cover.data());
-        let hash = format!("{:x}", hasher.finalize());
+        let hash = hasher.finalize().iter().map(|b| format!("{:02x}", b)).collect::<String>();
         match app.path().app_data_dir() {
             Ok(path) => {
                 let artwork_subdir = path.join(".artwork-cache");

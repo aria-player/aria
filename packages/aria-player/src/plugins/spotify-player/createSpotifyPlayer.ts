@@ -45,13 +45,16 @@ export default function createSpotifyPlayer(
 
   function startTokenRefreshInterval() {
     if (tokenRefreshInterval) return;
-    tokenRefreshInterval = setInterval(() => {
-      if (getConfig().refreshToken) {
-        refreshToken().catch((error) =>
-          console.error("Spotify token refresh failed:", error)
-        );
-      }
-    }, 55 * 60 * 1000);
+    tokenRefreshInterval = setInterval(
+      () => {
+        if (getConfig().refreshToken) {
+          refreshToken().catch((error) =>
+            console.error("Spotify token refresh failed:", error)
+          );
+        }
+      },
+      55 * 60 * 1000
+    );
   }
 
   async function initialize() {
