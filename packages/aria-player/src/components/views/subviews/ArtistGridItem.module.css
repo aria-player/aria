@@ -9,7 +9,7 @@
   aspect-ratio: 1/1;
   padding: 0;
   overflow: hidden;
-  border: 1px solid var(--inset-background);
+  border: 1px solid var(--artwork-border);
   border-radius: 50%;
   cursor: pointer;
 }
