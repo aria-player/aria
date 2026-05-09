@@ -1,5 +1,8 @@
 .header {
   display: flex;
+  box-sizing: border-box;
+  height: 3.125rem;
+  flex-shrink: 0;
   padding: 0.5rem 0.75rem;
   overflow: hidden;
   border-bottom: 1px solid transparent;
