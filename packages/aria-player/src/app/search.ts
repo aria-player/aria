@@ -36,7 +36,7 @@ const artistsOptions = {
 
 const albumsOptions = {
   keys: [
-    { name: "album", weight: 5 },
+    { name: "name", weight: 5 },
     { name: "artist", weight: 3 },
   ],
   ...fuseOptions,
