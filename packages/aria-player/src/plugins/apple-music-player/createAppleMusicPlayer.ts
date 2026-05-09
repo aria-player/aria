@@ -46,17 +46,27 @@ export default function createAppleMusicPlayer(
 
   const getConfig = () => host.getData() as AppleMusicConfig;
 
-  const script = document.createElement("script");
-  script.src = "https://js-cdn.music.apple.com/musickit/v3/musickit.js";
-  script.async = true;
-  document.body.appendChild(script);
+  let scriptElement: HTMLScriptElement | null = null;
+  let scriptLoadPromise: Promise<void> | null = null;
+
+  function loadMusicKitScript(): Promise<void> {
+    if (scriptLoadPromise) return scriptLoadPromise;
+    if (window.MusicKit) return Promise.resolve();
+    scriptLoadPromise = new Promise<void>((resolve) => {
+      document.addEventListener("musickitloaded", () => resolve(), {
+        once: true,
+      });
+    });
+    scriptElement = document.createElement("script");
+    scriptElement.src =
+      "https://js-cdn.music.apple.com/musickit/v3/musickit.js";
+    scriptElement.async = true;
+    document.body.appendChild(scriptElement);
+    return scriptLoadPromise;
+  }
 
   function initializeWhenReady() {
-    if (window.MusicKit) {
-      initialize();
-    } else {
-      document.addEventListener("musickitloaded", initialize);
-    }
+    loadMusicKitScript().then(initialize);
   }
 
   if (getConfig().loggedIn) {
@@ -429,6 +439,7 @@ export default function createAppleMusicPlayer(
   }
 
   async function authenticate() {
+    await loadMusicKitScript();
     if (!getTokenEndpoint()) {
       host.showAlert({
         heading: i18n.t(
@@ -1054,8 +1065,8 @@ export default function createAppleMusicPlayer(
 
     dispose: () => {
       music?.stop();
-      if (script.parentNode) {
-        script.parentNode.removeChild(script);
+      if (scriptElement?.parentNode) {
+        scriptElement.parentNode.removeChild(scriptElement);
       }
       document.removeEventListener("musickitloaded", initialize);
       i18n.removeResourceBundle("en-US", "apple-music-player");
