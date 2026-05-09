@@ -111,6 +111,9 @@ export default function createSpotifyPlayer(
 
       player.addListener("not_ready", ({ device_id }) => {
         console.error("Device ID has gone offline", device_id);
+        deviceId = null;
+        hasTransferredPlayback = false;
+        player?.connect();
       });
 
       player.addListener("authentication_error", ({ message }) => {
@@ -664,12 +667,37 @@ export default function createSpotifyPlayer(
     });
   }
 
+  function waitForDeviceId(timeoutMs = 10000): Promise<string> {
+    return new Promise((resolve, reject) => {
+      if (deviceId) return resolve(deviceId);
+      const timer = setTimeout(
+        () => reject(new Error("Timed out waiting for Spotify device")),
+        timeoutMs
+      );
+      const onReady = ({ device_id }: { device_id: string }) => {
+        clearTimeout(timer);
+        player?.removeListener("ready", onReady);
+        resolve(device_id);
+      };
+      player?.addListener("ready", onReady);
+    });
+  }
+
   async function requestTrack(track: TrackMetadata) {
     requestingTrack = true;
     await player?.pause();
-    await spotifyRequest(`/me/player/play?device_id=${deviceId}`, "PUT", {
-      uris: [track.uri],
-    });
+    const response = await spotifyRequest(
+      `/me/player/play?device_id=${deviceId}`,
+      "PUT",
+      { uris: [track.uri] }
+    );
+    if (response instanceof Response && response.status === 404) {
+      deviceId = await waitForDeviceId();
+      hasTransferredPlayback = false;
+      await spotifyRequest(`/me/player/play?device_id=${deviceId}`, "PUT", {
+        uris: [track.uri],
+      });
+    }
     return new Promise<void>((resolve) => {
       const onPlaybackStateChanged = (event: Spotify.PlaybackState) => {
         if (
