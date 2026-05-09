@@ -64,8 +64,7 @@ function App() {
     }
   };
 
-  if (platform === Platform.Unknown)
-    return <div className={styles.loading}></div>;
+  if (platform === Platform.Unknown) return <main className={styles.loading} />;
 
   const routes = (
     <Routes>
@@ -135,7 +134,7 @@ function App() {
               </div>{" "}
             </>
           )}
-          <div className={`main-view ${styles.outlet} ${styles.mobileOutlet}`}>
+          <main className={`main-view ${styles.outlet} ${styles.mobileOutlet}`}>
             <Header
               onMobileSidebarToggle={() =>
                 mobileSidebarOpen
@@ -145,7 +144,7 @@ function App() {
             />
             <PluginAlertDialog />
             {routes}
-          </div>
+          </main>
         </div>
       ) : (
         <Allotment
@@ -160,11 +159,11 @@ function App() {
             <Sidebar />
           </Allotment.Pane>
           <Allotment.Pane>
-            <div className={`main-view ${styles.outlet}`}>
+            <main className={`main-view ${styles.outlet}`}>
               <Header />
               <PluginAlertDialog />
               {routes}
-            </div>
+            </main>
           </Allotment.Pane>
         </Allotment>
       )}

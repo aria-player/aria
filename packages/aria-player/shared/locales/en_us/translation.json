@@ -357,7 +357,10 @@
     "toggleTimeDisplay": "Toggle time display mode",
     "scanProgressLabel": "Scanning tracks...",
     "scanProgress": "{{scannedTracks}}/{{totalTracks}}",
-    "syncInProgress": "{{source}} sync in progress..."
+    "syncInProgress": "{{source}} sync in progress...",
+    "playbackPosition": "Playback position",
+    "playbackPositionValue": "{{position}} of {{duration}}",
+    "volume": "Volume"
   },
   "accentColors": {
     "blue": "Blue",

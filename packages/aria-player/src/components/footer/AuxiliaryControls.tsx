@@ -62,7 +62,16 @@ export function AuxiliaryControls() {
       {!isMobileBrowser && scannedTracks != totalTracks && (
         <div className={styles.scanProgress}>
           {t("footer.scanProgressLabel")} <br />
-          <MediaSlider disabled value={[scannedTracks]} max={totalTracks} />
+          <MediaSlider
+            disabled
+            value={[scannedTracks]}
+            max={totalTracks}
+            aria-label={t("footer.scanProgressLabel")}
+            aria-valuetext={t("footer.scanProgress", {
+              scannedTracks,
+              totalTracks,
+            })}
+          />
           {t("footer.scanProgress", {
             scannedTracks,
             totalTracks,
@@ -83,6 +92,8 @@ export function AuxiliaryControls() {
           keyboardStepMultiplier={10}
           keyboardFocusOnly={true}
           thumbAlignment={"center"}
+          aria-label={t("footer.volume")}
+          aria-valuetext={`${muted ? 0 : localVolume}%`}
           onKeyDown={(e) => {
             e.stopPropagation();
           }}

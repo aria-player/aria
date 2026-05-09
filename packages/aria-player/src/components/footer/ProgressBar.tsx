@@ -11,10 +11,13 @@ import { Status } from "../../features/player/playerTypes";
 import { selectCurrentTrack } from "../../features/currentSelectors";
 import { getSourceHandle } from "../../features/plugins/pluginsSlice";
 import { store } from "../../app/store";
+import { formatDuration } from "../../app/utils";
+import { useTranslation } from "react-i18next";
 
 export function ProgressBar(props: {
   progressValueState: [number, (progressValue: number) => void];
 }) {
+  const { t } = useTranslation();
   const duration = useAppSelector(selectCurrentTrack)?.duration;
   const status = useAppSelector(selectStatus);
   const [progressValue, setProgressValue] = props.progressValueState;
@@ -47,6 +50,14 @@ export function ProgressBar(props: {
     };
   }, [setProgressValue, progressValue, dragging, duration, status]);
 
+  const positionText =
+    duration != null
+      ? t("footer.playbackPositionValue", {
+          position: formatDuration(progressValue),
+          duration: formatDuration(duration),
+        })
+      : formatDuration(progressValue);
+
   return (
     <MediaSlider
       min={0}
@@ -57,6 +68,8 @@ export function ProgressBar(props: {
       keyboardFocusOnly={true}
       disabled={disabled}
       value={[progressValue ?? 1]}
+      aria-label={t("footer.playbackPosition")}
+      aria-valuetext={positionText}
       onPointerDown={() => {
         setDragging(true);
       }}

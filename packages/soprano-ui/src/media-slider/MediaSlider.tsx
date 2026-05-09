@@ -4,13 +4,20 @@ import { SliderProps } from "./Slider";
 import styles from "./MediaSlider.module.css";
 
 export const MediaSlider = React.forwardRef<HTMLDivElement, SliderProps>(
-  (props, forwardedRef) => {
+  (
+    { "aria-label": ariaLabel, "aria-valuetext": ariaValueText, ...props },
+    forwardedRef
+  ) => {
     return (
       <RadixSlider.Root className={styles.slider} {...props} ref={forwardedRef}>
         <RadixSlider.Track className={styles.track}>
           <RadixSlider.Range className={styles.range} />
         </RadixSlider.Track>
-        <RadixSlider.Thumb className={styles.thumb} />
+        <RadixSlider.Thumb
+          className={styles.thumb}
+          aria-label={ariaLabel}
+          aria-valuetext={ariaValueText}
+        />
       </RadixSlider.Root>
     );
   }

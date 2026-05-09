@@ -47,9 +47,11 @@ export function Row({
   const section = findSectionFromNode(node);
   const adjustedAttrs = { ...attrs };
   if (node.data.type === "separator") {
-    adjustedAttrs.role = "separator";
+    adjustedAttrs.role = "none";
     delete adjustedAttrs.tabIndex;
     delete adjustedAttrs["aria-selected"];
+    delete adjustedAttrs["aria-level"];
+    delete adjustedAttrs["aria-expanded"];
   }
 
   return (
