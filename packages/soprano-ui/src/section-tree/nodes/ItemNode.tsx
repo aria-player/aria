@@ -135,6 +135,17 @@ export function ItemNode(
               <input type="checkbox" checked={!node.data.hidden} readOnly />
             )}
             <span className={styles.itemText}>{node.data.name}</span>
+            {node.data.loading && (
+              <div className={styles.spinnerContainer} aria-hidden="true">
+                {Array.from({ length: 8 }).map((_, i) => (
+                  <div
+                    key={i}
+                    className={styles.spinnerBlade}
+                    style={{ "--blade-index": i } as React.CSSProperties}
+                  />
+                ))}
+              </div>
+            )}
           </>
         )}
       </div>

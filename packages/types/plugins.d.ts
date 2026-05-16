@@ -492,6 +492,14 @@ export interface ExternalPlaylistsHandle extends BaseHandle {
     startIndex: number,
     stopIndex: number
   ) => Promise<{ uris: TrackUri[]; total: number }>;
+  /**
+   * Rename an external playlist.
+   */
+  renamePlaylist?: (id: PlaylistId, name: string) => Promise<void>;
+  /**
+   * Delete an external playlist.
+   */
+  deletePlaylist?: (id: PlaylistId) => Promise<void>;
 }
 
 /**

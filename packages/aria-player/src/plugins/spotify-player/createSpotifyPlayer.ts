@@ -251,6 +251,54 @@ export default function createSpotifyPlayer(
     }
   }
 
+  async function spotifyWriteRequest(
+    endpoint: string,
+    method: "PUT" | "DELETE",
+    body?: Record<string, string | string[]>
+  ) {
+    const token = await getOrRefreshAccessToken();
+    if (!token) throw new Error("Spotify access token unavailable.");
+
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const response = await fetch(`https://api.spotify.com/v1${endpoint}`, {
+        method,
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: body ? JSON.stringify(body) : undefined,
+      });
+
+      if (response.status === 429 && attempt === 0) {
+        const retryAfter = response.headers.get("Retry-After");
+        await new Promise((resolve) =>
+          setTimeout(
+            resolve,
+            retryAfter ? parseInt(retryAfter, 10) * 1000 : 1000
+          )
+        );
+        continue;
+      }
+
+      if (!response.ok) {
+        const message = response.headers
+          .get("content-type")
+          ?.includes("application/json")
+          ? await response
+              .json()
+              .then(
+                (body: { error?: { message?: string } }) => body?.error?.message
+              )
+              .catch(() => undefined)
+          : undefined;
+        throw new Error(
+          message ?? `Spotify request failed. Status: ${response.status}`
+        );
+      }
+      return;
+    }
+  }
+
   async function checkForSubscription() {
     const profileResponse = (await spotifyRequest(
       `/me/`
@@ -624,7 +672,7 @@ export default function createSpotifyPlayer(
     }
 
     const scopes =
-      "user-modify-playback-state user-read-playback-state app-remote-control streaming user-library-read user-library-modify user-read-private user-read-email playlist-read-private";
+      "user-modify-playback-state user-read-playback-state app-remote-control streaming user-library-read user-library-modify user-read-private user-read-email playlist-read-private playlist-modify-public playlist-modify-private";
 
     const codeVerifier = generateRandomString(128);
     const codeChallenge = await generateCodeChallenge(codeVerifier);
@@ -1173,6 +1221,19 @@ export default function createSpotifyPlayer(
         .filter((item) => item.track)
         .map((item) => item.track!.uri);
       return { uris, total: response.total };
+    },
+
+    renamePlaylist: async (id: string, name: string) => {
+      await spotifyWriteRequest(`/playlists/${encodeURIComponent(id)}`, "PUT", {
+        name,
+      });
+    },
+
+    deletePlaylist: async (id: string) => {
+      await spotifyWriteRequest(
+        `/playlists/${encodeURIComponent(id)}/followers`,
+        "DELETE"
+      );
     },
 
     getTracksByUri: async (uris: string[]) => {

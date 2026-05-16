@@ -2,6 +2,8 @@
   font-size: 0.9rem;
   transition: var(--tree-item-transition);
   cursor: pointer;
+  display: flex;
+  align-items: center;
 }
 
 .item:hover:not(.selected, .editing) {
@@ -13,7 +15,7 @@
 }
 
 .folderIcon {
-  display: inline-block;
+  display: flex;
   width: 0.75rem;
   height: 0.75rem;
   margin-right: 0.25rem;
@@ -40,5 +42,41 @@
 }
 
 .itemText {
+  min-width: 0;
+  overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.spinnerContainer {
+  width: 0.75rem;
+  height: 0.75rem;
+  position: relative;
+  margin-left: auto;
+  flex: 0 0 auto;
+}
+
+.spinnerBlade {
+  position: absolute;
+  width: 1.5px;
+  height: 4px;
+  background: currentcolor;
+  border-radius: 1px;
+  top: 0;
+  left: 50%;
+  transform-origin: 50% 6px;
+  transform: translateX(-50%) rotate(calc(var(--blade-index) * 45deg));
+  opacity: 0.15;
+  animation: blade-fade 1s linear infinite;
+  animation-delay: calc(var(--blade-index) * 0.125s);
+}
+
+@keyframes blade-fade {
+  0%,
+  100% {
+    opacity: 0.15;
+  }
+
+  12.5% {
+    opacity: 0.7;
+  }
 }

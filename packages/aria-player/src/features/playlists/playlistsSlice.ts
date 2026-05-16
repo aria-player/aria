@@ -31,6 +31,7 @@ import {
 } from "../../app/utils";
 import { DisplayMode, SplitViewState, TrackGrouping } from "../../app/view";
 import { PluginId, TrackUri } from "../../../../types";
+import { AppThunk } from "../../app/store";
 import { createAsyncThunk, nanoid } from "@reduxjs/toolkit";
 import { pluginHandles } from "../plugins/pluginsSlice";
 import {
@@ -41,11 +42,15 @@ import {
 const playlistsAdapter = createEntityAdapter<PlaylistUndoable>();
 const playlistsConfigAdapter = createEntityAdapter<PlaylistConfig>();
 
+export type PlaylistOperation = "rename" | "delete";
+
 export interface PlaylistsState {
   playlists: EntityState<PlaylistUndoable, PlaylistId>;
   playlistsConfig: EntityState<PlaylistConfig, PlaylistId>;
   layout: Item[];
   openFolders: string[];
+  pendingOperations: Partial<Record<string, PlaylistOperation>>;
+  slowOperations: Partial<Record<string, PlaylistOperation>>;
 }
 
 const initialState: PlaylistsState = {
@@ -53,9 +58,37 @@ const initialState: PlaylistsState = {
   playlistsConfig: playlistsConfigAdapter.getInitialState(),
   layout: [],
   openFolders: [],
+  pendingOperations: {},
+  slowOperations: {},
 };
 
 export const PLAYLIST_URI_PAGE_SIZE = 100;
+const SLOW_OPERATION_DELAY_MS = 600;
+
+const operationTimers = new Map<string, ReturnType<typeof setTimeout>>();
+
+export function startPlaylistOperation(
+  id: string,
+  operation: PlaylistOperation
+): AppThunk {
+  return (dispatch) => {
+    dispatch(setPendingOperation({ id, operation }));
+    operationTimers.set(
+      id,
+      setTimeout(() => {
+        dispatch(setSlowOperation({ id, operation }));
+      }, SLOW_OPERATION_DELAY_MS)
+    );
+  };
+}
+
+export function finishPlaylistOperation(id: string): AppThunk {
+  return (dispatch) => {
+    clearTimeout(operationTimers.get(id));
+    operationTimers.delete(id);
+    dispatch(clearOperation(id));
+  };
+}
 
 export const initExternalPlaylist = createAsyncThunk(
   "playlists/initExternalPlaylist",
@@ -209,6 +242,22 @@ export const playlistsSlice = createSlice({
     closePlaylistFolder: (state, action: PayloadAction<{ id: string }>) => {
       const itemId = action.payload.id;
       state.openFolders = state.openFolders.filter((id) => id !== itemId);
+    },
+    setPendingOperation: (
+      state,
+      action: PayloadAction<{ id: string; operation: PlaylistOperation }>
+    ) => {
+      state.pendingOperations[action.payload.id] = action.payload.operation;
+    },
+    setSlowOperation: (
+      state,
+      action: PayloadAction<{ id: string; operation: PlaylistOperation }>
+    ) => {
+      state.slowOperations[action.payload.id] = action.payload.operation;
+    },
+    clearOperation: (state, action: PayloadAction<string>) => {
+      delete state.pendingOperations[action.payload];
+      delete state.slowOperations[action.payload];
     },
     addTracksToPlaylist: (
       state,
@@ -445,12 +494,19 @@ export const {
   togglePlaylistUsesCustomLayout,
   setPlaylistDisplayMode,
   updatePlaylistSplitViewState,
+  setPendingOperation,
+  setSlowOperation,
+  clearOperation,
 } = playlistsSlice.actions;
 
 export const selectPlaylistsLayout = (state: RootState) =>
   state.undoable.present.playlists.layout;
 export const selectOpenFolders = (state: RootState) =>
   state.undoable.present.playlists.openFolders;
+export const selectPendingPlaylistOperations = (state: RootState) =>
+  state.undoable.present.playlists.pendingOperations;
+export const selectSlowPlaylistOperations = (state: RootState) =>
+  state.undoable.present.playlists.slowOperations;
 
 export const selectPlaylistsLayoutItemById = createSelector(
   [selectPlaylistsLayout, (_: RootState, nodeId: string) => nodeId],

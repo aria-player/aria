@@ -2,7 +2,15 @@ import styles from "./Sidebar.module.css";
 import { isTauri } from "../../app/utils";
 import { useTranslation } from "react-i18next";
 import { SectionTree, findTreeNode } from "soprano-ui";
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import type { Item as TreeItem } from "soprano-ui";
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   moveLibraryItem,
@@ -16,6 +24,7 @@ import {
   openPlaylistFolder,
   closePlaylistFolder,
   updatePlaylistItem,
+  selectPlaylistById,
 } from "../../features/playlists/playlistsSlice";
 import { useNativeContextMenu } from "../../hooks/useNativeContextMenu";
 import { MenuContext } from "../../contexts/MenuContext";
@@ -47,8 +56,27 @@ import ClearIcon from "../../assets/xmark-solid.svg?react";
 import { useLocation } from "react-router-dom";
 import { TreeContext } from "../../contexts/TreeContext";
 import { SidebarMenu } from "./SidebarMenu";
+import { getExternalPlaylistsHandle } from "../../features/plugins/pluginsSlice";
+import {
+  startPlaylistOperation,
+  finishPlaylistOperation,
+  selectPendingPlaylistOperations,
+  selectSlowPlaylistOperations,
+} from "../../features/playlists/playlistsSlice";
+import { showToast } from "../../app/toasts";
 
 const SEARCH_DEBOUNCE_MS = 180;
+
+function annotatePlaylistOperations(
+  items: TreeItem[],
+  ops: Partial<Record<string, unknown>>
+): TreeItem[] {
+  return items.map((item) => ({
+    ...item,
+    loading: ops[item.id] != null,
+    ...(item.children && { children: annotatePlaylistOperations(item.children, ops) }),
+  }));
+}
 
 export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
   const dispatch = useAppDispatch();
@@ -64,6 +92,10 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
   const selectedSearchSource = useAppSelector(selectSelectedSearchSource);
   const search = useAppSelector(selectSearch);
   const debouncedSearch = useAppSelector(selectDebouncedSearch);
+  const pendingPlaylistOperations = useAppSelector(
+    selectPendingPlaylistOperations
+  );
+  const slowPlaylistOperations = useAppSelector(selectSlowPlaylistOperations);
   const [isComposing, setIsComposing] = useState(false);
   const [localSearch, setLocalSearch] = useState(search);
   const searchFocusedRef = useRef(false);
@@ -83,6 +115,10 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
   const { invokeMenuAction } = useMenuActions();
   const dragDropManager = useDragDropManager();
   const [scrollY, setScrollY] = useState(0);
+  const playlistsLayoutWithOperations = useMemo(
+    () => annotatePlaylistOperations(playlistsLayout, slowPlaylistOperations),
+    [playlistsLayout, slowPlaylistOperations]
+  );
   const sections = [
     {
       id: "library",
@@ -97,7 +133,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
       id: "playlists",
       name: t("sidebar.playlists.title"),
       emptyMessage: t("sidebar.playlists.empty"),
-      children: playlistsLayout,
+      children: playlistsLayoutWithOperations,
     },
   ];
 
@@ -299,18 +335,59 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
             })
           );
         }}
-        onRenameWithinSection={(_, itemId, newName) => {
-          if (
-            findTreeNode(selectPlaylistsLayout(store.getState()), itemId)
-              ?.name != newName
-          )
+        onRenameWithinSection={async (sectionId, itemId, newName) => {
+          if (sectionId !== "playlists") return;
+          const playlistItem = findTreeNode(
+            selectPlaylistsLayout(store.getState()),
+            itemId
+          );
+          if (!playlistItem || playlistItem.name === newName) return;
+
+          const isPlaylistFolder = playlistItem.children !== undefined;
+          const playlist = selectPlaylistById(store.getState(), itemId);
+          if (!playlist?.provider) {
             dispatch(
               updatePlaylistItem({
                 id: itemId,
                 changes: { name: newName },
-                isFolder: isFolder(itemId),
+                isFolder: isPlaylistFolder,
               })
             );
+            return;
+          }
+
+          const plugin = getExternalPlaylistsHandle(playlist.provider);
+          if (!plugin?.renamePlaylist || pendingPlaylistOperations[itemId]) {
+            return;
+          }
+
+          dispatch(
+            updatePlaylistItem({
+              id: itemId,
+              changes: { name: newName },
+              isFolder: false,
+            })
+          );
+          dispatch(startPlaylistOperation(itemId, "rename"));
+          try {
+            await plugin.renamePlaylist(itemId, newName);
+          } catch (error) {
+            dispatch(
+              updatePlaylistItem({
+                id: itemId,
+                changes: { name: playlistItem.name },
+                isFolder: false,
+              })
+            );
+            console.error("Failed to rename external playlist:", error);
+            showToast(
+              t("toasts.renameExternalPlaylistError", {
+                name: playlistItem.name,
+              })
+            );
+          } finally {
+            dispatch(finishPlaylistOperation(itemId));
+          }
         }}
         onOptionsMenuActiveChange={(section, button, event) => {
           if (section != null && event != null) {

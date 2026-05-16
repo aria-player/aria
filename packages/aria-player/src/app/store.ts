@@ -42,7 +42,14 @@ const { createReduxHistory, routerMiddleware, routerReducer } =
 const undoableSlices = undoable(
   combineReducers({
     library: persistReducer({ key: "library", storage }, libraryReducer),
-    playlists: persistReducer({ key: "playlists", storage }, playlistsReducer),
+    playlists: persistReducer(
+      {
+        key: "playlists",
+        storage,
+        blacklist: ["pendingOperations", "slowOperations"],
+      },
+      playlistsReducer
+    ),
   }),
   {
     filter: includeAction(undoableActions.map((action) => action.type)),

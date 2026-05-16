@@ -7,6 +7,7 @@ import {
   createPlaylistItem,
   deletePlaylistItem,
   openPlaylistFolder,
+  selectPlaylistById,
   selectPlaylistsLayoutItemById,
 } from "../../features/playlists/playlistsSlice";
 import { nanoid } from "@reduxjs/toolkit";
@@ -16,6 +17,12 @@ import { selectSortedTrackList } from "../../features/genericSelectors";
 import { store } from "../../app/store";
 import { showToast } from "../../app/toasts";
 import { View } from "../../app/view";
+import { getExternalPlaylistsHandle } from "../../features/plugins/pluginsSlice";
+import {
+  startPlaylistOperation,
+  finishPlaylistOperation,
+  selectPendingPlaylistOperations,
+} from "../../features/playlists/playlistsSlice";
 
 const id = "sidebaritem";
 
@@ -26,7 +33,21 @@ export function SidebarItemContextMenu() {
   const item = useAppSelector((state) =>
     selectPlaylistsLayoutItemById(state, menuData?.itemId ?? "")
   );
+  const playlist = useAppSelector((state) =>
+    menuData ? selectPlaylistById(state, menuData.itemId) : undefined
+  );
+  const pendingPlaylistOperations = useAppSelector(
+    selectPendingPlaylistOperations
+  );
   const treeRef = useContext(TreeContext)?.treeRef;
+  const plugin = playlist?.provider
+    ? getExternalPlaylistsHandle(playlist.provider)
+    : undefined;
+  const isOperationPending =
+    menuData != null && pendingPlaylistOperations[menuData.itemId] != null;
+  const isExternalPlaylist = playlist?.provider != null;
+  const canRename = !isExternalPlaylist || plugin?.renamePlaylist != null;
+  const canDelete = !isExternalPlaylist || plugin?.deletePlaylist != null;
 
   const createItem = (isFolder: boolean) => {
     if (!menuData) return;
@@ -102,6 +123,7 @@ export function SidebarItemContextMenu() {
         </>
       )}
       <Item
+        disabled={!canRename || isOperationPending}
         onClick={() => {
           if (!menuData) return;
           treeRef?.current?.root.tree.edit(menuData.itemId);
@@ -110,9 +132,25 @@ export function SidebarItemContextMenu() {
         {t("sidebar.playlists.menu.rename")}
       </Item>
       <Item
+        disabled={!canDelete || isOperationPending}
         onClick={async () => {
-          if (!menuData) return;
-          if (item?.children?.length ?? 0 > 0) {
+          if (!menuData || !item) return;
+          if (isExternalPlaylist) {
+            dispatch(startPlaylistOperation(menuData.itemId, "delete"));
+            try {
+              await plugin!.deletePlaylist!(menuData.itemId);
+              dispatch(deletePlaylistItem({ id: menuData.itemId, isFolder: false }));
+              showToast(t("toasts.deletedPlaylistItem", { name: item.name }));
+            } catch (error) {
+              console.error("Failed to delete external playlist:", error);
+              showToast(t("toasts.deleteExternalPlaylistError", { name: item.name }));
+            } finally {
+              dispatch(finishPlaylistOperation(menuData.itemId));
+            }
+            return;
+          }
+
+          if ((item.children?.length ?? 0) > 0) {
             const confirmed = await confirm(
               t("sidebar.playlists.menu.confirmDelete")
             );

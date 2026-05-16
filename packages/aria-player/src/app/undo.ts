@@ -58,7 +58,8 @@ export const excludeStateFromUndo =
             playlists: {
               ...newState.present.playlists,
               playlistsConfig: state.present.playlists.playlistsConfig,
-              foldersOpen: state.present.playlists.openFolders,
+              pendingOperations: state.present.playlists.pendingOperations,
+              slowOperations: state.present.playlists.slowOperations,
             },
           },
         };

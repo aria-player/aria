@@ -61,6 +61,7 @@ export type Item = {
   name: string;
   children?: Item[];
   hidden?: boolean;
+  loading?: boolean;
 };
 
 export type Section = {
