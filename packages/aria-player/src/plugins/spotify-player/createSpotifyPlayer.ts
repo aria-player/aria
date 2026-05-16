@@ -1236,6 +1236,18 @@ export default function createSpotifyPlayer(
       );
     },
 
+    createPlaylist: async (name: string) => {
+      const profile = (await spotifyRequest(
+        "/me"
+      )) as SpotifyApi.CurrentUsersProfileResponse;
+      const response = (await spotifyRequest(
+        `/users/${encodeURIComponent(profile.id)}/playlists`,
+        "POST",
+        { name, description: "" }
+      )) as { id: string };
+      return response.id;
+    },
+
     getTracksByUri: async (uris: string[]) => {
       const tracks: TrackMetadata[] = [];
       const batchSize = 50;

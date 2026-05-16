@@ -500,6 +500,12 @@ export interface ExternalPlaylistsHandle extends BaseHandle {
    * Delete an external playlist.
    */
   deletePlaylist?: (id: PlaylistId) => Promise<void>;
+  /**
+   * Create a external playlist with the given name.
+   *
+   * Returns the ID of the new playlist.
+   */
+  createPlaylist?: (name: string) => Promise<PlaylistId>;
 }
 
 /**
