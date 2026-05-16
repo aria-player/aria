@@ -4,7 +4,7 @@ import VolumeLowIcon from "../../assets/volume-low-solid.svg?react";
 import VolumeHighIcon from "../../assets/volume-high-solid.svg?react";
 import VolumeMutedIcon from "../../assets/volume-xmark-solid.svg?react";
 import styles from "./AuxiliaryControls.module.css";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   setVolume,
@@ -39,10 +39,11 @@ export function AuxiliaryControls() {
   ).length;
   const totalTracks = libraryTracks.length;
   const [localVolume, setLocalVolume] = useState(volume);
-
-  useEffect(() => {
+  const [prevVolume, setPrevVolume] = useState(volume);
+  if (prevVolume !== volume) {
+    setPrevVolume(volume);
     setLocalVolume(volume);
-  }, [volume]);
+  }
 
   useDebounce(() => dispatch(setVolume(localVolume)), 100, [localVolume]);
 

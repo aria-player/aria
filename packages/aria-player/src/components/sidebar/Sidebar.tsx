@@ -4,7 +4,6 @@ import { useTranslation } from "react-i18next";
 import { SectionTree, findTreeNode } from "soprano-ui";
 import type { Item as TreeItem } from "soprano-ui";
 import {
-  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -100,7 +99,12 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
   const slowPlaylistOperations = useAppSelector(selectSlowPlaylistOperations);
   const [isComposing, setIsComposing] = useState(false);
   const [localSearch, setLocalSearch] = useState(search);
+  const [prevSearch, setPrevSearch] = useState(search);
   const searchFocusedRef = useRef(false);
+  if (prevSearch !== search) {
+    setPrevSearch(search);
+    setLocalSearch(search);
+  }
 
   useEffect(() => {
     if (visibleViewType !== View.Search) return;
@@ -156,27 +160,26 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
     }
   }, [treeRef]);
 
-  const syncSelectionWithRoute = useCallback(
-    (alwaysUpdateSelection: boolean) => {
-      const routeAsId = visiblePlaylist?.id || visibleViewType;
-      if (treeRef?.current?.root.tree.get(routeAsId) || alwaysUpdateSelection) {
-        treeRef?.current?.root.tree.setSelection({
-          ids: [routeAsId],
-          anchor: null,
-          mostRecent: null,
-        });
-      }
-    },
-    [treeRef, visiblePlaylist, visibleViewType]
-  );
+  function syncSelectionWithRoute(alwaysUpdateSelection: boolean) {
+    const routeAsId = visiblePlaylist?.id || visibleViewType;
+    if (treeRef?.current?.root.tree.get(routeAsId) || alwaysUpdateSelection) {
+      treeRef?.current?.root.tree.setSelection({
+        ids: [routeAsId],
+        anchor: null,
+        mostRecent: null,
+      });
+    }
+  }
 
   useEffect(() => {
-    syncSelectionWithRoute(true);
-  }, [syncSelectionWithRoute, treeRef, visiblePlaylist, visibleViewType]);
+    const routeAsId = visiblePlaylist?.id || visibleViewType;
+    treeRef?.current?.root.tree.setSelection({
+      ids: [routeAsId],
+      anchor: null,
+      mostRecent: null,
+    });
+  }, [treeRef, visiblePlaylist, visibleViewType]);
 
-  useEffect(() => {
-    setLocalSearch(search);
-  }, [search]);
 
   useEffect(() => {
     if (debouncedSearch === search) {

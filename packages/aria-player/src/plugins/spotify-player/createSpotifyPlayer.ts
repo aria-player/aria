@@ -315,11 +315,10 @@ export default function createSpotifyPlayer(
       });
       return false;
     }
-    if (!("product" in profileResponse)) return false;
-    if (
-      profileResponse.product === "free" ||
-      profileResponse.product === "open"
-    ) {
+    const product = (profileResponse as unknown as Record<string, unknown>)
+      .product;
+    if (product === undefined) return false;
+    if (product === "free" || product === "open") {
       host.showAlert({
         heading: i18n.t("spotify-player:errorDialog.premiumRequiredHeading"),
         message: i18n.t("spotify-player:errorDialog.premiumRequiredMessage"),
@@ -1212,14 +1211,14 @@ export default function createSpotifyPlayer(
     ) => {
       const limit = stopIndex - startIndex;
       const response = (await spotifyRequest(
-        `/playlists/${id}/tracks?limit=${limit}&offset=${startIndex}&fields=total,items(track(uri))`
+        `/playlists/${id}/tracks?limit=${limit}&offset=${startIndex}&fields=total,items(item(uri))`
       )) as SpotifyApi.PlaylistTrackResponse;
       if (!response || !response.items) {
         return { uris: [], total: 0 };
       }
       const uris = response.items
-        .filter((item) => item.track)
-        .map((item) => item.track!.uri);
+        .filter((item) => item.item)
+        .map((item) => item.item!.uri);
       return { uris, total: response.total };
     },
 
