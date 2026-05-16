@@ -19,6 +19,7 @@ import { PlaylistItem } from "./playlists/playlistsTypes";
 import {
   selectAllAlbums,
   selectAllArtists,
+  selectExternalPlaylistTracks,
   selectGroupFilteredTracks,
   selectLibraryAlbums,
   selectLibraryArtists,
@@ -149,10 +150,11 @@ export const selectVisibleTracks = createSelector(
     (state: RootState) => state.router.location?.pathname,
     (state: RootState) => state.undoable.present.playlists.playlists,
     (state: RootState) => selectVisibleSearchSource(state),
+    (state: RootState) => state.cache.playlistTrackUris,
   ],
   () => {
     const state = store.getState();
-    const visiblePlaylist = selectVisiblePlaylist(state)?.tracks;
+    const visiblePlaylist = selectVisiblePlaylist(state);
     const visibleViewType = selectVisibleViewType(state);
     const visibleSelectedTrackGroup = selectVisibleSelectedTrackGroup(state);
 
@@ -160,55 +162,52 @@ export const selectVisibleTracks = createSelector(
       return selectVisibleArtistTracks(state);
     }
 
-    return visiblePlaylist
-      ? visiblePlaylist.map((playlistTrack) => {
-          return {
-            ...playlistTrack,
-            ...selectTrackById(state, playlistTrack.trackId),
-          };
-        })
-      : Object.values(LibraryView).includes(
-            selectVisibleViewType(state) as LibraryView
-          )
-        ? (
-            selectLibraryTracks(state).map((track) => ({
-              ...track,
-              itemId: track?.trackId,
-            })) as TrackListItem[]
-          ).sort((a, b) => (b.dateAdded ?? 0) - (a.dateAdded ?? 0))
-        : selectVisibleViewType(state) == View.Search
-          ? (() => {
-              const visibleSource = selectVisibleSearchSource(state);
-              const searchHandle = visibleSource
-                ? getSourceHandle(visibleSource)
-                : null;
-              if (visibleSource && searchHandle?.searchTracks) {
-                return [];
-              }
-              const debouncedSearch = selectDebouncedSearch(state);
-              const searchResults = searchTracks(
-                selectLibraryTracks(state),
-                debouncedSearch
-              );
-              return (
-                visibleSource
-                  ? searchResults.filter(
-                      (track) => track.source == visibleSource
-                    )
-                  : searchResults
-              ).map((track) => ({
-                ...track,
-                itemId: track?.trackId,
-              })) as TrackListItem[];
-            })()
-          : visibleViewType == View.Album && visibleSelectedTrackGroup
-            ? (selectAllTracks(state)
-                .filter((track) => track.albumId === visibleSelectedTrackGroup)
-                .map((track) => ({
-                  ...track,
-                  itemId: track?.trackId,
-                })) as TrackListItem[])
-            : [];
+    if (visiblePlaylist) {
+      const externalTracks = selectExternalPlaylistTracks(state, visiblePlaylist);
+      if (externalTracks !== null) return externalTracks;
+      return visiblePlaylist.tracks.map((playlistTrack) => ({
+        ...playlistTrack,
+        ...selectTrackById(state, playlistTrack.trackId),
+      }));
+    }
+
+    if (Object.values(LibraryView).includes(visibleViewType as LibraryView)) {
+      return (
+        selectLibraryTracks(state).map((track) => ({
+          ...track,
+          itemId: track?.trackId,
+        })) as TrackListItem[]
+      ).sort((a, b) => (b.dateAdded ?? 0) - (a.dateAdded ?? 0));
+    }
+
+    if (visibleViewType == View.Search) {
+      const visibleSource = selectVisibleSearchSource(state);
+      const searchHandle = visibleSource ? getSourceHandle(visibleSource) : null;
+      if (visibleSource && searchHandle?.searchTracks) {
+        return [];
+      }
+      const debouncedSearch = selectDebouncedSearch(state);
+      const searchResults = searchTracks(selectLibraryTracks(state), debouncedSearch);
+      return (
+        visibleSource
+          ? searchResults.filter((track) => track.source == visibleSource)
+          : searchResults
+      ).map((track) => ({
+        ...track,
+        itemId: track?.trackId,
+      })) as TrackListItem[];
+    }
+
+    if (visibleViewType == View.Album && visibleSelectedTrackGroup) {
+      return selectAllTracks(state)
+        .filter((track) => track.albumId === visibleSelectedTrackGroup)
+        .map((track) => ({
+          ...track,
+          itemId: track?.trackId,
+        })) as TrackListItem[];
+    }
+
+    return [];
   }
 );
 
@@ -219,6 +218,7 @@ export const selectVisibleGroupFilteredTracks = createSelector(
     (state: RootState) => state.undoable.present.library.splitViewStates,
     (state: RootState) => state.undoable.present.playlists.playlists,
     (state: RootState) => state.undoable.present.playlists.playlistsConfig,
+    (state: RootState) => state.cache.playlistTrackUris,
   ],
   () => {
     const state = store.getState();
@@ -336,6 +336,7 @@ export const selectVisibleTrackGroups = createSelector(
     (state: RootState) => selectArtistDelimiter(state),
     (state: RootState) => selectVisibleSearchSource(state),
     (state: RootState) => selectVisibleSearchCategory(state),
+    (state: RootState) => state.cache.playlistTrackUris,
   ],
   () => {
     const state = store.getState();
@@ -426,6 +427,7 @@ export const selectVisibleAlbums = createSelector(
     (state: RootState) => state.search.debouncedSearch,
     (state: RootState) => selectVisibleSearchSource(state),
     (state: RootState) => selectVisibleSearchCategory(state),
+    (state: RootState) => state.cache.playlistTrackUris,
   ],
   () => {
     const state = store.getState();

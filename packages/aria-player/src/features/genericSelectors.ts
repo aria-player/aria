@@ -5,12 +5,14 @@ import {
 } from "./playlists/playlistsSlice";
 import { TrackListItem } from "./tracks/tracksTypes";
 import { isLibraryView, LibraryView, TrackGrouping, View } from "../app/view";
-import { PlaylistId, PlaylistItem } from "./playlists/playlistsTypes";
+import { PlaylistId, PlaylistItem, PlaylistUndoable } from "./playlists/playlistsTypes";
 import { selectLibraryColumnState } from "./library/librarySlice";
 import {
   getMostCommonArtworkUri,
   normalizeArtists,
   overrideColumnStateSort,
+  getTrackId,
+  getAlbumId,
 } from "../app/utils";
 import { compareMetadata } from "../app/sort";
 import {
@@ -29,6 +31,33 @@ import { getAsArray } from "../app/utils";
 import { AlbumId, ArtistId, Track } from "../../../types";
 import { selectAlbumInfoById, selectAlbumsInfo } from "./albums/albumsSlice";
 import { AlbumDetails } from "./albums/albumsTypes";
+import { getSourceHandle } from "./plugins/pluginsSlice";
+
+export const selectExternalPlaylistTracks = (
+  state: RootState,
+  playlist: PlaylistUndoable
+): TrackListItem[] | null => {
+  if (!playlist.provider) return null;
+  const handle = getSourceHandle(playlist.provider);
+  if (!handle?.getTracksByUri) return null;
+  const cached = state.cache.playlistTrackUris[playlist.id];
+  if (!cached) return [];
+  return cached.uris
+    .map((uri, i) => {
+      if (!uri) return null;
+      const trackId = getTrackId(playlist.provider!, uri);
+      const track = selectTrackById(state, trackId);
+      if (!track) return null;
+      return {
+        ...track,
+        itemId: `${playlist.id}:${i}`,
+        albumId: track.albumUri
+          ? getAlbumId(playlist.provider!, track.album!, track.albumArtist, track.albumUri)
+          : track.albumId,
+      } as TrackListItem;
+    })
+    .filter((track): track is TrackListItem => track !== null);
+};
 
 export const selectTrackListMetadata = (
   state: RootState,
@@ -38,14 +67,15 @@ export const selectTrackListMetadata = (
   const playlist = playlistId
     ? selectPlaylistById(state, playlistId)
     : undefined;
-  return playlist
-    ? playlist.tracks.map((track) => {
-        return {
-          ...track,
-          ...selectTrackById(state, track.trackId),
-        } as TrackListItem;
-      })
-    : isLibraryView(view)
+  if (playlist) {
+    const externalTracks = selectExternalPlaylistTracks(state, playlist);
+    if (externalTracks !== null) return externalTracks;
+    return playlist.tracks.map((track) => ({
+      ...track,
+      ...selectTrackById(state, track.trackId),
+    } as TrackListItem));
+  }
+  return isLibraryView(view)
       ? (selectLibraryTracks(state).map((track) => ({
           ...track,
           itemId: track?.trackId,
