@@ -17,7 +17,10 @@ import { selectSortedTrackList } from "../../features/genericSelectors";
 import { store } from "../../app/store";
 import { showToast } from "../../app/toasts";
 import { View } from "../../app/view";
-import { getExternalPlaylistsHandle } from "../../features/plugins/pluginsSlice";
+import {
+  getExternalPlaylistsHandle,
+  selectPluginInfo,
+} from "../../features/plugins/pluginsSlice";
 import {
   startPlaylistOperation,
   finishPlaylistOperation,
@@ -40,6 +43,7 @@ export function SidebarItemContextMenu() {
     selectPendingPlaylistOperations
   );
   const treeRef = useContext(TreeContext)?.treeRef;
+  const pluginInfo = useAppSelector(selectPluginInfo);
   const plugin = playlist?.provider
     ? getExternalPlaylistsHandle(playlist.provider)
     : undefined;
@@ -142,7 +146,12 @@ export function SidebarItemContextMenu() {
               dispatch(
                 deletePlaylistItem({ id: menuData.itemId, isFolder: false })
               );
-              showToast(t("toasts.deletedPlaylistItem", { name: item.name }));
+              showToast(
+                t("toasts.deletedExternalPlaylistItem", {
+                  name: item.name,
+                  provider: pluginInfo[playlist!.provider!]?.name ?? playlist!.provider,
+                })
+              );
             } catch (error) {
               console.error("Failed to delete external playlist:", error);
               showToast(

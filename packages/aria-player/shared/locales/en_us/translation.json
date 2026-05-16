@@ -52,6 +52,7 @@
     "addedNamedTrackToPlaylist": "Added '{{title}}' to '{{playlist}}'",
     "addedTracksToPlaylist": "Added {{count}} tracks to '{{playlist}}'",
     "deletedPlaylistItem": "Deleted '{{name}}'",
+    "deletedExternalPlaylistItem": "Deleted '{{name}}' from {{provider}}",
     "renameExternalPlaylistError": "Couldn't rename '{{name}}'",
     "deleteExternalPlaylistError": "Couldn't delete '{{name}}'",
     "addedNamedTrackToQueue": "Added '{{title}}' to queue",
