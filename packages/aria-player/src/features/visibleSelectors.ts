@@ -163,7 +163,10 @@ export const selectVisibleTracks = createSelector(
     }
 
     if (visiblePlaylist) {
-      const externalTracks = selectExternalPlaylistTracks(state, visiblePlaylist);
+      const externalTracks = selectExternalPlaylistTracks(
+        state,
+        visiblePlaylist
+      );
       if (externalTracks !== null) return externalTracks;
       return visiblePlaylist.tracks.map((playlistTrack) => ({
         ...playlistTrack,
@@ -182,12 +185,17 @@ export const selectVisibleTracks = createSelector(
 
     if (visibleViewType == View.Search) {
       const visibleSource = selectVisibleSearchSource(state);
-      const searchHandle = visibleSource ? getSourceHandle(visibleSource) : null;
+      const searchHandle = visibleSource
+        ? getSourceHandle(visibleSource)
+        : null;
       if (visibleSource && searchHandle?.searchTracks) {
         return [];
       }
       const debouncedSearch = selectDebouncedSearch(state);
-      const searchResults = searchTracks(selectLibraryTracks(state), debouncedSearch);
+      const searchResults = searchTracks(
+        selectLibraryTracks(state),
+        debouncedSearch
+      );
       return (
         visibleSource
           ? searchResults.filter((track) => track.source == visibleSource)

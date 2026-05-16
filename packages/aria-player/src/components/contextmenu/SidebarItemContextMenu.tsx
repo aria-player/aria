@@ -139,11 +139,15 @@ export function SidebarItemContextMenu() {
             dispatch(startPlaylistOperation(menuData.itemId, "delete"));
             try {
               await plugin!.deletePlaylist!(menuData.itemId);
-              dispatch(deletePlaylistItem({ id: menuData.itemId, isFolder: false }));
+              dispatch(
+                deletePlaylistItem({ id: menuData.itemId, isFolder: false })
+              );
               showToast(t("toasts.deletedPlaylistItem", { name: item.name }));
             } catch (error) {
               console.error("Failed to delete external playlist:", error);
-              showToast(t("toasts.deleteExternalPlaylistError", { name: item.name }));
+              showToast(
+                t("toasts.deleteExternalPlaylistError", { name: item.name })
+              );
             } finally {
               dispatch(finishPlaylistOperation(menuData.itemId));
             }

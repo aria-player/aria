@@ -74,7 +74,9 @@ function annotatePlaylistOperations(
   return items.map((item) => ({
     ...item,
     loading: ops[item.id] != null,
-    ...(item.children && { children: annotatePlaylistOperations(item.children, ops) }),
+    ...(item.children && {
+      children: annotatePlaylistOperations(item.children, ops),
+    }),
   }));
 }
 

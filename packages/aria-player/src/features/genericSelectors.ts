@@ -5,7 +5,11 @@ import {
 } from "./playlists/playlistsSlice";
 import { TrackListItem } from "./tracks/tracksTypes";
 import { isLibraryView, LibraryView, TrackGrouping, View } from "../app/view";
-import { PlaylistId, PlaylistItem, PlaylistUndoable } from "./playlists/playlistsTypes";
+import {
+  PlaylistId,
+  PlaylistItem,
+  PlaylistUndoable,
+} from "./playlists/playlistsTypes";
 import { selectLibraryColumnState } from "./library/librarySlice";
 import {
   getMostCommonArtworkUri,
@@ -52,7 +56,12 @@ export const selectExternalPlaylistTracks = (
         ...track,
         itemId: `${playlist.id}:${i}`,
         albumId: track.albumUri
-          ? getAlbumId(playlist.provider!, track.album!, track.albumArtist, track.albumUri)
+          ? getAlbumId(
+              playlist.provider!,
+              track.album!,
+              track.albumArtist,
+              track.albumUri
+            )
           : track.albumId,
       } as TrackListItem;
     })
@@ -70,20 +79,23 @@ export const selectTrackListMetadata = (
   if (playlist) {
     const externalTracks = selectExternalPlaylistTracks(state, playlist);
     if (externalTracks !== null) return externalTracks;
-    return playlist.tracks.map((track) => ({
-      ...track,
-      ...selectTrackById(state, track.trackId),
-    } as TrackListItem));
+    return playlist.tracks.map(
+      (track) =>
+        ({
+          ...track,
+          ...selectTrackById(state, track.trackId),
+        }) as TrackListItem
+    );
   }
   return isLibraryView(view)
-      ? (selectLibraryTracks(state).map((track) => ({
-          ...track,
-          itemId: track?.trackId,
-        })) as TrackListItem[])
-      : (selectAllTracks(state).map((track) => ({
-          ...track,
-          itemId: track?.trackId,
-        })) as TrackListItem[]);
+    ? (selectLibraryTracks(state).map((track) => ({
+        ...track,
+        itemId: track?.trackId,
+      })) as TrackListItem[])
+    : (selectAllTracks(state).map((track) => ({
+        ...track,
+        itemId: track?.trackId,
+      })) as TrackListItem[]);
 };
 
 export const selectSortedTrackList = (

@@ -18,7 +18,10 @@ export const useKeyboardShortcuts = () => {
       menuItems.forEach((item) => {
         if (item.shortcut) {
           const shortcut = IS_MAC_LIKE
-            ? item.shortcut.split("Ctrl").join("Cmd").replace("Delete", "Backspace")
+            ? item.shortcut
+                .split("Ctrl")
+                .join("Cmd")
+                .replace("Delete", "Backspace")
             : item.shortcut;
           shortcuts[shortcut] = item.id;
         }
