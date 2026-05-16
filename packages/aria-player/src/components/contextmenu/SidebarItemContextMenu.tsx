@@ -140,6 +140,14 @@ export function SidebarItemContextMenu() {
         onClick={async () => {
           if (!menuData || !item) return;
           if (isExternalPlaylist) {
+            const confirmed = confirm(
+              t("sidebar.playlists.menu.confirmDeleteExternal", {
+                name: item.name,
+                provider:
+                  pluginInfo[playlist!.provider!]?.name ?? playlist!.provider,
+              })
+            );
+            if (!confirmed) return;
             dispatch(startPlaylistOperation(menuData.itemId, "delete"));
             try {
               await plugin!.deletePlaylist!(menuData.itemId);
@@ -149,7 +157,8 @@ export function SidebarItemContextMenu() {
               showToast(
                 t("toasts.deletedExternalPlaylistItem", {
                   name: item.name,
-                  provider: pluginInfo[playlist!.provider!]?.name ?? playlist!.provider,
+                  provider:
+                    pluginInfo[playlist!.provider!]?.name ?? playlist!.provider,
                 })
               );
             } catch (error) {
