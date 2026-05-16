@@ -40,7 +40,7 @@ export type PluginInfo = {
    * createPlugin(host: SourceCallbacks & IntegrationCallbacks): SourceHandle & IntegrationHandle
    * ```
    */
-  capabilities?: ("integration" | "source")[];
+  capabilities?: ("integration" | "source" | "externalPlaylists")[];
 };
 
 /**
@@ -362,6 +362,10 @@ export interface SourceHandle extends BaseHandle {
    * Remove tracks from the library managed by this source.
    */
   removeTracksFromRemoteLibrary?: (tracks: TrackUri[]) => Promise<void>;
+  /**
+   * Return metadata for the specified tracks.
+   */
+  getTracksByUri?: (uris: TrackUri[]) => Promise<TrackMetadata[]>;
 }
 
 export type SyncProgress = {
@@ -457,4 +461,51 @@ export interface SourceCallbacks extends BaseCallbacks {
    * Returns `true` if the player is currently muted.
    */
   getMuted: () => boolean;
+}
+
+export type PlaylistId = string;
+
+export type ExternalPlaylistInfo = {
+  /**
+   * Unique identifier for this playlist.
+   */
+  uri: PlaylistId;
+  /**
+   * Display name of the playlist.
+   */
+  name: string;
+  /**
+   * Whether this playlist can be modified by the user.
+   */
+  readonly: boolean;
+};
+
+/**
+ * Handle for a plugin that can provide external playlists.
+ */
+export interface ExternalPlaylistsHandle extends BaseHandle {
+  /**
+   * Fetch track URIs for a particular playlist.
+   */
+  getPlaylistTracks?: (
+    id: PlaylistId,
+    startIndex: number,
+    stopIndex: number
+  ) => Promise<{ uris: TrackUri[]; total: number }>;
+}
+
+/**
+ * Callbacks for a plugin that can provide external playlists.
+ */
+export interface ExternalPlaylistsCallbacks extends BaseCallbacks {
+  /**
+   * Add new playlists to the library and update existing playlists with new metadata.
+   */
+  updatePlaylists: (playlists: ExternalPlaylistInfo[]) => void;
+  /**
+   * Remove playlists with the specified IDs from the library.
+   *
+   * If `ids` is null, all playlists for this source are removed from the library.
+   */
+  removePlaylists: (playlistIds?: PlaylistId[]) => void;
 }

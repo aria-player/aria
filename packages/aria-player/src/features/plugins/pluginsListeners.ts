@@ -9,6 +9,7 @@ import {
 import {
   getBaseCallbacks,
   getIntegrationCallbacks,
+  getExternalPlaylistsCallbacks,
   getSourceCallbacks,
 } from "./pluginsCallbacks";
 import { listenForAction, listenForChange } from "../../app/listener";
@@ -33,6 +34,12 @@ function getPluginCallbacks(pluginId: PluginId, capabilities?: string[]) {
   }
   if (capabilities?.includes("source")) {
     callbacks = { ...callbacks, ...getSourceCallbacks(pluginId) };
+  }
+  if (capabilities?.includes("externalPlaylists")) {
+    callbacks = {
+      ...callbacks,
+      ...getExternalPlaylistsCallbacks(pluginId),
+    };
   }
   return callbacks;
 }

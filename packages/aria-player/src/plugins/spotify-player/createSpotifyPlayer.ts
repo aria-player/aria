@@ -7,6 +7,9 @@ import { BASEPATH } from "../../app/constants";
 import { isTauri } from "../../app/utils";
 import {
   ArtistMetadata,
+  ExternalPlaylistInfo,
+  ExternalPlaylistsCallbacks,
+  ExternalPlaylistsHandle,
   SourceCallbacks,
   SourceHandle,
   TrackMetadata,
@@ -28,9 +31,9 @@ export type SpotifyConfig = {
 };
 
 export default function createSpotifyPlayer(
-  host: SourceCallbacks,
+  host: SourceCallbacks & ExternalPlaylistsCallbacks,
   i18n: i18n
-): SourceHandle {
+): SourceHandle & ExternalPlaylistsHandle {
   i18n.addResourceBundle("en-US", "spotify-player", en_us);
   let player: Spotify.Player | null;
   let deviceId: string | null;
@@ -64,7 +67,7 @@ export default function createSpotifyPlayer(
       const hasSubscription = await checkForSubscription();
       if (!hasSubscription) return;
       await fetchAndStoreLibraryInfo();
-      loadTracks();
+      startLibraryLoad();
     }
   }
 
@@ -162,6 +165,7 @@ export default function createSpotifyPlayer(
 
   function startLibraryLoad() {
     loadTracks();
+    loadPlaylists();
   }
 
   function refreshLibrary(configOverride?: Partial<SpotifyConfig>) {
@@ -557,6 +561,42 @@ export default function createSpotifyPlayer(
     );
   }
 
+  async function loadPlaylists() {
+    const playlistsLimit = 50;
+    let playlistsOffset = 0;
+    let playlistsRemaining = true;
+    const allPlaylists: ExternalPlaylistInfo[] = [];
+    let loadedAllPlaylists = true;
+
+    while (playlistsRemaining) {
+      const playlistsResponse = (await spotifyRequest(
+        `/me/playlists?limit=${playlistsLimit}&offset=${playlistsOffset}`
+      )) as SpotifyApi.ListOfCurrentUsersPlaylistsResponse | undefined;
+
+      if (playlistsResponse && playlistsResponse.items) {
+        const playlists = playlistsResponse.items.map((playlist) => ({
+          uri: playlist.id,
+          name: playlist.name,
+          readonly: true,
+        }));
+
+        allPlaylists.push(...playlists);
+
+        if (playlistsResponse.items.length < playlistsLimit) {
+          playlistsRemaining = false;
+        } else {
+          playlistsOffset += playlistsLimit;
+        }
+      } else {
+        loadedAllPlaylists = false;
+        playlistsRemaining = false;
+      }
+    }
+    if (loadedAllPlaylists) {
+      host.updatePlaylists(allPlaylists);
+    }
+  }
+
   async function authenticate(showLibrarySetupDialog = true) {
     if (!getClientId()) return;
 
@@ -584,7 +624,7 @@ export default function createSpotifyPlayer(
     }
 
     const scopes =
-      "user-modify-playback-state user-read-playback-state app-remote-control streaming user-library-read user-library-modify user-read-private user-read-email";
+      "user-modify-playback-state user-read-playback-state app-remote-control streaming user-library-read user-library-modify user-read-private user-read-email playlist-read-private";
 
     const codeVerifier = generateRandomString(128);
     const codeChallenge = await generateCodeChallenge(codeVerifier);
@@ -657,6 +697,7 @@ export default function createSpotifyPlayer(
     host.setSyncProgress({ synced: 0, total: 0 });
     host.removeTracks();
     host.removeArtists();
+    host.removePlaylists();
     const config = getConfig();
     host.updateData({
       accessToken: undefined,
@@ -1114,6 +1155,50 @@ export default function createSpotifyPlayer(
 
     setTime(time: number) {
       player?.seek(Math.round(time));
+    },
+
+    getPlaylistTracks: async (
+      id: string,
+      startIndex: number,
+      stopIndex: number
+    ) => {
+      const limit = stopIndex - startIndex;
+      const response = (await spotifyRequest(
+        `/playlists/${id}/tracks?limit=${limit}&offset=${startIndex}&fields=total,items(track(uri))`
+      )) as SpotifyApi.PlaylistTrackResponse;
+      if (!response || !response.items) {
+        return { uris: [], total: 0 };
+      }
+      const uris = response.items
+        .filter((item) => item.track)
+        .map((item) => item.track!.uri);
+      return { uris, total: response.total };
+    },
+
+    getTracksByUri: async (uris: string[]) => {
+      const tracks: TrackMetadata[] = [];
+      const batchSize = 50;
+
+      for (let i = 0; i < uris.length; i += batchSize) {
+        const batchUris = uris.slice(i, i + batchSize);
+        const trackIds = batchUris.map((uri) => uri.split(":")[2]).join(",");
+
+        const response = (await spotifyRequest(
+          `/tracks?ids=${trackIds}`
+        )) as SpotifyApi.MultipleTracksResponse;
+
+        if (response && response.tracks) {
+          for (const track of response.tracks) {
+            if (!track || track.restrictions?.reason) {
+              continue;
+            }
+
+            tracks.push(getTrackMetadata(track, track.album, undefined));
+          }
+        }
+      }
+
+      return tracks;
     },
 
     dispose() {

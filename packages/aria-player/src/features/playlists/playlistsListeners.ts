@@ -11,6 +11,7 @@ import {
   addTracksToPlaylist,
   cleanupPlaylistConfigs,
   deletePlaylistItem,
+  selectPlaylistById,
   selectPlaylistsLayoutItemById,
 } from "./playlistsSlice";
 import { ActionTypes } from "redux-undo";
@@ -28,6 +29,21 @@ import { View } from "../../app/view";
 import { showToast } from "../../app/toasts";
 import { selectTrackById } from "../tracks/tracksSlice";
 import { t } from "i18next";
+import { selectCachedPlaylistTrackUris } from "../cache/cacheSlice";
+import { getTrackId } from "../../app/utils";
+
+function buildExternalPlaylistQueue(
+  playlistId: string,
+  provider: string,
+  uris: (string | null)[]
+) {
+  return uris.flatMap((uri, i) => {
+    if (uri === null) return [];
+    return [
+      { itemId: `${playlistId}:${i}`, trackId: getTrackId(provider, uri) },
+    ];
+  });
+}
 
 export function setupPlaylistsListeners() {
   listenForAction(isAnyOf(addTracksToPlaylist), (state, action) => {
@@ -82,10 +98,48 @@ export function setupPlaylistsListeners() {
         // If it was deleted, the player should keep playing what it remembers of it
         return;
       }
-      const newQueue = state.player.queueGrouping
-        ? selectCurrentGroupFilteredTrackList(state)
-        : selectSortedTrackList(state, View.Playlist, newPlaylist?.id);
+      const playlistEntity = selectPlaylistById(state, newPlaylist.id);
+      const cachedUris = playlistEntity?.provider
+        ? selectCachedPlaylistTrackUris(state, newPlaylist.id)
+        : null;
+      const newQueue = cachedUris
+        ? buildExternalPlaylistQueue(
+            newPlaylist.id,
+            playlistEntity!.provider!,
+            cachedUris.uris
+          )
+        : state.player.queueGrouping
+          ? selectCurrentGroupFilteredTrackList(state)
+          : selectSortedTrackList(state, View.Playlist, newPlaylist?.id);
       dispatch(updateQueueAfterChange(newQueue));
+    }
+  );
+
+  listenForChange(
+    (state) => {
+      const playlist = selectCurrentPlaylist(state);
+      if (!playlist?.provider) return null;
+      return selectCachedPlaylistTrackUris(state, playlist.id);
+    },
+    (state, _, dispatch) => {
+      const currentPlaylist = selectCurrentPlaylist(state);
+      if (!currentPlaylist?.provider) return;
+      const cachedUris = selectCachedPlaylistTrackUris(
+        state,
+        currentPlaylist.id
+      );
+      if (!cachedUris) return;
+      const playlistEntity = selectPlaylistById(state, currentPlaylist.id);
+      if (!playlistEntity?.provider) return;
+      dispatch(
+        updateQueueAfterChange(
+          buildExternalPlaylistQueue(
+            currentPlaylist.id,
+            playlistEntity.provider,
+            cachedUris.uris
+          )
+        )
+      );
     }
   );
 

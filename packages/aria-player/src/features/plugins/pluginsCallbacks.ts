@@ -47,10 +47,16 @@ import {
   TrackUri,
   BaseCallbacks,
   IntegrationCallbacks,
+  ExternalPlaylistInfo,
+  ExternalPlaylistsCallbacks,
   PluginId,
   SourceCallbacks,
   SyncProgress,
 } from "../../../../types";
+import {
+  upsertExternalPlaylist,
+  removeExternalPlaylists,
+} from "../playlists/playlistsSlice";
 
 function validateTrackMetadata(track: TrackMetadata): void {
   const artists = getAsArray(track.artist);
@@ -274,5 +280,40 @@ export const getSourceCallbacks = (pluginId: PluginId): SourceCallbacks => {
     },
     getVolume: () => store.getState().player.volume,
     getMuted: () => store.getState().player.muted,
+  };
+};
+
+export const getExternalPlaylistsCallbacks = (
+  pluginId: PluginId
+): ExternalPlaylistsCallbacks => {
+  return {
+    ...getBaseCallbacks(pluginId),
+
+    updatePlaylists: (playlists: ExternalPlaylistInfo[]) => {
+      const incomingIds = new Set(playlists.map((p) => p.uri));
+      const existingIds = Object.values(
+        store.getState().undoable.present.playlists.playlists.entities
+      )
+        .filter((p) => p?.provider === pluginId)
+        .map((p) => p!.id);
+      const removedIds = existingIds.filter((id) => !incomingIds.has(id));
+      if (removedIds.length > 0) {
+        store.dispatch(
+          removeExternalPlaylists({ provider: pluginId, ids: removedIds })
+        );
+      }
+      for (const playlist of playlists) {
+        store.dispatch(
+          upsertExternalPlaylist({
+            id: playlist.uri,
+            name: playlist.name,
+            provider: pluginId,
+          })
+        );
+      }
+    },
+    removePlaylists: (ids?: string[]) => {
+      store.dispatch(removeExternalPlaylists({ provider: pluginId, ids }));
+    },
   };
 };

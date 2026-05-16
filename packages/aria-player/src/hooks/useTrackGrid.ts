@@ -67,7 +67,10 @@ export function useTrackGrid() {
     // it can cause the grid to become blank until the user scrolls.
     // Wrapping it in setTimeout seems to mitigate this issue
     const resetScrollPosition = () => {
-      gridRef?.current?.api.ensureIndexVisible(0, "top");
+      const api = gridRef?.current?.api;
+      if (api && !api.isDestroyed() && api.getDisplayedRowCount() > 0) {
+        api.ensureIndexVisible(0, "top");
+      }
     };
 
     let timeout: number;

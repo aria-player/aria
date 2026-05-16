@@ -51,7 +51,10 @@ export const defaultColumnDefinitions: ColDef[] = [
     flex: 0.8,
     valueFormatter: (params: { data?: Track; value: string | null }) => {
       if (params.data && !params.data.uri) {
-        return t("tracks.unknownTrack");
+        return (params.data as { metadataLoaded?: boolean }).metadataLoaded ===
+          false
+          ? ""
+          : t("tracks.unknownTrack");
       }
       return params.value ?? "";
     },

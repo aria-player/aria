@@ -8,6 +8,7 @@ import { AnyPluginHandle } from "./pluginsTypes";
 import {
   PluginId,
   PluginInfo,
+  ExternalPlaylistsHandle,
   SourceHandle,
   SyncProgress,
 } from "../../../../types/plugins";
@@ -46,6 +47,15 @@ const initialState: PluginsState = {
 export function getSourceHandle(pluginId: PluginId): SourceHandle | undefined {
   const pluginInfo = selectPluginInfo(store.getState());
   if (pluginInfo[pluginId]?.capabilities?.includes("source")) {
+    return pluginHandles[pluginId];
+  }
+}
+
+export function getExternalPlaylistsHandle(
+  pluginId: PluginId
+): ExternalPlaylistsHandle | undefined {
+  const pluginInfo = selectPluginInfo(store.getState());
+  if (pluginInfo[pluginId]?.capabilities?.includes("externalPlaylists")) {
     return pluginHandles[pluginId];
   }
 }

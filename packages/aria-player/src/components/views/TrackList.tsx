@@ -1,4 +1,12 @@
-import { useCallback, useContext, useEffect, useMemo, useState } from "react";
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import { AgGridReact } from "ag-grid-react";
 import {
   BodyScrollEvent,
@@ -11,7 +19,6 @@ import {
   FocusGridInnerElementParams,
   GridApi,
   IDatasource,
-  IRowNode,
   NavigateToNextHeaderParams,
   RowClassParams,
   RowDragEndEvent,
@@ -74,13 +81,23 @@ import {
   selectSelectedSearchSource,
 } from "../../features/search/searchSlice";
 import NoRowsOverlay from "./subviews/NoRowsOverlay";
-import { getSourceHandle } from "../../features/plugins/pluginsSlice";
+import {
+  getExternalPlaylistsHandle,
+  getSourceHandle,
+} from "../../features/plugins/pluginsSlice";
 import { addTracks, selectTrackById } from "../../features/tracks/tracksSlice";
 import { TrackMetadata } from "../../../../types/tracks";
 import { useLocation } from "react-router-dom";
 import LoadingSpinner from "./subviews/LoadingSpinner";
 import {
+  fetchPlaylistTracks,
+  fetchPlaylistTrackUrisPage,
+  initExternalPlaylist,
+  PLAYLIST_URI_PAGE_SIZE,
+} from "../../features/playlists/playlistsSlice";
+import {
   selectCachedArtistTopTracks,
+  selectCachedPlaylistTrackUris,
   selectCachedSearchTracks,
   updateCachedArtistTopTracks,
   updateCachedSearchTracks,
@@ -89,6 +106,7 @@ import {
 const EXTERNAL_TRACKS_BATCH_SIZE = 20;
 const EXTERNAL_TRACKS_CACHE_OVERFLOW = 20;
 const EXTERNAL_TRACKS_CONCURRENT_REQUESTS = 4;
+const PLAYLIST_METADATA_LOOKAHEAD = 40;
 
 export const TrackList = () => {
   const dispatch = useAppDispatch();
@@ -97,6 +115,15 @@ export const TrackList = () => {
   const currentTrack = useAppSelector(selectCurrentTrack);
   const rowData = useAppSelector(selectVisibleTracks);
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
+  const currentPlaylistId = visiblePlaylist?.id;
+  const provider = visiblePlaylist?.provider;
+  const playlistSourceHandle = provider ? getSourceHandle(provider) : null;
+  const canFetchPlaylistTracksByUri = !!playlistSourceHandle?.getTracksByUri;
+  const cachedPlaylistUris = useAppSelector((state) =>
+    currentPlaylistId
+      ? selectCachedPlaylistTrackUris(state, currentPlaylistId)
+      : null
+  );
   const visibleViewType = useAppSelector(selectVisibleViewType);
   const visibleArtistSection = useAppSelector(selectVisibleArtistSection);
   const selectedArtistGroup = useAppSelector(selectVisibleSelectedTrackGroup);
@@ -143,10 +170,137 @@ export const TrackList = () => {
     !!externalSearchHandle?.searchTracks &&
     !!debouncedSearch.trim();
 
+  const isExternalPlaylist = !!provider && canFetchPlaylistTracksByUri;
+  const [fetchedPlaylistId, setFetchedPlaylistId] = useState<string | null>(
+    null
+  );
+  const isProviderPlaylistInitializing =
+    isExternalPlaylist &&
+    (cachedPlaylistUris == null || fetchedPlaylistId !== currentPlaylistId);
+
+  const tracksEntities = useAppSelector(
+    (state) => state.tracks.tracks.entities
+  );
+
+  const externalPlaylistRowData = useMemo(() => {
+    if (!isExternalPlaylist || !currentPlaylistId || !cachedPlaylistUris)
+      return null;
+    const { uris, total } = cachedPlaylistUris;
+    return Array.from({ length: total }, (_, i) => {
+      const uri = uris[i];
+      if (!uri)
+        return { itemId: `${currentPlaylistId}:${i}`, metadataLoaded: false };
+      const trackId = getTrackId(provider!, uri);
+      const track = tracksEntities[trackId];
+      if (!track)
+        return { itemId: `${currentPlaylistId}:${i}`, metadataLoaded: false };
+      return {
+        ...track,
+        itemId: `${currentPlaylistId}:${i}`,
+        albumId: track.albumUri
+          ? getAlbumId(
+              provider!,
+              track.album!,
+              track.albumArtist,
+              track.albumUri
+            )
+          : undefined,
+        metadataLoaded: true,
+      };
+    });
+  }, [
+    isExternalPlaylist,
+    currentPlaylistId,
+    cachedPlaylistUris,
+    provider,
+    tracksEntities,
+  ]);
+
+  const fetchingTrackUris = useRef(new Set<string>());
+  const prevCachedPlaylistUrisRef = useRef<
+    typeof cachedPlaylistUris | undefined
+  >(undefined);
+
+  useEffect(() => {
+    fetchingTrackUris.current.clear();
+  }, [currentPlaylistId]);
+
+  useEffect(() => {
+    const prev = prevCachedPlaylistUrisRef.current;
+    prevCachedPlaylistUrisRef.current = cachedPlaylistUris;
+    if (prev !== null || cachedPlaylistUris == null) return;
+    const api = gridRef?.current?.api;
+    if (!api) return;
+    const timeout = window.setTimeout(() => {
+      if (!api.isDestroyed() && api.getDisplayedRowCount() > 0) {
+        api.ensureIndexVisible(0, "top");
+      }
+    }, 0);
+    return () => clearTimeout(timeout);
+  }, [cachedPlaylistUris, gridRef]);
+
+  const fetchVisibleTrackMetadata = useCallback(async () => {
+    if (
+      !isExternalPlaylist ||
+      !provider ||
+      !playlistSourceHandle?.getTracksByUri ||
+      !gridRef?.current?.api
+    )
+      return;
+    const api = gridRef.current.api;
+    if (api.isDestroyed()) return;
+    const first = api.getFirstDisplayedRowIndex();
+    const last = Math.min(
+      api.getLastDisplayedRowIndex() + PLAYLIST_METADATA_LOOKAHEAD,
+      api.getDisplayedRowCount() - 1
+    );
+    const urisToFetch: string[] = [];
+    for (let i = first; i <= last; i++) {
+      const node = api.getDisplayedRowAtIndex(i);
+      const uri: string | undefined = cachedPlaylistUris?.uris[i] ?? undefined;
+      if (
+        uri &&
+        !node?.data?.metadataLoaded &&
+        !fetchingTrackUris.current.has(uri)
+      ) {
+        urisToFetch.push(uri);
+        fetchingTrackUris.current.add(uri);
+      }
+    }
+    if (urisToFetch.length === 0) return;
+    const tracks = await playlistSourceHandle.getTracksByUri(urisToFetch);
+    if (tracks?.length) {
+      dispatch(addTracks({ source: provider, tracks, addToLibrary: false }));
+    }
+  }, [
+    isExternalPlaylist,
+    provider,
+    playlistSourceHandle,
+    gridRef,
+    cachedPlaylistUris,
+    dispatch,
+  ]);
+
+  useEffect(() => {
+    if (!isGridReady || !isExternalPlaylist || !cachedPlaylistUris) return;
+    fetchVisibleTrackMetadata().then(() =>
+      setFetchedPlaylistId(currentPlaylistId ?? null)
+    );
+  }, [
+    isGridReady,
+    isExternalPlaylist,
+    cachedPlaylistUris,
+    fetchVisibleTrackMetadata,
+    currentPlaylistId,
+  ]);
+
   const useInfiniteRowModel =
     useInfiniteRowModelForArtist || useInfiniteRowModelForSearch;
 
-  useEffect(() => setIsGridReady(false), [setIsGridReady, useInfiniteRowModel]);
+  useLayoutEffect(
+    () => setIsGridReady(false),
+    [setIsGridReady, useInfiniteRowModel]
+  );
 
   const columnDefs = useMemo<ColDef[]>(() => {
     const defs = defaultColumnDefinitions
@@ -338,10 +492,7 @@ export const TrackList = () => {
         const cachedTracks =
           selectCachedArtistTopTracks(state, selectedArtistGroup!) || [];
         for (const trackId of cachedTracks) {
-          queue.push({
-            itemId: trackId,
-            trackId: trackId,
-          });
+          queue.push({ itemId: trackId, trackId });
         }
       }
     }
@@ -439,7 +590,15 @@ export const TrackList = () => {
       gridRef.current.api.refreshCells({
         force: true,
       });
-  }, [gridRef, currentTrack, rowData]);
+  }, [gridRef, currentTrack]);
+
+  useEffect(() => {
+    if (!useInfiniteRowModel && gridRef?.current?.api) {
+      gridRef.current.api.refreshCells({
+        force: true,
+      });
+    }
+  }, [gridRef, rowData, useInfiniteRowModel]);
 
   useEffect(() => {
     const headerContextArea = document.querySelector(".ag-header");
@@ -557,6 +716,7 @@ export const TrackList = () => {
 
   const handleBodyScroll = (event: BodyScrollEvent) => {
     setScrollY(event.top);
+    if (isExternalPlaylist) fetchVisibleTrackMetadata();
   };
 
   const createDatasource = useCallback(
@@ -580,89 +740,64 @@ export const TrackList = () => {
       getRows: async (params) => {
         const currentCachedTracks = getCachedTrackIds() || [];
         const cachedCount = currentCachedTracks.length;
-        const showCachedTracks = params.startRow < cachedCount;
-        if (showCachedTracks) {
-          const cachedRows = currentCachedTracks
-            .slice(params.startRow, Math.min(params.endRow, cachedCount))
+        const requestedCachedTracks = currentCachedTracks.slice(
+          params.startRow,
+          Math.min(params.endRow, cachedCount)
+        );
+
+        if (requestedCachedTracks.length > 0) {
+          const cachedRows = requestedCachedTracks
             .map((trackId) => {
               const track = selectTrackById(store.getState(), trackId);
               return track
-                ? {
-                    ...track,
-                    itemId: trackId,
-                    metadataLoaded: true,
-                  }
+                ? { ...track, itemId: trackId, metadataLoaded: true }
                 : null;
             })
             .filter(Boolean);
-
           params.successCallback(
             cachedRows,
             cachedCount < params.endRow ? cachedCount : undefined
           );
           api.setGridOption("loading", false);
+          return;
         }
+
         const tracks = await fetchTracks(params.startRow, params.endRow);
 
         if (tracks?.length) {
-          dispatch(
-            addTracks({
-              source,
-              tracks,
-              addToLibrary: false,
-            })
-          );
+          dispatch(addTracks({ source, tracks, addToLibrary: false }));
           const newTrackIds = tracks.map((track) =>
             getTrackId(source, track.uri)
           );
-
           onCacheUpdate(newTrackIds, params.startRow);
 
           const state = store.getState();
-          const rows = tracks.map((track) => ({
-            ...selectTrackById(state, getTrackId(source, track.uri)),
-            albumId: getAlbumId(
-              source,
-              track.album!,
-              track.albumArtist,
-              track.albumUri
-            ),
-            itemId: getTrackId(source, track.uri),
-          }));
-          if (showCachedTracks) {
-            const nodesToUpdate: IRowNode[] = [];
-            api.forEachNode((node) => {
-              if (
-                node.rowIndex !== null &&
-                node.rowIndex >= params.startRow &&
-                node.rowIndex < params.endRow &&
-                rows
-              ) {
-                const updatedRow = rows[node.rowIndex - params.startRow];
-                if (updatedRow) {
-                  node.setData(updatedRow);
-                  nodesToUpdate.push(node);
-                }
-              }
-            });
-
-            if (nodesToUpdate.length > 0) {
-              api.refreshCells({ rowNodes: nodesToUpdate, force: true });
-            }
-          } else {
-            const isLast =
-              (rows?.length ?? 0) < params.endRow - params.startRow;
-            params.successCallback(
-              rows ?? [],
-              isLast ? params.startRow + (rows?.length ?? 0) : undefined
-            );
-          }
-        } else if (!showCachedTracks) {
+          const rows = tracks.map((track) => {
+            const trackId = getTrackId(source, track.uri);
+            return {
+              ...selectTrackById(state, trackId),
+              albumId: getAlbumId(
+                source,
+                track.album!,
+                track.albumArtist,
+                track.albumUri
+              ),
+              itemId: trackId,
+            };
+          });
+          const isLast = rows.length < params.endRow - params.startRow;
+          params.successCallback(
+            rows,
+            isLast ? params.startRow + rows.length : undefined
+          );
+        } else {
           const inferredRowCount = Math.max(cachedCount, params.startRow);
           params.successCallback([], inferredRowCount);
         }
 
-        api.setGridOption("loading", false);
+        if (!api.isDestroyed()) {
+          api.setGridOption("loading", false);
+        }
       },
     }),
     [dispatch]
@@ -784,6 +919,39 @@ export const TrackList = () => {
     createDatasource,
   ]);
 
+  useEffect(() => {
+    if (!provider || !currentPlaylistId) return;
+    const plugin = getExternalPlaylistsHandle(provider);
+    if (!plugin) return;
+    if (canFetchPlaylistTracksByUri) {
+      dispatch(
+        initExternalPlaylist({ playlistId: currentPlaylistId, provider })
+      ).then((result) => {
+        if (result.meta.requestStatus !== "fulfilled") return;
+        const { total } = result.payload as { uris: string[]; total: number };
+        let offset = PLAYLIST_URI_PAGE_SIZE;
+        const fetchNext = () => {
+          if (offset >= total) return;
+          dispatch(
+            fetchPlaylistTrackUrisPage({
+              playlistId: currentPlaylistId,
+              provider,
+              offset,
+            })
+          ).then(() => {
+            offset += PLAYLIST_URI_PAGE_SIZE;
+            fetchNext();
+          });
+        };
+        fetchNext();
+      });
+    } else {
+      dispatch(
+        fetchPlaylistTracks({ playlistId: currentPlaylistId, provider })
+      );
+    }
+  }, [provider, currentPlaylistId, canFetchPlaylistTracksByUri, dispatch]);
+
   const infiniteModelProps = useMemo(() => {
     if (!useInfiniteRowModel) return {};
     return {
@@ -793,21 +961,36 @@ export const TrackList = () => {
     };
   }, [useInfiniteRowModel]);
 
+  const activeRowData =
+    externalPlaylistRowData ?? (useInfiniteRowModel ? undefined : rowData);
+
   return (
     <div
       className="track-list ag-theme-balham ag-overrides-track-list"
-      style={{ width: "100%", height: "100%" }}
+      style={{ width: "100%", height: "100%", position: "relative" }}
     >
+      {isProviderPlaylistInitializing && <LoadingSpinner />}
       <div
         className={`${scrollY <= 1 ? "ag-overrides-scroll-top" : ""}`}
-        style={{ display: isGridReady ? "block" : "none", height: "100%" }}
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          display:
+            isGridReady && !(isExternalPlaylist && cachedPlaylistUris == null)
+              ? "block"
+              : "none",
+          visibility: isProviderPlaylistInitializing ? "hidden" : "visible",
+        }}
       >
         <AgGridReact
           key={useInfiniteRowModel ? "infinite" : "clientSide"}
           {...gridProps}
           {...infiniteModelProps}
           ref={gridRef}
-          rowData={useInfiniteRowModel ? undefined : rowData}
+          rowData={activeRowData}
           rowModelType={useInfiniteRowModel ? "infinite" : "clientSide"}
           columnDefs={columnDefs}
           defaultColDef={defaultColDef}
@@ -824,11 +1007,15 @@ export const TrackList = () => {
           onBodyScroll={handleBodyScroll}
           rowHeight={33}
           headerHeight={37}
-          rowDragManaged={visibleViewType == View.Playlist}
+          rowDragManaged={
+            visibleViewType == View.Playlist && !isExternalPlaylist
+          }
           noRowsOverlayComponent={NoRowsOverlay}
           loadingOverlayComponent={LoadingSpinner}
           multiSortKey="ctrl"
-          rowDragEntireRow
+          rowDragEntireRow={
+            visibleViewType == View.Playlist && !isExternalPlaylist
+          }
           suppressDragLeaveHidesColumns
           suppressMoveWhenRowDragging
         />

@@ -3,5 +3,5 @@
   "name": "Spotify",
   "needsTauri": false,
   "main": "createSpotifyPlayer.ts",
-  "capabilities": ["source"]
+  "capabilities": ["source", "externalPlaylists"]
 }

@@ -25,10 +25,18 @@ import { setupPlaylistsListeners } from "./playlistsListeners";
 import { ColumnState } from "ag-grid-community";
 import {
   filterHiddenColumnSort,
+  getTrackId,
   overrideColumnStateSort,
   resetColumnStateExceptSort,
 } from "../../app/utils";
 import { DisplayMode, SplitViewState, TrackGrouping } from "../../app/view";
+import { PluginId, TrackUri } from "../../../../types";
+import { createAsyncThunk, nanoid } from "@reduxjs/toolkit";
+import { pluginHandles } from "../plugins/pluginsSlice";
+import {
+  initPlaylistTrackUris,
+  setPlaylistTrackUrisPage,
+} from "../cache/cacheSlice";
 
 const playlistsAdapter = createEntityAdapter<PlaylistUndoable>();
 const playlistsConfigAdapter = createEntityAdapter<PlaylistConfig>();
@@ -46,6 +54,84 @@ const initialState: PlaylistsState = {
   layout: [],
   openFolders: [],
 };
+
+export const PLAYLIST_URI_PAGE_SIZE = 100;
+
+export const initExternalPlaylist = createAsyncThunk(
+  "playlists/initExternalPlaylist",
+  async (
+    { playlistId, provider }: { playlistId: PlaylistId; provider: PluginId },
+    { dispatch }
+  ) => {
+    const plugin = pluginHandles[provider];
+    if (!plugin?.getPlaylistTracks) return;
+    const { uris, total } = await plugin.getPlaylistTracks(
+      playlistId,
+      0,
+      PLAYLIST_URI_PAGE_SIZE
+    );
+    dispatch(initPlaylistTrackUris({ playlistId, uris, total, offset: 0 }));
+    return { uris, total };
+  }
+);
+
+export const fetchPlaylistTrackUrisPage = createAsyncThunk(
+  "playlists/fetchPlaylistTrackUrisPage",
+  async (
+    {
+      playlistId,
+      provider,
+      offset,
+    }: { playlistId: PlaylistId; provider: PluginId; offset: number },
+    { dispatch }
+  ) => {
+    const plugin = pluginHandles[provider];
+    if (!plugin?.getPlaylistTracks) return;
+    const { uris } = await plugin.getPlaylistTracks(
+      playlistId,
+      offset,
+      offset + PLAYLIST_URI_PAGE_SIZE
+    );
+    dispatch(setPlaylistTrackUrisPage({ playlistId, uris, offset }));
+    return uris;
+  }
+);
+
+export const fetchPlaylistTracks = createAsyncThunk(
+  "playlists/fetchPlaylistTracks",
+  async (
+    { playlistId, provider }: { playlistId: PlaylistId; provider: PluginId },
+    { dispatch, getState }
+  ) => {
+    const plugin = pluginHandles[provider];
+    if (!plugin || plugin.getTracksByUri || !plugin.getPlaylistTracks) return;
+    let offset = 0;
+    let total = Infinity;
+    const allUris: TrackUri[] = [];
+    while (offset < total) {
+      const result = await plugin.getPlaylistTracks(
+        playlistId,
+        offset,
+        offset + PLAYLIST_URI_PAGE_SIZE
+      );
+      total = result.total;
+      allUris.push(...result.uris);
+      offset += PLAYLIST_URI_PAGE_SIZE;
+    }
+    const state = getState() as RootState;
+    const availableTrackIds = allUris
+      .map((uri) => getTrackId(provider, uri))
+      .filter((trackId) => state.tracks.tracks.entities[trackId]);
+    dispatch(
+      syncExternalPlaylistTracks({
+        playlistId,
+        provider,
+        uris: allUris,
+        availableTrackIds,
+      })
+    );
+  }
+);
 
 export const playlistsSlice = createSlice({
   name: "playlists",
@@ -78,6 +164,7 @@ export const playlistsSlice = createSlice({
         newData: Item;
         parentId?: string | undefined;
         index?: number | undefined;
+        provider?: PluginId;
       }>
     ) => {
       state.layout = createTreeNode(state.layout, action.payload);
@@ -85,6 +172,7 @@ export const playlistsSlice = createSlice({
         playlistsAdapter.addOne(state.playlists, {
           id: action.payload.newData.id,
           tracks: [],
+          provider: action.payload.provider,
         });
         playlistsConfigAdapter.addOne(state.playlistsConfig, {
           id: action.payload.newData.id,
@@ -158,6 +246,111 @@ export const playlistsSlice = createSlice({
       const item = state.playlists.entities[playlistId];
       if (item) {
         item.tracks = tracks;
+      }
+    },
+    syncExternalPlaylistTracks: (
+      state,
+      action: PayloadAction<{
+        playlistId: PlaylistId;
+        provider: PluginId;
+        uris: TrackUri[];
+        availableTrackIds: string[];
+      }>
+    ) => {
+      const { playlistId, provider, uris, availableTrackIds } = action.payload;
+      const item = state.playlists.entities[playlistId];
+      if (!item || item.provider !== provider) return;
+
+      const availableTrackIdsSet = new Set(availableTrackIds);
+      const existingItemsByTrackId = new Map<string, PlaylistItem[]>();
+      item.tracks.forEach((playlistItem) => {
+        const existingItems = existingItemsByTrackId.get(playlistItem.trackId);
+        if (existingItems) {
+          existingItems.push(playlistItem);
+        } else {
+          existingItemsByTrackId.set(playlistItem.trackId, [playlistItem]);
+        }
+      });
+
+      item.tracks = uris
+        .map((uri) => {
+          const trackId = getTrackId(provider, uri);
+          if (!availableTrackIdsSet.has(trackId)) return null;
+          return (
+            existingItemsByTrackId.get(trackId)?.shift() ?? {
+              itemId: nanoid(),
+              trackId,
+            }
+          );
+        })
+        .filter(
+          (playlistItem): playlistItem is PlaylistItem => playlistItem !== null
+        );
+    },
+    upsertExternalPlaylist: (
+      state,
+      action: PayloadAction<{
+        id: string;
+        name: string;
+        provider: PluginId;
+      }>
+    ) => {
+      const { id, name, provider } = action.payload;
+      const existingNode = findTreeNode(state.layout, id);
+      const existingPlaylist = state.playlists.entities[id];
+
+      if (existingPlaylist && existingPlaylist.provider !== provider) return;
+
+      if (!existingNode) {
+        state.layout = createTreeNode(state.layout, {
+          newData: { id, name },
+        });
+        if (!existingPlaylist) {
+          playlistsAdapter.addOne(state.playlists, {
+            id,
+            tracks: [],
+            provider,
+          });
+          playlistsConfigAdapter.addOne(state.playlistsConfig, {
+            id,
+            columnState: null,
+            useCustomLayout: false,
+            displayMode: DisplayMode.TrackList,
+            splitViewState: { trackGrouping: TrackGrouping.Artist },
+          });
+        }
+      } else {
+        state.layout = updateTreeNode(state.layout, {
+          id,
+          changes: { name },
+        });
+      }
+    },
+    removeExternalPlaylists: (
+      state,
+      action: PayloadAction<{ provider: PluginId; ids?: string[] }>
+    ) => {
+      const { provider, ids } = action.payload;
+      const idsToRemove =
+        ids ??
+        Object.values(state.playlists.entities)
+          .filter((playlist) => playlist?.provider === provider)
+          .map((playlist) => playlist!.id);
+
+      for (const id of idsToRemove) {
+        if (state.playlists.entities[id]?.provider !== provider) continue;
+        if (findTreeNode(state.layout, id)) {
+          const deletion = deleteTreeNode(state.layout, { id });
+          state.layout = deletion.result;
+          playlistsAdapter.removeMany(state.playlists, deletion.deletedIds);
+          playlistsConfigAdapter.removeMany(
+            state.playlistsConfig,
+            deletion.deletedIds
+          );
+        } else {
+          playlistsAdapter.removeOne(state.playlists, id);
+          playlistsConfigAdapter.removeOne(state.playlistsConfig, id);
+        }
       }
     },
     updatePlaylistColumnState: (
@@ -244,6 +437,9 @@ export const {
   addTracksToPlaylist,
   removeTracksFromPlaylist,
   setPlaylistTracks,
+  syncExternalPlaylistTracks,
+  upsertExternalPlaylist,
+  removeExternalPlaylists,
   resetPlaylistColumnState,
   updatePlaylistColumnState,
   togglePlaylistUsesCustomLayout,
