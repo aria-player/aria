@@ -101,7 +101,11 @@ export const selectSelectedTracks = (state: RootState) =>
   state.tracks.selectedTracks;
 export const selectClipboard = (state: RootState) => state.tracks.clipboard;
 
-export const selectTrackById = (state: RootState, trackId: TrackId) => {
+export const selectTrackById = (
+  state: RootState,
+  trackId: TrackId | undefined
+) => {
+  if (!trackId) return undefined;
   const track = state.tracks.tracks.entities[trackId];
   if (!track) {
     fetchMissingTrack(trackId);
