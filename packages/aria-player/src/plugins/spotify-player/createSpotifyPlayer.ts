@@ -48,6 +48,7 @@ export default function createSpotifyPlayer(
   let tokenRefreshInterval: NodeJS.Timeout | null = null;
 
   const getConfig = () => host.getData() as SpotifyConfig;
+  const LIKED_SONGS_PLAYLIST_ID = "liked-songs";
 
   initialize();
 
@@ -619,14 +620,16 @@ export default function createSpotifyPlayer(
     const config = getConfig();
     const includeOwnPlaylists = config.includeOwnPlaylists !== false;
     const includeFollowedPlaylists = config.includeFollowedPlaylists !== false;
-    if (!includeOwnPlaylists && !includeFollowedPlaylists) {
-      host.updatePlaylists([]);
-      return;
-    }
 
-    const profile = (await spotifyRequest(
-      "/me"
-    )) as SpotifyApi.CurrentUsersProfileResponse | undefined;
+    const likedSongsPlaylist: ExternalPlaylistInfo = {
+      uri: LIKED_SONGS_PLAYLIST_ID,
+      name: "Liked Songs",
+      permissions: "write",
+    };
+
+    const profile = (await spotifyRequest("/me")) as
+      | SpotifyApi.CurrentUsersProfileResponse
+      | undefined;
     const currentUserId = profile?.id;
 
     const playlistsLimit = 50;
@@ -645,7 +648,8 @@ export default function createSpotifyPlayer(
       if (playlistsResponse && playlistsResponse.items) {
         const playlists = playlistsResponse.items.flatMap((playlist) => {
           if (!playlist) return [];
-          const isOwner = currentUserId != null && playlist.owner.id === currentUserId;
+          const isOwner =
+            currentUserId != null && playlist.owner.id === currentUserId;
           if (isOwner) {
             ownPlaylistsCount++;
           } else {
@@ -674,8 +678,12 @@ export default function createSpotifyPlayer(
       }
     }
     if (loadedAllPlaylists) {
-      host.updateData({ ...getConfig(), ownPlaylistsCount, followedPlaylistsCount });
-      host.updatePlaylists(allPlaylists);
+      host.updateData({
+        ...getConfig(),
+        ownPlaylistsCount,
+        followedPlaylistsCount,
+      });
+      host.updatePlaylists([likedSongsPlaylist, ...allPlaylists]);
     }
   }
 
@@ -1254,6 +1262,29 @@ export default function createSpotifyPlayer(
       stopIndex: number
     ) => {
       const limit = stopIndex - startIndex;
+      if (id === LIKED_SONGS_PLAYLIST_ID) {
+        const likedSongsLimit = 50;
+        const allUris: string[] = [];
+        let total = 0;
+        for (
+          let batchOffset = startIndex;
+          batchOffset < stopIndex;
+          batchOffset += likedSongsLimit
+        ) {
+          const batchLimit = Math.min(likedSongsLimit, stopIndex - batchOffset);
+          const response = (await spotifyRequest(
+            `/me/tracks?limit=${batchLimit}&offset=${batchOffset}`
+          )) as SpotifyApi.UsersSavedTracksResponse;
+          if (!response || !response.items) return { uris: [], total: 0 };
+          total = response.total;
+          allUris.push(
+            ...response.items
+              .filter((item) => item.track)
+              .map((item) => item.track.uri)
+          );
+        }
+        return { uris: allUris, total };
+      }
       const response = (await spotifyRequest(
         `/playlists/${id}/tracks?limit=${limit}&offset=${startIndex}&fields=total,items(item(uri))`
       )) as SpotifyApi.PlaylistTrackResponse;
