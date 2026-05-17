@@ -38,7 +38,7 @@
     "songCount": "{{count}} songs",
     "albumCount": "{{count}} albums",
     "playlistsHeading": "Playlists",
-    "includeOwnPlaylists": "Include playlists you own",
+    "includeOwnPlaylists": "Include playlists you created",
     "includeFollowedPlaylists": "Include playlists you follow",
     "playlistCount": "{{count}} playlists",
     "metadataHeading": "Metadata",
