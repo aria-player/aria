@@ -1008,7 +1008,11 @@ export const TrackList = () => {
           rowHeight={33}
           headerHeight={37}
           rowDragManaged={
-            visibleViewType == View.Playlist && !isExternalPlaylist
+            visibleViewType == View.Playlist &&
+            visiblePlaylist?.orderable !== false &&
+            (!isExternalPlaylist ||
+              visiblePlaylist?.permissions == "write" ||
+              visiblePlaylist?.permissions == "manage")
           }
           noRowsOverlayComponent={NoRowsOverlay}
           loadingOverlayComponent={LoadingSpinner}

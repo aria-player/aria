@@ -625,6 +625,7 @@ export default function createSpotifyPlayer(
       uri: LIKED_SONGS_PLAYLIST_ID,
       name: "Liked Songs",
       permissions: "write",
+      orderable: false,
     };
 
     const profile = (await spotifyRequest("/me")) as

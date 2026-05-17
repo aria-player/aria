@@ -309,6 +309,7 @@ export const getExternalPlaylistsCallbacks = (
             name: playlist.name,
             provider: pluginId,
             permissions: playlist.permissions,
+            orderable: playlist.orderable,
           })
         );
       }

@@ -11,6 +11,7 @@ export interface PlaylistUndoable {
   tracks: PlaylistItem[];
   provider?: PluginId;
   permissions?: PlaylistPermissions;
+  orderable?: boolean;
 }
 
 export interface PlaylistConfig {

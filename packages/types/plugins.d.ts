@@ -480,6 +480,10 @@ export type ExternalPlaylistInfo = {
    * Permissions for this playlist.
    */
   permissions: PlaylistPermissions;
+  /**
+   * Whether tracks in this playlist can be reordered. Defaults to true.
+   */
+  orderable?: boolean;
 };
 
 /**
