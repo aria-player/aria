@@ -3,13 +3,7 @@ import { isTauri } from "../../app/utils";
 import { useTranslation } from "react-i18next";
 import { SectionTree, findTreeNode } from "soprano-ui";
 import type { Item as TreeItem } from "soprano-ui";
-import {
-  useContext,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
   moveLibraryItem,
@@ -179,7 +173,6 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
       mostRecent: null,
     });
   }, [treeRef, visiblePlaylist, visibleViewType]);
-
 
   useEffect(() => {
     if (debouncedSearch === search) {
