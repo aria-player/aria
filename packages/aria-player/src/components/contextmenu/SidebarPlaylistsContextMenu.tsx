@@ -5,7 +5,7 @@ import {
   createPlaylistItem,
   upsertExternalPlaylist,
 } from "../../features/playlists/playlistsSlice";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { MenuContext } from "../../contexts/MenuContext";
 import { useTranslation } from "react-i18next";
 import { TreeContext } from "../../contexts/TreeContext";
@@ -25,8 +25,11 @@ export function SidebarPlaylistsContextMenu() {
   const treeRef = useContext(TreeContext)?.treeRef;
   const activePlugins = useAppSelector(selectActivePlugins);
   const pluginInfo = useAppSelector(selectPluginInfo);
+  const [refreshingProviders, setRefreshingProviders] = useState<
+    Partial<Record<string, true>>
+  >({});
 
-  const playlistProviders = activePlugins
+  const externalPlaylistProviders = activePlugins
     .filter((pluginId) =>
       pluginInfo[pluginId]?.capabilities?.includes("externalPlaylists")
     )
@@ -34,8 +37,13 @@ export function SidebarPlaylistsContextMenu() {
       id: pluginId,
       name: pluginInfo[pluginId].name,
       handle: getExternalPlaylistsHandle(pluginId),
-    }))
-    .filter((provider) => provider.handle?.createPlaylist != null);
+    }));
+  const creatablePlaylistProviders = externalPlaylistProviders.filter(
+    (provider) => provider.handle?.createPlaylist != null
+  );
+  const refreshablePlaylistProviders = externalPlaylistProviders.filter(
+    (provider) => provider.handle?.refreshPlaylists != null
+  );
 
   return (
     <Menu
@@ -82,8 +90,9 @@ export function SidebarPlaylistsContextMenu() {
       >
         {t("sidebar.playlists.menu.addFolder")}
       </Item>
-      {playlistProviders.length > 0 && <Separator />}
-      {playlistProviders.map((provider) => (
+      {(creatablePlaylistProviders.length > 0 ||
+        refreshablePlaylistProviders.length > 0) && <Separator />}
+      {creatablePlaylistProviders.map((provider) => (
         <Item
           key={provider.id}
           onClick={async () => {
@@ -106,6 +115,46 @@ export function SidebarPlaylistsContextMenu() {
           }}
         >
           {t("sidebar.playlists.menu.addExternalPlaylist", {
+            provider: provider.name,
+          })}
+        </Item>
+      ))}
+      {creatablePlaylistProviders.length > 0 &&
+        refreshablePlaylistProviders.length > 0 && <Separator />}
+      {refreshablePlaylistProviders.map((provider) => (
+        <Item
+          key={`${provider.id}:refresh`}
+          disabled={refreshingProviders[provider.id] === true}
+          onClick={async () => {
+            if (
+              !provider.handle?.refreshPlaylists ||
+              refreshingProviders[provider.id]
+            ) {
+              return;
+            }
+            setRefreshingProviders((previousProviders) => ({
+              ...previousProviders,
+              [provider.id]: true,
+            }));
+            try {
+              await provider.handle.refreshPlaylists();
+            } catch (error) {
+              console.error("Failed to refresh external playlists:", error);
+              showToast(
+                t("toasts.refreshExternalPlaylistsError", {
+                  provider: provider.name,
+                })
+              );
+            } finally {
+              setRefreshingProviders((previousProviders) => {
+                const updatedProviders = { ...previousProviders };
+                delete updatedProviders[provider.id];
+                return updatedProviders;
+              });
+            }
+          }}
+        >
+          {t("sidebar.playlists.menu.refreshExternalPlaylists", {
             provider: provider.name,
           })}
         </Item>

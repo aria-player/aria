@@ -1322,6 +1322,10 @@ export default function createSpotifyPlayer(
       return response.id;
     },
 
+    refreshPlaylists: async () => {
+      await loadPlaylists();
+    },
+
     getTracksByUri: async (uris: string[]) => {
       const tracks: TrackMetadata[] = [];
       const batchSize = 50;

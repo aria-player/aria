@@ -508,6 +508,10 @@ export interface ExternalPlaylistsHandle extends BaseHandle {
    * Returns the ID of the new playlist.
    */
   createPlaylist?: (name: string) => Promise<PlaylistId>;
+  /**
+   * Refresh all playlists for this source.
+   */
+  refreshPlaylists?: () => Promise<void>;
 }
 
 /**

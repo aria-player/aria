@@ -23,6 +23,7 @@
         "confirmDelete": "Deleting this folder will also delete all of its contents. Are you sure?",
         "confirmDeleteExternal": "Are you sure you want to delete '{{name}}'? This will also remove it from {{provider}}.",
         "addExternalPlaylist": "Add new {{provider}} playlist...",
+        "refreshExternalPlaylists": "Refresh {{provider}} playlists",
         "play": "Play"
       },
       "defaultPlaylist": "New Playlist",
@@ -58,6 +59,7 @@
     "renameExternalPlaylistError": "Couldn't rename '{{name}}'",
     "deleteExternalPlaylistError": "Couldn't delete '{{name}}'",
     "createExternalPlaylistError": "Couldn't create playlist",
+    "refreshExternalPlaylistsError": "Couldn't refresh playlists",
     "addedNamedTrackToQueue": "Added '{{title}}' to queue",
     "addedTracksToQueue": "Added {{count}} tracks to queue",
     "addedNamedTrackToQueueFront": "Added '{{title}}' to front of queue",
