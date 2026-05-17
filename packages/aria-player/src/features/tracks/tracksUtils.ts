@@ -6,36 +6,57 @@ import { parseTrackId } from "../../app/utils";
 import { getSourceHandle } from "../plugins/pluginsSlice";
 
 const pendingTrackFetches = new Set<TrackId>();
+const pendingBatchBySource = new Map<string, Set<string>>();
 
 export function fetchMissingTrack(trackId: TrackId): void {
-  if (pendingTrackFetches.has(trackId)) {
-    return;
-  }
+  if (pendingTrackFetches.has(trackId)) return;
   const track = parseTrackId(trackId);
-  const pluginHandle = track ? getSourceHandle(track.source) : null;
-  if (!track || !pluginHandle?.getTrack) {
-    return;
-  }
+  const handle = track ? getSourceHandle(track.source) : null;
+  if (!track || (!handle?.getTracksByUri && !handle?.getTrack)) return;
   pendingTrackFetches.add(trackId);
-  pluginHandle
-    .getTrack(track.uri)
-    .then((trackMetadata) => {
-      if (trackMetadata) {
-        store.dispatch(
-          addTracks({
-            source: track.source,
-            tracks: [trackMetadata],
-            addToLibrary: false,
+
+  if (handle.getTracksByUri) {
+    const { source, uri } = track;
+    if (!pendingBatchBySource.has(source)) {
+      pendingBatchBySource.set(source, new Set());
+      setTimeout(() => {
+        const uris = Array.from(pendingBatchBySource.get(source) ?? []);
+        pendingBatchBySource.delete(source);
+        const currentHandle = getSourceHandle(source);
+        if (!currentHandle?.getTracksByUri || uris.length === 0) return;
+        currentHandle
+          .getTracksByUri(uris)
+          .then((tracks) => {
+            if (tracks?.length)
+              store.dispatch(
+                addTracks({ source, tracks, addToLibrary: false })
+              );
           })
-        );
-      }
-    })
-    .catch((error) => {
-      console.error(`Failed to fetch track ${trackId}:`, error);
-    })
-    .finally(() => {
-      pendingTrackFetches.delete(trackId);
-    });
+          .finally(() => {
+            uris.forEach((u) =>
+              pendingTrackFetches.delete(`${source}:uri:${u}`)
+            );
+          });
+      }, 0);
+    }
+    pendingBatchBySource.get(source)!.add(uri);
+  } else {
+    handle.getTrack!(track.uri)
+      .then((trackMetadata) => {
+        if (trackMetadata)
+          store.dispatch(
+            addTracks({
+              source: track.source,
+              tracks: [trackMetadata],
+              addToLibrary: false,
+            })
+          );
+      })
+      .catch((error) =>
+        console.error(`Failed to fetch track ${trackId}:`, error)
+      )
+      .finally(() => pendingTrackFetches.delete(trackId));
+  }
 }
 
 export function getReferencedTrackIds(state: RootState): Set<TrackId> {
