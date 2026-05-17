@@ -95,6 +95,7 @@ export function SidebarPlaylistsContextMenu() {
                   id: newId,
                   name: defaultName,
                   provider: provider.id,
+                  permissions: "manage",
                 })
               );
               treeRef?.current?.root.tree.edit(newId);
