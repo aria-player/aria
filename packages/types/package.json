@@ -5,7 +5,8 @@
   "type": "module",
   "types": "./index.d.ts",
   "scripts": {
-    "lint": "tsc && eslint . && prettier -c ."
+    "lint": "tsc && eslint . && prettier -c .",
+    "format": "prettier -c . --write"
   },
   "dependencies": {
     "@types/react": "^18.3.28"

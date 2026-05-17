@@ -16,6 +16,7 @@
   "scripts": {
     "build": "vite build",
     "lint": "tsc && eslint . && prettier -c . && stylelint \"src/**/*.css\"",
+    "format": "prettier -c . --write",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "test": "vitest"

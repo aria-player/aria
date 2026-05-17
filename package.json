@@ -27,7 +27,8 @@
     "preview": "bun run --cwd packages/aria-player preview",
     "tauri": "bun run --cwd packages/aria-player tauri",
     "test": "bun run --cwd packages/aria-player test",
-    "lint": "bun --filter '*' lint"
+    "lint": "bun --filter '*' lint",
+    "format": "bun --filter '*' format"
   },
   "prettier": {
     "semi": true,
