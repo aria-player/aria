@@ -32,10 +32,17 @@
   "librarySetup": {
     "heading": "Configure your Spotify library",
     "description": "Choose which songs from Spotify you'd like to include in your library. You can change this later in Settings.",
+    "libraryHeading": "Library",
     "includeLikedSongs": "Include songs from Liked Songs",
     "includeSavedAlbums": "Include songs from Saved Albums",
     "songCount": "{{count}} songs",
     "albumCount": "{{count}} albums",
+    "playlistsHeading": "Playlists",
+    "includeOwnPlaylists": "Include playlists you own",
+    "includeFollowedPlaylists": "Include playlists you follow",
+    "playlistCount": "{{count}} playlists",
+    "metadataHeading": "Metadata",
+    "libraryFootnote": "Playlists created by Spotify cannot be accessed by Aria.",
     "fetchGenres": "Include artist genre information",
     "continue": "Continue"
   },

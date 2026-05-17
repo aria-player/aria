@@ -8,12 +8,16 @@ export default function LibrarySetupDialog({
   initialSelection,
   likedSongsCount,
   savedAlbumsCount,
+  ownPlaylistsCount,
+  followedPlaylistsCount,
   onChange,
   i18n: i18nInstance,
 }: {
   initialSelection: LibraryItemSelection;
   likedSongsCount?: number;
   savedAlbumsCount?: number;
+  ownPlaylistsCount?: number;
+  followedPlaylistsCount?: number;
   onChange: (next: LibraryItemSelection) => void;
   i18n: i18n;
 }) {
@@ -27,6 +31,8 @@ export default function LibrarySetupDialog({
         selection={selection}
         likedSongsCount={likedSongsCount}
         savedAlbumsCount={savedAlbumsCount}
+        ownPlaylistsCount={ownPlaylistsCount}
+        followedPlaylistsCount={followedPlaylistsCount}
         onChange={(next) => {
           setSelection(next);
           onChange(next);

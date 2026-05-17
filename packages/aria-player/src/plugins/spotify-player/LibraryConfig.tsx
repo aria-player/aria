@@ -18,18 +18,16 @@ export function showLibrarySetupDialog({
   host: SourceCallbacks;
   config: SpotifyConfig;
   i18n: i18n;
-  onSubmit: (
-    includeLikedSongs: boolean,
-    includeSavedAlbums: boolean,
-    fetchGenres: boolean
-  ) => void;
+  onSubmit: (selection: LibraryItemSelection) => void;
 }) {
   let state: LibraryItemSelection = {
     includeLikedSongs: config.includeLikedSongs !== false,
     includeSavedAlbums: config.includeSavedAlbums !== false,
     fetchGenres: config.fetchGenres !== false,
+    includeOwnPlaylists: config.includeOwnPlaylists !== false,
+    includeFollowedPlaylists: config.includeFollowedPlaylists !== false,
   };
-  const { likedSongsCount, savedAlbumsCount } = config;
+  const { likedSongsCount, savedAlbumsCount, ownPlaylistsCount, followedPlaylistsCount } = config;
 
   host.showAlert({
     heading: i18nInstance.t("spotify-player:librarySetup.heading"),
@@ -38,6 +36,8 @@ export function showLibrarySetupDialog({
         initialSelection={state}
         likedSongsCount={likedSongsCount}
         savedAlbumsCount={savedAlbumsCount}
+        ownPlaylistsCount={ownPlaylistsCount}
+        followedPlaylistsCount={followedPlaylistsCount}
         onChange={(next) => {
           state = next;
         }}
@@ -45,12 +45,7 @@ export function showLibrarySetupDialog({
       />
     ),
     closeLabel: i18nInstance.t("spotify-player:librarySetup.continue"),
-    onClose: () =>
-      onSubmit(
-        state.includeLikedSongs,
-        state.includeSavedAlbums,
-        state.fetchGenres
-      ),
+    onClose: () => onSubmit(state),
   });
 }
 
@@ -62,6 +57,7 @@ export default function LibraryConfig(props: {
   redirectUri: string;
   startLibraryLoad: () => void;
   refreshLibrary: (configOverride?: Partial<SpotifyConfig>) => void;
+  refreshPlaylists: () => void;
   i18n: i18n;
 }) {
   const config = props.data as SpotifyConfig;
@@ -88,6 +84,7 @@ export default function LibraryConfig(props: {
       librarySetupPending: false,
     });
     props.refreshLibrary(newSelection);
+    props.refreshPlaylists();
   }
 
   return (
@@ -110,9 +107,13 @@ export default function LibraryConfig(props: {
             includeLikedSongs: config.includeLikedSongs !== false,
             includeSavedAlbums: config.includeSavedAlbums !== false,
             fetchGenres: config.fetchGenres !== false,
+            includeOwnPlaylists: config.includeOwnPlaylists !== false,
+            includeFollowedPlaylists: config.includeFollowedPlaylists !== false,
           }}
           likedSongsCount={config.likedSongsCount}
           savedAlbumsCount={config.savedAlbumsCount}
+          ownPlaylistsCount={config.ownPlaylistsCount}
+          followedPlaylistsCount={config.followedPlaylistsCount}
           onChange={handleLibrarySettingChange}
           i18n={props.i18n}
         />

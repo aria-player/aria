@@ -26,8 +26,12 @@ export type SpotifyConfig = {
   includeLikedSongs?: boolean;
   includeSavedAlbums?: boolean;
   fetchGenres?: boolean;
+  includeOwnPlaylists?: boolean;
+  includeFollowedPlaylists?: boolean;
   likedSongsCount?: number;
   savedAlbumsCount?: number;
+  ownPlaylistsCount?: number;
+  followedPlaylistsCount?: number;
   librarySetupPending?: boolean;
 };
 
@@ -79,12 +83,10 @@ export default function createSpotifyPlayer(
       host,
       config,
       i18n,
-      onSubmit: (includeLikedSongs, includeSavedAlbums, fetchGenres) => {
+      onSubmit: (selection) => {
         host.updateData({
           ...getConfig(),
-          includeLikedSongs,
-          includeSavedAlbums,
-          fetchGenres,
+          ...selection,
           librarySetupPending: false,
         });
         startLibraryLoad();
@@ -614,6 +616,14 @@ export default function createSpotifyPlayer(
   }
 
   async function loadPlaylists() {
+    const config = getConfig();
+    const includeOwnPlaylists = config.includeOwnPlaylists !== false;
+    const includeFollowedPlaylists = config.includeFollowedPlaylists !== false;
+    if (!includeOwnPlaylists && !includeFollowedPlaylists) {
+      host.updatePlaylists([]);
+      return;
+    }
+
     const profile = (await spotifyRequest(
       "/me"
     )) as SpotifyApi.CurrentUsersProfileResponse | undefined;
@@ -624,6 +634,8 @@ export default function createSpotifyPlayer(
     let playlistsRemaining = true;
     const allPlaylists: ExternalPlaylistInfo[] = [];
     let loadedAllPlaylists = true;
+    let ownPlaylistsCount = 0;
+    let followedPlaylistsCount = 0;
 
     while (playlistsRemaining) {
       const playlistsResponse = (await spotifyRequest(
@@ -631,14 +643,22 @@ export default function createSpotifyPlayer(
       )) as SpotifyApi.ListOfCurrentUsersPlaylistsResponse | undefined;
 
       if (playlistsResponse && playlistsResponse.items) {
-        const playlists = playlistsResponse.items.map((playlist) => {
+        const playlists = playlistsResponse.items.flatMap((playlist) => {
+          if (!playlist) return [];
           const isOwner = currentUserId != null && playlist.owner.id === currentUserId;
+          if (isOwner) {
+            ownPlaylistsCount++;
+          } else {
+            followedPlaylistsCount++;
+          }
+          if (isOwner && !includeOwnPlaylists) return [];
+          if (!isOwner && !includeFollowedPlaylists) return [];
           const permissions: PlaylistPermissions = isOwner
             ? "manage"
             : playlist.collaborative
               ? "write"
               : "read";
-          return { uri: playlist.id, name: playlist.name, permissions };
+          return [{ uri: playlist.id, name: playlist.name, permissions }];
         });
 
         allPlaylists.push(...playlists);
@@ -654,6 +674,7 @@ export default function createSpotifyPlayer(
       }
     }
     if (loadedAllPlaylists) {
+      host.updateData({ ...getConfig(), ownPlaylistsCount, followedPlaylistsCount });
       host.updatePlaylists(allPlaylists);
     }
   }
@@ -829,6 +850,7 @@ export default function createSpotifyPlayer(
         redirectUri: getRedirectUri(),
         startLibraryLoad,
         refreshLibrary,
+        refreshPlaylists: loadPlaylists,
         i18n,
       }),
 

@@ -6,18 +6,24 @@ export type LibraryItemSelection = {
   includeLikedSongs: boolean;
   includeSavedAlbums: boolean;
   fetchGenres: boolean;
+  includeOwnPlaylists: boolean;
+  includeFollowedPlaylists: boolean;
 };
 
 export default function LibraryItemsConfig({
   selection,
   likedSongsCount,
   savedAlbumsCount,
+  ownPlaylistsCount,
+  followedPlaylistsCount,
   onChange,
   i18n: i18nInstance,
 }: {
   selection: LibraryItemSelection;
   likedSongsCount?: number;
   savedAlbumsCount?: number;
+  ownPlaylistsCount?: number;
+  followedPlaylistsCount?: number;
   onChange: (next: LibraryItemSelection) => void;
   i18n: i18n;
 }) {
@@ -27,6 +33,9 @@ export default function LibraryItemsConfig({
     <div>
       <table className={styles.libraryItemsConfig}>
         <tbody>
+          <tr className={styles.libraryItemSeparatorRow}>
+            <td colSpan={2}>{t("librarySetup.libraryHeading")}</td>
+          </tr>
           <tr>
             <td>
               <label className={styles.libraryItemLabel}>
@@ -71,23 +80,82 @@ export default function LibraryItemsConfig({
                 : ""}
             </td>
           </tr>
+          <tr className={styles.libraryItemSeparatorRow}>
+            <td colSpan={2}>{t("librarySetup.playlistsHeading")}</td>
+          </tr>
+          <tr>
+            <td>
+              <label className={styles.libraryItemLabel}>
+                <input
+                  type="checkbox"
+                  checked={selection.includeOwnPlaylists}
+                  onChange={(e) =>
+                    onChange({
+                      ...selection,
+                      includeOwnPlaylists: e.target.checked,
+                    })
+                  }
+                />
+                {t("librarySetup.includeOwnPlaylists")}
+              </label>
+            </td>
+            <td className={styles.libraryItemCount}>
+              {ownPlaylistsCount !== undefined
+                ? t("librarySetup.playlistCount", { count: ownPlaylistsCount })
+                : ""}
+            </td>
+          </tr>
+          <tr>
+            <td>
+              <label className={styles.libraryItemLabel}>
+                <input
+                  type="checkbox"
+                  checked={selection.includeFollowedPlaylists}
+                  onChange={(e) =>
+                    onChange({
+                      ...selection,
+                      includeFollowedPlaylists: e.target.checked,
+                    })
+                  }
+                />
+                {t("librarySetup.includeFollowedPlaylists")}
+              </label>
+            </td>
+            <td className={styles.libraryItemCount}>
+              {followedPlaylistsCount !== undefined
+                ? t("librarySetup.playlistCount", {
+                    count: followedPlaylistsCount,
+                  })
+                : ""}
+            </td>
+          </tr>
+          <tr className={styles.libraryItemSeparatorRow}>
+            <td colSpan={2}>{t("librarySetup.metadataHeading")}</td>
+          </tr>
+          <tr>
+            <td colSpan={2}>
+              <label className={styles.libraryItemLabel}>
+                <input
+                  type="checkbox"
+                  checked={selection.fetchGenres}
+                  onChange={(e) =>
+                    onChange({
+                      ...selection,
+                      fetchGenres: e.target.checked,
+                    })
+                  }
+                />
+                {t("librarySetup.fetchGenres")}
+              </label>
+            </td>
+          </tr>
+          <tr>
+            <td colSpan={2} className={styles.libraryFootnote}>
+              {t("librarySetup.libraryFootnote")}
+            </td>
+          </tr>
         </tbody>
       </table>
-      <label
-        className={`${styles.libraryItemLabel} ${styles.libraryExtraOptions}`}
-      >
-        <input
-          type="checkbox"
-          checked={selection.fetchGenres}
-          onChange={(e) =>
-            onChange({
-              ...selection,
-              fetchGenres: e.target.checked,
-            })
-          }
-        />
-        {t("librarySetup.fetchGenres")}
-      </label>
     </div>
   );
 }
