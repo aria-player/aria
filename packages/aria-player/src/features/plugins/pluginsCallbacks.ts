@@ -308,6 +308,7 @@ export const getExternalPlaylistsCallbacks = (
             id: playlist.uri,
             name: playlist.name,
             provider: pluginId,
+            permissions: playlist.permissions,
           })
         );
       }

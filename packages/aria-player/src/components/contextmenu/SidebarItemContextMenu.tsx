@@ -50,8 +50,12 @@ export function SidebarItemContextMenu() {
   const isOperationPending =
     menuData != null && pendingPlaylistOperations[menuData.itemId] != null;
   const isExternalPlaylist = playlist?.provider != null;
-  const canRename = !isExternalPlaylist || plugin?.renamePlaylist != null;
-  const canDelete = !isExternalPlaylist || plugin?.deletePlaylist != null;
+  const canRename =
+    !isExternalPlaylist ||
+    (plugin?.renamePlaylist != null && playlist?.permissions === "manage");
+  const canDelete =
+    !isExternalPlaylist ||
+    (plugin?.deletePlaylist != null && playlist?.permissions === "manage");
 
   const createItem = (isFolder: boolean) => {
     if (!menuData) return;

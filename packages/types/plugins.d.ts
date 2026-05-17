@@ -465,6 +465,8 @@ export interface SourceCallbacks extends BaseCallbacks {
 
 export type PlaylistId = string;
 
+export type PlaylistPermissions = "read" | "write" | "manage";
+
 export type ExternalPlaylistInfo = {
   /**
    * Unique identifier for this playlist.
@@ -475,9 +477,9 @@ export type ExternalPlaylistInfo = {
    */
   name: string;
   /**
-   * Whether this playlist can be modified by the user.
+   * Permissions for this playlist.
    */
-  readonly: boolean;
+  permissions: PlaylistPermissions;
 };
 
 /**

@@ -8,6 +8,7 @@ import { isTauri } from "../../app/utils";
 import {
   ArtistMetadata,
   ExternalPlaylistInfo,
+  PlaylistPermissions,
   ExternalPlaylistsCallbacks,
   ExternalPlaylistsHandle,
   SourceCallbacks,
@@ -613,6 +614,11 @@ export default function createSpotifyPlayer(
   }
 
   async function loadPlaylists() {
+    const profile = (await spotifyRequest(
+      "/me"
+    )) as SpotifyApi.CurrentUsersProfileResponse | undefined;
+    const currentUserId = profile?.id;
+
     const playlistsLimit = 50;
     let playlistsOffset = 0;
     let playlistsRemaining = true;
@@ -625,11 +631,15 @@ export default function createSpotifyPlayer(
       )) as SpotifyApi.ListOfCurrentUsersPlaylistsResponse | undefined;
 
       if (playlistsResponse && playlistsResponse.items) {
-        const playlists = playlistsResponse.items.map((playlist) => ({
-          uri: playlist.id,
-          name: playlist.name,
-          readonly: true,
-        }));
+        const playlists = playlistsResponse.items.map((playlist) => {
+          const isOwner = currentUserId != null && playlist.owner.id === currentUserId;
+          const permissions: PlaylistPermissions = isOwner
+            ? "manage"
+            : playlist.collaborative
+              ? "write"
+              : "read";
+          return { uri: playlist.id, name: playlist.name, permissions };
+        });
 
         allPlaylists.push(...playlists);
 

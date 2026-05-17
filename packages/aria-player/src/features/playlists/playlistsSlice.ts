@@ -30,7 +30,7 @@ import {
   resetColumnStateExceptSort,
 } from "../../app/utils";
 import { DisplayMode, SplitViewState, TrackGrouping } from "../../app/view";
-import { PluginId, TrackUri } from "../../../../types";
+import { PluginId, PlaylistPermissions, TrackUri } from "../../../../types";
 import { AppThunk } from "../../app/store";
 import { createAsyncThunk, nanoid } from "@reduxjs/toolkit";
 import { pluginHandles } from "../plugins/pluginsSlice";
@@ -342,9 +342,10 @@ export const playlistsSlice = createSlice({
         id: string;
         name: string;
         provider: PluginId;
+        permissions: PlaylistPermissions;
       }>
     ) => {
-      const { id, name, provider } = action.payload;
+      const { id, name, provider, permissions } = action.payload;
       const existingNode = findTreeNode(state.layout, id);
       const existingPlaylist = state.playlists.entities[id];
 
@@ -359,6 +360,7 @@ export const playlistsSlice = createSlice({
             id,
             tracks: [],
             provider,
+            permissions,
           });
           playlistsConfigAdapter.addOne(state.playlistsConfig, {
             id,
@@ -372,6 +374,10 @@ export const playlistsSlice = createSlice({
         state.layout = updateTreeNode(state.layout, {
           id,
           changes: { name },
+        });
+        playlistsAdapter.updateOne(state.playlists, {
+          id,
+          changes: { permissions },
         });
       }
     },
