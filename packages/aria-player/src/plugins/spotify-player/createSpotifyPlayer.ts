@@ -241,6 +241,10 @@ export default function createSpotifyPlayer(
         const retryAfter = response.headers.get("Retry-After");
         const waitTime = retryAfter ? parseInt(retryAfter, 10) * 1000 : 1000;
         await new Promise((resolve) => setTimeout(resolve, waitTime));
+        if (attempt === 0) {
+          continue;
+        }
+        return;
       } else if (
         response.status !== 204 &&
         response.headers.get("content-type")?.includes("application/json")
@@ -857,10 +861,18 @@ export default function createSpotifyPlayer(
       if (!trackId) {
         throw new Error(`Invalid Spotify track URI: ${uri}`);
       }
-      const trackResponse = (await spotifyRequest(
-        `/tracks/${trackId}`
-      )) as SpotifyApi.SingleTrackResponse;
-      if (!trackResponse || trackResponse.restrictions?.reason) {
+      const trackResponse = (await spotifyRequest(`/tracks/${trackId}`)) as
+        | SpotifyApi.SingleTrackResponse
+        | Response
+        | undefined;
+      if (
+        !trackResponse ||
+        trackResponse instanceof Response ||
+        !Array.isArray(trackResponse.artists) ||
+        !trackResponse.album ||
+        !Array.isArray(trackResponse.album.artists) ||
+        trackResponse.restrictions?.reason
+      ) {
         return undefined;
       }
 
