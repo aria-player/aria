@@ -1013,9 +1013,7 @@ export const TrackList = () => {
           noRowsOverlayComponent={NoRowsOverlay}
           loadingOverlayComponent={LoadingSpinner}
           multiSortKey="ctrl"
-          rowDragEntireRow={
-            visibleViewType == View.Playlist && !isExternalPlaylist
-          }
+          rowDragEntireRow
           suppressDragLeaveHidesColumns
           suppressMoveWhenRowDragging
         />
