@@ -1,5 +1,5 @@
 import { AppDispatch, RootState, store } from "./store";
-import { createSelector, nanoid } from "@reduxjs/toolkit";
+import { createSelector } from "@reduxjs/toolkit";
 import { invoke } from "@tauri-apps/api/core";
 import { push, goBack, goForward } from "redux-first-history";
 import { BASEPATH } from "./constants";
@@ -25,15 +25,14 @@ import {
 import { restartOrPreviousTrack } from "../features/player/playerTime";
 import { ActionCreators } from "redux-undo";
 import {
-  addTracksToPlaylist,
-  removeTracksFromPlaylist,
+  addPlaylistTracksThunk,
+  removePlaylistTracksThunk,
   resetPlaylistColumnState,
   setPlaylistDisplayMode,
   togglePlaylistUsesCustomLayout,
   updatePlaylistSplitViewState,
 } from "../features/playlists/playlistsSlice";
 import { copySelectedTracks } from "../features/tracks/tracksSlice";
-import { PlaylistItem } from "../features/playlists/playlistsTypes";
 import { View, DisplayMode, LibraryView, TrackGrouping } from "./view";
 import {
   selectCurrentTrack,
@@ -157,36 +156,35 @@ export function handleMenuAction(
         dispatch(ActionCreators.redo());
       }
       break;
-    case "delete":
-      {
-        const visibleView = selectVisibleViewType(state);
-        const visiblePlaylist = selectVisiblePlaylist(state)?.id;
-        if (visiblePlaylist) {
-          dispatch(
-            removeTracksFromPlaylist({
-              playlistId: visiblePlaylist,
-              itemIds: state.tracks.selectedTracks.map((track) => track.itemId),
-            })
-          );
-        } else if (visibleView == View.Queue) {
-          dispatch(
-            removeFromQueue(
-              state.tracks.selectedTracks.map((track) => track.itemId)
-            )
-          );
-        }
+    case "delete": {
+      const visibleView = selectVisibleViewType(state);
+      const visiblePlaylist = selectVisiblePlaylist(state);
+      if (visiblePlaylist?.id) {
+        dispatch(
+          removePlaylistTracksThunk(
+            visiblePlaylist.id,
+            state.tracks.selectedTracks
+          )
+        );
+      } else if (visibleView == View.Queue) {
+        dispatch(
+          removeFromQueue(
+            state.tracks.selectedTracks.map((track) => track.itemId)
+          )
+        );
       }
       break;
+    }
     case "cut": {
       const visibleView = selectVisibleViewType(state);
-      const visiblePlaylist = selectVisiblePlaylist(state)?.id;
+      const visiblePlaylist = selectVisiblePlaylist(state);
       dispatch(copySelectedTracks());
-      if (visiblePlaylist) {
+      if (visiblePlaylist?.id) {
         dispatch(
-          removeTracksFromPlaylist({
-            playlistId: visiblePlaylist,
-            itemIds: state.tracks.selectedTracks.map((track) => track.itemId),
-          })
+          removePlaylistTracksThunk(
+            visiblePlaylist.id,
+            state.tracks.selectedTracks
+          )
         );
       } else if (visibleView == View.Queue) {
         dispatch(
@@ -200,27 +198,17 @@ export function handleMenuAction(
     case "copy":
       dispatch(copySelectedTracks());
       break;
-    case "paste":
-      {
-        const visiblePlaylist = selectVisiblePlaylist(state);
-        if (visiblePlaylist?.id) {
-          const newTracks: PlaylistItem[] = state.tracks.clipboard
-            .map((node) => {
-              return {
-                itemId: nanoid(),
-                trackId: node.trackId,
-              };
-            })
-            .filter(Boolean) as PlaylistItem[];
-          dispatch(
-            addTracksToPlaylist({
-              playlistId: visiblePlaylist.id,
-              newTracks,
-            })
-          );
-        }
-      }
+    case "paste": {
+      const visiblePlaylist = selectVisiblePlaylist(state);
+      if (!visiblePlaylist?.id || !state.tracks.clipboard.length) break;
+      dispatch(
+        addPlaylistTracksThunk(
+          visiblePlaylist.id,
+          state.tracks.clipboard.map((item) => item.trackId)
+        )
+      );
       break;
+    }
     case "togglePlaylistLayout": {
       const visiblePlaylist = selectVisiblePlaylist(state);
       if (visiblePlaylist?.id) {

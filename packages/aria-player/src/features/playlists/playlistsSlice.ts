@@ -36,8 +36,12 @@ import { createAsyncThunk, nanoid } from "@reduxjs/toolkit";
 import { pluginHandles } from "../plugins/pluginsSlice";
 import {
   initPlaylistTrackUris,
+  removePlaylistTrackUris,
   setPlaylistTrackUrisPage,
 } from "../cache/cacheSlice";
+import { selectTrackById } from "../tracks/tracksSlice";
+import { showToast } from "../../app/toasts";
+import { t } from "i18next";
 
 const playlistsAdapter = createEntityAdapter<PlaylistUndoable>();
 const playlistsConfigAdapter = createEntityAdapter<PlaylistConfig>();
@@ -87,6 +91,96 @@ export function finishPlaylistOperation(id: string): AppThunk {
     clearTimeout(operationTimers.get(id));
     operationTimers.delete(id);
     dispatch(clearOperation(id));
+  };
+}
+
+export function addPlaylistTracksThunk(
+  playlistId: string,
+  trackIds: string[]
+): AppThunk<Promise<void>> {
+  return async (dispatch, getState) => {
+    const state = getState();
+    const playlist = selectPlaylistById(state, playlistId);
+    if (playlist?.provider) {
+      const { provider } = playlist;
+      const uris = trackIds
+        .map((id) => selectTrackById(state, id)?.uri)
+        .filter(Boolean) as string[];
+      if (!uris.length) return;
+      const playlistName = selectPlaylistsLayoutItemById(
+        state,
+        playlistId
+      )?.name;
+      if (trackIds.length === 1) {
+        showToast(
+          t("toasts.addedNamedTrackToPlaylist", {
+            title: selectTrackById(state, trackIds[0])?.title,
+            playlist: playlistName,
+          })
+        );
+      } else {
+        showToast(
+          t("toasts.addedTracksToPlaylist", {
+            count: trackIds.length,
+            playlist: playlistName,
+          })
+        );
+      }
+      try {
+        await pluginHandles[provider]?.addPlaylistTracks?.(playlistId, uris);
+        dispatch(initExternalPlaylist({ playlistId, provider }));
+      } catch {
+        showToast(
+          t("toasts.addToExternalPlaylistError", { playlist: playlistName })
+        );
+      }
+    } else {
+      dispatch(
+        addTracksToPlaylist({
+          playlistId,
+          newTracks: trackIds.map((trackId) => ({ itemId: nanoid(), trackId })),
+        })
+      );
+    }
+  };
+}
+
+export function removePlaylistTracksThunk(
+  playlistId: string,
+  tracks: PlaylistItem[]
+): AppThunk<Promise<void>> {
+  return async (dispatch, getState) => {
+    const state = getState();
+    const playlist = selectPlaylistById(state, playlistId);
+    if (playlist?.provider) {
+      const { provider } = playlist;
+      const uris = tracks
+        .map((track) => selectTrackById(state, track.trackId)?.uri)
+        .filter(Boolean) as string[];
+      if (!uris.length) return;
+      const playlistName = selectPlaylistsLayoutItemById(
+        state,
+        playlistId
+      )?.name;
+      try {
+        await pluginHandles[provider]?.removePlaylistTracks?.(playlistId, uris);
+        dispatch(removePlaylistTrackUris({ playlistId, uris }));
+        dispatch(initExternalPlaylist({ playlistId, provider }));
+      } catch {
+        showToast(
+          t("toasts.removeFromExternalPlaylistError", {
+            playlist: playlistName,
+          })
+        );
+      }
+    } else {
+      dispatch(
+        removeTracksFromPlaylist({
+          playlistId,
+          itemIds: tracks.map((track) => track.itemId),
+        })
+      );
+    }
   };
 }
 

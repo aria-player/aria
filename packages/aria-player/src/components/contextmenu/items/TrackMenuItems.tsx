@@ -4,13 +4,13 @@ import { useContext } from "react";
 import { t } from "i18next";
 import { useAppDispatch, useAppSelector } from "../../../app/hooks";
 import {
-  addTracksToPlaylist,
+  addPlaylistTracksThunk,
   createPlaylistItem,
+  selectPlaylistById,
   selectPlaylistsLayout,
 } from "../../../features/playlists/playlistsSlice";
 import { Item as TreeItem } from "soprano-ui";
 import { nanoid } from "@reduxjs/toolkit";
-import { PlaylistItem } from "../../../features/playlists/playlistsTypes";
 import {
   addTracks,
   removeTracks,
@@ -73,16 +73,11 @@ export function TrackMenuItems() {
     !!remoteLibraryHandle?.removeTracksFromRemoteLibrary && !hasUnaddedTracks;
 
   const addToPlaylist = (playlistId: string) => {
-    const newItems: PlaylistItem[] = tracksForActions
-      .map((node) => {
-        return { itemId: nanoid(), trackId: node.trackId };
-      })
-      .filter(Boolean) as PlaylistItem[];
     dispatch(
-      addTracksToPlaylist({
+      addPlaylistTracksThunk(
         playlistId,
-        newTracks: newItems,
-      })
+        tracksForActions.map((track) => track.trackId)
+      )
     );
   };
 
@@ -96,12 +91,18 @@ export function TrackMenuItems() {
           </Submenu>
         );
       } else {
+        const playlist = selectPlaylistById(store.getState(), item.id);
+        const isDisabled =
+          !!playlist?.provider &&
+          (playlist.provider !== sourceForActions ||
+            !pluginHandles[playlist.provider]?.addPlaylistTracks ||
+            (playlist.permissions !== "write" &&
+              playlist.permissions !== "manage"));
         return (
           <Item
             key={item.id}
-            onClick={() => {
-              addToPlaylist(item.id);
-            }}
+            disabled={isDisabled}
+            onClick={() => addToPlaylist(item.id)}
           >
             {item.name}
           </Item>

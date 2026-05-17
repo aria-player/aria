@@ -261,8 +261,8 @@ export default function createSpotifyPlayer(
 
   async function spotifyWriteRequest(
     endpoint: string,
-    method: "PUT" | "DELETE",
-    body?: Record<string, string | string[]>
+    method: "POST" | "PUT" | "DELETE",
+    body?: Record<string, unknown>
   ) {
     const token = await getOrRefreshAccessToken();
     if (!token) throw new Error("Spotify access token unavailable.");
@@ -1325,6 +1325,37 @@ export default function createSpotifyPlayer(
 
     refreshPlaylists: async () => {
       await loadPlaylists();
+    },
+
+    addPlaylistTracks: async (id: string, uris: string[]) => {
+      for (let i = 0; i < uris.length; i += 100) {
+        await spotifyWriteRequest(
+          `/playlists/${encodeURIComponent(id)}/tracks`,
+          "POST",
+          { uris: uris.slice(i, i + 100) }
+        );
+      }
+    },
+
+    removePlaylistTracks: async (id: string, uris: string[]) => {
+      if (id === LIKED_SONGS_PLAYLIST_ID) {
+        const batchSize = 50;
+        for (let i = 0; i < uris.length; i += batchSize) {
+          const ids = uris
+            .slice(i, i + batchSize)
+            .map((uri) => uri.split(":")[2])
+            .join(",");
+          await spotifyWriteRequest(`/me/tracks?ids=${ids}`, "DELETE");
+        }
+      } else {
+        for (let i = 0; i < uris.length; i += 100) {
+          await spotifyWriteRequest(
+            `/playlists/${encodeURIComponent(id)}/tracks`,
+            "DELETE",
+            { tracks: uris.slice(i, i + 100).map((uri) => ({ uri })) }
+          );
+        }
+      }
     },
 
     getTracksByUri: async (uris: string[]) => {

@@ -516,6 +516,14 @@ export interface ExternalPlaylistsHandle extends BaseHandle {
    * Refresh all playlists for this source.
    */
   refreshPlaylists?: () => Promise<void>;
+  /**
+   * Add tracks to an external playlist.
+   */
+  addPlaylistTracks?: (id: PlaylistId, uris: TrackUri[]) => Promise<void>;
+  /**
+   * Remove tracks from an external playlist.
+   */
+  removePlaylistTracks?: (id: PlaylistId, uris: TrackUri[]) => Promise<void>;
 }
 
 /**

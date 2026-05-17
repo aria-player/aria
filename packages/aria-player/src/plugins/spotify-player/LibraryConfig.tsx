@@ -27,7 +27,12 @@ export function showLibrarySetupDialog({
     includeOwnPlaylists: config.includeOwnPlaylists !== false,
     includeFollowedPlaylists: config.includeFollowedPlaylists !== false,
   };
-  const { likedSongsCount, savedAlbumsCount, ownPlaylistsCount, followedPlaylistsCount } = config;
+  const {
+    likedSongsCount,
+    savedAlbumsCount,
+    ownPlaylistsCount,
+    followedPlaylistsCount,
+  } = config;
 
   host.showAlert({
     heading: i18nInstance.t("spotify-player:librarySetup.heading"),

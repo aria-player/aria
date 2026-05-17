@@ -165,6 +165,17 @@ export const cacheSlice = createSlice({
         entry.uris[offset + i] = uri;
       });
     },
+    removePlaylistTrackUris: (
+      state,
+      action: PayloadAction<{ playlistId: string; uris: string[] }>
+    ) => {
+      const { playlistId, uris } = action.payload;
+      const entry = state.playlistTrackUris[playlistId];
+      if (!entry) return;
+      const uriSet = new Set(uris);
+      entry.uris = entry.uris.filter((uri) => uri === null || !uriSet.has(uri));
+      entry.total = entry.uris.length;
+    },
     clearCache: (state) => {
       state.fetchedAlbums = [];
       state.artistTopTracks = {};
@@ -225,6 +236,7 @@ export const {
   updateCachedSearchArtists,
   initPlaylistTrackUris,
   setPlaylistTrackUrisPage,
+  removePlaylistTrackUris,
   clearCache,
   removeCachedTracks,
 } = cacheSlice.actions;

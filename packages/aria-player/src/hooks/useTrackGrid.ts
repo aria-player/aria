@@ -11,13 +11,14 @@ import {
   GridApi,
   getGridElement,
 } from "ag-grid-community";
-import { nanoid } from "@reduxjs/toolkit";
 import { t } from "i18next";
 import { useContext, useEffect, useRef } from "react";
 import { replace } from "redux-first-history";
 import { store } from "../app/store";
-import { addTracksToPlaylist } from "../features/playlists/playlistsSlice";
-import { PlaylistItem } from "../features/playlists/playlistsTypes";
+import {
+  addPlaylistTracksThunk,
+  selectPlaylistById,
+} from "../features/playlists/playlistsSlice";
 import { setSelectedTracks } from "../features/tracks/tracksSlice";
 import { useAppDispatch, useAppSelector } from "../app/hooks";
 import { GridContext } from "../contexts/GridContext";
@@ -27,6 +28,7 @@ import { selectVisibleSelectedTrackGroup } from "../features/visibleSelectors";
 import { BASEPATH } from "../app/constants";
 import { AlbumTrackListItem } from "../components/views/subviews/AlbumTrackList";
 import { QueueListItem } from "../components/pages/QueuePage";
+import { PlaylistItem } from "../features/playlists/playlistsTypes";
 
 const ROW_ANIMATION_DURATION_MS = 400;
 
@@ -183,7 +185,19 @@ export function useTrackGrid() {
 
       onDragging: (params: RowDragMoveEvent) => {
         const item = getHoveredItem(params.event.clientX, params.event.clientY);
-        updateDragGhost(params.node.data.title, item?.title);
+        if (item?.id) {
+          const playlist = selectPlaylistById(store.getState(), item.id);
+          const selectedRows = params.api.getSelectedRows();
+          const dragSource = (
+            selectedRows.length > 0 ? selectedRows[0] : params.node.data
+          ).source;
+          if (playlist?.provider && playlist.provider !== dragSource) {
+            setOutline(lastHoveredItem, false);
+            updateDragGhost(params.node.data.title);
+            return;
+          }
+        }
+        updateDragGhost(params.node.data.title, item?.title ?? undefined);
       },
 
       onDragLeave: (params: RowDragLeaveEvent) => {
@@ -195,26 +209,20 @@ export function useTrackGrid() {
         const item = getHoveredItem(params.event.clientX, params.event.clientY);
         if (!item?.id) return;
 
-        const selectedRowsCount = params.api.getSelectedRows().length ?? 0;
-        const newTracks: PlaylistItem[] =
-          selectedRowsCount <= 1
-            ? [
-                {
-                  itemId: nanoid(),
-                  trackId: params.node.data.trackId,
-                },
-              ]
-            : (getSortedSelectedTracks(params.api)
-                .map((node) => {
-                  return { itemId: nanoid(), trackId: node.trackId };
-                })
-                .filter(Boolean) as PlaylistItem[]);
-        dispatch(
-          addTracksToPlaylist({
-            playlistId: item.id,
-            newTracks,
-          })
-        );
+        const state = store.getState();
+        const playlist = selectPlaylistById(state, item.id);
+        const selectedRows = params.api.getSelectedRows();
+        const rows =
+          selectedRows.length > 0 ? selectedRows : [params.node.data];
+        const dragSource = rows[0]?.source;
+
+        if (playlist?.provider && playlist.provider !== dragSource) return;
+
+        const trackIds =
+          rows.length <= 1
+            ? [params.node.data.trackId]
+            : getSortedSelectedTracks(params.api).map((node) => node.trackId);
+        dispatch(addPlaylistTracksThunk(item.id, trackIds));
       },
     };
 

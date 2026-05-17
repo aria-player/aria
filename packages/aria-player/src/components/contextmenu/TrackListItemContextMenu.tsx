@@ -4,10 +4,11 @@ import { useContext } from "react";
 import { t } from "i18next";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 import {
-  removeTracksFromPlaylist,
+  removePlaylistTracksThunk,
   selectPlaylistById,
 } from "../../features/playlists/playlistsSlice";
 import { selectSelectedTracks } from "../../features/tracks/tracksSlice";
+import { pluginHandles } from "../../features/plugins/pluginsSlice";
 import { store } from "../../app/store";
 import { DisplayMode, LibraryView, View } from "../../app/view";
 import {
@@ -40,6 +41,12 @@ export function TrackListItemContextMenu() {
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
   const visibleView = useAppSelector(selectVisibleViewType);
   const selectedTracks = useAppSelector(selectSelectedTracks);
+  const canRemoveFromPlaylist =
+    !!visiblePlaylist &&
+    (!visiblePlaylist.provider ||
+      ((visiblePlaylist.permissions === "write" ||
+        visiblePlaylist.permissions === "manage") &&
+        !!pluginHandles[visiblePlaylist.provider]?.removePlaylistTracks));
 
   return (
     <Menu
@@ -101,18 +108,15 @@ export function TrackListItemContextMenu() {
       </Item>
       <Separator />
       <TrackMenuItems />
-      {(visiblePlaylist ||
+      {(canRemoveFromPlaylist ||
         (visibleView == View.Queue && menuData?.itemIndex != 0)) && (
         <Separator />
       )}
-      {visiblePlaylist && (
+      {canRemoveFromPlaylist && (
         <Item
           onClick={() => {
             dispatch(
-              removeTracksFromPlaylist({
-                playlistId: visiblePlaylist.id,
-                itemIds: selectedTracks.map((track) => track.itemId),
-              })
+              removePlaylistTracksThunk(visiblePlaylist!.id, selectedTracks)
             );
           }}
         >

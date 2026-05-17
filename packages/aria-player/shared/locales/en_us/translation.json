@@ -60,6 +60,8 @@
     "deleteExternalPlaylistError": "Couldn't delete '{{name}}'",
     "createExternalPlaylistError": "Couldn't create playlist",
     "refreshExternalPlaylistsError": "Couldn't refresh playlists",
+    "addToExternalPlaylistError": "Couldn't add to '{{playlist}}'",
+    "removeFromExternalPlaylistError": "Couldn't remove from '{{playlist}}'",
     "addedNamedTrackToQueue": "Added '{{title}}' to queue",
     "addedTracksToQueue": "Added {{count}} tracks to queue",
     "addedNamedTrackToQueueFront": "Added '{{title}}' to front of queue",
