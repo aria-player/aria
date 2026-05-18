@@ -8,6 +8,7 @@ import {
   createPlaylistItem,
   selectPlaylistById,
   selectPlaylistsLayout,
+  upsertExternalPlaylist,
 } from "../../../features/playlists/playlistsSlice";
 import { Item as TreeItem } from "soprano-ui";
 import { nanoid } from "@reduxjs/toolkit";
@@ -27,7 +28,9 @@ import { BASEPATH } from "../../../app/constants";
 import { push } from "redux-first-history";
 import { showToast } from "../../../app/toasts";
 import {
+  getExternalPlaylistsHandle,
   pluginHandles,
+  selectActivePlugins,
   selectPluginInfo,
 } from "../../../features/plugins/pluginsSlice";
 import { normalizeArtists } from "../../../app/utils";
@@ -45,6 +48,7 @@ export function TrackMenuItems() {
   const selectedTracks = useAppSelector(selectSelectedTracks);
   const delimiter = useAppSelector(selectArtistDelimiter);
   const pluginInfo = useAppSelector(selectPluginInfo);
+  const activePlugins = useAppSelector(selectActivePlugins);
 
   const tracksForActions =
     menuData?.type == "track" && menuData.metadata
@@ -71,6 +75,17 @@ export function TrackMenuItems() {
     !!remoteLibraryHandle?.addTracksToRemoteLibrary && hasUnaddedTracks;
   const showRemoveFromLibrary =
     !!remoteLibraryHandle?.removeTracksFromRemoteLibrary && !hasUnaddedTracks;
+
+  const externalPlaylistsHandle =
+    sourceForActions &&
+    allSameSource &&
+    activePlugins.includes(sourceForActions) &&
+    pluginInfo[sourceForActions]?.capabilities?.includes("externalPlaylists")
+      ? getExternalPlaylistsHandle(sourceForActions)
+      : null;
+  const canCreateExternalPlaylist =
+    !!externalPlaylistsHandle?.createPlaylist &&
+    !!externalPlaylistsHandle?.addPlaylistTracks;
 
   const addToPlaylist = (playlistId: string) => {
     dispatch(
@@ -163,6 +178,33 @@ export function TrackMenuItems() {
         >
           {t("tracks.addToNewPlaylist")}
         </Item>
+        {parentId == undefined && canCreateExternalPlaylist && (
+          <Item
+            onClick={async () => {
+              const defaultName = t("sidebar.playlists.defaultPlaylist");
+              try {
+                const newId =
+                  await externalPlaylistsHandle!.createPlaylist!(defaultName);
+                dispatch(
+                  upsertExternalPlaylist({
+                    id: newId,
+                    name: defaultName,
+                    provider: sourceForActions!,
+                    permissions: "manage",
+                  })
+                );
+                addToPlaylist(newId);
+              } catch (error) {
+                console.error("Couldn't create external playlist:", error);
+                showToast(t("toasts.createExternalPlaylistError"));
+              }
+            }}
+          >
+            {t("tracks.addToNewExternalPlaylist", {
+              provider: sourceDisplayName,
+            })}
+          </Item>
+        )}
         <Separator />
         {renderFolderContent(items)}
       </>

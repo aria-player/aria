@@ -77,6 +77,7 @@
     "noItems": "(No items)",
     "addToPlaylist": "Add to playlist",
     "addToNewPlaylist": "New playlist...",
+    "addToNewExternalPlaylist": "New {{provider}} playlist...",
     "removeFromPlaylist": "Remove from playlist",
     "removeFromQueue": "Remove from queue",
     "addNamedTrackToPlaylist": "Add '{{title}}' to '{{playlist}}'",
