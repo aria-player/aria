@@ -21,6 +21,7 @@ import { formatStringArray, getRelativePath } from "../../../app/utils";
 import { ArtistArt } from "../../views/subviews/ArtistArt";
 import { ArtistDetails } from "../../../features/artists/artistsTypes";
 import { useLocation } from "react-router-dom";
+import PlaylistArt from "../../views/subviews/PlaylistArt";
 
 interface TopResultItemProps {
   result: SearchResult;
@@ -125,6 +126,8 @@ export default function TopResultItem({ result }: TopResultItemProps) {
 
   const itemData = getItemData();
   if (!itemData) return null;
+  const playlistId =
+    result.type === "playlist" ? (result.item as PlaylistSearchItem).id : null;
   const pluginHandle =
     result.type === "playlist"
       ? null
@@ -157,7 +160,9 @@ export default function TopResultItem({ result }: TopResultItemProps) {
             <AlbumArt album={result.item as AlbumDetails} />
           </div>
         ) : result.type === "playlist" ? (
-          <div className={styles.artwork} />
+          <div className={styles.artwork}>
+            {playlistId && <PlaylistArt playlistId={playlistId} />}
+          </div>
         ) : (
           <div className={styles.artwork}>
             <AlbumArt track={result.item as Track} />
