@@ -486,6 +486,21 @@ export type ExternalPlaylistInfo = {
   orderable?: boolean;
 };
 
+export type PlaylistAction = {
+  /**
+   * Localized label for this action that will be displayed in the playlist context menu.
+   */
+  label: string;
+  /**
+   * Whether this action is currently disabled.
+   */
+  disabled?: boolean;
+  /**
+   * Called when this action is clicked.
+   */
+  onClick: (id: PlaylistId) => void;
+};
+
 /**
  * Handle for a plugin that can provide external playlists.
  */
@@ -535,6 +550,13 @@ export interface ExternalPlaylistsHandle extends BaseHandle {
     insertBefore: number,
     rangeLength: number
   ) => Promise<void>;
+  /**
+   * Return an array of custom actions that can be performed on a playlist.
+   */
+  getCustomPlaylistActions?: (
+    id: PlaylistId,
+    permissions: PlaylistPermissions
+  ) => PlaylistAction[];
 }
 
 /**

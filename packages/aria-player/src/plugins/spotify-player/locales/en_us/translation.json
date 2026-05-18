@@ -46,5 +46,8 @@
     "fetchGenres": "Include artist genre information",
     "continue": "Continue"
   },
-  "playOnSpotify": "Play on Spotify"
+  "playOnSpotify": "Play on Spotify",
+  "playlists": {
+    "unfollow": "Unfollow"
+  }
 }

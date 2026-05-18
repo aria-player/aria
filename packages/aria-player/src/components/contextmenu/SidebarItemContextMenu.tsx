@@ -56,6 +56,13 @@ export function SidebarItemContextMenu() {
   const canDelete =
     !isExternalPlaylist ||
     (plugin?.deletePlaylist != null && playlist?.permissions === "manage");
+  const customPlaylistActions =
+    menuData && plugin?.getCustomPlaylistActions
+      ? plugin.getCustomPlaylistActions(
+          menuData.itemId,
+          playlist?.permissions ?? "read"
+        )
+      : [];
 
   const createItem = (isFolder: boolean) => {
     if (!menuData) return;
@@ -177,18 +184,14 @@ export function SidebarItemContextMenu() {
           }
 
           if ((item.children?.length ?? 0) > 0) {
-            const confirmed = await confirm(
+            const confirmed = confirm(
               t("sidebar.playlists.menu.confirmDelete")
             );
             if (confirmed) {
               dispatch(
                 deletePlaylistItem({ id: menuData.itemId, isFolder: true })
               );
-              showToast(
-                t("toasts.deletedPlaylistItem", {
-                  name: item?.name,
-                })
-              );
+              showToast(t("toasts.deletedPlaylistItem", { name: item?.name }));
             }
           } else {
             dispatch(
@@ -197,16 +200,22 @@ export function SidebarItemContextMenu() {
                 isFolder: item?.children != undefined,
               })
             );
-            showToast(
-              t("toasts.deletedPlaylistItem", {
-                name: item?.name,
-              })
-            );
+            showToast(t("toasts.deletedPlaylistItem", { name: item?.name }));
           }
         }}
       >
         {t("sidebar.playlists.menu.delete")}
       </Item>
+      {customPlaylistActions.length > 0 && <Separator />}
+      {customPlaylistActions.map((action) => (
+        <Item
+          key={action.label}
+          disabled={action.disabled || isOperationPending}
+          onClick={() => menuData && action.onClick(menuData.itemId)}
+        >
+          {action.label}
+        </Item>
+      ))}
     </Menu>
   );
 }

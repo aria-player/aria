@@ -1307,6 +1307,22 @@ export default function createSpotifyPlayer(
       );
     },
 
+    getCustomPlaylistActions: (_id, permissions) => {
+      if (permissions === "manage") return [];
+      return [
+        {
+          label: i18n.t("spotify-player:playlists.unfollow"),
+          onClick: async (playlistId: string) => {
+            await spotifyWriteRequest(
+              `/playlists/${encodeURIComponent(playlistId)}/followers`,
+              "DELETE"
+            );
+            host.removePlaylists([playlistId]);
+          },
+        },
+      ];
+    },
+
     createPlaylist: async (name: string) => {
       const profile = (await spotifyRequest(
         "/me"
