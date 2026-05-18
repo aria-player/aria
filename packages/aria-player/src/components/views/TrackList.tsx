@@ -556,24 +556,66 @@ export const TrackList = () => {
   };
 
   const handleSortChanged = (params: SortChangedEvent) => {
+    const columnState = params.api.getColumnState();
     if (visiblePlaylist) {
       dispatch(
         updatePlaylistColumnState({
           playlistId: visiblePlaylist.id,
-          columnState: params.api.getColumnState(),
+          columnState,
         })
       );
     } else {
-      dispatch(setLibraryColumnState(params.api.getColumnState()));
+      dispatch(setLibraryColumnState(columnState));
     }
-    if (queueSource == visibleView) {
+    if (queueSource == getRelativePath(location.pathname)) {
+      const hasActiveSort = columnState.some(
+        (column) => !column.hide && column.sort
+      );
+      let externalPlaylistQueue: PlaylistItem[] | null = null;
+      if (
+        isExternalPlaylist &&
+        currentPlaylistId &&
+        provider &&
+        cachedPlaylistUris
+      ) {
+        const defaultQueue = cachedPlaylistUris.uris.flatMap((uri, index) => {
+          if (uri === null) return [];
+          return [
+            {
+              itemId: getPlaylistItemId(
+                currentPlaylistId,
+                index,
+                cachedPlaylistUris.ids
+              ),
+              trackId: getTrackId(provider, uri),
+            },
+          ];
+        });
+        if (hasActiveSort) {
+          const sortedQueue: PlaylistItem[] = [];
+          params.api.forEachNodeAfterFilterAndSort((rowNode) => {
+            const itemId = rowNode.data?.itemId;
+            const trackId = rowNode.data?.trackId;
+            if (itemId && trackId) sortedQueue.push({ itemId, trackId });
+          });
+          const sortedItemIds = new Set(
+            sortedQueue.map((track) => track.itemId)
+          );
+          externalPlaylistQueue = sortedQueue.concat(
+            defaultQueue.filter((track) => !sortedItemIds.has(track.itemId))
+          );
+        } else {
+          externalPlaylistQueue = defaultQueue;
+        }
+      }
       dispatch(
         updateQueueAfterChange(
-          selectSortedTrackList(
-            store.getState(),
-            visibleViewType,
-            visiblePlaylist?.id
-          )
+          externalPlaylistQueue ??
+            selectSortedTrackList(
+              store.getState(),
+              visibleViewType,
+              visiblePlaylist?.id
+            )
         )
       );
     }

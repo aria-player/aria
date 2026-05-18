@@ -5,6 +5,7 @@ import {
 } from "../../app/listener";
 import { push } from "redux-first-history";
 import { BASEPATH } from "../../app/constants";
+import { RootState } from "../../app/store";
 
 import { isAnyOf } from "@reduxjs/toolkit";
 import {
@@ -12,6 +13,7 @@ import {
   cleanupPlaylistConfigs,
   deletePlaylistItem,
   selectPlaylistById,
+  selectPlaylistConfigById,
   selectPlaylistsLayoutItemById,
 } from "./playlistsSlice";
 import { ActionTypes } from "redux-undo";
@@ -30,7 +32,12 @@ import { showToast } from "../../app/toasts";
 import { selectTrackById } from "../tracks/tracksSlice";
 import { t } from "i18next";
 import { selectCachedPlaylistTrackUris } from "../cache/cacheSlice";
-import { getTrackId, getPlaylistItemId } from "../../app/utils";
+import {
+  getTrackId,
+  getPlaylistItemId,
+  overrideColumnStateSort,
+} from "../../app/utils";
+import { selectLibraryColumnState } from "../library/librarySlice";
 
 function buildExternalPlaylistQueue(
   playlistId: string,
@@ -43,6 +50,38 @@ function buildExternalPlaylistQueue(
     const itemId = getPlaylistItemId(playlistId, i, ids);
     return [{ itemId, trackId: getTrackId(provider, uri) }];
   });
+}
+
+function hasActivePlaylistSort(state: RootState, playlistId: string) {
+  const playlistConfig = selectPlaylistConfigById(state, playlistId);
+  const libraryColumnState = selectLibraryColumnState(state);
+  const columnState = playlistConfig?.useCustomLayout
+    ? playlistConfig.columnState
+    : playlistConfig && libraryColumnState
+      ? overrideColumnStateSort(libraryColumnState, playlistConfig.columnState)
+      : libraryColumnState;
+  return columnState?.some((column) => !column.hide && column.sort) ?? false;
+}
+
+function buildExternalPlaylistPlaybackQueue(
+  state: RootState,
+  playlistId: string,
+  provider: string,
+  uris: (string | null)[],
+  ids: string[]
+) {
+  const defaultQueue = buildExternalPlaylistQueue(
+    playlistId,
+    provider,
+    uris,
+    ids
+  );
+  if (!hasActivePlaylistSort(state, playlistId)) return defaultQueue;
+  const sortedQueue = selectSortedTrackList(state, View.Playlist, playlistId);
+  const sortedItemIds = new Set(sortedQueue.map((track) => track.itemId));
+  return sortedQueue.concat(
+    defaultQueue.filter((track) => !sortedItemIds.has(track.itemId))
+  );
 }
 
 export function setupPlaylistsListeners() {
@@ -103,7 +142,8 @@ export function setupPlaylistsListeners() {
         ? selectCachedPlaylistTrackUris(state, newPlaylist.id)
         : null;
       const newQueue = cachedUris
-        ? buildExternalPlaylistQueue(
+        ? buildExternalPlaylistPlaybackQueue(
+            state,
             newPlaylist.id,
             playlistEntity!.provider!,
             cachedUris.uris,
@@ -134,7 +174,8 @@ export function setupPlaylistsListeners() {
       if (!playlistEntity?.provider) return;
       dispatch(
         updateQueueAfterChange(
-          buildExternalPlaylistQueue(
+          buildExternalPlaylistPlaybackQueue(
+            state,
             currentPlaylist.id,
             playlistEntity.provider,
             cachedUris.uris,
