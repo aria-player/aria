@@ -8,6 +8,7 @@ export type PlaylistItemId = string;
 
 export interface PlaylistUndoable {
   id: PlaylistId;
+  name?: string;
   tracks: PlaylistItem[];
   provider?: PluginId;
   permissions?: PlaylistPermissions;

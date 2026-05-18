@@ -558,6 +558,34 @@ export const playlistsSlice = createSlice({
         });
       }
     },
+    addExternalSearchPlaylist: (
+      state,
+      action: PayloadAction<{
+        id: string;
+        name: string;
+        provider: PluginId;
+        artworkUri?: string;
+        permissions: PlaylistPermissions;
+      }>
+    ) => {
+      const { id, name, provider, artworkUri, permissions } = action.payload;
+      if (state.playlists.entities[id]) return;
+      playlistsAdapter.addOne(state.playlists, {
+        id,
+        name,
+        tracks: [],
+        provider,
+        permissions,
+        artworkUri,
+      });
+      playlistsConfigAdapter.addOne(state.playlistsConfig, {
+        id,
+        columnState: null,
+        useCustomLayout: false,
+        displayMode: DisplayMode.TrackList,
+        splitViewState: { trackGrouping: TrackGrouping.Artist },
+      });
+    },
     removeExternalPlaylists: (
       state,
       action: PayloadAction<{ provider: PluginId; ids?: string[] }>
@@ -671,6 +699,7 @@ export const {
   setPlaylistTracks,
   syncExternalPlaylistTracks,
   upsertExternalPlaylist,
+  addExternalSearchPlaylist,
   removeExternalPlaylists,
   resetPlaylistColumnState,
   updatePlaylistColumnState,

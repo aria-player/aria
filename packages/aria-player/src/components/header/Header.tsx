@@ -33,10 +33,12 @@ export default function Header({
   const visibleDisplayMode = useAppSelector(selectVisibleDisplayMode);
   const visibleViewType = useAppSelector(selectVisibleViewType);
   const { t } = useTranslation();
-  const currentPlaylistId = useAppSelector(selectVisiblePlaylist)?.id;
-  const playlistName = useAppSelector((state) =>
+  const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
+  const currentPlaylistId = visiblePlaylist?.id;
+  const layoutPlaylistName = useAppSelector((state) =>
     selectPlaylistsLayoutItemById(state, currentPlaylistId ?? "")
   )?.name;
+  const playlistName = layoutPlaylistName ?? visiblePlaylist?.name;
   const search = useAppSelector(selectSearch);
   const scrollContext = useContext(ScrollContext);
   const visibleSelectedTrackGroup = useAppSelector(

@@ -36,6 +36,7 @@ import {
 } from "./tracks/tracksSlice";
 import {
   selectCachedArtistTopTracks,
+  selectCachedSearchPlaylists,
   selectCachedSearchTracks,
 } from "./cache/cacheSlice";
 import {
@@ -57,7 +58,10 @@ import {
 import { compareMetadata } from "../app/sort";
 import { PluginId } from "../../../types";
 import { Item } from "soprano-ui";
-import { getSourceHandle } from "./plugins/pluginsSlice";
+import {
+  getExternalPlaylistsHandle,
+  getSourceHandle,
+} from "./plugins/pluginsSlice";
 
 export const selectVisibleViewType = (state: RootState) => {
   const path = state.router.location?.pathname
@@ -563,6 +567,8 @@ export const selectVisiblePlaylists = createSelector(
     (state: RootState) => state.search.search,
     (state: RootState) => state.search.debouncedSearch,
     (state: RootState) => selectVisibleSearchSource(state),
+    (state: RootState) => state.cache.search.playlists,
+    (state: RootState) => state.undoable.present.playlists.playlists.entities,
   ],
   () => {
     const state = store.getState();
@@ -574,8 +580,28 @@ export const selectVisiblePlaylists = createSelector(
     if (!debouncedSearch.trim()) {
       return [];
     }
-    if (selectVisibleSearchSource(state)) {
-      return [];
+    const visibleSource = selectVisibleSearchSource(state);
+    if (visibleSource) {
+      const externalPlaylistsHandle = getExternalPlaylistsHandle(visibleSource);
+      if (!externalPlaylistsHandle?.searchPlaylists) {
+        return [];
+      }
+      const cacheKey = getExternalSearchCacheKey(
+        visibleSource,
+        debouncedSearch
+      );
+      const cachedPlaylistIds =
+        selectCachedSearchPlaylists(state, cacheKey) ?? [];
+      return cachedPlaylistIds
+        .map((playlistId) => {
+          const playlist = selectPlaylistById(state, playlistId);
+          if (!playlist) return null;
+          return {
+            id: playlist.id,
+            name: playlist.name ?? playlist.id,
+          };
+        })
+        .filter(Boolean) as PlaylistSearchItem[];
     }
     return searchPlaylists(selectSearchablePlaylists(state), debouncedSearch);
   }

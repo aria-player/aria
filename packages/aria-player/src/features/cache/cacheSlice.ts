@@ -34,6 +34,7 @@ export interface CacheState {
     tracks: Record<string, TrackId[]>;
     albums: Record<string, AlbumId[]>;
     artists: Record<string, ArtistId[]>;
+    playlists: Record<string, string[]>;
   };
   playlistTrackUris: Record<
     string,
@@ -49,6 +50,7 @@ const initialState: CacheState = {
     tracks: {},
     albums: {},
     artists: {},
+    playlists: {},
   },
   playlistTrackUris: {},
 };
@@ -137,6 +139,21 @@ export const cacheSlice = createSlice({
         offset
       );
     },
+    updateCachedSearchPlaylists: (
+      state,
+      action: PayloadAction<{
+        key: string;
+        playlistIds: string[];
+        offset: number;
+      }>
+    ) => {
+      const { key, playlistIds, offset } = action.payload;
+      state.search.playlists[key] = updateAtOffset(
+        state.search.playlists[key],
+        playlistIds,
+        offset
+      );
+    },
     initPlaylistTrackUris: {
       reducer: (
         state,
@@ -155,7 +172,11 @@ export const cacheSlice = createSlice({
         });
         const existing = state.playlistTrackUris[playlistId];
         const finalIds = existing?.total === total ? existing.ids : ids;
-        state.playlistTrackUris[playlistId] = { uris: sparse, ids: finalIds, total };
+        state.playlistTrackUris[playlistId] = {
+          uris: sparse,
+          ids: finalIds,
+          total,
+        };
       },
       prepare: (payload: {
         playlistId: string;
@@ -232,6 +253,7 @@ export const cacheSlice = createSlice({
         tracks: {},
         albums: {},
         artists: {},
+        playlists: {},
       };
       state.playlistTrackUris = {};
     },
@@ -282,6 +304,7 @@ export const {
   updateCachedSearchTracks,
   updateCachedSearchAlbums,
   updateCachedSearchArtists,
+  updateCachedSearchPlaylists,
   initPlaylistTrackUris,
   setPlaylistTrackUrisPage,
   removePlaylistTrackUris,
@@ -311,6 +334,9 @@ export const selectCachedSearchAlbums = (state: RootState, key: string) =>
 
 export const selectCachedSearchArtists = (state: RootState, key: string) =>
   state.cache.search.artists[key];
+
+export const selectCachedSearchPlaylists = (state: RootState, key: string) =>
+  state.cache.search.playlists[key];
 
 export const selectCachedPlaylistTrackUris = (
   state: RootState,

@@ -510,6 +510,14 @@ export type PlaylistAction = {
  */
 export interface ExternalPlaylistsHandle extends BaseHandle {
   /**
+   * Search for playlists matching the given query.
+   */
+  searchPlaylists?: (
+    query: string,
+    startIndex: number,
+    stopIndex: number
+  ) => Promise<{ id: string; name: string; artworkUri?: string }[]>;
+  /**
    * Fetch track URIs for a particular playlist.
    */
   getPlaylistTracks?: (

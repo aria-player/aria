@@ -32,8 +32,10 @@ import {
   selectCachedSearchTracks,
   selectCachedSearchAlbums,
   selectCachedSearchArtists,
+  selectCachedSearchPlaylists,
   updateCachedSearchAlbums,
   updateCachedSearchArtists,
+  updateCachedSearchPlaylists,
 } from "../../../features/cache/cacheSlice";
 import { store } from "../../../app/store";
 import {
@@ -48,7 +50,12 @@ import {
   addArtists,
   selectArtistsInfo,
 } from "../../../features/artists/artistsSlice";
-import { getSourceHandle } from "../../../features/plugins/pluginsSlice";
+import { addExternalSearchPlaylist } from "../../../features/playlists/playlistsSlice";
+import { selectPlaylistById } from "../../../features/playlists/playlistsSlice";
+import {
+  getSourceHandle,
+  getExternalPlaylistsHandle,
+} from "../../../features/plugins/pluginsSlice";
 import { updateCachedSearchTracks } from "../../../features/cache/cacheSlice";
 import { getTrackId, getAlbumId, getArtistId } from "../../../app/utils";
 import LoadingSpinner from "../../views/subviews/LoadingSpinner";
@@ -66,6 +73,10 @@ export default function AllResultsPage() {
   const { onScroll } = useScrollDetection();
   const externalSearchHandle =
     visibleSearchSource !== null ? getSourceHandle(visibleSearchSource) : null;
+  const externalPlaylistsHandle =
+    visibleSearchSource !== null
+      ? getExternalPlaylistsHandle(visibleSearchSource)
+      : null;
   const isExternalSearchSource =
     !!externalSearchHandle?.searchTracks && !!debouncedSearch.trim();
   const isDebouncingExternalSearch =
@@ -91,6 +102,11 @@ export default function AllResultsPage() {
       ? selectCachedSearchArtists(state, externalSearchCacheKey)
       : undefined
   );
+  const cachedSearchPlaylistIds = useAppSelector((state) =>
+    externalSearchCacheKey
+      ? selectCachedSearchPlaylists(state, externalSearchCacheKey)
+      : undefined
+  );
   const albumsInfo = useAppSelector(selectAlbumsInfo);
   const artistsInfo = useAppSelector(selectArtistsInfo);
   const [isLoading, setIsLoading] = useState(
@@ -101,6 +117,7 @@ export default function AllResultsPage() {
   const fetchedTracksRef = useRef<string | null>(null);
   const fetchedAlbumsRef = useRef<string | null>(null);
   const fetchedArtistsRef = useRef<string | null>(null);
+  const fetchedPlaylistsRef = useRef<string | null>(null);
 
   useEffect(() => {
     if (
@@ -110,6 +127,7 @@ export default function AllResultsPage() {
       fetchedTracksRef.current = null;
       fetchedAlbumsRef.current = null;
       fetchedArtistsRef.current = null;
+      fetchedPlaylistsRef.current = null;
     }
   }, [externalSearchCacheKey]);
 
@@ -309,6 +327,65 @@ export default function AllResultsPage() {
     visibleSearchSource,
   ]);
 
+  useEffect(() => {
+    const shouldFetch =
+      isExternalSearchSource &&
+      externalPlaylistsHandle?.searchPlaylists &&
+      debouncedSearch.trim().length > 0 &&
+      externalSearchCacheKey;
+
+    if (
+      !shouldFetch ||
+      !visibleSearchSource ||
+      fetchedPlaylistsRef.current === externalSearchCacheKey
+    )
+      return;
+
+    const fetchExternalPlaylists = async () => {
+      fetchedPlaylistsRef.current = externalSearchCacheKey;
+      try {
+        const results = await externalPlaylistsHandle?.searchPlaylists?.(
+          debouncedSearch,
+          0,
+          20
+        );
+        if (!results?.length) return;
+
+        for (const playlist of results) {
+          dispatch(
+            addExternalSearchPlaylist({
+              id: playlist.id,
+              name: playlist.name,
+              provider: visibleSearchSource,
+              artworkUri: playlist.artworkUri,
+              permissions: "read",
+            })
+          );
+        }
+
+        dispatch(
+          updateCachedSearchPlaylists({
+            key: externalSearchCacheKey,
+            playlistIds: results.map((p) => p.id),
+            offset: 0,
+          })
+        );
+      } catch (error) {
+        console.error("Couldn't fetch playlists:", error);
+      }
+    };
+
+    fetchExternalPlaylists();
+  }, [
+    cachedSearchPlaylistIds,
+    dispatch,
+    externalSearchCacheKey,
+    externalPlaylistsHandle,
+    isExternalSearchSource,
+    debouncedSearch,
+    visibleSearchSource,
+  ]);
+
   const cachedAlbumResults = useMemo(() => {
     if (!isExternalSearchSource || !cachedSearchAlbumIds?.length) return [];
     return cachedSearchAlbumIds
@@ -322,6 +399,21 @@ export default function AllResultsPage() {
       .map((artistId) => artistsInfo[artistId])
       .filter(Boolean);
   }, [cachedSearchArtistIds, isExternalSearchSource, artistsInfo]);
+
+  const cachedPlaylistResults = useMemo(() => {
+    if (!isExternalSearchSource || !cachedSearchPlaylistIds?.length) return [];
+    const state = store.getState();
+    return cachedSearchPlaylistIds
+      .map((id) => {
+        const playlist = selectPlaylistById(state, id);
+        if (!playlist) return null;
+        return {
+          id: playlist.id,
+          name: playlist.name ?? id,
+        } as PlaylistSearchItem;
+      })
+      .filter(Boolean) as PlaylistSearchItem[];
+  }, [cachedSearchPlaylistIds, isExternalSearchSource]);
 
   const songResults = useMemo(() => {
     if (isExternalSearchSource || isDebouncingExternalSearch) {
@@ -370,13 +462,16 @@ export default function AllResultsPage() {
 
   const playlistResults = useMemo(() => {
     if (isExternalSearchSource || isDebouncingExternalSearch) {
-      return [] as PlaylistSearchItem[];
+      return (
+        isExternalSearchSource ? cachedPlaylistResults : []
+      ) as PlaylistSearchItem[];
     }
     return (searchResults?.playlists.map((result) => result.item) ||
       []) as PlaylistSearchItem[];
   }, [
     isExternalSearchSource,
     isDebouncingExternalSearch,
+    cachedPlaylistResults,
     searchResults?.playlists,
   ]);
 

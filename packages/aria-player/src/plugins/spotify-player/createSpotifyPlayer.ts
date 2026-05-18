@@ -1238,6 +1238,28 @@ export default function createSpotifyPlayer(
       };
     },
 
+    get searchPlaylists() {
+      if (!getConfig().accessToken) return undefined;
+      return async (query: string, startIndex: number, stopIndex: number) => {
+        const limit = stopIndex - startIndex;
+        const searchResponse = (await spotifyRequest(
+          `/search?q=${encodeURIComponent(query)}&type=playlist&limit=${limit}&offset=${startIndex}`
+        )) as SpotifyApi.SearchResponse;
+
+        if (!searchResponse?.playlists?.items) {
+          return [];
+        }
+
+        return searchResponse.playlists.items
+          .filter((playlist) => playlist != null)
+          .map((playlist) => ({
+            id: playlist.id,
+            name: playlist.name,
+            artworkUri: playlist.images?.[0]?.url,
+          }));
+      };
+    },
+
     pause() {
       player?.pause();
     },
