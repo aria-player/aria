@@ -153,7 +153,9 @@ export const cacheSlice = createSlice({
         uris.forEach((uri, i) => {
           sparse[offset + i] = uri;
         });
-        state.playlistTrackUris[playlistId] = { uris: sparse, ids, total };
+        const existing = state.playlistTrackUris[playlistId];
+        const finalIds = existing?.total === total ? existing.ids : ids;
+        state.playlistTrackUris[playlistId] = { uris: sparse, ids: finalIds, total };
       },
       prepare: (payload: {
         playlistId: string;
