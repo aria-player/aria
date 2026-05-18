@@ -1,4 +1,4 @@
-import { RootState, store } from "../../app/store";
+import { store } from "../../app/store";
 import { selectCurrentTrack } from "../currentSelectors";
 import {
   getSourceHandle,
@@ -35,7 +35,7 @@ export function resetTimer() {
 export function seek(position: number) {
   lastStartPosition = position;
   lastStartTimestamp = Date.now();
-  const state = store.getState() as RootState;
+  const state = store.getState();
   const currentTrack = selectCurrentTrack(state);
   if (!currentTrack) return;
 
