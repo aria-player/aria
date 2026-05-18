@@ -533,6 +533,7 @@ export const playlistsSlice = createSlice({
         if (!existingPlaylist) {
           playlistsAdapter.addOne(state.playlists, {
             id,
+            name,
             tracks: [],
             provider,
             permissions,
@@ -546,6 +547,11 @@ export const playlistsSlice = createSlice({
             displayMode: DisplayMode.TrackList,
             splitViewState: { trackGrouping: TrackGrouping.Artist },
           });
+        } else {
+          playlistsAdapter.updateOne(state.playlists, {
+            id,
+            changes: { name, permissions, orderable, artworkUri },
+          });
         }
       } else {
         state.layout = updateTreeNode(state.layout, {
@@ -554,7 +560,7 @@ export const playlistsSlice = createSlice({
         });
         playlistsAdapter.updateOne(state.playlists, {
           id,
-          changes: { permissions, orderable, artworkUri },
+          changes: { name, permissions, orderable, artworkUri },
         });
       }
     },
@@ -569,22 +575,30 @@ export const playlistsSlice = createSlice({
       }>
     ) => {
       const { id, name, provider, artworkUri, permissions } = action.payload;
-      if (state.playlists.entities[id]) return;
-      playlistsAdapter.addOne(state.playlists, {
-        id,
-        name,
-        tracks: [],
-        provider,
-        permissions,
-        artworkUri,
-      });
-      playlistsConfigAdapter.addOne(state.playlistsConfig, {
-        id,
-        columnState: null,
-        useCustomLayout: false,
-        displayMode: DisplayMode.TrackList,
-        splitViewState: { trackGrouping: TrackGrouping.Artist },
-      });
+      const existingPlaylist = state.playlists.entities[id];
+      if (existingPlaylist && existingPlaylist.provider !== provider) return;
+      if (existingPlaylist) {
+        playlistsAdapter.updateOne(state.playlists, {
+          id,
+          changes: { name, provider, permissions, artworkUri },
+        });
+      } else {
+        playlistsAdapter.addOne(state.playlists, {
+          id,
+          name,
+          tracks: [],
+          provider,
+          permissions,
+          artworkUri,
+        });
+        playlistsConfigAdapter.addOne(state.playlistsConfig, {
+          id,
+          columnState: null,
+          useCustomLayout: false,
+          displayMode: DisplayMode.TrackList,
+          splitViewState: { trackGrouping: TrackGrouping.Artist },
+        });
+      }
     },
     removeExternalPlaylists: (
       state,
