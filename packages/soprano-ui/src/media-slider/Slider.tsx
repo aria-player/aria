@@ -77,7 +77,7 @@ type SliderContextValue = {
   min: number;
   max: number;
   values: number[];
-  valueIndexToChangeRef: React.MutableRefObject<number>;
+  valueIndexToChangeRef: React.RefObject<number>;
   thumbs: Set<SliderThumbElement>;
   orientation: SliderProps["orientation"];
   keyboardFocusOnly: boolean;

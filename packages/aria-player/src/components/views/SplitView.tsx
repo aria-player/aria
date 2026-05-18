@@ -136,7 +136,9 @@ export function SplitView() {
   const buttons = visibleItems.map((itemName, index) => (
     <button
       key={itemName ?? index}
-      ref={(el) => (itemRefs.current[itemName ?? index] = el)}
+      ref={(element) => {
+        itemRefs.current[itemName ?? index] = element;
+      }}
       className={`split-view-track-groups-item ${styles.listItem} ${selectedItem == itemName ? styles.selected : ""}`}
       onClick={() => {
         setSelectedItem(itemName ?? null);

@@ -7,7 +7,6 @@ import React, {
   useState,
 } from "react";
 import { NodeApi, NodeRendererProps, Tree, TreeApi } from "react-arborist";
-import useResizeObserver from "use-resize-observer";
 import { SectionTreeItem, SectionTreeApi, SectionTreeProps } from "./treeTypes";
 import { HeaderNode } from "./nodes/HeaderNode";
 import { ItemNode } from "./nodes/ItemNode";
@@ -29,7 +28,22 @@ export const SectionTree = React.forwardRef(
     forwardRef: ForwardedRef<SectionTreeApi<SectionTreeItem> | undefined>
   ) => {
     const internalTreeRef = useRef<TreeApi<SectionTreeItem>>(null);
-    const { ref, height } = useResizeObserver();
+    const [height, setHeight] = useState<number>();
+    const observerRef = useRef<ResizeObserver | null>(null);
+    const ref = useCallback((element: HTMLDivElement | null) => {
+      observerRef.current?.disconnect();
+      observerRef.current = null;
+      if (!element) return;
+      setHeight(element.getBoundingClientRect().height);
+      if (typeof ResizeObserver === "undefined") return;
+      observerRef.current = new ResizeObserver((entries) => {
+        const nextHeight = entries[0]?.contentRect.height;
+        if (nextHeight != null) {
+          setHeight((prev) => (prev === nextHeight ? prev : nextHeight));
+        }
+      });
+      observerRef.current.observe(element);
+    }, []);
 
     const [visibilityEditing, setVisibilityEditing] = useState<string | null>(
       null

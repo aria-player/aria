@@ -1,7 +1,7 @@
 import { AgGridReact } from "ag-grid-react";
 import {
   Dispatch,
-  MutableRefObject,
+  RefObject,
   SetStateAction,
   createContext,
   useState,
@@ -9,7 +9,7 @@ import {
 import { ReactNode, useRef } from "react";
 
 export const GridContext = createContext<{
-  gridRef: MutableRefObject<AgGridReact | null> | null;
+  gridRef: RefObject<AgGridReact | null> | null;
   isGridReady: boolean;
   setIsGridReady: Dispatch<SetStateAction<boolean>>;
 }>({
@@ -19,7 +19,7 @@ export const GridContext = createContext<{
 });
 
 export function GridProvider({ children }: { children: ReactNode }) {
-  const gridRef = useRef<AgGridReact>(null);
+  const gridRef = useRef<AgGridReact | null>(null);
   const [isGridReady, setIsGridReady] = useState(false);
   return (
     <GridContext.Provider value={{ gridRef, isGridReady, setIsGridReady }}>

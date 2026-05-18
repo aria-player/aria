@@ -12,7 +12,7 @@ export function WindowsMenuBarButtons() {
   const [open, setOpen] = useState(false);
   const [altHeld, setAltHeld] = useState(false);
   const buttonRefs = React.useMemo<
-    Record<string, React.RefObject<HTMLButtonElement>>
+    Record<string, React.RefObject<HTMLButtonElement | null>>
   >(() => {
     return Object.fromEntries(
       menus
