@@ -1307,8 +1307,8 @@ export default function createSpotifyPlayer(
       );
     },
 
-    getCustomPlaylistActions: (_id, permissions) => {
-      if (permissions === "manage") return [];
+    getCustomPlaylistActions: (id, permissions) => {
+      if (permissions === "manage" || id === LIKED_SONGS_PLAYLIST_ID) return [];
       return [
         {
           label: i18n.t("spotify-player:playlists.unfollow"),
