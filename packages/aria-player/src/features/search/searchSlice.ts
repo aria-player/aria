@@ -37,7 +37,8 @@ const searchSlice = createSlice({
       );
     },
     setSelectedSearchSource: (state, action) => {
-      state.selectedSearchSource = action.payload;
+      state.selectedSearchSource =
+        action.payload === "library" ? null : action.payload;
     },
   },
 });
@@ -56,7 +57,9 @@ export const selectDebouncedSearch = (state: RootState) =>
 export const selectSearchHistory = (state: RootState) =>
   state.search.searchHistory;
 export const selectSelectedSearchSource = (state: RootState) =>
-  state.search.selectedSearchSource;
+  state.search.selectedSearchSource === "library"
+    ? null
+    : state.search.selectedSearchSource;
 
 export default searchSlice.reducer;
 

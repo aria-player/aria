@@ -78,7 +78,7 @@ export default function SearchSourceSwitcher({
             `search/${encodeURIComponent(search)}/library/${encodeURIComponent(visibleSearchCategory ?? "")}`
         )
       );
-      dispatch(setSelectedSearchSource("library"));
+      dispatch(setSelectedSearchSource(null));
     } else if (
       visibleSearchSource !== null &&
       visibleSearchSource !== selectedSearchSource
@@ -124,7 +124,7 @@ export default function SearchSourceSwitcher({
           `search/${encodeURIComponent(search)}/${encodeURIComponent(source)}/${encodeURIComponent(visibleSearchCategory ?? "")}`
       )
     );
-    dispatch(setSelectedSearchSource(source));
+    dispatch(setSelectedSearchSource(source === "library" ? null : source));
   };
 
   return (
