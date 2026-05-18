@@ -356,6 +356,7 @@ export default function AllResultsPage() {
             addExternalSearchPlaylist({
               id: playlist.id,
               name: playlist.name,
+              creatorName: playlist.creatorName,
               provider: visibleSearchSource,
               artworkUri: playlist.artworkUri,
               permissions: "read",
@@ -410,6 +411,7 @@ export default function AllResultsPage() {
         return {
           id: playlist.id,
           name: playlist.name ?? id,
+          creatorName: playlist.creatorName,
         } as PlaylistSearchItem;
       })
       .filter(Boolean) as PlaylistSearchItem[];

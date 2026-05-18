@@ -129,6 +129,7 @@ export default function PlaylistGrid() {
           addExternalSearchPlaylist({
             id: playlist.id,
             name: playlist.name,
+            creatorName: playlist.creatorName,
             provider: visibleSearchSource,
             artworkUri: playlist.artworkUri,
             permissions: "read",

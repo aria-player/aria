@@ -16,7 +16,7 @@ import {
   selectPlaylistConfigById,
   selectPlaylistsLayout,
 } from "./playlists/playlistsSlice";
-import { PlaylistItem } from "./playlists/playlistsTypes";
+import { PlaylistItem, PlaylistUndoable } from "./playlists/playlistsTypes";
 import {
   selectAllAlbums,
   selectAllArtists,
@@ -540,22 +540,31 @@ export const selectVisibleArtists = createSelector(
 
 const collectLayoutPlaylists = (
   items: Item[],
+  playlistsById: Record<string, PlaylistUndoable | undefined>,
   result: PlaylistSearchItem[]
 ) => {
   for (const item of items) {
     if (item.children) {
-      collectLayoutPlaylists(item.children, result);
+      collectLayoutPlaylists(item.children, playlistsById, result);
     } else {
-      result.push({ id: item.id, name: item.name });
+      const playlist = playlistsById[item.id];
+      result.push({
+        id: item.id,
+        name: item.name,
+        creatorName: playlist?.creatorName,
+      });
     }
   }
 };
 
 export const selectSearchablePlaylists = createSelector(
-  [(state: RootState) => selectPlaylistsLayout(state)],
-  (layout) => {
+  [
+    (state: RootState) => selectPlaylistsLayout(state),
+    (state: RootState) => state.undoable.present.playlists.playlists.entities,
+  ],
+  (layout, playlistsById) => {
     const playlists: PlaylistSearchItem[] = [];
-    collectLayoutPlaylists(layout, playlists);
+    collectLayoutPlaylists(layout, playlistsById, playlists);
     return playlists;
   }
 );
@@ -599,6 +608,7 @@ export const selectVisiblePlaylists = createSelector(
           return {
             id: playlist.id,
             name: playlist.name ?? playlist.id,
+            creatorName: playlist.creatorName,
           };
         })
         .filter(Boolean) as PlaylistSearchItem[];

@@ -513,14 +513,22 @@ export const playlistsSlice = createSlice({
       action: PayloadAction<{
         id: string;
         name: string;
+        creatorName?: string;
         provider: PluginId;
         permissions: PlaylistPermissions;
         orderable?: boolean;
         artworkUri?: string;
       }>
     ) => {
-      const { id, name, provider, permissions, orderable, artworkUri } =
-        action.payload;
+      const {
+        id,
+        name,
+        creatorName,
+        provider,
+        permissions,
+        orderable,
+        artworkUri,
+      } = action.payload;
       const existingNode = findTreeNode(state.layout, id);
       const existingPlaylist = state.playlists.entities[id];
 
@@ -534,6 +542,7 @@ export const playlistsSlice = createSlice({
           playlistsAdapter.addOne(state.playlists, {
             id,
             name,
+            creatorName,
             tracks: [],
             provider,
             permissions,
@@ -550,7 +559,13 @@ export const playlistsSlice = createSlice({
         } else {
           playlistsAdapter.updateOne(state.playlists, {
             id,
-            changes: { name, permissions, orderable, artworkUri },
+            changes: {
+              name,
+              creatorName,
+              permissions,
+              orderable,
+              artworkUri,
+            },
           });
         }
       } else {
@@ -560,7 +575,13 @@ export const playlistsSlice = createSlice({
         });
         playlistsAdapter.updateOne(state.playlists, {
           id,
-          changes: { name, permissions, orderable, artworkUri },
+          changes: {
+            name,
+            creatorName,
+            permissions,
+            orderable,
+            artworkUri,
+          },
         });
       }
     },
@@ -569,23 +590,26 @@ export const playlistsSlice = createSlice({
       action: PayloadAction<{
         id: string;
         name: string;
+        creatorName?: string;
         provider: PluginId;
         artworkUri?: string;
         permissions: PlaylistPermissions;
       }>
     ) => {
-      const { id, name, provider, artworkUri, permissions } = action.payload;
+      const { id, name, creatorName, provider, artworkUri, permissions } =
+        action.payload;
       const existingPlaylist = state.playlists.entities[id];
       if (existingPlaylist && existingPlaylist.provider !== provider) return;
       if (existingPlaylist) {
         playlistsAdapter.updateOne(state.playlists, {
           id,
-          changes: { name, provider, permissions, artworkUri },
+          changes: { name, creatorName, provider, permissions, artworkUri },
         });
       } else {
         playlistsAdapter.addOne(state.playlists, {
           id,
           name,
+          creatorName,
           tracks: [],
           provider,
           permissions,

@@ -488,6 +488,10 @@ export type ExternalPlaylistInfo = {
    * URL for the playlist's cover image.
    */
   artworkUri?: string;
+  /**
+   * Display name of the playlist creator.
+   */
+  creatorName?: string;
 };
 
 export type PlaylistAction = {
@@ -516,7 +520,9 @@ export interface ExternalPlaylistsHandle extends BaseHandle {
     query: string,
     startIndex: number,
     stopIndex: number
-  ) => Promise<{ id: string; name: string; artworkUri?: string }[]>;
+  ) => Promise<
+    { id: string; name: string; artworkUri?: string; creatorName?: string }[]
+  >;
   /**
    * Fetch track URIs for a particular playlist.
    */

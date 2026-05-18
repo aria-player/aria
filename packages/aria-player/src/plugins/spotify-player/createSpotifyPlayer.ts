@@ -665,6 +665,7 @@ export default function createSpotifyPlayer(
               name: playlist.name,
               permissions,
               artworkUri: playlist.images[0]?.url,
+              creatorName: playlist.owner.display_name ?? undefined,
             },
           ];
         });
@@ -1256,6 +1257,7 @@ export default function createSpotifyPlayer(
             id: playlist.id,
             name: playlist.name,
             artworkUri: playlist.images?.[0]?.url,
+            creatorName: playlist.owner.display_name ?? undefined,
           }));
       };
     },

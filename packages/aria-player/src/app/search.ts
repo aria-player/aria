@@ -6,6 +6,7 @@ import { ArtistDetails } from "../features/artists/artistsTypes";
 export interface PlaylistSearchItem {
   id: string;
   name: string;
+  creatorName?: string;
 }
 
 export interface SearchResult {

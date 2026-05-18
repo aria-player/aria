@@ -29,6 +29,9 @@ export default function PlaylistGridItem({
         <button className={styles.playlistName} onClick={goToPlaylist}>
           {playlist.name}
         </button>
+        {playlist.creatorName && (
+          <div className={styles.playlistCreator}>{playlist.creatorName}</div>
+        )}
       </div>
     </div>
   );

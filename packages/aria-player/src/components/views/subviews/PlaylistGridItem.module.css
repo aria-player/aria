@@ -33,3 +33,11 @@
     text-decoration: underline;
   }
 }
+
+.playlistCreator {
+  padding: 0.375rem;
+  font-size: 0.9rem;
+  color: var(--secondary-text);
+  display: inline;
+  white-space: nowrap;
+}

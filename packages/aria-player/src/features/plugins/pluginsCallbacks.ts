@@ -307,6 +307,7 @@ export const getExternalPlaylistsCallbacks = (
           upsertExternalPlaylist({
             id: playlist.uri,
             name: playlist.name,
+            creatorName: playlist.creatorName,
             provider: pluginId,
             permissions: playlist.permissions,
             orderable: playlist.orderable,
