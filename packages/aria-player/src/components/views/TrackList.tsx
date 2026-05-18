@@ -189,8 +189,8 @@ export const TrackList = () => {
       return null;
     const { uris, ids, total } = cachedPlaylistUris;
     return Array.from({ length: total }, (_, i) => {
-      const itemId = ids[i] ?? `${currentPlaylistId}:${i}`;
-      const uri = uris[i];
+      const itemId = ids?.[i] ?? `${currentPlaylistId}:${i}`;
+      const uri = uris?.[i];
       if (!uri) return { itemId, metadataLoaded: false };
       const trackId = getTrackId(provider!, uri);
       const track = tracksEntities[trackId];
