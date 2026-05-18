@@ -102,6 +102,7 @@ function App() {
         <Route path="songs" Component={ViewContainer} />
         <Route path="artists" Component={ViewContainer} />
         <Route path="albums" Component={ViewContainer} />
+        <Route path="playlists" Component={ViewContainer} />
       </Route>
       <Route path="*" Component={ErrorPage} />
     </Routes>

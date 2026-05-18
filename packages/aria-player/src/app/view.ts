@@ -51,6 +51,7 @@ export enum SearchCategory {
   Songs = "songs",
   Artists = "artists",
   Albums = "albums",
+  Playlists = "playlists",
 }
 
 export type SplitViewState = {

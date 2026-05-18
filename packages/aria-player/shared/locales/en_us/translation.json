@@ -141,6 +141,11 @@
         "one": "Album",
         "other": "Albums",
         "viewAll": "View all album results"
+      },
+      "playlists": {
+        "one": "Playlist",
+        "other": "Playlists",
+        "viewAll": "View all playlist results"
       }
     },
     "viewAll": "View all",

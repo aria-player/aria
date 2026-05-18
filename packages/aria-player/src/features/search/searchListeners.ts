@@ -9,6 +9,7 @@ export function setupSearchListeners() {
       state.tracks.tracks,
       state.artists.artists,
       state.albums.albums,
+      state.undoable.present.playlists.layout,
     ],
     () => {
       invalidateSearchCache();

@@ -14,7 +14,7 @@ import { TriggerEvent } from "react-contexify";
 import { useNativeContextMenu } from "../../../hooks/useNativeContextMenu";
 import { useContext } from "react";
 import { MenuContext } from "../../../contexts/MenuContext";
-import { SearchResult } from "../../../app/search";
+import { PlaylistSearchItem, SearchResult } from "../../../app/search";
 import { useTranslation } from "react-i18next";
 import { getSourceHandle } from "../../../features/plugins/pluginsSlice";
 import { formatStringArray, getRelativePath } from "../../../app/utils";
@@ -65,6 +65,12 @@ export default function TopResultItem({ result }: TopResultItemProps) {
           );
         }
         break;
+      case "playlist":
+        {
+          const playlist = result.item as PlaylistSearchItem;
+          dispatch(push(BASEPATH + "playlist/" + playlist.id));
+        }
+        break;
       default:
         break;
     }
@@ -103,6 +109,15 @@ export default function TopResultItem({ result }: TopResultItemProps) {
           attributionId: album.uri,
         };
       }
+      case "playlist": {
+        const playlist = result.item as PlaylistSearchItem;
+        return {
+          id: playlist.id,
+          title: playlist.name,
+          label: t("search.categories.playlists.one"),
+          attributionId: "",
+        };
+      }
       default:
         return null;
     }
@@ -110,7 +125,10 @@ export default function TopResultItem({ result }: TopResultItemProps) {
 
   const itemData = getItemData();
   if (!itemData) return null;
-  const pluginHandle = getSourceHandle(result.item.source);
+  const pluginHandle =
+    result.type === "playlist"
+      ? null
+      : getSourceHandle((result.item as Track).source);
 
   return (
     <div className={styles.topResultItem}>
@@ -138,6 +156,8 @@ export default function TopResultItem({ result }: TopResultItemProps) {
           <div className={styles.artwork}>
             <AlbumArt album={result.item as AlbumDetails} />
           </div>
+        ) : result.type === "playlist" ? (
+          <div className={styles.artwork} />
         ) : (
           <div className={styles.artwork}>
             <AlbumArt track={result.item as Track} />
@@ -151,7 +171,7 @@ export default function TopResultItem({ result }: TopResultItemProps) {
           <div className={styles.type}>{itemData.label}</div>
         </div>
       </button>
-      {pluginHandle?.Attribution && (
+      {result.type !== "playlist" && pluginHandle?.Attribution && (
         <div className={styles.attribution}>
           <pluginHandle.Attribution
             type={result.type}

@@ -11,6 +11,7 @@ import {
   selectVisibleViewType,
 } from "../../features/visibleSelectors";
 import ArtistGrid from "./ArtistGrid";
+import PlaylistGrid from "./PlaylistGrid";
 import ErrorPage from "../pages/ErrorPage";
 import ArtistView from "./ArtistView";
 import AlbumView from "./AlbumView";
@@ -49,6 +50,7 @@ export default function ViewContainer() {
         <ArtistView />
       )}
       {visibleSearchCategory == SearchCategory.Artists && <ArtistGrid />}
+      {visibleSearchCategory == SearchCategory.Playlists && <PlaylistGrid />}
     </>
   );
 }

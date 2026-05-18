@@ -3,9 +3,14 @@ import { Track } from "../../../types/tracks";
 import { AlbumDetails } from "../features/albums/albumsTypes";
 import { ArtistDetails } from "../features/artists/artistsTypes";
 
+export interface PlaylistSearchItem {
+  id: string;
+  name: string;
+}
+
 export interface SearchResult {
-  type: "track" | "artist" | "album";
-  item: Track | ArtistDetails | AlbumDetails;
+  type: "track" | "artist" | "album" | "playlist";
+  item: Track | ArtistDetails | AlbumDetails | PlaylistSearchItem;
   score: number;
 }
 
@@ -42,14 +47,21 @@ const albumsOptions = {
   ...fuseOptions,
 };
 
+const playlistsOptions = {
+  keys: [{ name: "name", weight: 5 }],
+  ...fuseOptions,
+};
+
 let tracksFuse: Fuse<Track> | null = null;
 let artistsFuse: Fuse<ArtistDetails> | null = null;
 let albumsFuse: Fuse<AlbumDetails> | null = null;
+let playlistsFuse: Fuse<PlaylistSearchItem> | null = null;
 
 export function invalidateSearchCache() {
   tracksFuse = null;
   artistsFuse = null;
   albumsFuse = null;
+  playlistsFuse = null;
 }
 
 export const searchTracks = (tracks: Track[], search: string): Track[] => {
@@ -83,21 +95,35 @@ export const searchAlbums = (
   return albumsFuse.search(search).map((result) => result.item);
 };
 
+export const searchPlaylists = (
+  playlists: PlaylistSearchItem[],
+  search: string
+): PlaylistSearchItem[] => {
+  if (!search.trim()) return [];
+  if (!playlistsFuse) {
+    playlistsFuse = new Fuse(playlists, playlistsOptions);
+  }
+  return playlistsFuse.search(search).map((result) => result.item);
+};
+
 export const searchAllCategories = (
   tracks: Track[],
   artists: ArtistDetails[],
   albums: AlbumDetails[],
+  playlists: PlaylistSearchItem[],
   search: string
 ): null | {
   tracks: SearchResult[];
   artists: SearchResult[];
   albums: SearchResult[];
+  playlists: SearchResult[];
 } => {
   if (!search.trim()) return null;
-  if (!tracksFuse || !artistsFuse || !albumsFuse) {
+  if (!tracksFuse || !artistsFuse || !albumsFuse || !playlistsFuse) {
     tracksFuse = new Fuse(tracks, tracksOptions);
     artistsFuse = new Fuse(artists, artistsOptions);
     albumsFuse = new Fuse(albums, albumsOptions);
+    playlistsFuse = new Fuse(playlists, playlistsOptions);
   }
   return {
     tracks: tracksFuse.search(search).map((result) => ({
@@ -112,6 +138,11 @@ export const searchAllCategories = (
     })),
     albums: albumsFuse.search(search).map((result) => ({
       type: "album",
+      item: result.item,
+      score: result.score ?? 0,
+    })),
+    playlists: playlistsFuse.search(search).map((result) => ({
+      type: "playlist",
       item: result.item,
       score: result.score ?? 0,
     })),

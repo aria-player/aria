@@ -1,0 +1,35 @@
+.playlistGridItem {
+  display: flex;
+  flex-direction: column;
+}
+
+.playlistArt {
+  width: 100%;
+  aspect-ratio: 1/1;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  background: var(--missing-artwork-background);
+  border: 1px solid var(--artwork-border);
+  cursor: pointer;
+}
+
+.playlistInfo {
+  margin-top: 0.5rem;
+  min-width: 0;
+}
+
+.playlistName {
+  font-weight: 500;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  overflow: hidden;
+  display: block;
+  max-width: 100%;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

@@ -14,6 +14,7 @@ import { selectLibrarySplitViewStates } from "./library/librarySlice";
 import {
   selectPlaylistById,
   selectPlaylistConfigById,
+  selectPlaylistsLayout,
 } from "./playlists/playlistsSlice";
 import { PlaylistItem } from "./playlists/playlistsTypes";
 import {
@@ -41,7 +42,9 @@ import {
   searchTracks,
   searchArtists,
   searchAlbums,
+  searchPlaylists,
   searchAllCategories,
+  PlaylistSearchItem,
 } from "../app/search";
 import { selectDebouncedSearch, selectSearch } from "./search/searchSlice";
 import { BASEPATH } from "../app/constants";
@@ -53,6 +56,7 @@ import {
 } from "../app/utils";
 import { compareMetadata } from "../app/sort";
 import { PluginId } from "../../../types";
+import { Item } from "soprano-ui";
 import { getSourceHandle } from "./plugins/pluginsSlice";
 
 export const selectVisibleViewType = (state: RootState) => {
@@ -530,6 +534,53 @@ export const selectVisibleArtists = createSelector(
   }
 );
 
+const collectLayoutPlaylists = (
+  items: Item[],
+  result: PlaylistSearchItem[]
+) => {
+  for (const item of items) {
+    if (item.children) {
+      collectLayoutPlaylists(item.children, result);
+    } else {
+      result.push({ id: item.id, name: item.name });
+    }
+  }
+};
+
+export const selectSearchablePlaylists = createSelector(
+  [(state: RootState) => selectPlaylistsLayout(state)],
+  (layout) => {
+    const playlists: PlaylistSearchItem[] = [];
+    collectLayoutPlaylists(layout, playlists);
+    return playlists;
+  }
+);
+
+export const selectVisiblePlaylists = createSelector(
+  [
+    (state: RootState) => state.router.location?.pathname,
+    (state: RootState) => selectSearchablePlaylists(state),
+    (state: RootState) => state.search.search,
+    (state: RootState) => state.search.debouncedSearch,
+    (state: RootState) => selectVisibleSearchSource(state),
+  ],
+  () => {
+    const state = store.getState();
+    const search = selectSearch(state);
+    if (!search || selectVisibleViewType(state) != View.Search) {
+      return [];
+    }
+    const debouncedSearch = selectDebouncedSearch(state);
+    if (!debouncedSearch.trim()) {
+      return [];
+    }
+    if (selectVisibleSearchSource(state)) {
+      return [];
+    }
+    return searchPlaylists(selectSearchablePlaylists(state), debouncedSearch);
+  }
+);
+
 export const selectVisibleArtist = createSelector(
   [
     (state: RootState) => selectAllTracks(state),
@@ -647,6 +698,7 @@ export const selectVisibleSearchResults = createSelector(
     (state: RootState) => state.search.search,
     (state: RootState) => state.search.debouncedSearch,
     (state: RootState) => selectArtistDelimiter(state),
+    (state: RootState) => selectSearchablePlaylists(state),
   ],
   () => {
     const state = store.getState();
@@ -660,6 +712,7 @@ export const selectVisibleSearchResults = createSelector(
         tracks: [],
         artists: [],
         albums: [],
+        playlists: [],
       };
     }
     const visibleSource = selectVisibleSearchSource(state);
@@ -669,12 +722,14 @@ export const selectVisibleSearchResults = createSelector(
         tracks: [],
         artists: [],
         albums: [],
+        playlists: [],
       };
     }
     const searchResults = searchAllCategories(
       selectLibraryTracks(state),
       selectLibraryArtists(state),
       selectLibraryAlbums(state),
+      selectSearchablePlaylists(state),
       debouncedSearch
     );
     if (!searchResults) return null;
@@ -703,6 +758,7 @@ export const selectVisibleSearchResults = createSelector(
             (result) => (result.item as AlbumDetails).source == visibleSource
           )
         : searchResults.albums,
+      playlists: visibleSource ? [] : searchResults.playlists,
     };
   }
 );

@@ -17,6 +17,8 @@ import { TrackSummaryRow } from "../../views/subviews/TrackSummaryRow";
 import styles from "./AllResultsPage.module.css";
 import { useTranslation } from "react-i18next";
 import ArtistGridItem from "../../views/subviews/ArtistGridItem";
+import PlaylistGridItem from "../../views/subviews/PlaylistGridItem";
+import { PlaylistSearchItem } from "../../../app/search";
 import {
   getExternalSearchCacheKey,
   getScrollbarWidth,
@@ -366,6 +368,18 @@ export default function AllResultsPage() {
     searchResults?.albums,
   ]);
 
+  const playlistResults = useMemo(() => {
+    if (isExternalSearchSource || isDebouncingExternalSearch) {
+      return [] as PlaylistSearchItem[];
+    }
+    return (searchResults?.playlists.map((result) => result.item) ||
+      []) as PlaylistSearchItem[];
+  }, [
+    isExternalSearchSource,
+    isDebouncingExternalSearch,
+    searchResults?.playlists,
+  ]);
+
   const topResults = useMemo(() => {
     if (!search.trim()) return [];
 
@@ -392,6 +406,7 @@ export default function AllResultsPage() {
       ...searchResults.tracks,
       ...searchResults.artists,
       ...searchResults.albums,
+      ...searchResults.playlists,
     ];
 
     return allResults.sort((a, b) => a.score - b.score);
@@ -444,6 +459,7 @@ export default function AllResultsPage() {
   const viewAllSongs = () => dispatch(push(buildSearchRoute("songs")));
   const viewAllArtists = () => dispatch(push(buildSearchRoute("artists")));
   const viewAllAlbums = () => dispatch(push(buildSearchRoute("albums")));
+  const viewAllPlaylists = () => dispatch(push(buildSearchRoute("playlists")));
 
   return (
     <div
@@ -454,7 +470,8 @@ export default function AllResultsPage() {
       {!showLoadingSpinner &&
         songResults.length === 0 &&
         artistResults.length === 0 &&
-        albumResults.length === 0 && (
+        albumResults.length === 0 &&
+        playlistResults.length === 0 && (
           <div className={styles.noResults}>{t("search.noResults")}</div>
         )}
       {!showLoadingSpinner && (
@@ -573,6 +590,41 @@ export default function AllResultsPage() {
                     <AlbumGridItem album={album} />
                   </div>
                 ))}
+              </div>
+            </section>
+          )}
+          {playlistResults.length > 0 && (
+            <section className={styles.section}>
+              <div className={styles.sectionHeader}>
+                <h2 className={styles.sectionTitle}>
+                  {t("search.categories.playlists.other")}
+                </h2>
+                <button
+                  className={styles.viewAll}
+                  onClick={viewAllPlaylists}
+                  title={t("search.categories.playlists.viewAll")}
+                >
+                  {t("search.viewAll")}
+                </button>
+              </div>
+              <div
+                className={styles.gridRow}
+                style={{
+                  gridTemplateColumns: `repeat(${gridLayout.columnCount}, 1fr)`,
+                  height: gridLayout.columnWidth + 40,
+                }}
+              >
+                {playlistResults
+                  .slice(0, gridLayout.columnCount)
+                  .map((playlist) => (
+                    <div
+                      key={playlist.id}
+                      className={styles.gridItem}
+                      style={{ width: gridLayout.columnWidth }}
+                    >
+                      <PlaylistGridItem playlist={playlist} />
+                    </div>
+                  ))}
               </div>
             </section>
           )}
