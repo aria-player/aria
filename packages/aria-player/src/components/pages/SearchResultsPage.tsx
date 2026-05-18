@@ -1,5 +1,9 @@
 import { useAppSelector, useAppDispatch } from "../../app/hooks";
-import { selectSearch } from "../../features/search/searchSlice";
+import {
+  selectSearch,
+  selectSelectedSearchCategory,
+  setSelectedSearchCategory,
+} from "../../features/search/searchSlice";
 import styles from "./SearchResultsPage.module.css";
 import { useTranslation } from "react-i18next";
 import { push } from "redux-first-history";
@@ -10,7 +14,7 @@ import {
   selectVisibleSearchCategory,
   selectVisibleSearchSource,
 } from "../../features/visibleSelectors";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { ScrollContext } from "../../contexts/ScrollContext";
 import { SearchCategory } from "../../app/view";
 import SearchSourceSwitcher from "./search/SearchSourceSwitcher";
@@ -20,9 +24,17 @@ export default function SearchResultsPage() {
   const { t } = useTranslation();
   const search = useAppSelector(selectSearch);
   const visibleSearchCategory = useAppSelector(selectVisibleSearchCategory);
+  const selectedSearchCategory = useAppSelector(selectSelectedSearchCategory);
   const visibleSearchSource = useAppSelector(selectVisibleSearchSource);
   const { scrollY } = useContext(ScrollContext);
   const { onScroll } = useScrollDetection();
+
+  useEffect(() => {
+    const searchCategory = visibleSearchCategory ?? null;
+    if (selectedSearchCategory !== searchCategory) {
+      dispatch(setSelectedSearchCategory(searchCategory));
+    }
+  }, [dispatch, selectedSearchCategory, visibleSearchCategory]);
 
   const getSearchPath = (category?: string) => {
     const basePath = `search/${encodeURIComponent(search)}/${encodeURIComponent(visibleSearchSource ?? "library")}`;

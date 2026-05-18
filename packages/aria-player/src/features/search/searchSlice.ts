@@ -1,11 +1,13 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
+import { SearchCategory } from "../../app/view";
 
 interface SearchState {
   search: string;
   debouncedSearch: string;
   searchHistory: string[];
   selectedSearchSource: string | null;
+  selectedSearchCategory: SearchCategory | null;
 }
 
 const initialState: SearchState = {
@@ -13,6 +15,7 @@ const initialState: SearchState = {
   debouncedSearch: "",
   searchHistory: [],
   selectedSearchSource: null,
+  selectedSearchCategory: null,
 };
 
 const searchSlice = createSlice({
@@ -21,6 +24,9 @@ const searchSlice = createSlice({
   reducers: {
     setSearch: (state, action) => {
       state.search = action.payload;
+      if (!action.payload.trim()) {
+        state.selectedSearchCategory = null;
+      }
     },
     setDebouncedSearch: (state, action) => {
       state.debouncedSearch = action.payload;
@@ -40,6 +46,9 @@ const searchSlice = createSlice({
       state.selectedSearchSource =
         action.payload === "library" ? null : action.payload;
     },
+    setSelectedSearchCategory: (state, action) => {
+      state.selectedSearchCategory = action.payload;
+    },
   },
 });
 
@@ -49,6 +58,7 @@ export const {
   addToSearchHistory,
   removeFromSearchHistory,
   setSelectedSearchSource,
+  setSelectedSearchCategory,
 } = searchSlice.actions;
 
 export const selectSearch = (state: RootState) => state.search.search;
@@ -60,6 +70,8 @@ export const selectSelectedSearchSource = (state: RootState) =>
   state.search.selectedSearchSource === "library"
     ? null
     : state.search.selectedSearchSource;
+export const selectSelectedSearchCategory = (state: RootState) =>
+  state.search.selectedSearchCategory;
 
 export default searchSlice.reducer;
 

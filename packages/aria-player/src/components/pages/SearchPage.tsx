@@ -2,6 +2,7 @@ import { useAppSelector, useAppDispatch } from "../../app/hooks";
 import {
   selectSearchHistory,
   removeFromSearchHistory,
+  selectSelectedSearchCategory,
   selectSelectedSearchSource,
   setSearch,
   setDebouncedSearch,
@@ -19,6 +20,7 @@ export default function SearchPage() {
   const dispatch = useAppDispatch();
   const { t } = useTranslation();
   const searchHistory = useAppSelector(selectSearchHistory);
+  const selectedSearchCategory = useAppSelector(selectSelectedSearchCategory);
   const selectedSearchSource = useAppSelector(selectSelectedSearchSource);
   const { onScroll } = useScrollDetection();
   const hasMultipleSources = useHasMultipleSearchSources();
@@ -65,7 +67,10 @@ export default function SearchPage() {
                             "/" +
                             encodeURIComponent(
                               selectedSearchSource ?? "library"
-                            )
+                            ) +
+                            (selectedSearchCategory
+                              ? `/${selectedSearchCategory}`
+                              : "")
                         )
                       );
                     }}

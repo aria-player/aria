@@ -35,6 +35,7 @@ import {
 import { View } from "../../app/view";
 import {
   selectDebouncedSearch,
+  selectSelectedSearchCategory,
   selectSelectedSearchSource,
   selectSearch,
   setSearch,
@@ -84,6 +85,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
   const visibleSearchCategory = useAppSelector(selectVisibleSearchCategory);
   const visibleSearchSource = useAppSelector(selectVisibleSearchSource);
+  const selectedSearchCategory = useAppSelector(selectSelectedSearchCategory);
   const selectedSearchSource = useAppSelector(selectSelectedSearchSource);
   const search = useAppSelector(selectSearch);
   const debouncedSearch = useAppSelector(selectDebouncedSearch);
@@ -188,9 +190,13 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
     if (visibleViewType !== View.Search || isComposing) return;
     if (debouncedSearch !== search) return;
     const source = visibleSearchSource ?? selectedSearchSource ?? "library";
+    const searchCategory =
+      visibleSearchCategory === undefined
+        ? selectedSearchCategory
+        : visibleSearchCategory;
     const nextPath = debouncedSearch.trim()
       ? BASEPATH +
-        `search/${encodeURIComponent(debouncedSearch)}/${encodeURIComponent(source)}${visibleSearchCategory ? `/${visibleSearchCategory}` : ""}`
+        `search/${encodeURIComponent(debouncedSearch)}/${encodeURIComponent(source)}${searchCategory ? `/${searchCategory}` : ""}`
       : BASEPATH + "search";
     if (location.pathname !== nextPath) {
       dispatch(replace(nextPath));
@@ -200,6 +206,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
     dispatch,
     isComposing,
     location.pathname,
+    selectedSearchCategory,
     selectedSearchSource,
     visibleSearchCategory,
     visibleSearchSource,
@@ -215,10 +222,14 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
 
   function getSearchRoute(search: string) {
     const source = visibleSearchSource ?? selectedSearchSource ?? "library";
+    const searchCategory =
+      visibleSearchCategory === undefined
+        ? selectedSearchCategory
+        : visibleSearchCategory;
     if (!search.trim()) {
       return "search";
     }
-    return `search/${encodeURIComponent(search)}/${encodeURIComponent(source)}${visibleSearchCategory ? `/${visibleSearchCategory}` : ""}`;
+    return `search/${encodeURIComponent(search)}/${encodeURIComponent(source)}${searchCategory ? `/${searchCategory}` : ""}`;
   }
 
   const isFolder = (itemId: string) => {
