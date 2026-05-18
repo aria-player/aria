@@ -186,6 +186,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
 
   useEffect(() => {
     if (visibleViewType !== View.Search || isComposing) return;
+    if (debouncedSearch !== search) return;
     const source = visibleSearchSource ?? selectedSearchSource ?? "library";
     const nextPath = debouncedSearch.trim()
       ? BASEPATH +
@@ -203,6 +204,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
     visibleSearchCategory,
     visibleSearchSource,
     visibleViewType,
+    search,
   ]);
 
   function goToSearch(searchValue: string) {
