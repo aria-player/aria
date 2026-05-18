@@ -1,4 +1,4 @@
-import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { createSlice, nanoid, PayloadAction } from "@reduxjs/toolkit";
 import { RootState } from "../../app/store";
 import { AlbumId, ArtistId, TrackId } from "../../../../types";
 import { parseTrackId } from "../../app/utils";
@@ -35,7 +35,10 @@ export interface CacheState {
     albums: Record<string, AlbumId[]>;
     artists: Record<string, ArtistId[]>;
   };
-  playlistTrackUris: Record<string, { uris: (string | null)[]; total: number }>;
+  playlistTrackUris: Record<
+    string,
+    { uris: (string | null)[]; ids: string[]; total: number }
+  >;
 }
 
 const initialState: CacheState = {
@@ -134,21 +137,35 @@ export const cacheSlice = createSlice({
         offset
       );
     },
-    initPlaylistTrackUris: (
-      state,
-      action: PayloadAction<{
+    initPlaylistTrackUris: {
+      reducer: (
+        state,
+        action: PayloadAction<{
+          playlistId: string;
+          uris: string[];
+          total: number;
+          offset: number;
+          ids: string[];
+        }>
+      ) => {
+        const { playlistId, uris, total, offset, ids } = action.payload;
+        const sparse: (string | null)[] = new Array(total).fill(null);
+        uris.forEach((uri, i) => {
+          sparse[offset + i] = uri;
+        });
+        state.playlistTrackUris[playlistId] = { uris: sparse, ids, total };
+      },
+      prepare: (payload: {
         playlistId: string;
         uris: string[];
         total: number;
         offset: number;
-      }>
-    ) => {
-      const { playlistId, uris, total, offset } = action.payload;
-      const sparse: (string | null)[] = new Array(total).fill(null);
-      uris.forEach((uri, i) => {
-        sparse[offset + i] = uri;
-      });
-      state.playlistTrackUris[playlistId] = { uris: sparse, total };
+      }) => ({
+        payload: {
+          ...payload,
+          ids: Array.from({ length: payload.total }, () => nanoid()),
+        },
+      }),
     },
     setPlaylistTrackUrisPage: (
       state,
@@ -173,8 +190,37 @@ export const cacheSlice = createSlice({
       const entry = state.playlistTrackUris[playlistId];
       if (!entry) return;
       const uriSet = new Set(uris);
-      entry.uris = entry.uris.filter((uri) => uri === null || !uriSet.has(uri));
-      entry.total = entry.uris.length;
+      const keptUris: (string | null)[] = [];
+      const keptIds: string[] = [];
+      entry.uris.forEach((uri, index) => {
+        if (uri === null || !uriSet.has(uri)) {
+          keptUris.push(uri);
+          keptIds.push(entry.ids[index]);
+        }
+      });
+      entry.uris = keptUris;
+      entry.ids = keptIds;
+      entry.total = keptUris.length;
+    },
+    reorderPlaylistTrackUris: (
+      state,
+      action: PayloadAction<{
+        playlistId: string;
+        rangeStart: number;
+        insertBefore: number;
+        rangeLength: number;
+      }>
+    ) => {
+      const { playlistId, rangeStart, insertBefore, rangeLength } =
+        action.payload;
+      const entry = state.playlistTrackUris[playlistId];
+      if (!entry) return;
+      const insertIndex =
+        insertBefore > rangeStart ? insertBefore - rangeLength : insertBefore;
+      const movedUris = entry.uris.splice(rangeStart, rangeLength);
+      entry.uris.splice(insertIndex, 0, ...movedUris);
+      const movedIds = entry.ids.splice(rangeStart, rangeLength);
+      entry.ids.splice(insertIndex, 0, ...movedIds);
     },
     clearCache: (state) => {
       state.fetchedAlbums = [];
@@ -237,6 +283,7 @@ export const {
   initPlaylistTrackUris,
   setPlaylistTrackUrisPage,
   removePlaylistTrackUris,
+  reorderPlaylistTrackUris,
   clearCache,
   removeCachedTracks,
 } = cacheSlice.actions;

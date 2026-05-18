@@ -1354,6 +1354,23 @@ export default function createSpotifyPlayer(
       }
     },
 
+    reorderPlaylistTracks: async (
+      id: string,
+      rangeStart: number,
+      insertBefore: number,
+      rangeLength: number
+    ) => {
+      await spotifyWriteRequest(
+        `/playlists/${encodeURIComponent(id)}/tracks`,
+        "PUT",
+        {
+          range_start: rangeStart,
+          insert_before: insertBefore,
+          range_length: rangeLength,
+        }
+      );
+    },
+
     getTracksByUri: async (uris: string[]) => {
       const tracks: TrackMetadata[] = [];
       const batchSize = 50;

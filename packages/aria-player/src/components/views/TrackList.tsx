@@ -41,6 +41,7 @@ import { useTranslation } from "react-i18next";
 import { TriggerEvent, useContextMenu } from "react-contexify";
 import { MenuContext } from "../../contexts/MenuContext";
 import {
+  reorderPlaylistTracksThunk,
   selectPlaylistConfigById,
   setPlaylistTracks,
   updatePlaylistColumnState,
@@ -52,6 +53,7 @@ import {
   getRelativePath,
   getTrackId,
   parseArtistId,
+  parseTrackId,
   overrideColumnStateSort,
   getExternalSearchCacheKey,
   getAlbumId,
@@ -185,18 +187,17 @@ export const TrackList = () => {
   const externalPlaylistRowData = useMemo(() => {
     if (!isExternalPlaylist || !currentPlaylistId || !cachedPlaylistUris)
       return null;
-    const { uris, total } = cachedPlaylistUris;
+    const { uris, ids, total } = cachedPlaylistUris;
     return Array.from({ length: total }, (_, i) => {
+      const itemId = ids[i] ?? `${currentPlaylistId}:${i}`;
       const uri = uris[i];
-      if (!uri)
-        return { itemId: `${currentPlaylistId}:${i}`, metadataLoaded: false };
+      if (!uri) return { itemId, metadataLoaded: false };
       const trackId = getTrackId(provider!, uri);
       const track = tracksEntities[trackId];
-      if (!track)
-        return { itemId: `${currentPlaylistId}:${i}`, metadataLoaded: false };
+      if (!track) return { itemId, metadataLoaded: false };
       return {
         ...track,
-        itemId: `${currentPlaylistId}:${i}`,
+        itemId,
         albumId: track.albumUri
           ? getAlbumId(
               provider!,
@@ -641,6 +642,15 @@ export const TrackList = () => {
       event.api.getColumnState().filter((col) => col.sort !== null).length != 0
     )
       return;
+    if (isExternalPlaylist) {
+      const newUris: (string | null)[] = [];
+      event.api.forEachNode((node) => {
+        const trackId = node.data?.trackId;
+        newUris.push(trackId ? (parseTrackId(trackId)?.uri ?? null) : null);
+      });
+      dispatch(reorderPlaylistTracksThunk(visiblePlaylist.id, newUris));
+      return;
+    }
     const newOrder = [] as PlaylistItem[];
     event.api.forEachNode((node) => {
       if (node.data) {

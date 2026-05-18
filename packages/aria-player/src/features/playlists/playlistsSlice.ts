@@ -37,6 +37,8 @@ import { pluginHandles } from "../plugins/pluginsSlice";
 import {
   initPlaylistTrackUris,
   removePlaylistTrackUris,
+  reorderPlaylistTrackUris,
+  selectCachedPlaylistTrackUris,
   setPlaylistTrackUrisPage,
 } from "../cache/cacheSlice";
 import { selectTrackById } from "../tracks/tracksSlice";
@@ -179,6 +181,81 @@ export function removePlaylistTracksThunk(
           playlistId,
           itemIds: tracks.map((track) => track.itemId),
         })
+      );
+    }
+  };
+}
+
+export function computeRangeMove(
+  oldUris: (string | null)[],
+  newUris: (string | null)[]
+): { rangeStart: number; insertBefore: number; rangeLength: number } | null {
+  if (oldUris.length !== newUris.length) return null;
+  const length = oldUris.length;
+  let prefix = 0;
+  while (prefix < length && oldUris[prefix] === newUris[prefix]) prefix++;
+  if (prefix === length) return null;
+  let suffix = 0;
+  while (
+    suffix < length - prefix &&
+    oldUris[length - 1 - suffix] === newUris[length - 1 - suffix]
+  )
+    suffix++;
+  const windowLength = length - prefix - suffix;
+  const oldWindow = oldUris.slice(prefix, prefix + windowLength);
+  const newWindow = newUris.slice(prefix, prefix + windowLength);
+  for (let rotation = 1; rotation < windowLength; rotation++) {
+    const rotated = oldWindow
+      .slice(rotation)
+      .concat(oldWindow.slice(0, rotation));
+    if (rotated.every((uri, index) => uri === newWindow[index])) {
+      if (rotation <= windowLength - rotation) {
+        return {
+          rangeStart: prefix,
+          insertBefore: prefix + windowLength,
+          rangeLength: rotation,
+        };
+      }
+      return {
+        rangeStart: prefix + rotation,
+        insertBefore: prefix,
+        rangeLength: windowLength - rotation,
+      };
+    }
+  }
+  return null;
+}
+
+export function reorderPlaylistTracksThunk(
+  playlistId: string,
+  newUris: (string | null)[]
+): AppThunk<Promise<void>> {
+  return async (dispatch, getState) => {
+    const state = getState();
+    const playlist = selectPlaylistById(state, playlistId);
+    if (!playlist?.provider) return;
+    const { provider } = playlist;
+    const oldUris = selectCachedPlaylistTrackUris(state, playlistId)?.uris;
+    if (!oldUris) return;
+    const move = computeRangeMove(oldUris, newUris);
+    if (!move) {
+      dispatch(initExternalPlaylist({ playlistId, provider }));
+      return;
+    }
+    const playlistName = selectPlaylistsLayoutItemById(state, playlistId)?.name;
+    // We avoid resyncing after success here to avoid cutting off the row reorder animations
+    dispatch(reorderPlaylistTrackUris({ playlistId, ...move }));
+    try {
+      await pluginHandles[provider]?.reorderPlaylistTracks?.(
+        playlistId,
+        move.rangeStart,
+        move.insertBefore,
+        move.rangeLength
+      );
+    } catch {
+      dispatch(initExternalPlaylist({ playlistId, provider }));
+      showToast(
+        t("toasts.reorderExternalPlaylistError", { playlist: playlistName })
       );
     }
   };

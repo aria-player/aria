@@ -524,6 +524,17 @@ export interface ExternalPlaylistsHandle extends BaseHandle {
    * Remove tracks from an external playlist.
    */
   removePlaylistTracks?: (id: PlaylistId, uris: TrackUri[]) => Promise<void>;
+  /**
+   * Reorder tracks within an external playlist.
+   *
+   * Items starting at `rangeStart` are moved so they sit before the item at `insertBefore`.
+   */
+  reorderPlaylistTracks?: (
+    id: PlaylistId,
+    rangeStart: number,
+    insertBefore: number,
+    rangeLength: number
+  ) => Promise<void>;
 }
 
 /**
