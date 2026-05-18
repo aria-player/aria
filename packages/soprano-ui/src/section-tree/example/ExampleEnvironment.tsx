@@ -1,20 +1,16 @@
 import { Allotment } from "allotment";
 import React, { useRef } from "react";
-import { SectionTree } from "../../src/section-tree/SectionTree";
-import views from "../data/views.json";
-import playlists from "../data/playlists.json";
+import { SectionTree } from "../SectionTree";
+import views from "./data/views.json";
+import playlists from "./data/playlists.json";
 import { TreeProps } from "react-arborist/dist/module/types/tree-props";
-import {
-  SectionTreeItem,
-  Section,
-  SectionTreeApi,
-} from "../../src/section-tree/treeTypes";
+import { SectionTreeItem, Section, SectionTreeApi } from "../treeTypes";
 import {
   createTreeNode,
   deleteTreeNode,
   moveTreeNode,
   updateTreeNode,
-} from "../../src/section-tree/treeOperations";
+} from "../treeOperations";
 import "allotment/dist/style.css";
 
 export function ExampleEnvironment(

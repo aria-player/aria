@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { SectionTree } from "../src/section-tree/SectionTree";
+import { SectionTree } from "./SectionTree";
 import { ExampleEnvironment } from "./example/ExampleEnvironment";
 
 const meta = {
-  title: "Example/SectionTree",
+  title: "SectionTree",
   component: SectionTree,
   tags: ["autodocs"],
   args: {

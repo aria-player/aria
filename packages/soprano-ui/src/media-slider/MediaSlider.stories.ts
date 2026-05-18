@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { MediaSlider } from "../src/media-slider/MediaSlider";
+import { MediaSlider } from "./MediaSlider";
 
 const meta = {
-  title: "Example/MediaSlider",
+  title: "MediaSlider",
   component: MediaSlider,
   tags: ["autodocs"],
   args: {
