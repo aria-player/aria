@@ -1,5 +1,6 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { RootState, createAppAsyncThunk } from "../../app/store";
+import { RootState } from "../../app/store";
+import { createAppAsyncThunk } from "../../app/thunk";
 import { QueueItem, RepeatMode, Status } from "./playerTypes";
 import { TrackId } from "../../../../types/tracks";
 import { getSourceHandle } from "../plugins/pluginsSlice";

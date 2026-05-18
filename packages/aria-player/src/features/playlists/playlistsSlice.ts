@@ -31,7 +31,8 @@ import {
 } from "../../app/utils";
 import { DisplayMode, SplitViewState, TrackGrouping } from "../../app/view";
 import { PluginId, PlaylistPermissions, TrackUri } from "../../../../types";
-import { AppThunk, createAppAsyncThunk } from "../../app/store";
+import { AppThunk } from "../../app/store";
+import { createAppAsyncThunk } from "../../app/thunk";
 import { nanoid } from "@reduxjs/toolkit";
 import { pluginHandles } from "../plugins/pluginsSlice";
 import {

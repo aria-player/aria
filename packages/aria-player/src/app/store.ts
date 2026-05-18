@@ -1,9 +1,4 @@
-import {
-  configureStore,
-  ThunkAction,
-  UnknownAction,
-  createAsyncThunk,
-} from "@reduxjs/toolkit";
+import { configureStore, ThunkAction, UnknownAction } from "@reduxjs/toolkit";
 import configReducer from "../features/config/configSlice";
 import playerReducer from "../features/player/playerSlice";
 import libraryReducer from "../features/library/librarySlice";
@@ -145,11 +140,6 @@ export type AppThunk<ReturnType = void> = ThunkAction<
   undefined,
   UnknownAction
 >;
-
-export const createAppAsyncThunk = createAsyncThunk.withTypes<{
-  state: RootState;
-  dispatch: AppDispatch;
-}>();
 
 export const persistor = persistStore(store);
 

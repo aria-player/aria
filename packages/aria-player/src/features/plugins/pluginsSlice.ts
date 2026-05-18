@@ -8,7 +8,8 @@ import {
   SyncProgress,
 } from "../../../../types/plugins";
 import { setupPluginListeners } from "./pluginsListeners";
-import { RootState, store, createAppAsyncThunk } from "../../app/store";
+import { RootState, store } from "../../app/store";
+import { createAppAsyncThunk } from "../../app/thunk";
 import { checkCompatibility, isTauri } from "../../app/utils";
 import JSZip from "jszip";
 import { defaultPluginInfo, pluginFormatVersion } from "../../plugins/plugins";
