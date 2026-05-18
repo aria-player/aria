@@ -492,10 +492,19 @@ export default function AllResultsPage() {
       const albums = albumResults
         .slice(0, 2)
         .map((item) => ({ type: "album" as const, item, score: 0 }));
+      const playlists = playlistResults
+        .slice(0, 2)
+        .map((item) => ({ type: "playlist" as const, item, score: 0 }));
       const moreSongs = songResults
         .slice(2, 6)
         .map((item) => ({ type: "track" as const, item, score: 0 }));
-      return [...songs, ...artists, ...albums, ...moreSongs].slice(0, 6);
+      return [
+        ...songs,
+        ...artists,
+        ...albums,
+        ...playlists,
+        ...moreSongs,
+      ].slice(0, 6);
     }
 
     if (!searchResults) return [];
@@ -515,6 +524,7 @@ export default function AllResultsPage() {
     artistResults,
     albumResults,
     songResults,
+    playlistResults,
   ]);
 
   const showLoadingSpinner = isLoading || isDebouncingExternalSearch;
