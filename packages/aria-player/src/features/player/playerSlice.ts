@@ -1,5 +1,5 @@
-import { PayloadAction, createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { RootState } from "../../app/store";
+import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { RootState, createAppAsyncThunk } from "../../app/store";
 import { QueueItem, RepeatMode, Status } from "./playerTypes";
 import { TrackId } from "../../../../types/tracks";
 import { getSourceHandle } from "../plugins/pluginsSlice";
@@ -51,14 +51,14 @@ function shuffleQueue(queue: QueueItem[], queueIndex: number | null) {
   return shuffledTracks;
 }
 
-export const loadAndPlayTrack = createAsyncThunk(
+export const loadAndPlayTrack = createAppAsyncThunk(
   "player/loadAndPlayTrack",
   async (trackId: TrackId, { getState }) => {
-    const state = getState() as RootState;
+    const state = getState();
     if (state.player.queueIndex === null) {
       throw new Error("Queue index null");
     }
-    const track = selectTrackById(getState() as RootState, trackId);
+    const track = selectTrackById(getState(), trackId);
     if (!track) {
       throw new Error("Track not found");
     }

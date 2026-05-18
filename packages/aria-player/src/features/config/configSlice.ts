@@ -1,10 +1,5 @@
-import {
-  createAsyncThunk,
-  createSelector,
-  createSlice,
-  PayloadAction,
-} from "@reduxjs/toolkit";
-import { RootState } from "../../app/store";
+import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { RootState, createAppAsyncThunk } from "../../app/store";
 import { LibraryView } from "../../app/view";
 import JSZip from "jszip";
 import {
@@ -51,7 +46,7 @@ const initialState: ConfigState = {
   alwaysShowNavigation: false,
 };
 
-export const installThemesFromFiles = createAsyncThunk(
+export const installThemesFromFiles = createAppAsyncThunk(
   "config/installThemesFromFiles",
   async (blobs: Blob[], { dispatch }) => {
     for (const blob of blobs) {

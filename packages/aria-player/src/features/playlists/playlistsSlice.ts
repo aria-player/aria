@@ -31,8 +31,8 @@ import {
 } from "../../app/utils";
 import { DisplayMode, SplitViewState, TrackGrouping } from "../../app/view";
 import { PluginId, PlaylistPermissions, TrackUri } from "../../../../types";
-import { AppThunk } from "../../app/store";
-import { createAsyncThunk, nanoid } from "@reduxjs/toolkit";
+import { AppThunk, createAppAsyncThunk } from "../../app/store";
+import { nanoid } from "@reduxjs/toolkit";
 import { pluginHandles } from "../plugins/pluginsSlice";
 import {
   initPlaylistTrackUris,
@@ -261,7 +261,7 @@ export function reorderPlaylistTracksThunk(
   };
 }
 
-export const initExternalPlaylist = createAsyncThunk(
+export const initExternalPlaylist = createAppAsyncThunk(
   "playlists/initExternalPlaylist",
   async (
     { playlistId, provider }: { playlistId: PlaylistId; provider: PluginId },
@@ -279,7 +279,7 @@ export const initExternalPlaylist = createAsyncThunk(
   }
 );
 
-export const fetchPlaylistTrackUrisPage = createAsyncThunk(
+export const fetchPlaylistTrackUrisPage = createAppAsyncThunk(
   "playlists/fetchPlaylistTrackUrisPage",
   async (
     {
@@ -301,7 +301,7 @@ export const fetchPlaylistTrackUrisPage = createAsyncThunk(
   }
 );
 
-export const fetchPlaylistTracks = createAsyncThunk(
+export const fetchPlaylistTracks = createAppAsyncThunk(
   "playlists/fetchPlaylistTracks",
   async (
     { playlistId, provider }: { playlistId: PlaylistId; provider: PluginId },
@@ -322,7 +322,7 @@ export const fetchPlaylistTracks = createAsyncThunk(
       allUris.push(...result.uris);
       offset += PLAYLIST_URI_PAGE_SIZE;
     }
-    const state = getState() as RootState;
+    const state = getState();
     const availableTrackIds = allUris
       .map((uri) => getTrackId(provider, uri))
       .filter((trackId) => state.tracks.tracks.entities[trackId]);

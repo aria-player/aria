@@ -1,9 +1,4 @@
-import {
-  createAsyncThunk,
-  createSelector,
-  createSlice,
-  PayloadAction,
-} from "@reduxjs/toolkit";
+import { createSelector, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AnyPluginHandle } from "./pluginsTypes";
 import {
   PluginId,
@@ -13,7 +8,7 @@ import {
   SyncProgress,
 } from "../../../../types/plugins";
 import { setupPluginListeners } from "./pluginsListeners";
-import { RootState, store } from "../../app/store";
+import { RootState, store, createAppAsyncThunk } from "../../app/store";
 import { checkCompatibility, isTauri } from "../../app/utils";
 import JSZip from "jszip";
 import { defaultPluginInfo, pluginFormatVersion } from "../../plugins/plugins";
@@ -60,7 +55,7 @@ export function getExternalPlaylistsHandle(
   }
 }
 
-export const installPluginsFromFiles = createAsyncThunk(
+export const installPluginsFromFiles = createAppAsyncThunk(
   "plugins/installPluginsFromFiles",
   async (blobs: Blob[], { dispatch }) => {
     for (const blob of blobs) {
