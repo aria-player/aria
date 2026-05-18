@@ -116,7 +116,7 @@ export default function TopResultItem({ result }: TopResultItemProps) {
           id: playlist.id,
           title: playlist.name,
           label: t("search.categories.playlists.one"),
-          attributionId: "",
+          attributionId: playlist.id,
         };
       }
       default:
@@ -128,10 +128,11 @@ export default function TopResultItem({ result }: TopResultItemProps) {
   if (!itemData) return null;
   const playlistId =
     result.type === "playlist" ? (result.item as PlaylistSearchItem).id : null;
-  const pluginHandle =
+  const source =
     result.type === "playlist"
-      ? null
-      : getSourceHandle((result.item as Track).source);
+      ? (result.item as PlaylistSearchItem).provider
+      : (result.item as Track | ArtistDetails | AlbumDetails).source;
+  const pluginHandle = source ? getSourceHandle(source) : undefined;
 
   return (
     <div className={styles.topResultItem}>
@@ -176,7 +177,7 @@ export default function TopResultItem({ result }: TopResultItemProps) {
           <div className={styles.type}>{itemData.label}</div>
         </div>
       </button>
-      {result.type !== "playlist" && pluginHandle?.Attribution && (
+      {pluginHandle?.Attribution && (
         <div className={styles.attribution}>
           <pluginHandle.Attribution
             type={result.type}

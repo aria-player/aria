@@ -7,6 +7,7 @@ export interface PlaylistSearchItem {
   id: string;
   name: string;
   creatorName?: string;
+  provider?: string;
 }
 
 export interface SearchResult {

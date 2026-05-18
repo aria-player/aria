@@ -412,6 +412,7 @@ export default function AllResultsPage() {
           id: playlist.id,
           name: playlist.name ?? id,
           creatorName: playlist.creatorName,
+          provider: playlist.provider,
         } as PlaylistSearchItem;
       })
       .filter(Boolean) as PlaylistSearchItem[];

@@ -552,6 +552,7 @@ const collectLayoutPlaylists = (
         id: item.id,
         name: item.name,
         creatorName: playlist?.creatorName,
+        provider: playlist?.provider,
       });
     }
   }
@@ -609,6 +610,7 @@ export const selectVisiblePlaylists = createSelector(
             id: playlist.id,
             name: playlist.name ?? playlist.id,
             creatorName: playlist.creatorName,
+            provider: playlist.provider,
           };
         })
         .filter(Boolean) as PlaylistSearchItem[];

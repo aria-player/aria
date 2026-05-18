@@ -187,7 +187,7 @@ export type AttributionProps = {
   /**
    * The type of content that is being attributed.
    */
-  type: "track" | "album" | "artist";
+  type: "track" | "album" | "artist" | "playlist";
   /**
    * Whether to display a compact attribution. If `true`, the attribution should be an icon no larger than 30x30px.
    */

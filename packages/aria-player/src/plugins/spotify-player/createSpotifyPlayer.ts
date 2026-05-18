@@ -35,6 +35,8 @@ export type SpotifyConfig = {
   librarySetupPending?: boolean;
 };
 
+export const LIKED_SONGS_PLAYLIST_ID = "liked-songs";
+
 export default function createSpotifyPlayer(
   host: SourceCallbacks & ExternalPlaylistsCallbacks,
   i18n: i18n
@@ -48,7 +50,6 @@ export default function createSpotifyPlayer(
   let tokenRefreshInterval: NodeJS.Timeout | null = null;
 
   const getConfig = () => host.getData() as SpotifyConfig;
-  const LIKED_SONGS_PLAYLIST_ID = "liked-songs";
 
   initialize();
 
