@@ -344,7 +344,7 @@ export default function createSpotifyPlayer(
     const config = { ...getConfig(), ...configOverride };
     const includeLikedSongs = config.includeLikedSongs !== false;
     const includeSavedAlbums = config.includeSavedAlbums !== false;
-    const fetchGenres = config.fetchGenres !== false;
+    const fetchGenres = config.fetchGenres === true;
     const existingTracks = host.getTracks();
     const albumArtistMapping: Record<string, string[]> = {};
     const artistIds = new Set<string>();
@@ -922,7 +922,7 @@ export default function createSpotifyPlayer(
       }
 
       let formattedGenres: string[] | undefined;
-      if (getConfig().fetchGenres !== false) {
+      if (getConfig().fetchGenres === true) {
         const artistIds = new Set<string>();
         trackResponse.artists.forEach((artist) => artistIds.add(artist.id));
         trackResponse.album.artists.forEach((artist) =>
@@ -997,7 +997,7 @@ export default function createSpotifyPlayer(
         }
       }
 
-      if (getConfig().fetchGenres !== false) {
+      if (getConfig().fetchGenres === true) {
         const artists = Array.from(artistIds);
         const artistGenreMapping = await fetchArtistGenres(artists);
         const albumArtistIds = albumResponse.artists.map((artist) => artist.id);
@@ -1068,7 +1068,7 @@ export default function createSpotifyPlayer(
         track.album.artists.forEach((artist) => artistIds.add(artist.id));
       }
 
-      if (getConfig().fetchGenres !== false) {
+      if (getConfig().fetchGenres === true) {
         const artists = Array.from(artistIds);
         const artistGenreMapping = await fetchArtistGenres(artists);
 
@@ -1167,7 +1167,7 @@ export default function createSpotifyPlayer(
           track.album.artists.forEach((artist) => artistIds.add(artist.id));
         }
 
-        if (getConfig().fetchGenres !== false) {
+        if (getConfig().fetchGenres === true) {
           const artists = Array.from(artistIds);
           const artistGenreMapping = await fetchArtistGenres(artists);
 

@@ -23,7 +23,7 @@ export function showLibrarySetupDialog({
   let state: LibraryItemSelection = {
     includeLikedSongs: config.includeLikedSongs !== false,
     includeSavedAlbums: config.includeSavedAlbums !== false,
-    fetchGenres: config.fetchGenres !== false,
+    fetchGenres: config.fetchGenres === true,
     includeOwnPlaylists: config.includeOwnPlaylists !== false,
     includeFollowedPlaylists: config.includeFollowedPlaylists !== false,
   };
@@ -111,7 +111,7 @@ export default function LibraryConfig(props: {
           selection={{
             includeLikedSongs: config.includeLikedSongs !== false,
             includeSavedAlbums: config.includeSavedAlbums !== false,
-            fetchGenres: config.fetchGenres !== false,
+            fetchGenres: config.fetchGenres === true,
             includeOwnPlaylists: config.includeOwnPlaylists !== false,
             includeFollowedPlaylists: config.includeFollowedPlaylists !== false,
           }}
