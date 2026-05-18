@@ -206,7 +206,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
   ]);
 
   function goToSearch(searchValue: string) {
-    if (visibleViewType != View.Search || visibleSearchCategory != null) {
+    if (visibleViewType != View.Search) {
       dispatch(push(BASEPATH + getSearchRoute(searchValue)));
     }
   }
