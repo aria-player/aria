@@ -12,6 +12,7 @@ export interface PlaylistUndoable {
   provider?: PluginId;
   permissions?: PlaylistPermissions;
   orderable?: boolean;
+  artworkUri?: string;
 }
 
 export interface PlaylistConfig {

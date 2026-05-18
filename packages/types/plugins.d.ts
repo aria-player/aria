@@ -484,6 +484,10 @@ export type ExternalPlaylistInfo = {
    * Whether tracks in this playlist can be reordered. Defaults to true.
    */
   orderable?: boolean;
+  /**
+   * URL for the playlist's cover image.
+   */
+  artworkUri?: string;
 };
 
 export type PlaylistAction = {

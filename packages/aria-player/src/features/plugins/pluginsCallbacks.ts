@@ -310,6 +310,7 @@ export const getExternalPlaylistsCallbacks = (
             provider: pluginId,
             permissions: playlist.permissions,
             orderable: playlist.orderable,
+            artworkUri: playlist.artworkUri,
           })
         );
       }

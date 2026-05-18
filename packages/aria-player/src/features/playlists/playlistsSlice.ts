@@ -516,9 +516,11 @@ export const playlistsSlice = createSlice({
         provider: PluginId;
         permissions: PlaylistPermissions;
         orderable?: boolean;
+        artworkUri?: string;
       }>
     ) => {
-      const { id, name, provider, permissions, orderable } = action.payload;
+      const { id, name, provider, permissions, orderable, artworkUri } =
+        action.payload;
       const existingNode = findTreeNode(state.layout, id);
       const existingPlaylist = state.playlists.entities[id];
 
@@ -535,6 +537,7 @@ export const playlistsSlice = createSlice({
             provider,
             permissions,
             orderable,
+            artworkUri,
           });
           playlistsConfigAdapter.addOne(state.playlistsConfig, {
             id,
@@ -551,7 +554,7 @@ export const playlistsSlice = createSlice({
         });
         playlistsAdapter.updateOne(state.playlists, {
           id,
-          changes: { permissions, orderable },
+          changes: { permissions, orderable, artworkUri },
         });
       }
     },

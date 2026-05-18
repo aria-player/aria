@@ -659,7 +659,14 @@ export default function createSpotifyPlayer(
           if (isOwner && !includeOwnPlaylists) return [];
           if (!isOwner && !includeFollowedPlaylists) return [];
           const permissions: PlaylistPermissions = isOwner ? "manage" : "write";
-          return [{ uri: playlist.id, name: playlist.name, permissions }];
+          return [
+            {
+              uri: playlist.id,
+              name: playlist.name,
+              permissions,
+              artworkUri: playlist.images[0]?.url,
+            },
+          ];
         });
 
         allPlaylists.push(...playlists);

@@ -6,7 +6,12 @@ import { AlbumArt } from "./AlbumArt";
 import styles from "./PlaylistArt.module.css";
 
 export default function PlaylistArt({ playlistId }: { playlistId: string }) {
+  const playlistArtworkUri = useAppSelector(
+    (state) => selectPlaylistById(state, playlistId)?.artworkUri
+  );
+
   const artworkTracks = useAppSelector((state) => {
+    if (playlistArtworkUri) return [] as Track[];
     const playlist = selectPlaylistById(state, playlistId);
     if (!playlist?.tracks.length) return [] as Track[];
     const seen = new Set<string>();
@@ -23,6 +28,15 @@ export default function PlaylistArt({ playlistId }: { playlistId: string }) {
     }
     return tracks;
   });
+
+  if (playlistArtworkUri) {
+    return (
+      <img
+        className={`album-art ${styles.externalArtwork}`}
+        src={playlistArtworkUri}
+      />
+    );
+  }
 
   if (artworkTracks.length < 4) {
     return <AlbumArt track={artworkTracks[0]} />;
