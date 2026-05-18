@@ -30,18 +30,18 @@ import { showToast } from "../../app/toasts";
 import { selectTrackById } from "../tracks/tracksSlice";
 import { t } from "i18next";
 import { selectCachedPlaylistTrackUris } from "../cache/cacheSlice";
-import { getTrackId } from "../../app/utils";
+import { getTrackId, getPlaylistItemId } from "../../app/utils";
 
 function buildExternalPlaylistQueue(
   playlistId: string,
   provider: string,
-  uris: (string | null)[]
+  uris: (string | null)[],
+  ids: string[]
 ) {
   return uris.flatMap((uri, i) => {
     if (uri === null) return [];
-    return [
-      { itemId: `${playlistId}:${i}`, trackId: getTrackId(provider, uri) },
-    ];
+    const itemId = getPlaylistItemId(playlistId, i, ids);
+    return [{ itemId, trackId: getTrackId(provider, uri) }];
   });
 }
 
@@ -106,7 +106,8 @@ export function setupPlaylistsListeners() {
         ? buildExternalPlaylistQueue(
             newPlaylist.id,
             playlistEntity!.provider!,
-            cachedUris.uris
+            cachedUris.uris,
+            cachedUris.ids
           )
         : state.player.queueGrouping
           ? selectCurrentGroupFilteredTrackList(state)
@@ -136,7 +137,8 @@ export function setupPlaylistsListeners() {
           buildExternalPlaylistQueue(
             currentPlaylist.id,
             playlistEntity.provider,
-            cachedUris.uris
+            cachedUris.uris,
+            cachedUris.ids
           )
         )
       );

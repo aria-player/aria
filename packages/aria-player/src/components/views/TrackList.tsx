@@ -52,6 +52,7 @@ import {
   filterHiddenColumnSort,
   getRelativePath,
   getTrackId,
+  getPlaylistItemId,
   parseArtistId,
   parseTrackId,
   overrideColumnStateSort,
@@ -189,7 +190,7 @@ export const TrackList = () => {
       return null;
     const { uris, ids, total } = cachedPlaylistUris;
     return Array.from({ length: total }, (_, i) => {
-      const itemId = ids?.[i] ?? `${currentPlaylistId}:${i}`;
+      const itemId = getPlaylistItemId(currentPlaylistId, i, ids);
       const uri = uris?.[i];
       if (!uri) return { itemId, metadataLoaded: false };
       const trackId = getTrackId(provider!, uri);

@@ -17,6 +17,7 @@ import {
   overrideColumnStateSort,
   getTrackId,
   getAlbumId,
+  getPlaylistItemId,
 } from "../app/utils";
 import { compareMetadata } from "../app/sort";
 import {
@@ -54,7 +55,7 @@ export const selectExternalPlaylistTracks = (
       if (!track) return null;
       return {
         ...track,
-        itemId: `${playlist.id}:${i}`,
+        itemId: getPlaylistItemId(playlist.id, i, cached.ids),
         albumId: track.albumUri
           ? getAlbumId(
               playlist.provider!,

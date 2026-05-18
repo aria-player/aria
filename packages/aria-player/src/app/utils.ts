@@ -70,6 +70,14 @@ export function getTrackId(source: PluginId, uri: TrackUri): TrackId {
   return source + ":" + uri;
 }
 
+export function getPlaylistItemId(
+  playlistId: string,
+  index: number,
+  ids?: string[]
+): string {
+  return ids?.[index] ?? `${playlistId}:${index}`;
+}
+
 export function getArtistId(
   source: PluginId,
   artist: string,
