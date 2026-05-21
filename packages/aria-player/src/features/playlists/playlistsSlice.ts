@@ -27,6 +27,7 @@ import {
   filterHiddenColumnSort,
   getTrackId,
   overrideColumnStateSort,
+  parseExternalPlaylistId,
   resetColumnStateExceptSort,
 } from "../../app/utils";
 import { DisplayMode, SplitViewState, TrackGrouping } from "../../app/view";
@@ -130,7 +131,10 @@ export function addPlaylistTracksThunk(
         );
       }
       try {
-        await pluginHandles[provider]?.addPlaylistTracks?.(playlistId, uris);
+        await pluginHandles[provider]?.addPlaylistTracks?.(
+          parseExternalPlaylistId(playlistId)?.rawId ?? playlistId,
+          uris
+        );
         dispatch(initExternalPlaylist({ playlistId, provider }));
       } catch {
         showToast(
@@ -170,7 +174,10 @@ export function removePlaylistTracksThunk(
         playlistId
       )?.name;
       try {
-        await pluginHandles[provider]?.removePlaylistTracks?.(playlistId, uris);
+        await pluginHandles[provider]?.removePlaylistTracks?.(
+          parseExternalPlaylistId(playlistId)?.rawId ?? playlistId,
+          uris
+        );
         dispatch(removePlaylistTrackUris({ playlistId, uris }));
         dispatch(initExternalPlaylist({ playlistId, provider }));
       } catch {
@@ -252,7 +259,7 @@ export function reorderPlaylistTracksThunk(
     dispatch(reorderPlaylistTrackUris({ playlistId, ...move }));
     try {
       await pluginHandles[provider]?.reorderPlaylistTracks?.(
-        playlistId,
+        parseExternalPlaylistId(playlistId)?.rawId ?? playlistId,
         move.rangeStart,
         move.insertBefore,
         move.rangeLength
@@ -274,8 +281,9 @@ export const initExternalPlaylist = createAppAsyncThunk(
   ) => {
     const plugin = pluginHandles[provider];
     if (!plugin?.getPlaylistTracks) return;
+    const rawId = parseExternalPlaylistId(playlistId)?.rawId ?? playlistId;
     const { uris, dates, total } = await plugin.getPlaylistTracks(
-      playlistId,
+      rawId,
       0,
       PLAYLIST_URI_PAGE_SIZE
     );
@@ -298,8 +306,9 @@ export const fetchPlaylistTrackUrisPage = createAppAsyncThunk(
   ) => {
     const plugin = pluginHandles[provider];
     if (!plugin?.getPlaylistTracks) return;
+    const rawId = parseExternalPlaylistId(playlistId)?.rawId ?? playlistId;
     const { uris, dates } = await plugin.getPlaylistTracks(
-      playlistId,
+      rawId,
       offset,
       offset + PLAYLIST_URI_PAGE_SIZE
     );
@@ -316,12 +325,13 @@ export const fetchPlaylistTracks = createAppAsyncThunk(
   ) => {
     const plugin = pluginHandles[provider];
     if (!plugin || plugin.getTracksByUri || !plugin.getPlaylistTracks) return;
+    const rawId = parseExternalPlaylistId(playlistId)?.rawId ?? playlistId;
     let offset = 0;
     let total = Infinity;
     const allUris: TrackUri[] = [];
     while (offset < total) {
       const result = await plugin.getPlaylistTracks(
-        playlistId,
+        rawId,
         offset,
         offset + PLAYLIST_URI_PAGE_SIZE
       );

@@ -16,6 +16,7 @@ import { setQueueToNewSource } from "../../features/player/playerSlice";
 import { selectSortedTrackList } from "../../features/genericSelectors";
 import { store } from "../../app/store";
 import { showToast } from "../../app/toasts";
+import { parseExternalPlaylistId } from "../../app/utils";
 import { View } from "../../app/view";
 import {
   getExternalPlaylistsHandle,
@@ -161,7 +162,10 @@ export function SidebarItemContextMenu() {
             if (!confirmed) return;
             dispatch(startPlaylistOperation(menuData.itemId, "delete"));
             try {
-              await plugin!.deletePlaylist!(menuData.itemId);
+              await plugin!.deletePlaylist!(
+                parseExternalPlaylistId(menuData.itemId)?.rawId ??
+                  menuData.itemId
+              );
               dispatch(
                 deletePlaylistItem({ id: menuData.itemId, isFolder: false })
               );

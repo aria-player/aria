@@ -15,6 +15,7 @@ import {
   selectPluginInfo,
 } from "../../features/plugins/pluginsSlice";
 import { showToast } from "../../app/toasts";
+import { getExternalPlaylistId } from "../../app/utils";
 
 const id = "sidebarplaylists";
 
@@ -98,7 +99,8 @@ export function SidebarPlaylistsContextMenu() {
           onClick={async () => {
             const defaultName = t("sidebar.playlists.defaultPlaylist");
             try {
-              const newId = await provider.handle!.createPlaylist!(defaultName);
+              const rawId = await provider.handle!.createPlaylist!(defaultName);
+              const newId = getExternalPlaylistId(provider.id, rawId);
               dispatch(
                 upsertExternalPlaylist({
                   id: newId,

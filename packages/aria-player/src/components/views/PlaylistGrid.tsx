@@ -6,7 +6,11 @@ import {
   selectVisibleSearchSource,
 } from "../../features/visibleSelectors";
 import { useScrollDetection } from "../../hooks/useScrollDetection";
-import { getExternalSearchCacheKey, getScrollbarWidth } from "../../app/utils";
+import {
+  getExternalPlaylistId,
+  getExternalSearchCacheKey,
+  getScrollbarWidth,
+} from "../../app/utils";
 import { AutoSizer } from "react-virtualized-auto-sizer";
 import { CellComponentProps, Grid, GridImperativeAPI } from "react-window";
 import { useInfiniteLoader } from "react-window-infinite-loader";
@@ -127,7 +131,7 @@ export default function PlaylistGrid() {
       for (const playlist of playlists) {
         dispatch(
           addExternalSearchPlaylist({
-            id: playlist.id,
+            id: getExternalPlaylistId(visibleSearchSource, playlist.id),
             name: playlist.name,
             creatorName: playlist.creatorName,
             provider: visibleSearchSource,
@@ -140,7 +144,9 @@ export default function PlaylistGrid() {
       dispatch(
         updateCachedSearchPlaylists({
           key: searchCacheKey,
-          playlistIds: playlists.map((playlist) => playlist.id),
+          playlistIds: playlists.map((playlist) =>
+            getExternalPlaylistId(visibleSearchSource, playlist.id)
+          ),
           offset: startIndex,
         })
       );

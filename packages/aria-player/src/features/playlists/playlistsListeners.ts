@@ -9,6 +9,7 @@ import { RootState } from "../../app/store";
 
 import { isAnyOf } from "@reduxjs/toolkit";
 import {
+  addExternalSearchPlaylist,
   addTracksToPlaylist,
   cleanupPlaylistConfigs,
   deletePlaylistItem,
@@ -36,6 +37,7 @@ import {
   getTrackId,
   getPlaylistItemId,
   overrideColumnStateSort,
+  parseExternalPlaylistId,
 } from "../../app/utils";
 import { selectLibraryColumnState } from "../library/librarySlice";
 
@@ -198,6 +200,28 @@ export function setupPlaylistsListeners() {
       if (deletedIds.length > 0) {
         dispatch(cleanupPlaylistConfigs({ deletedIds }));
       }
+    }
+  );
+
+  listenForChange(
+    (state) => state.router.location?.pathname,
+    (state, _, dispatch) => {
+      if (selectVisiblePlaylist(state)) return;
+      const pathParts = state.router.location?.pathname
+        ?.substring(BASEPATH.length)
+        .split("/");
+      if (!pathParts || pathParts.length < 2 || pathParts[0] !== View.Playlist)
+        return;
+      const parsed = parseExternalPlaylistId(pathParts[1]);
+      if (!parsed) return;
+      dispatch(
+        addExternalSearchPlaylist({
+          id: pathParts[1],
+          name: "",
+          provider: parsed.provider,
+          permissions: "read",
+        })
+      );
     }
   );
 }

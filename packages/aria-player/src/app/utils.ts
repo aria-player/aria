@@ -116,6 +116,24 @@ export function parseArtistId(artistId: ArtistId):
   }
 }
 
+export function getExternalPlaylistId(
+  provider: PluginId,
+  rawId: string
+): string {
+  return `${provider}:${rawId}`;
+}
+
+export function parseExternalPlaylistId(
+  playlistId: string
+): { provider: PluginId; rawId: string } | undefined {
+  const colonIndex = playlistId.indexOf(":");
+  if (colonIndex === -1) return undefined;
+  return {
+    provider: playlistId.substring(0, colonIndex) as PluginId,
+    rawId: playlistId.substring(colonIndex + 1),
+  };
+}
+
 export function getAlbumId(
   source: PluginId,
   album: string,

@@ -1,5 +1,5 @@
 import styles from "./Sidebar.module.css";
-import { isTauri } from "../../app/utils";
+import { isTauri, parseExternalPlaylistId } from "../../app/utils";
 import { useTranslation } from "react-i18next";
 import { SectionTree, findTreeNode } from "soprano-ui";
 import type { Item as TreeItem } from "soprano-ui";
@@ -381,7 +381,10 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
           );
           dispatch(startPlaylistOperation(itemId, "rename"));
           try {
-            await plugin.renamePlaylist(itemId, newName);
+            await plugin.renamePlaylist(
+              parseExternalPlaylistId(itemId)?.rawId ?? itemId,
+              newName
+            );
           } catch (error) {
             dispatch(
               updatePlaylistItem({

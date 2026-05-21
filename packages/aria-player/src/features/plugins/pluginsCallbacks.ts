@@ -4,6 +4,7 @@ import {
   getAlbumId,
   getArtistId,
   getAsArray,
+  getExternalPlaylistId,
   getTrackId,
   isTauri,
 } from "../../app/utils";
@@ -290,7 +291,9 @@ export const getExternalPlaylistsCallbacks = (
     ...getBaseCallbacks(pluginId),
 
     updatePlaylists: (playlists: ExternalPlaylistInfo[]) => {
-      const incomingIds = new Set(playlists.map((p) => p.uri));
+      const incomingIds = new Set(
+        playlists.map((p) => getExternalPlaylistId(pluginId, p.uri))
+      );
       const existingIds = Object.values(
         store.getState().undoable.present.playlists.playlists.entities
       )
@@ -305,7 +308,7 @@ export const getExternalPlaylistsCallbacks = (
       for (const playlist of playlists) {
         store.dispatch(
           upsertExternalPlaylist({
-            id: playlist.uri,
+            id: getExternalPlaylistId(pluginId, playlist.uri),
             name: playlist.name,
             creatorName: playlist.creatorName,
             provider: pluginId,
@@ -317,7 +320,12 @@ export const getExternalPlaylistsCallbacks = (
       }
     },
     removePlaylists: (ids?: string[]) => {
-      store.dispatch(removeExternalPlaylists({ provider: pluginId, ids }));
+      store.dispatch(
+        removeExternalPlaylists({
+          provider: pluginId,
+          ids: ids?.map((id) => getExternalPlaylistId(pluginId, id)),
+        })
+      );
     },
   };
 };

@@ -57,7 +57,12 @@ import {
   getExternalPlaylistsHandle,
 } from "../../../features/plugins/pluginsSlice";
 import { updateCachedSearchTracks } from "../../../features/cache/cacheSlice";
-import { getTrackId, getAlbumId, getArtistId } from "../../../app/utils";
+import {
+  getTrackId,
+  getAlbumId,
+  getArtistId,
+  getExternalPlaylistId,
+} from "../../../app/utils";
 import LoadingSpinner from "../../views/subviews/LoadingSpinner";
 
 export default function AllResultsPage() {
@@ -354,7 +359,7 @@ export default function AllResultsPage() {
         for (const playlist of results) {
           dispatch(
             addExternalSearchPlaylist({
-              id: playlist.id,
+              id: getExternalPlaylistId(visibleSearchSource, playlist.id),
               name: playlist.name,
               creatorName: playlist.creatorName,
               provider: visibleSearchSource,
@@ -367,7 +372,9 @@ export default function AllResultsPage() {
         dispatch(
           updateCachedSearchPlaylists({
             key: externalSearchCacheKey,
-            playlistIds: results.map((p) => p.id),
+            playlistIds: results.map((p) =>
+              getExternalPlaylistId(visibleSearchSource, p.id)
+            ),
             offset: 0,
           })
         );

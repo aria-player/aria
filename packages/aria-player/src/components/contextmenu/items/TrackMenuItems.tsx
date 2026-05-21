@@ -33,7 +33,7 @@ import {
   selectActivePlugins,
   selectPluginInfo,
 } from "../../../features/plugins/pluginsSlice";
-import { normalizeArtists } from "../../../app/utils";
+import { getExternalPlaylistId, normalizeArtists } from "../../../app/utils";
 import { selectArtistDelimiter } from "../../../features/config/configSlice";
 import { TrackMetadata } from "../../../../../types";
 import { store } from "../../../app/store";
@@ -183,8 +183,9 @@ export function TrackMenuItems() {
             onClick={async () => {
               const defaultName = t("sidebar.playlists.defaultPlaylist");
               try {
-                const newId =
+                const rawId =
                   await externalPlaylistsHandle!.createPlaylist!(defaultName);
+                const newId = getExternalPlaylistId(sourceForActions!, rawId);
                 dispatch(
                   upsertExternalPlaylist({
                     id: newId,
