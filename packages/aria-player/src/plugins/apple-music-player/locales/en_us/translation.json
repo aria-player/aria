@@ -4,7 +4,8 @@
     "logInWithAppleMusic": "Connect to Apple Music",
     "logOutFromAppleMusic": "Log out of Apple Music",
     "toggleAdvancedSettings": "Toggle advanced settings",
-    "tokenEndpoint": "Token Endpoint"
+    "tokenEndpoint": "Token Endpoint",
+    "disableInitialSync": "Disable initial sync"
   },
   "errorDialog": {
     "tokenEndpointRequiredHeading": "Token Endpoint Not Set",

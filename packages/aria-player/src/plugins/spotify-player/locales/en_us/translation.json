@@ -4,7 +4,8 @@
     "logInWithSpotify": "Connect to Spotify",
     "logOutFromSpotify": "Log out of Spotify",
     "toggleAdvancedSettings": "Toggle advanced settings",
-    "redirectUri": "Redirect URI"
+    "redirectUri": "Redirect URI",
+    "disableInitialSync": "Disable initial sync"
   },
   "setup": {
     "heading": "Spotify setup",

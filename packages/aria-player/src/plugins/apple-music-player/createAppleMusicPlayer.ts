@@ -24,6 +24,7 @@ export type AppleMusicConfig = {
   token?: string;
   tokenExpiration?: number;
   tokenEndpoint?: string;
+  disableInitialSync?: boolean;
 };
 
 export default function createAppleMusicPlayer(
@@ -93,7 +94,7 @@ export default function createAppleMusicPlayer(
       await window.MusicKit.configure(musicKitConfig);
       music = await window.MusicKit.getInstance();
       musicKitReadyResolve?.();
-      if (music.isAuthorized) {
+      if (music.isAuthorized && !getConfig().disableInitialSync) {
         fetchUserLibrary();
         loadPlaylists();
       }

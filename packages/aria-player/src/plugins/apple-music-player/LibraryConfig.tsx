@@ -64,16 +64,33 @@ export default function LibraryConfig(props: {
         </p>
       )}
       {import.meta.env.DEV && showAdvancedSettings && (
-        <p>
-          {t("settings.tokenEndpoint")}
-          <br />
-          <input
-            type="text"
-            value={tokenEndpoint}
-            onChange={updateTokenEndpoint}
-            onKeyDown={(e) => e.stopPropagation()}
-          />
-        </p>
+        <>
+          <p>
+            {t("settings.tokenEndpoint")}
+            <br />
+            <input
+              type="text"
+              value={tokenEndpoint}
+              onChange={updateTokenEndpoint}
+              onKeyDown={(e) => e.stopPropagation()}
+            />
+          </p>
+          <p>
+            <label>
+              <input
+                type="checkbox"
+                checked={config.disableInitialSync === true}
+                onChange={(e) =>
+                  props.host.updateData({
+                    ...config,
+                    disableInitialSync: e.target.checked,
+                  })
+                }
+              />{" "}
+              {t("settings.disableInitialSync")}
+            </label>
+          </p>
+        </>
       )}
     </div>
   );

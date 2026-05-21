@@ -33,6 +33,7 @@ export type SpotifyConfig = {
   ownPlaylistsCount?: number;
   followedPlaylistsCount?: number;
   librarySetupPending?: boolean;
+  disableInitialSync?: boolean;
 };
 
 export const LIKED_SONGS_PLAYLIST_ID = "liked-songs";
@@ -68,9 +69,11 @@ export default function createSpotifyPlayer(
   }
 
   async function initialize() {
-    if (getConfig().accessToken) {
+    const config = getConfig();
+    if (config.accessToken) {
       setupSpotifyPlayer();
       startTokenRefreshInterval();
+      if (config.disableInitialSync) return;
       const hasSubscription = await checkForSubscription();
       if (!hasSubscription) return;
       await fetchAndStoreLibraryInfo();
