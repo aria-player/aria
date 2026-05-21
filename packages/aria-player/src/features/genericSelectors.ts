@@ -53,9 +53,11 @@ export const selectExternalPlaylistTracks = (
       const trackId = getTrackId(playlist.provider!, uri);
       const track = selectTrackById(state, trackId);
       if (!track) return null;
+      const dateAdded = cached.dates?.[i];
       return {
         ...track,
         itemId: getPlaylistItemId(playlist.id, i, cached.ids),
+        dateAdded: dateAdded ?? track.dateAdded,
         albumId: track.albumUri
           ? getAlbumId(
               playlist.provider!,
@@ -80,13 +82,14 @@ export const selectTrackListMetadata = (
   if (playlist) {
     const externalTracks = selectExternalPlaylistTracks(state, playlist);
     if (externalTracks !== null) return externalTracks;
-    return playlist.tracks.map(
-      (track) =>
-        ({
-          ...track,
-          ...selectTrackById(state, track.trackId),
-        }) as TrackListItem
-    );
+    return playlist.tracks.map((playlistItem) => {
+      const track = selectTrackById(state, playlistItem.trackId);
+      return {
+        ...playlistItem,
+        ...track,
+        dateAdded: playlistItem.dateAdded ?? track?.dateAdded,
+      } as TrackListItem;
+    });
   }
   return isLibraryView(view)
     ? (selectLibraryTracks(state).map((track) => ({

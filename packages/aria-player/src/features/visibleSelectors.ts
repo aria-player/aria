@@ -176,10 +176,14 @@ export const selectVisibleTracks = createSelector(
         visiblePlaylist
       );
       if (externalTracks !== null) return externalTracks;
-      return visiblePlaylist.tracks.map((playlistTrack) => ({
-        ...playlistTrack,
-        ...selectTrackById(state, playlistTrack.trackId),
-      }));
+      return visiblePlaylist.tracks.map((playlistTrack) => {
+        const track = selectTrackById(state, playlistTrack.trackId);
+        return {
+          ...playlistTrack,
+          ...track,
+          dateAdded: playlistTrack.dateAdded ?? track?.dateAdded,
+        };
+      });
     }
 
     if (Object.values(LibraryView).includes(visibleViewType as LibraryView)) {

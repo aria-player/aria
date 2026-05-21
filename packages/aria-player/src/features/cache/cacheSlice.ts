@@ -38,7 +38,12 @@ export interface CacheState {
   };
   playlistTrackUris: Record<
     string,
-    { uris: (string | null)[]; ids: string[]; total: number }
+    {
+      uris: (string | null)[];
+      ids: string[];
+      dates: (number | undefined)[];
+      total: number;
+    }
   >;
 }
 
@@ -160,27 +165,36 @@ export const cacheSlice = createSlice({
         action: PayloadAction<{
           playlistId: string;
           uris: string[];
+          dates?: (number | undefined)[];
           total: number;
           offset: number;
           ids: string[];
         }>
       ) => {
-        const { playlistId, uris, total, offset, ids } = action.payload;
+        const { playlistId, uris, dates, total, offset, ids } = action.payload;
         const sparse: (string | null)[] = new Array(total).fill(null);
         uris.forEach((uri, i) => {
           sparse[offset + i] = uri;
+        });
+        const datesByPosition: (number | undefined)[] = new Array(total).fill(
+          undefined
+        );
+        dates?.forEach((date, i) => {
+          datesByPosition[offset + i] = date;
         });
         const existing = state.playlistTrackUris[playlistId];
         const finalIds = existing?.total === total ? existing.ids : ids;
         state.playlistTrackUris[playlistId] = {
           uris: sparse,
           ids: finalIds,
+          dates: datesByPosition,
           total,
         };
       },
       prepare: (payload: {
         playlistId: string;
         uris: string[];
+        dates?: (number | undefined)[];
         total: number;
         offset: number;
       }) => ({
@@ -195,14 +209,18 @@ export const cacheSlice = createSlice({
       action: PayloadAction<{
         playlistId: string;
         uris: string[];
+        dates?: (number | undefined)[];
         offset: number;
       }>
     ) => {
-      const { playlistId, uris, offset } = action.payload;
+      const { playlistId, uris, dates, offset } = action.payload;
       const entry = state.playlistTrackUris[playlistId];
       if (!entry) return;
       uris.forEach((uri, i) => {
         entry.uris[offset + i] = uri;
+      });
+      dates?.forEach((date, i) => {
+        entry.dates[offset + i] = date;
       });
     },
     removePlaylistTrackUris: (
@@ -215,14 +233,17 @@ export const cacheSlice = createSlice({
       const uriSet = new Set(uris);
       const keptUris: (string | null)[] = [];
       const keptIds: string[] = [];
+      const keptDates: (number | undefined)[] = [];
       entry.uris.forEach((uri, index) => {
         if (uri === null || !uriSet.has(uri)) {
           keptUris.push(uri);
           keptIds.push(entry.ids[index]);
+          keptDates.push(entry.dates[index]);
         }
       });
       entry.uris = keptUris;
       entry.ids = keptIds;
+      entry.dates = keptDates;
       entry.total = keptUris.length;
     },
     reorderPlaylistTrackUris: (
@@ -244,6 +265,8 @@ export const cacheSlice = createSlice({
       entry.uris.splice(insertIndex, 0, ...movedUris);
       const movedIds = entry.ids.splice(rangeStart, rangeLength);
       entry.ids.splice(insertIndex, 0, ...movedIds);
+      const movedDates = entry.dates.splice(rangeStart, rangeLength);
+      entry.dates.splice(insertIndex, 0, ...movedDates);
     },
     clearCache: (state) => {
       state.fetchedAlbums = [];

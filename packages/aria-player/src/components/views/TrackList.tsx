@@ -188,7 +188,7 @@ export const TrackList = () => {
   const externalPlaylistRowData = useMemo(() => {
     if (!isExternalPlaylist || !currentPlaylistId || !cachedPlaylistUris)
       return null;
-    const { uris, ids, total } = cachedPlaylistUris;
+    const { uris, ids, dates, total } = cachedPlaylistUris;
     return Array.from({ length: total }, (_, i) => {
       const itemId = getPlaylistItemId(currentPlaylistId, i, ids);
       const uri = uris?.[i];
@@ -199,6 +199,7 @@ export const TrackList = () => {
       return {
         ...track,
         itemId,
+        dateAdded: dates?.[i] ?? track.dateAdded,
         albumId: track.albumUri
           ? getAlbumId(
               provider!,

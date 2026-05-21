@@ -141,7 +141,11 @@ export function addPlaylistTracksThunk(
       dispatch(
         addTracksToPlaylist({
           playlistId,
-          newTracks: trackIds.map((trackId) => ({ itemId: nanoid(), trackId })),
+          newTracks: trackIds.map((trackId) => ({
+            itemId: nanoid(),
+            trackId,
+            dateAdded: Date.now(),
+          })),
         })
       );
     }
@@ -270,12 +274,14 @@ export const initExternalPlaylist = createAppAsyncThunk(
   ) => {
     const plugin = pluginHandles[provider];
     if (!plugin?.getPlaylistTracks) return;
-    const { uris, total } = await plugin.getPlaylistTracks(
+    const { uris, dates, total } = await plugin.getPlaylistTracks(
       playlistId,
       0,
       PLAYLIST_URI_PAGE_SIZE
     );
-    dispatch(initPlaylistTrackUris({ playlistId, uris, total, offset: 0 }));
+    dispatch(
+      initPlaylistTrackUris({ playlistId, uris, dates, total, offset: 0 })
+    );
     return { uris, total };
   }
 );
@@ -292,12 +298,12 @@ export const fetchPlaylistTrackUrisPage = createAppAsyncThunk(
   ) => {
     const plugin = pluginHandles[provider];
     if (!plugin?.getPlaylistTracks) return;
-    const { uris } = await plugin.getPlaylistTracks(
+    const { uris, dates } = await plugin.getPlaylistTracks(
       playlistId,
       offset,
       offset + PLAYLIST_URI_PAGE_SIZE
     );
-    dispatch(setPlaylistTrackUrisPage({ playlistId, uris, offset }));
+    dispatch(setPlaylistTrackUrisPage({ playlistId, uris, dates, offset }));
     return uris;
   }
 );

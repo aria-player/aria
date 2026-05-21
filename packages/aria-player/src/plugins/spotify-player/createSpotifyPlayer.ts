@@ -1294,6 +1294,7 @@ export default function createSpotifyPlayer(
       if (id === LIKED_SONGS_PLAYLIST_ID) {
         const likedSongsLimit = 50;
         const allUris: string[] = [];
+        const allDates: (number | undefined)[] = [];
         let total = 0;
         for (
           let batchOffset = startIndex;
@@ -1304,26 +1305,31 @@ export default function createSpotifyPlayer(
           const response = (await spotifyRequest(
             `/me/tracks?limit=${batchLimit}&offset=${batchOffset}`
           )) as SpotifyApi.UsersSavedTracksResponse;
-          if (!response || !response.items) return { uris: [], total: 0 };
+          if (!response || !response.items)
+            return { uris: [], dates: [], total: 0 };
           total = response.total;
-          allUris.push(
-            ...response.items
-              .filter((item) => item.track)
-              .map((item) => item.track.uri)
+          const items = response.items.filter((item) => item.track);
+          allUris.push(...items.map((item) => item.track.uri));
+          allDates.push(
+            ...items.map((item) =>
+              item.added_at ? new Date(item.added_at).getTime() : undefined
+            )
           );
         }
-        return { uris: allUris, total };
+        return { uris: allUris, dates: allDates, total };
       }
       const response = (await spotifyRequest(
-        `/playlists/${id}/tracks?limit=${limit}&offset=${startIndex}&fields=total,items(item(uri))`
+        `/playlists/${id}/tracks?limit=${limit}&offset=${startIndex}&fields=total,items(added_at,item(uri))`
       )) as SpotifyApi.PlaylistTrackResponse;
       if (!response || !response.items) {
-        return { uris: [], total: 0 };
+        return { uris: [], dates: [], total: 0 };
       }
-      const uris = response.items
-        .filter((item) => item.item)
-        .map((item) => item.item!.uri);
-      return { uris, total: response.total };
+      const items = response.items.filter((item) => item.item);
+      const uris = items.map((item) => item.item!.uri);
+      const dates = items.map((item) =>
+        item.added_at ? new Date(item.added_at).getTime() : undefined
+      );
+      return { uris, dates, total: response.total };
     },
 
     renamePlaylist: async (id: string, name: string) => {

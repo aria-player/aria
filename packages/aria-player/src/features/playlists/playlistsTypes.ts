@@ -28,4 +28,5 @@ export interface PlaylistConfig {
 export interface PlaylistItem {
   itemId: PlaylistItemId;
   trackId: TrackId;
+  dateAdded?: number;
 }

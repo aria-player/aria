@@ -530,7 +530,11 @@ export interface ExternalPlaylistsHandle extends BaseHandle {
     id: PlaylistId,
     startIndex: number,
     stopIndex: number
-  ) => Promise<{ uris: TrackUri[]; total: number }>;
+  ) => Promise<{
+    uris: TrackUri[];
+    dates?: (number | undefined)[];
+    total: number;
+  }>;
   /**
    * Rename an external playlist.
    */
