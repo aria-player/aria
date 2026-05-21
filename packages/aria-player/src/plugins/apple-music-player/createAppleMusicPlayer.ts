@@ -7,6 +7,10 @@ import Attribution from "./Attribution";
 import en_us from "./locales/en_us/translation.json";
 import {
   ArtistMetadata,
+  ExternalPlaylistInfo,
+  ExternalPlaylistsCallbacks,
+  ExternalPlaylistsHandle,
+  PlaylistPermissions,
   SourceCallbacks,
   SourceHandle,
   Track,
@@ -23,9 +27,9 @@ export type AppleMusicConfig = {
 };
 
 export default function createAppleMusicPlayer(
-  host: SourceCallbacks,
+  host: SourceCallbacks & ExternalPlaylistsCallbacks,
   i18n: i18n
-): SourceHandle {
+): SourceHandle & ExternalPlaylistsHandle {
   i18n.addResourceBundle("en-US", "apple-music-player", en_us);
 
   let music: MusicKit.MusicKitInstance | undefined;
@@ -91,6 +95,7 @@ export default function createAppleMusicPlayer(
       musicKitReadyResolve?.();
       if (music.isAuthorized) {
         fetchUserLibrary();
+        loadPlaylists();
       }
 
       music.addEventListener("playbackStateDidChange", () => {
@@ -102,6 +107,7 @@ export default function createAppleMusicPlayer(
       music.addEventListener("userTokenDidChange", () => {
         if (!music?.isAuthorized) {
           music = undefined;
+          host.removePlaylists();
         }
       });
     } finally {
@@ -138,6 +144,141 @@ export default function createAppleMusicPlayer(
       return data.token;
     } catch (error) {
       console.error("Failed to fetch developer token:", error);
+    }
+  }
+
+  function normalizeArtworkUri(artworkUri: string | undefined) {
+    return artworkUri?.replace("{w}", "1000").replace("{h}", "1000");
+  }
+
+  function getPlaylistPermissions(
+    playlist: MusicKit.LibraryPlaylists
+  ): PlaylistPermissions {
+    return playlist.attributes?.canEdit ? "write" : "read";
+  }
+
+  function getPlaylistTrackUri(track: MusicKit.Songs | MusicKit.MusicVideos) {
+    return (
+      track.attributes?.playParams?.catalogId ??
+      track.attributes?.playParams?.id ??
+      track.id
+    );
+  }
+
+  function getPlaylistTrackType(uri: TrackUri) {
+    return uri.startsWith("i.") || uri.startsWith("l.")
+      ? "library-songs"
+      : "songs";
+  }
+
+  function getPlaylistArtworkUri(playlist: MusicKit.LibraryPlaylists) {
+    return normalizeArtworkUri(
+      playlist.attributes?.artwork?.url ??
+        playlist.relationships?.catalog?.data[0]?.attributes?.artwork?.url
+    );
+  }
+
+  function isLibraryPlaylistId(id: string) {
+    return id.startsWith("p.");
+  }
+
+  async function getWriteTokens() {
+    const musicKit = await waitForMusicKit();
+    const developerToken = await getDeveloperToken();
+    if (!developerToken || !musicKit.musicUserToken) {
+      throw new Error("Apple Music authorization unavailable.");
+    }
+    return { developerToken, musicUserToken: musicKit.musicUserToken };
+  }
+
+  async function appleMusicPost(path: string, body?: object) {
+    const { developerToken, musicUserToken } = await getWriteTokens();
+    const headers: Record<string, string> = {
+      Authorization: `Bearer ${developerToken}`,
+      "Music-User-Token": musicUserToken,
+    };
+    if (body !== undefined) {
+      headers["Content-Type"] = "application/json";
+    }
+    const response = await fetch(`https://api.music.apple.com/${path}`, {
+      method: "POST",
+      headers,
+      body: body === undefined ? undefined : JSON.stringify(body),
+    });
+    if (!response.ok) {
+      const responseBody = response.headers
+        .get("content-type")
+        ?.includes("application/json")
+        ? ((await response.json().catch(() => undefined)) as
+            | { errors?: Array<{ title?: string; detail?: string }> }
+            | undefined)
+        : undefined;
+      const firstError = responseBody?.errors?.[0];
+      const message =
+        firstError?.detail ??
+        firstError?.title ??
+        `Apple Music request failed. Status: ${response.status}`;
+      throw new Error(message);
+    }
+    return response;
+  }
+
+  async function loadPlaylists() {
+    if (!music?.isAuthorized) return;
+    const musicKit = await waitForMusicKit();
+    const playlists: ExternalPlaylistInfo[] = [];
+    const limit = 100;
+    let offset = 0;
+    let hasMore = true;
+    while (hasMore) {
+      const response = (await musicKit.api.music(
+        `v1/me/library/playlists?limit=${limit}&offset=${offset}&include=catalog`
+      )) as { data: MusicKit.Relationship<MusicKit.LibraryPlaylists> };
+      const batch = response.data?.data ?? [];
+      playlists.push(
+        ...batch.map((playlist) => ({
+          uri: playlist.id,
+          name: playlist.attributes?.name ?? "",
+          permissions: getPlaylistPermissions(playlist),
+          orderable: false,
+          artworkUri: getPlaylistArtworkUri(playlist),
+        }))
+      );
+      if (!response.data?.next || batch.length === 0) {
+        hasMore = false;
+      } else {
+        offset += limit;
+      }
+    }
+    host.updatePlaylists(playlists);
+  }
+
+  async function fetchPlaylistUris(
+    playlistId: string,
+    startIndex: number,
+    stopIndex: number
+  ): Promise<{ uris: string[]; total: number }> {
+    const musicKit = await waitForMusicKit();
+    const limit = Math.max(0, stopIndex - startIndex);
+    if (limit === 0) return { uris: [], total: 0 };
+    const basePath = isLibraryPlaylistId(playlistId)
+      ? `v1/me/library/playlists/${playlistId}/tracks`
+      : `v1/catalog/${musicKit.storefrontId}/playlists/${playlistId}/tracks`;
+    try {
+      const response = (await musicKit.api.music(
+        `${basePath}?limit=${limit}&offset=${startIndex}`
+      )) as {
+        data: MusicKit.Relationship<MusicKit.Songs | MusicKit.MusicVideos>;
+      };
+      const tracks = response.data?.data ?? [];
+      const total = response.data?.meta?.total ?? tracks.length;
+      const uris = tracks
+        .filter((track) => !(track.type as string).includes("music-video"))
+        .map((track) => getPlaylistTrackUri(track))
+        .filter((uri): uri is string => uri != null && uri !== "");
+      return { uris, total };
+    } catch {
+      return { uris: [], total: 0 };
     }
   }
 
@@ -232,7 +373,7 @@ export default function createAppleMusicPlayer(
       data.forEach((track) => {
         const albumData = track.relationships?.albums
           .data[0] as unknown as MusicKit.LibraryAlbums;
-        /* We only want to fetch catalog IDs for songs from Apple Music, and songs from 
+        /* We only want to fetch catalog IDs for songs from Apple Music, and songs from
         the user's iCloud Music library don't seem to have the releaseDate attribute,
         so that is being used to identify them here. */
         if (
@@ -328,7 +469,7 @@ export default function createAppleMusicPlayer(
     });
   }
 
-  /* Apple Music doesn't seem to include artist arrays in library responses, so 
+  /* Apple Music doesn't seem to include artist arrays in library responses, so
   we need to fetch them separately in case songs have multiple artists. */
   async function fetchCatalogArtists(
     catalogIds: string[]
@@ -415,10 +556,11 @@ export default function createAppleMusicPlayer(
     endpoint: string
   ): Promise<T[]> {
     const maxConcurrentRequests = 5;
+    const separator = endpoint.includes("?") ? "&" : "?";
     const urls: string[] = [];
     for (let i = 0; i < ids.length; i += batchSize) {
       const batch = ids.slice(i, i + batchSize).join(",");
-      urls.push(`${endpoint}?ids=${batch}`);
+      urls.push(`${endpoint}${separator}ids=${batch}`);
     }
 
     const results: { data: MusicKit.Relationship<T> }[] = [];
@@ -559,6 +701,7 @@ export default function createAppleMusicPlayer(
     if (!music?.isAuthorized) return;
     host.updateData({ ...getConfig(), loggedIn: true });
     await fetchUserLibrary();
+    await loadPlaylists();
   }
 
   async function logout() {
@@ -567,6 +710,7 @@ export default function createAppleMusicPlayer(
     host.setSyncProgress({ synced: 0, total: 0 });
     host.removeTracks();
     host.removeArtists();
+    host.removePlaylists();
   }
 
   return {
@@ -632,11 +776,11 @@ export default function createAppleMusicPlayer(
     },
 
     getTrackArtwork: async (artworkUri) => {
-      return artworkUri?.replace("{w}", "1000").replace("{h}", "1000");
+      return normalizeArtworkUri(artworkUri);
     },
 
     getArtistArtwork: async (artworkUri) => {
-      return artworkUri?.replace("{w}", "1000").replace("{h}", "1000");
+      return normalizeArtworkUri(artworkUri);
     },
 
     getAlbumTracks: async (uri: string) => {
@@ -1003,29 +1147,182 @@ export default function createAppleMusicPlayer(
       };
     },
 
+    get searchPlaylists() {
+      if (!getConfig().loggedIn) return undefined;
+      return async (query: string, startIndex: number, stopIndex: number) => {
+        const music = await waitForMusicKit();
+        try {
+          const limit = stopIndex - startIndex;
+          const searchResponse = (await music.api.music(
+            `v1/catalog/${music.storefrontId}/search?term=${encodeURIComponent(query)}&types=playlists&limit=${limit}&offset=${startIndex}`
+          )) as {
+            data: {
+              results: {
+                playlists?: MusicKit.Relationship<MusicKit.Playlists>;
+              };
+            };
+          };
+          const playlists = searchResponse.data?.results?.playlists?.data;
+          if (!playlists || playlists.length === 0) {
+            return [];
+          }
+          return playlists.map((playlist) => ({
+            id: playlist.id,
+            name: playlist.attributes?.name ?? "",
+            artworkUri: normalizeArtworkUri(playlist.attributes?.artwork?.url),
+            creatorName: playlist.attributes?.curatorName,
+          }));
+        } catch (error) {
+          console.error("Failed to search playlists:", error);
+          return [];
+        }
+      };
+    },
+
+    getPlaylistTracks: async (
+      id: string,
+      startIndex: number,
+      stopIndex: number
+    ) => {
+      return fetchPlaylistUris(id, startIndex, stopIndex);
+    },
+
+    createPlaylist: async (name: string) => {
+      const response = await appleMusicPost("v1/me/library/playlists", {
+        attributes: { name },
+      });
+      const responseData = (await response.json()) as {
+        data?: Array<{ id?: string }>;
+      };
+      const playlistId = responseData.data?.[0]?.id;
+      if (!playlistId) {
+        throw new Error("Apple Music playlist creation returned no ID.");
+      }
+      await loadPlaylists();
+      return playlistId;
+    },
+
+    refreshPlaylists: async () => {
+      await loadPlaylists();
+    },
+
+    addPlaylistTracks: async (id: string, uris: string[]) => {
+      if (!isLibraryPlaylistId(id) || uris.length === 0) return;
+      const batchSize = 100;
+      for (let index = 0; index < uris.length; index += batchSize) {
+        const batchUris = uris.slice(index, index + batchSize);
+        await appleMusicPost(`v1/me/library/playlists/${id}/tracks`, {
+          data: batchUris.map((uri) => ({
+            id: uri,
+            type: getPlaylistTrackType(uri),
+          })),
+        });
+      }
+    },
+
     addTracksToRemoteLibrary: async (tracks: TrackUri[]) => {
       const music = await waitForMusicKit();
       if (!music.isAuthorized) return;
       const catalogIds = Array.from(
-        new Set(tracks.filter((uri) => uri && !uri.startsWith("l.")))
+        new Set(
+          tracks.filter(
+            (uri) =>
+              uri &&
+              !uri.startsWith("l.") &&
+              !uri.startsWith("i.") &&
+              !uri.startsWith("p.") &&
+              !uri.startsWith("pl.")
+          )
+        )
       );
       if (catalogIds.length === 0) return;
       const batchSize = 200;
       for (let i = 0; i < catalogIds.length; i += batchSize) {
         const batch = catalogIds.slice(i, i + batchSize).join(",");
-        const developerToken = await getDeveloperToken();
-        if (!developerToken || !music.musicUserToken) return;
-        await fetch(
-          `https://api.music.apple.com/v1/me/library?ids[songs]=${batch}`,
-          {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${developerToken}`,
-              "Music-User-Token": music.musicUserToken,
-            },
-          }
-        );
+        await appleMusicPost(`v1/me/library?ids[songs]=${batch}`);
       }
+    },
+
+    getTracksByUri: async (uris: string[]) => {
+      const music = await waitForMusicKit();
+      const uniqueUris = Array.from(new Set(uris.filter(Boolean)));
+      if (uniqueUris.length === 0) return [];
+
+      const localTracks: TrackMetadata[] = [];
+      const missingUris: string[] = [];
+      for (const uri of uniqueUris) {
+        const existing = host.getTrackByUri(uri);
+        if (existing) {
+          localTracks.push(existing);
+        } else {
+          missingUris.push(uri);
+        }
+      }
+      if (missingUris.length === 0) return localTracks;
+
+      const catalogUris = missingUris.filter(
+        (uri) => !uri.startsWith("i.") && !uri.startsWith("l.")
+      );
+      const libraryUris = missingUris.filter(
+        (uri) => uri.startsWith("i.") || uri.startsWith("l.")
+      );
+
+      const tracks: TrackMetadata[] = [];
+      const catalogIdMap: Record<string, string> = {};
+
+      if (catalogUris.length > 0) {
+        const catalogTracks = await batchFetch<MusicKit.Songs>(
+          catalogUris,
+          300,
+          `v1/catalog/${music.storefrontId}/songs?include=albums`
+        );
+        catalogTracks.forEach((track) => {
+          const albumData = track.relationships?.albums
+            ?.data[0] as unknown as MusicKit.Albums;
+          if (!albumData) return;
+          catalogIdMap[track.id] = track.id;
+          tracks.push(getTrackMetadata(track, albumData, undefined));
+        });
+      }
+
+      if (libraryUris.length > 0) {
+        const batchSize = 25;
+        for (let index = 0; index < libraryUris.length; index += batchSize) {
+          const batch = libraryUris.slice(index, index + batchSize);
+          const responses = await Promise.all(
+            batch.map((uri) =>
+              music.api.music(`v1/me/library/songs/${uri}?include=albums`)
+            )
+          );
+          for (const response of responses) {
+            const track = (
+              response as { data: MusicKit.Relationship<MusicKit.Songs> }
+            ).data?.data?.[0];
+            if (!track) continue;
+            const albumData = track.relationships?.albums
+              ?.data[0] as unknown as MusicKit.LibraryAlbums;
+            if (!albumData) continue;
+            if (
+              albumData.attributes?.releaseDate &&
+              track.attributes?.playParams?.catalogId
+            ) {
+              catalogIdMap[track.id] = track.attributes.playParams.catalogId;
+            }
+            tracks.push(
+              getTrackMetadata(
+                track,
+                albumData,
+                (albumData.attributes?.dateAdded &&
+                  new Date(albumData.attributes.dateAdded).getTime()) ||
+                  undefined
+              )
+            );
+          }
+        }
+      }
+
+      await addCatalogArtistsToTracks(tracks, catalogIdMap);
+      return [...localTracks, ...tracks];
     },
 
     pause: () => {

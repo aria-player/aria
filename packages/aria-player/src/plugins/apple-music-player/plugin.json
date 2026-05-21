@@ -3,5 +3,5 @@
   "name": "Apple Music",
   "needsTauri": false,
   "main": "createAppleMusicPlayer.ts",
-  "capabilities": ["source"]
+  "capabilities": ["source", "externalPlaylists"]
 }
