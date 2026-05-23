@@ -7,10 +7,9 @@ import { useMenuActions } from "../../hooks/useMenuActions";
 import { normalizeArtists } from "../../app/utils";
 import { selectCurrentTrack } from "../../features/currentSelectors";
 import { useTranslation } from "react-i18next";
-import { TriggerEvent } from "react-contexify";
-import { useNativeContextMenu } from "../../hooks/useNativeContextMenu";
-import { useContext, useState } from "react";
-import { MenuContext } from "../../contexts/MenuContext";
+import { useContextMenu } from "soprano-ui";
+import { useState } from "react";
+import { useTrackMenuItems } from "../../hooks/useTrackMenuItems";
 import { getSourceHandle } from "../../features/plugins/pluginsSlice";
 import { push } from "redux-first-history";
 import { BASEPATH } from "../../app/constants";
@@ -27,10 +26,8 @@ export function Footer() {
   const metadata = useAppSelector(selectCurrentTrack);
   const currentTrack = useAppSelector(selectCurrentTrack);
   const { invokeMenuAction } = useMenuActions();
-  const { setMenuData } = useContext(MenuContext);
-  const { show: showTrackContextMenu } = useNativeContextMenu({
-    id: "track",
-  });
+  const buildTrackMenuItems = useTrackMenuItems();
+  const showContextMenu = useContextMenu();
   const pluginHandle = metadata && getSourceHandle(metadata?.source);
   const displayAttribution = pluginHandle?.Attribution != null;
   const delimiter = useAppSelector(selectArtistDelimiter);
@@ -76,14 +73,10 @@ export function Footer() {
                     invokeMenuAction("goToCurrent");
                   }}
                   onContextMenu={(event) => {
-                    setMenuData({
-                      itemId: metadata.itemId,
-                      itemSource: undefined,
-                      itemIndex: undefined,
-                      metadata: metadata,
-                      type: "track",
-                    });
-                    showTrackContextMenu({ event: event as TriggerEvent });
+                    showContextMenu(
+                      event.nativeEvent,
+                      buildTrackMenuItems([metadata], metadata)
+                    );
                   }}
                   title={t("menu.goToCurrent")}
                 >

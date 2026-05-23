@@ -1,14 +1,12 @@
 import { useEffect } from "react";
 import menus from "../../shared/menus.json";
 import { MenuItem } from "../app/menu";
-import { useContextMenu } from "react-contexify";
 import { useMenuActions } from "./useMenuActions";
 import { IS_MAC_LIKE } from "../app/constants";
 
 const isNativeMacAction = (action: string) => /^mac[A-Z]/.test(action);
 
 export const useKeyboardShortcuts = () => {
-  const { hideAll } = useContextMenu();
   const { invokeMenuAction } = useMenuActions();
 
   useEffect(() => {
@@ -51,7 +49,6 @@ export const useKeyboardShortcuts = () => {
         }
         event.preventDefault();
         invokeMenuAction(action);
-        hideAll();
       }
     };
 
@@ -59,5 +56,5 @@ export const useKeyboardShortcuts = () => {
     return () => {
       window.removeEventListener("keydown", handleKeyDown);
     };
-  }, [invokeMenuAction, hideAll]);
+  }, [invokeMenuAction]);
 };

@@ -4,10 +4,8 @@ import {
   formatDuration,
   getRelativePath,
 } from "../../../app/utils";
-import { useContextMenu } from "react-contexify";
-import { useContext } from "react";
 import { View } from "../../../app/view";
-import { MenuContext } from "../../../contexts/MenuContext";
+import { useTrackListItemContextMenu } from "../../../hooks/useTrackListItemContextMenu";
 import {
   skipQueueIndexes,
   setQueueToNewSource,
@@ -41,12 +39,11 @@ import { QueueListItem } from "../../pages/QueuePage";
 import { useLocation } from "react-router-dom";
 
 export const TrackSummaryRow = (props: ICellRendererParams) => {
-  const { show: showCellContextMenu } = useContextMenu({
-    id: "tracklistitem",
-  });
-  const { setMenuData } = useContext(MenuContext);
   const dispatch = useAppDispatch();
   const location = useLocation();
+  const handleCellContextMenuEvent = useTrackListItemContextMenu(
+    location.pathname
+  );
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
   const visibleViewType = useAppSelector(selectVisibleViewType);
   const currentTrack = useAppSelector(selectCurrentTrack);
@@ -65,33 +62,27 @@ export const TrackSummaryRow = (props: ICellRendererParams) => {
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     rowProps: ICellRendererParams
   ) => {
-    // Logic mostly duplicated from TrackList
-    if (!rowProps.node.isSelected()) {
-      rowProps.node.setSelected(true, true);
-    }
-    if (rowProps.node.id) {
-      const visibleTracks =
-        visibleView == View.Search
-          ? selectVisibleSearchTracks(store.getState())
-          : visibleView == View.Artist
-            ? selectVisibleArtistTracks(store.getState())
-            : visibleView == View.Queue
-              ? (
-                  selectCurrentQueueTracks(store.getState()) as QueueListItem[]
-                ).filter((track) => !track.separator)
-              : selectVisibleGroupFilteredTrackList(store.getState());
-      setMenuData({
-        itemId: rowProps.node.data.itemId,
-        itemSource: getRelativePath(location.pathname),
-        itemIndex:
-          visibleTracks.findIndex(
-            (track) => track.itemId == rowProps.node.data.itemId
-          ) ?? undefined,
-        metadata: rowProps.node.data,
-        type: "tracklistitem",
-      });
-    }
-    showCellContextMenu({ event });
+    const visibleTracks =
+      visibleView == View.Search
+        ? selectVisibleSearchTracks(store.getState())
+        : visibleView == View.Artist
+          ? selectVisibleArtistTracks(store.getState())
+          : visibleView == View.Queue
+            ? (
+                selectCurrentQueueTracks(store.getState()) as QueueListItem[]
+              ).filter((track) => !track.separator)
+            : selectVisibleGroupFilteredTrackList(store.getState());
+    const rowIndex =
+      visibleTracks.findIndex(
+        (track) => track.itemId == rowProps.node.data.itemId
+      ) ?? null;
+    handleCellContextMenuEvent(
+      event.nativeEvent,
+      rowIndex,
+      rowProps.node.data,
+      rowProps.node.isSelected() ?? false,
+      (selected, clear) => rowProps.node.setSelected(selected, clear)
+    );
   };
 
   const handleCellDoubleClicked = (

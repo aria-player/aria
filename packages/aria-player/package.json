@@ -36,7 +36,6 @@
     "rdndmb-html5-to-touch": "^9.0.0",
     "react": "^19.2.6",
     "react-color-palette": "^7.3.1",
-    "react-contexify": "^6.0.0",
     "react-dnd": "^16.0.1",
     "react-dnd-multi-backend": "^9.0.0",
     "react-dom": "^19.2.6",

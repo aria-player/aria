@@ -13,7 +13,6 @@ import {
   provideGlobalGridOptions,
 } from "ag-grid-community";
 import { ModuleRegistry } from "ag-grid-community";
-import { MenuProvider } from "./contexts/MenuContext";
 import { TreeProvider } from "./contexts/TreeContext";
 import { HTML5toTouch } from "rdndmb-html5-to-touch";
 import { DndProvider } from "react-dnd-multi-backend";
@@ -24,17 +23,17 @@ import { isTauri } from "./app/utils";
 import { invoke } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { checkForUpdates } from "./app/updater";
+import { ScrollProvider } from "./contexts/ScrollContext";
+import { ContextMenuProvider } from "soprano-ui";
 import App from "./App";
 import "./i18n";
 
 import "allotment/dist/style.css";
-import "react-contexify/dist/ReactContexify.css";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-balham.css";
 
 import "./styles/base.css";
 import "./styles/overrides.css";
-import { ScrollProvider } from "./contexts/ScrollContext";
 
 provideGlobalGridOptions({
   theme: "legacy",
@@ -50,7 +49,7 @@ createRoot(document.getElementById("root") as HTMLElement).render(
           <HistoryRouter history={history} basename={BASEPATH}>
             <GridProvider>
               <TreeProvider>
-                <MenuProvider>
+                <ContextMenuProvider>
                   <PlatformProvider>
                     <ArtworkProvider>
                       <DndProvider options={HTML5toTouch}>
@@ -62,7 +61,7 @@ createRoot(document.getElementById("root") as HTMLElement).render(
                       </DndProvider>
                     </ArtworkProvider>
                   </PlatformProvider>
-                </MenuProvider>
+                </ContextMenuProvider>
               </TreeProvider>
             </GridProvider>
           </HistoryRouter>

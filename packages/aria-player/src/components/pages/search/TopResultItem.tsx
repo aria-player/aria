@@ -10,17 +10,14 @@ import {
 import { useAppSelector } from "../../../app/hooks";
 import { AlbumArt } from "../../views/subviews/AlbumArt";
 import styles from "./TopResultItem.module.css";
-import { TriggerEvent } from "react-contexify";
-import { useNativeContextMenu } from "../../../hooks/useNativeContextMenu";
-import { useContext } from "react";
-import { MenuContext } from "../../../contexts/MenuContext";
+import { useContextMenu } from "soprano-ui";
+import { useTrackMenuItems } from "../../../hooks/useTrackMenuItems";
 import { PlaylistSearchItem, SearchResult } from "../../../app/search";
 import { useTranslation } from "react-i18next";
 import { getSourceHandle } from "../../../features/plugins/pluginsSlice";
-import { formatStringArray, getRelativePath } from "../../../app/utils";
+import { formatStringArray } from "../../../app/utils";
 import { ArtistArt } from "../../views/subviews/ArtistArt";
 import { ArtistDetails } from "../../../features/artists/artistsTypes";
-import { useLocation } from "react-router-dom";
 import PlaylistArt from "../../views/subviews/PlaylistArt";
 
 interface TopResultItemProps {
@@ -29,13 +26,10 @@ interface TopResultItemProps {
 
 export default function TopResultItem({ result }: TopResultItemProps) {
   const dispatch = useAppDispatch();
-  const location = useLocation();
   const { t } = useTranslation();
   const search = useAppSelector(selectSearch);
-  const { setMenuData } = useContext(MenuContext);
-  const { show: showTrackContextMenu } = useNativeContextMenu({
-    id: "track",
-  });
+  const buildTrackMenuItems = useTrackMenuItems();
+  const showContextMenu = useContextMenu();
 
   const handleClick = () => {
     dispatch(addToSearchHistory(search));
@@ -142,14 +136,10 @@ export default function TopResultItem({ result }: TopResultItemProps) {
         onContextMenu={(event) => {
           if (result.type !== "track") return;
           const track = result.item as Track;
-          setMenuData({
-            itemId: track.trackId,
-            itemSource: getRelativePath(location.pathname),
-            itemIndex: undefined,
-            metadata: track,
-            type: "track",
-          });
-          showTrackContextMenu({ event: event as TriggerEvent });
+          showContextMenu(
+            event.nativeEvent,
+            buildTrackMenuItems([track], track)
+          );
         }}
       >
         {result.type === "artist" ? (

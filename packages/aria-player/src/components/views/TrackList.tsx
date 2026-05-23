@@ -1,6 +1,5 @@
 import {
   useCallback,
-  useContext,
   useEffect,
   useLayoutEffect,
   useMemo,
@@ -38,8 +37,13 @@ import {
 } from "../../features/player/playerSlice";
 
 import { useTranslation } from "react-i18next";
-import { TriggerEvent, useContextMenu } from "react-contexify";
-import { MenuContext } from "../../contexts/MenuContext";
+import { useContextMenu } from "soprano-ui";
+import { selectMenuState } from "../../app/menu";
+import { buildMenuItems } from "../../app/appMenu";
+import menus from "../../../shared/menus.json";
+import type { MenuItem as JsonMenuItem } from "../../app/menu";
+import { useMenuActions } from "../../hooks/useMenuActions";
+import { useTrackListItemContextMenu } from "../../hooks/useTrackListItemContextMenu";
 import {
   reorderPlaylistTracksThunk,
   selectPlaylistConfigById,
@@ -114,6 +118,7 @@ const PLAYLIST_METADATA_LOOKAHEAD = 40;
 export const TrackList = () => {
   const dispatch = useAppDispatch();
   const location = useLocation();
+  const showContextMenu = useContextMenu();
   const { gridRef, gridProps, isGridReady, setIsGridReady } = useTrackGrid();
   const currentTrack = useAppSelector(selectCurrentTrack);
   const rowData = useAppSelector(selectVisibleTracks);
@@ -131,13 +136,10 @@ export const TrackList = () => {
   const visibleArtistSection = useAppSelector(selectVisibleArtistSection);
   const selectedArtistGroup = useAppSelector(selectVisibleSelectedTrackGroup);
   const queueSource = useAppSelector(selectQueueSource);
-  const { setMenuData } = useContext(MenuContext);
-  const { show: showHeaderContextMenu } = useContextMenu({
-    id: "tracklistheader",
-  });
-  const { show: showCellContextMenu } = useContextMenu({
-    id: "tracklistitem",
-  });
+  const { invokeMenuAction } = useMenuActions();
+  const handleCellContextMenuEvent = useTrackListItemContextMenu(
+    location.pathname
+  );
   const visibleView = visiblePlaylist?.id ?? visibleViewType;
   const [scrollY, setScrollY] = useState(0);
   const { t } = useTranslation();
@@ -646,12 +648,31 @@ export const TrackList = () => {
   }, [gridRef, rowData, useInfiniteRowModel]);
 
   useEffect(() => {
+    const columnSubmenu = (
+      menus
+        .find((m: JsonMenuItem) => m.id === "view")
+        ?.submenu?.find((s: JsonMenuItem) => s.id === "columns") as
+        | JsonMenuItem
+        | undefined
+    )?.submenu;
+
     const headerContextArea = document.querySelector(".ag-header");
     const handleContextMenu = (e: Event) => {
+      if ((e as MouseEvent).shiftKey) return;
       e.preventDefault();
-      showHeaderContextMenu({
-        event: e as TriggerEvent,
-      });
+      if (columnSubmenu) {
+        showContextMenu(
+          e as MouseEvent,
+          () =>
+            buildMenuItems(
+              columnSubmenu,
+              selectMenuState(store.getState()),
+              t,
+              invokeMenuAction
+            ),
+          { subscribe: (cb) => store.subscribe(cb) }
+        );
+      }
     };
 
     if (headerContextArea) {
@@ -662,22 +683,17 @@ export const TrackList = () => {
         headerContextArea.removeEventListener("contextmenu", handleContextMenu);
       }
     };
-  }, [showHeaderContextMenu]);
+  }, [t, invokeMenuAction, isGridReady, showContextMenu]);
 
   const handleCellContextMenu = (event: CellContextMenuEvent) => {
-    if (!event.node.isSelected()) {
-      event.node.setSelected(true, true);
-    }
-    if (event.node.id) {
-      setMenuData({
-        itemId: event.node.data.trackId,
-        itemSource: getRelativePath(location.pathname),
-        itemIndex: event.rowIndex ?? undefined,
-        metadata: event.node.data,
-        type: "tracklistitem",
-      });
-    }
-    showCellContextMenu({ event: event.event as TriggerEvent });
+    if (!event.event) return;
+    handleCellContextMenuEvent(
+      event.event as MouseEvent,
+      event.rowIndex,
+      event.node.data,
+      event.node.isSelected() ?? false,
+      (selected, clear) => event.node.setSelected(selected, clear)
+    );
   };
 
   const handleRowDragEnd = (event: RowDragEndEvent) => {

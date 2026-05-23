@@ -16,7 +16,6 @@ import {
   selectSidebarWidth,
   setSidebarConfig,
 } from "./features/config/configSlice";
-import { ContextMenuContainer } from "./components/contextmenu/ContextMenuContainer";
 import ErrorPage from "./components/pages/ErrorPage";
 import SettingsPage from "./components/pages/SettingsPage";
 import { AboutPage } from "./components/pages/settings/AboutPage";
@@ -110,7 +109,6 @@ function App() {
 
   return (
     <div className={styles.window} onContextMenu={handleContextMenu}>
-      <ContextMenuContainer />
       <Toaster
         visibleToasts={1}
         position="bottom-center"
