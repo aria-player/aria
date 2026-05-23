@@ -71,4 +71,29 @@ body {
     margin-right: 0.75rem;
     cursor: pointer;
   }
+
+  .resize-handle {
+    width: 0;
+    overflow: visible;
+    position: relative;
+    cursor: col-resize;
+    z-index: 1;
+  }
+
+  .resize-handle::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: -1.75px;
+    width: 4px;
+    background-color: transparent;
+    transition: background-color 0.1s ease-out;
+  }
+
+  .resize-handle[data-separator="hover"]::after,
+  .resize-handle[data-separator="active"]::after,
+  .resize-handle[data-separator="focus"]::after {
+    background-color: var(--accent-color);
+  }
 }

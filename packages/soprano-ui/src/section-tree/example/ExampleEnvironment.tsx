@@ -1,4 +1,4 @@
-import { Allotment } from "allotment";
+import { Group, Panel, Separator } from "react-resizable-panels";
 import React, { useRef } from "react";
 import { SectionTree } from "../SectionTree";
 import views from "./data/views.json";
@@ -11,7 +11,6 @@ import {
   moveTreeNode,
   updateTreeNode,
 } from "../treeOperations";
-import "allotment/dist/style.css";
 
 export function ExampleEnvironment(
   props: TreeProps<SectionTreeItem> & {
@@ -83,150 +82,155 @@ export function ExampleEnvironment(
 
   return (
     <div style={{ fontFamily: "Segoe UI", height: "500px" }}>
-      <Allotment>
-        <SectionTree
-          {...props}
-          ref={ref}
-          sections={sections}
-          initialOpenState={{
-            b: true,
-          }}
-          onMoveWithinSection={(args) => {
-            const sectionIndex = sections.findIndex(
-              (section) => section.id === args.sectionId
-            );
-            const newTree = moveTreeNode(sections[sectionIndex].children, {
-              id: args.movedItemId,
-              parentId: args.newParentId,
-              index: args.newIndex,
-            });
-            updateSection(args.sectionId, newTree);
-          }}
-          onRenameWithinSection={(sectionId, itemId, newName) => {
-            const sectionIndex = sections.findIndex(
-              (section) => section.id === sectionId
-            );
-            const newTree = updateTreeNode(sections[sectionIndex].children, {
-              id: itemId,
-              changes: { name: newName },
-            });
-            updateSection(sectionId, newTree);
-          }}
-          onItemVisibilityChange={(sectionId, itemId, hidden) => {
-            const sectionIndex = sections.findIndex(
-              (section) => section.id === sectionId
-            );
-            const newTree = updateTreeNode(sections[sectionIndex].children, {
-              id: itemId,
-              changes: { hidden },
-            });
-            updateSection(sections[sectionIndex].id, newTree);
-          }}
-          onOptionsMenuActiveChange={(sectionId, button) => {
-            console.log("Options menu state changed to ", sectionId);
-            console.log("Button position: ", button?.getBoundingClientRect());
-          }}
-          onVisibilityEditingChange={(sectionId) => {
-            console.log("Visibility editing state changed to ", sectionId);
-          }}
-          onSelectedItemChange={(sectionId, itemId) => {
-            console.log("Selected item changed to ", sectionId, itemId);
-          }}
-          onItemContextMenu={(sectionId, itemId) => {
-            console.log("Context menu opened for ", sectionId, itemId);
-            setLastContextMenu({ sectionId, itemId });
-          }}
-          onSectionContextMenu={(sectionId, e) => {
-            console.log("Section context menu opened for ", sectionId);
-            e.preventDefault();
-          }}
-          onRowKeyDown={(e) => {
-            if (e.key === " ") {
-              e.stopPropagation();
-            }
-          }}
-          onFolderAction={(sectionId, itemId, action) => {
-            console.log("Folder open: ", sectionId, itemId, action);
-          }}
-          onEmptySpaceContextMenu={(e) => {
-            e.preventDefault();
-            console.log("Empty space context menu");
-          }}
-          optionsButtonTooltip="Options"
-          doneButtonTooltip="Done"
-        />
-        <div>
-          <button
-            onClick={() => {
-              ref?.current?.setSelectedItem(null);
+      <Group orientation="horizontal" style={{ height: "100%" }}>
+        <Panel defaultSize="25%">
+          <SectionTree
+            {...props}
+            ref={ref}
+            sections={sections}
+            initialOpenState={{
+              b: true,
             }}
-          >
-            Clear selection
-          </button>
-          <br /> <br />
-          {sections.map((section) => (
-            <React.Fragment key={section.id}>
-              <button onClick={() => createItem(section.id)}>
-                Add item to {section.name}
-              </button>
-              <button onClick={() => createItem(section.id, true)}>
-                Add folder to {section.name}
-              </button>
-              <button
-                onClick={() =>
-                  ref?.current?.setOptionsMenuActive(
-                    ref?.current?.optionsMenuActive == section.id
-                      ? null
-                      : section.id
-                  )
-                }
-              >
-                Toggle options menu for {section.name}
-              </button>
-              <button
-                onClick={() =>
-                  ref?.current?.setVisibilityEditing(
-                    ref?.current?.visibilityEditing == section.id
-                      ? null
-                      : section.id
-                  )
-                }
-              >
-                Toggle visibility editing for {section.name}
-              </button>
-              <br /> <br />
-            </React.Fragment>
-          ))}
-          <br /> <br />
-          {lastContextMenu && (
-            <div>
-              Context menu for {lastContextMenu.itemId}:
-              <button
-                onClick={() => {
-                  ref.current?.root.tree.edit(lastContextMenu.itemId);
-                }}
-              >
-                Rename
-              </button>
-              <button
-                onClick={() => {
-                  const sectionIndex = sections.findIndex(
-                    (section) => section.id === lastContextMenu.sectionId
-                  );
-                  const deletion = deleteTreeNode(
-                    sections[sectionIndex].children,
-                    { id: lastContextMenu.itemId }
-                  );
-                  updateSection(lastContextMenu.sectionId, deletion.result);
-                  setLastContextMenu(null);
-                }}
-              >
-                Delete
-              </button>
-            </div>
-          )}
-        </div>
-      </Allotment>
+            onMoveWithinSection={(args) => {
+              const sectionIndex = sections.findIndex(
+                (section) => section.id === args.sectionId
+              );
+              const newTree = moveTreeNode(sections[sectionIndex].children, {
+                id: args.movedItemId,
+                parentId: args.newParentId,
+                index: args.newIndex,
+              });
+              updateSection(args.sectionId, newTree);
+            }}
+            onRenameWithinSection={(sectionId, itemId, newName) => {
+              const sectionIndex = sections.findIndex(
+                (section) => section.id === sectionId
+              );
+              const newTree = updateTreeNode(sections[sectionIndex].children, {
+                id: itemId,
+                changes: { name: newName },
+              });
+              updateSection(sectionId, newTree);
+            }}
+            onItemVisibilityChange={(sectionId, itemId, hidden) => {
+              const sectionIndex = sections.findIndex(
+                (section) => section.id === sectionId
+              );
+              const newTree = updateTreeNode(sections[sectionIndex].children, {
+                id: itemId,
+                changes: { hidden },
+              });
+              updateSection(sections[sectionIndex].id, newTree);
+            }}
+            onOptionsMenuActiveChange={(sectionId, button) => {
+              console.log("Options menu state changed to ", sectionId);
+              console.log("Button position: ", button?.getBoundingClientRect());
+            }}
+            onVisibilityEditingChange={(sectionId) => {
+              console.log("Visibility editing state changed to ", sectionId);
+            }}
+            onSelectedItemChange={(sectionId, itemId) => {
+              console.log("Selected item changed to ", sectionId, itemId);
+            }}
+            onItemContextMenu={(sectionId, itemId) => {
+              console.log("Context menu opened for ", sectionId, itemId);
+              setLastContextMenu({ sectionId, itemId });
+            }}
+            onSectionContextMenu={(sectionId, e) => {
+              console.log("Section context menu opened for ", sectionId);
+              e.preventDefault();
+            }}
+            onRowKeyDown={(e) => {
+              if (e.key === " ") {
+                e.stopPropagation();
+              }
+            }}
+            onFolderAction={(sectionId, itemId, action) => {
+              console.log("Folder open: ", sectionId, itemId, action);
+            }}
+            onEmptySpaceContextMenu={(e) => {
+              e.preventDefault();
+              console.log("Empty space context menu");
+            }}
+            optionsButtonTooltip="Options"
+            doneButtonTooltip="Done"
+          />
+        </Panel>
+        <Separator style={{ width: "4px", cursor: "col-resize" }} />
+        <Panel>
+          <div>
+            <button
+              onClick={() => {
+                ref?.current?.setSelectedItem(null);
+              }}
+            >
+              Clear selection
+            </button>
+            <br /> <br />
+            {sections.map((section) => (
+              <React.Fragment key={section.id}>
+                <button onClick={() => createItem(section.id)}>
+                  Add item to {section.name}
+                </button>
+                <button onClick={() => createItem(section.id, true)}>
+                  Add folder to {section.name}
+                </button>
+                <button
+                  onClick={() =>
+                    ref?.current?.setOptionsMenuActive(
+                      ref?.current?.optionsMenuActive == section.id
+                        ? null
+                        : section.id
+                    )
+                  }
+                >
+                  Toggle options menu for {section.name}
+                </button>
+                <button
+                  onClick={() =>
+                    ref?.current?.setVisibilityEditing(
+                      ref?.current?.visibilityEditing == section.id
+                        ? null
+                        : section.id
+                    )
+                  }
+                >
+                  Toggle visibility editing for {section.name}
+                </button>
+                <br /> <br />
+              </React.Fragment>
+            ))}
+            <br /> <br />
+            {lastContextMenu && (
+              <div>
+                Context menu for {lastContextMenu.itemId}:
+                <button
+                  onClick={() => {
+                    ref.current?.root.tree.edit(lastContextMenu.itemId);
+                  }}
+                >
+                  Rename
+                </button>
+                <button
+                  onClick={() => {
+                    const sectionIndex = sections.findIndex(
+                      (section) => section.id === lastContextMenu.sectionId
+                    );
+                    const deletion = deleteTreeNode(
+                      sections[sectionIndex].children,
+                      { id: lastContextMenu.itemId }
+                    );
+                    updateSection(lastContextMenu.sectionId, deletion.result);
+                    setLastContextMenu(null);
+                  }}
+                >
+                  Delete
+                </button>
+              </div>
+            )}
+          </div>
+        </Panel>
+      </Group>
     </div>
   );
 }

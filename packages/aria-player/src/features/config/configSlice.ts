@@ -22,7 +22,6 @@ export interface ConfigState {
   language: string | null;
   displayRemainingTime: boolean;
   sidebarWidth: number;
-  sidebarCollapsed: boolean;
   initialView: LibraryView | "continue";
   lastView: string;
   artistDelimiterType: ArtistDelimiterType;
@@ -39,7 +38,6 @@ const initialState: ConfigState = {
   language: null,
   displayRemainingTime: false,
   sidebarWidth: 220,
-  sidebarCollapsed: false,
   initialView: LibraryView.Songs,
   lastView: "/",
   artistDelimiterType: ArtistDelimiterType.None,
@@ -116,12 +114,8 @@ export const configSlice = createSlice({
     setDisplayRemainingTime: (state, action: PayloadAction<boolean>) => {
       state.displayRemainingTime = action.payload;
     },
-    setSidebarConfig: (
-      state,
-      action: PayloadAction<{ width: number; collapsed: boolean }>
-    ) => {
+    setSidebarConfig: (state, action: PayloadAction<{ width: number }>) => {
       state.sidebarWidth = action.payload.width;
-      state.sidebarCollapsed = action.payload.collapsed;
     },
     setInitialView: (
       state,
@@ -174,8 +168,6 @@ export const selectDisplayRemainingTime = (state: RootState) =>
   state.config.displayRemainingTime;
 export const selectSidebarWidth = (state: RootState) =>
   state.config.sidebarWidth;
-export const selectSidebarCollapsed = (state: RootState) =>
-  state.config.sidebarCollapsed;
 export const selectInitialView = (state: RootState) => state.config.initialView;
 export const selectLastView = (state: RootState) => state.config.lastView;
 export const selectArtistDelimiterType = (state: RootState) =>

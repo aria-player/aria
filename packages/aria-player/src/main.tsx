@@ -28,7 +28,6 @@ import { ContextMenuProvider } from "soprano-ui";
 import App from "./App";
 import "./i18n";
 
-import "allotment/dist/style.css";
 import "ag-grid-community/styles/ag-grid.css";
 import "ag-grid-community/styles/ag-theme-balham.css";
 

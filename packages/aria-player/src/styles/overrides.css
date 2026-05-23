@@ -19,11 +19,6 @@ body {
   --tree-drop-cursor-border: 2px solid var(--accent-color);
   --tree-item-transition: none;
 
-  /* Allotment overrides */
-  --separator-border: transparent;
-  --focus-border: var(--accent-color);
-  --sash-size: 9px;
-
   /* react-color-palette overrides */
   .rcp-root {
     --rcp-background-color: var(--primary-background);

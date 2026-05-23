@@ -1,4 +1,9 @@
-import { Allotment } from "allotment";
+import {
+  Group,
+  Panel,
+  PanelImperativeHandle,
+  Separator,
+} from "react-resizable-panels";
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
 
 import styles from "./SplitView.module.css";
@@ -30,13 +35,14 @@ export function SplitView() {
     .map((item) => String(item));
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
   const visibleViewType = useAppSelector(selectVisibleViewType);
-  const visiblePlaylistSplitViewSizes = useAppSelector(
+  const visiblePlaylistLeftPaneSize = useAppSelector(
     selectVisiblePlaylistConfig
-  )?.splitViewState.paneSizes;
+  )?.splitViewState.paneSizes?.[0];
   const visibleLibrarySplitViewConfig = useAppSelector(
     selectLibrarySplitViewStates
   )[visibleViewType];
-  const visibleLibrarySplitViewSizes = visibleLibrarySplitViewConfig?.paneSizes;
+  const visibleLibraryLeftPaneSize =
+    visibleLibrarySplitViewConfig?.paneSizes?.[0];
   const selectedItem = useAppSelector(selectVisibleSelectedTrackGroup);
   const splitViewStates = useAppSelector(selectLibrarySplitViewStates);
   const visiblePlaylistConfig = useAppSelector(selectVisiblePlaylistConfig);
@@ -112,26 +118,23 @@ export function SplitView() {
     [dispatch, visiblePlaylistId, visibleViewType]
   );
 
-  const handleDragEnd = useCallback(
-    (sizes: number[]) => {
-      if (visiblePlaylist) {
-        dispatch(
-          updatePlaylistSplitViewState({
-            playlistId: visiblePlaylist?.id,
-            splitState: { paneSizes: sizes },
-          })
-        );
-      } else {
-        dispatch(
-          updateLibrarySplitState({
-            view: visibleViewType,
-            splitState: { paneSizes: sizes },
-          })
-        );
-      }
-    },
-    [dispatch, visiblePlaylist, visibleViewType]
-  );
+  const leftPanelRef = useRef<PanelImperativeHandle | null>(null);
+
+  const handleSplitLayoutChanged = useCallback(() => {
+    const size = leftPanelRef.current?.getSize();
+    if (!size) return;
+    const splitState = { paneSizes: [size.asPercentage] };
+    if (visiblePlaylist) {
+      dispatch(
+        updatePlaylistSplitViewState({
+          playlistId: visiblePlaylist.id,
+          splitState,
+        })
+      );
+    } else {
+      dispatch(updateLibrarySplitState({ view: visibleViewType, splitState }));
+    }
+  }, [dispatch, visiblePlaylist, visibleViewType]);
 
   const buttons = visibleItems.map((itemName, index) => (
     <button
@@ -162,29 +165,35 @@ export function SplitView() {
     }
   }, [visibleViewType, visiblePlaylist?.id, selectedItem, location?.state]);
 
+  const storedLeftSize =
+    visiblePlaylistLeftPaneSize ?? visibleLibraryLeftPaneSize;
+
   return (
     <div className={styles.splitView}>
-      <Allotment
+      <Group
         key={visibleViewType + visiblePlaylist?.id}
-        onDragEnd={handleDragEnd}
-        defaultSizes={
-          visiblePlaylistSplitViewSizes ??
-          visibleLibrarySplitViewSizes ?? [2, 8]
-        }
+        orientation="horizontal"
+        onLayoutChanged={handleSplitLayoutChanged}
       >
-        <Allotment.Pane minSize={60}>
+        <Panel
+          panelRef={leftPanelRef}
+          defaultSize={storedLeftSize != null ? `${storedLeftSize}%` : "20%"}
+          minSize={60}
+          style={{ overflow: "hidden", height: "100%" }}
+        >
           <div className={`split-view-track-groups ${styles.trackGroupsList}`}>
             {buttons}
           </div>
-        </Allotment.Pane>
-        <Allotment.Pane minSize={600}>
+        </Panel>
+        <Separator className="resize-handle" />
+        <Panel minSize={600} style={{ overflow: "hidden", height: "100%" }}>
           <div
             className={`split-view-album-track-list ag-overrides-split-view ${styles.albumTrackList}`}
           >
             <AlbumTrackList />
           </div>
-        </Allotment.Pane>
-      </Allotment>
+        </Panel>
+      </Group>
     </div>
   );
 }

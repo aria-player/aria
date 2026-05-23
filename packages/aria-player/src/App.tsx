@@ -1,8 +1,13 @@
 import { WindowsMenuBar } from "./components/platforms/windows/WindowsMenuBar";
 import styles from "./App.module.css";
 import { Route, Routes } from "react-router-dom";
-import { Allotment } from "allotment";
-import { useContext, useState } from "react";
+import {
+  Group,
+  Panel,
+  Separator,
+  PanelImperativeHandle,
+} from "react-resizable-panels";
+import { useCallback, useContext, useRef, useState } from "react";
 import { useIsMobileBrowser } from "./hooks/useIsMobileBrowser";
 import { useKeyboardShortcuts } from "./hooks/useKeyboardShortcuts";
 import { MacTitleBar } from "./components/platforms/mac/MacTitleBar";
@@ -12,7 +17,6 @@ import { Footer } from "./components/footer/Footer";
 import { Sidebar } from "./components/sidebar/Sidebar";
 import { useAppDispatch, useAppSelector } from "./app/hooks";
 import {
-  selectSidebarCollapsed,
   selectSidebarWidth,
   setSidebarConfig,
 } from "./features/config/configSlice";
@@ -40,10 +44,10 @@ function App() {
   const dispatch = useAppDispatch();
   const isMobileBrowser = useIsMobileBrowser();
   const sidebarWidth = useAppSelector(selectSidebarWidth);
-  const sidebarCollapsed = useAppSelector(selectSidebarCollapsed);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
   const [mobileSidebarClosing, setMobileSidebarClosing] = useState(false);
   const isMobileSidebarOpen = isMobileBrowser && mobileSidebarOpen;
+  const sidebarPanelRef = useRef<PanelImperativeHandle | null>(null);
 
   const closeMobileSidebar = () => {
     setMobileSidebarClosing(true);
@@ -53,9 +57,11 @@ function App() {
     }, 200);
   };
 
-  const handleDragEnd = (sizes: number[]) => {
-    dispatch(setSidebarConfig({ width: sizes[0], collapsed: sizes[0] === 0 }));
-  };
+  const handleSidebarLayoutChanged = useCallback(() => {
+    const size = sidebarPanelRef.current?.getSize();
+    if (!size) return;
+    dispatch(setSidebarConfig({ width: size.inPixels }));
+  }, [dispatch]);
 
   const handleContextMenu = (e: React.MouseEvent) => {
     if (!e.shiftKey && !(e.target as HTMLElement).closest("input, textarea")) {
@@ -146,25 +152,28 @@ function App() {
           </main>
         </div>
       ) : (
-        <Allotment
-          proportionalLayout={false}
-          onDragEnd={handleDragEnd}
-          minSize={44}
+        <Group
+          orientation="horizontal"
+          onLayoutChanged={handleSidebarLayoutChanged}
         >
-          <Allotment.Pane
-            preferredSize={sidebarWidth}
-            visible={!sidebarCollapsed}
+          <Panel
+            panelRef={sidebarPanelRef}
+            defaultSize={sidebarWidth || 220}
+            minSize={44}
+            groupResizeBehavior="preserve-pixel-size"
+            style={{ overflow: "hidden" }}
           >
             <Sidebar />
-          </Allotment.Pane>
-          <Allotment.Pane>
+          </Panel>
+          <Separator className="resize-handle" />
+          <Panel minSize={44}>
             <main className={`main-view ${styles.outlet}`}>
               <Header />
               <PluginAlertDialog />
               {routes}
             </main>
-          </Allotment.Pane>
-        </Allotment>
+          </Panel>
+        </Group>
       )}
       <Footer />
     </div>
