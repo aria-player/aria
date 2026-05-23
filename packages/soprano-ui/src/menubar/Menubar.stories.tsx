@@ -3,7 +3,7 @@ import { Menubar } from "./Menubar";
 import type { MenubarMenu } from "../shared/menu-types";
 
 const meta = {
-  title: "Soprano/Menubar",
+  title: "Menubar",
   component: Menubar,
   tags: ["autodocs"],
 } satisfies Meta<typeof Menubar>;

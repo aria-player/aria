@@ -39,7 +39,7 @@ function ContextMenuDemo() {
 }
 
 const meta = {
-  title: "Soprano/ContextMenu",
+  title: "ContextMenu",
   component: ContextMenuDemo,
   decorators: [
     (Story) => (

@@ -3,7 +3,7 @@ import { DropdownMenu } from "./DropdownMenu";
 import type { MenuItem } from "../shared/menu-types";
 
 const meta = {
-  title: "Soprano/DropdownMenu",
+  title: "DropdownMenu",
   component: DropdownMenu,
   tags: ["autodocs"],
 } satisfies Meta<typeof DropdownMenu>;
