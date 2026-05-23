@@ -62,8 +62,8 @@
     "@testing-library/react": "^16.3.2",
     "@types/crypto-js": "^4.2.2",
     "@types/musickit-js": "^1.0.11",
-    "@types/node": "^25.8.0",
-    "@types/react": "^19.2.14",
+    "@types/node": "^25.9.1",
+    "@types/react": "^19.2.15",
     "@types/react-dom": "^19.2.3",
     "@types/spotify-api": "^0.0.26",
     "@types/spotify-web-playback-sdk": "^0.1.19",
@@ -71,10 +71,10 @@
     "@vitejs/plugin-react": "^6.0.2",
     "autoprefixer": "^10.5.0",
     "jsdom": "^29.1.1",
-    "postcss": "^8.5.14",
+    "postcss": "^8.5.15",
     "react-dnd-test-backend": "^16.0.1",
-    "vite": "^8.0.13",
+    "vite": "^8.0.14",
     "vite-plugin-svgr": "^5.2.0",
-    "vitest": "^4.1.6"
+    "vitest": "^4.1.7"
   }
 }

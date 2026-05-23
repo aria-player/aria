@@ -9,6 +9,6 @@
     "format": "prettier -c . --write"
   },
   "dependencies": {
-    "@types/react": "^19.2.14"
+    "@types/react": "^19.2.15"
   }
 }
