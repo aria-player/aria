@@ -26,11 +26,11 @@ export function MenuItems({
   primitives: MenuPrimitives;
 }) {
   return (
-    <>
+    <div className={styles.scrollWrapper}>
       {items.map((item, i) => (
         <MenuItemEntry key={i} item={item} primitives={P} />
       ))}
-    </>
+    </div>
   );
 }
 
