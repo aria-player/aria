@@ -34,7 +34,6 @@ import { useMenuActions } from "../../hooks/useMenuActions";
 import { store } from "../../app/store";
 import { push, replace } from "redux-first-history";
 import { BASEPATH } from "../../app/constants";
-import { useDragDropManager } from "react-dnd";
 import {
   selectVisibleViewType,
   selectVisiblePlaylist,
@@ -132,7 +131,6 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
     Partial<Record<string, true>>
   >({});
   const { invokeMenuAction } = useMenuActions();
-  const dragDropManager = useDragDropManager();
   const [scrollY, setScrollY] = useState(0);
   const playlistsLayoutWithOperations = useMemo(
     () => annotatePlaylistOperations(playlistsLayout, slowPlaylistOperations),
@@ -636,7 +634,6 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
       <SectionTree
         ref={treeRef}
         sections={sections}
-        dndManager={dragDropManager}
         FolderOpenIcon={() => <FolderOpenIcon />}
         FolderClosedIcon={() => <FolderClosedIcon />}
         OptionsButtonIcon={() => <OptionsButtonIcon />}

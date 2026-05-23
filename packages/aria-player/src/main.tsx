@@ -14,8 +14,6 @@ import {
 } from "ag-grid-community";
 import { ModuleRegistry } from "ag-grid-community";
 import { TreeProvider } from "./contexts/TreeContext";
-import { HTML5toTouch } from "rdndmb-html5-to-touch";
-import { DndProvider } from "react-dnd-multi-backend";
 import { ArtworkProvider } from "./contexts/ArtworkContext";
 import { ErrorBoundary } from "react-error-boundary";
 import { CrashPage } from "./components/pages/CrashPage";
@@ -51,13 +49,11 @@ createRoot(document.getElementById("root") as HTMLElement).render(
                 <ContextMenuProvider>
                   <PlatformProvider>
                     <ArtworkProvider>
-                      <DndProvider options={HTML5toTouch}>
-                        <ErrorBoundary FallbackComponent={CrashPage}>
-                          <ScrollProvider>
-                            <App />
-                          </ScrollProvider>
-                        </ErrorBoundary>
-                      </DndProvider>
+                      <ErrorBoundary FallbackComponent={CrashPage}>
+                        <ScrollProvider>
+                          <App />
+                        </ScrollProvider>
+                      </ErrorBoundary>
                     </ArtworkProvider>
                   </PlatformProvider>
                 </ContextMenuProvider>

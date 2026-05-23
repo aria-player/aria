@@ -4,10 +4,9 @@ import { store } from "./app/store";
 import App from "./App";
 import { BrowserRouter } from "react-router-dom";
 import { Platform, PlatformContext } from "./contexts/PlatformContext";
-import { TestBackend } from "react-dnd-test-backend";
-import { DndProvider } from "react-dnd";
 import { ModuleRegistry } from "ag-grid-community";
 import { AllCommunityModule } from "ag-grid-community";
+import { ContextMenuProvider } from "soprano-ui";
 
 test("renders loading state by default", () => {
   class ResizeObserver {
@@ -44,9 +43,9 @@ test("renders search bar when loaded", () => {
     <Provider store={store}>
       <BrowserRouter>
         <PlatformContext.Provider value={mockPlatform}>
-          <DndProvider backend={TestBackend}>
+          <ContextMenuProvider>
             <App />
-          </DndProvider>
+          </ContextMenuProvider>
         </PlatformContext.Provider>
       </BrowserRouter>
     </Provider>
