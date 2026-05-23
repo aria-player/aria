@@ -77,7 +77,23 @@ function MenuItemEntry({
             />
           </P.SubTrigger>
           <P.Portal>
-            <P.SubContent className={styles.subContent} sideOffset={4}>
+            <P.SubContent
+              className={styles.subContent}
+              sideOffset={4}
+              ref={(element) => {
+                if (!element) return;
+                requestAnimationFrame(() => {
+                  const rect = element.getBoundingClientRect();
+                  const rightOverflow =
+                    rect.right - document.documentElement.clientWidth;
+                  const leftOverflow = -rect.left;
+                  if (rightOverflow > 0)
+                    element.style.transform += ` translateX(-${Math.ceil(rightOverflow)}px)`;
+                  else if (leftOverflow > 0)
+                    element.style.transform += ` translateX(${Math.ceil(leftOverflow)}px)`;
+                });
+              }}
+            >
               <MenuItems items={item.items} primitives={P} />
             </P.SubContent>
           </P.Portal>
