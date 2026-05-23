@@ -1,0 +1,31 @@
+.root {
+  display: flex;
+  align-items: flex-end;
+  height: 2rem;
+  flex-shrink: 0;
+  background-color: var(--menubar-background);
+  padding-left: 0.5rem;
+  user-select: none;
+}
+
+.trigger {
+  height: 1.5rem;
+  padding: 0.1rem 0.5rem;
+  margin-left: 0.1rem;
+  font-size: 0.85rem;
+  justify-content: center;
+  align-items: center;
+  line-height: normal;
+  border-radius: 0.25rem;
+  background: none;
+  border: none;
+  font-family: inherit;
+  cursor: pointer;
+  user-select: none;
+}
+
+.trigger:hover:not([data-disabled]),
+.trigger:focus:not([data-disabled]),
+.trigger[data-state="open"] {
+  background-color: var(--menubar-button-background-hover);
+}

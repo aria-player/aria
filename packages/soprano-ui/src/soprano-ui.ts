@@ -1,8 +1,5 @@
-import { MediaSlider } from "./media-slider/MediaSlider";
-import { SectionTree } from "./section-tree/SectionTree";
-
-export { MediaSlider };
-export { SectionTree };
+export { MediaSlider } from "./media-slider/MediaSlider";
+export { SectionTree } from "./section-tree/SectionTree";
 
 export {
   createTreeNode,
@@ -19,3 +16,23 @@ export type {
   Item,
   Section,
 } from "./section-tree/treeTypes";
+
+export { ContextMenuProvider } from "./context-menu/ContextMenu";
+export { useContextMenu } from "./context-menu/contextMenuContext";
+
+export { DropdownMenu } from "./dropdown-menu/DropdownMenu";
+export type { DropdownMenuProps } from "./dropdown-menu/DropdownMenu";
+
+export { Menubar } from "./menubar/Menubar";
+export type { MenubarProps } from "./menubar/Menubar";
+
+export type {
+  MenuItem,
+  MenuItemAction,
+  MenuItemSeparator,
+  MenuItemLabel,
+  MenuItemSubmenu,
+  MenuItemCheckbox,
+  MenuItemRadioGroup,
+  MenubarMenu,
+} from "./shared/menu-types";

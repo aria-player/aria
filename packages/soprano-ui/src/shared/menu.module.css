@@ -1,0 +1,93 @@
+.content,
+.subContent {
+  background-color: var(--context-menu-background);
+  border-radius: 0.4rem;
+  box-shadow:
+    1px 2px 2px rgb(0 0 0 / 10%),
+    2px 4px 4px rgb(0 0 0 / 10%),
+    3px 6px 6px rgb(0 0 0 / 10%);
+  padding: 0.25rem;
+  min-width: 12.5rem;
+  z-index: 999;
+  font-size: 0.8rem;
+}
+
+.item,
+.checkboxItem,
+.radioItem,
+.subTrigger {
+  display: flex;
+  align-items: center;
+  padding: 0.25rem 1.5rem;
+  border-radius: 0.25rem;
+  color: var(--primary-text);
+  cursor: pointer;
+  user-select: none;
+  outline: none;
+  position: relative;
+  white-space: nowrap;
+}
+
+.item[data-highlighted],
+.checkboxItem[data-highlighted],
+.radioItem[data-highlighted],
+.subTrigger[data-highlighted],
+.subTrigger[data-state="open"] {
+  background-color: var(--button-background-hover);
+}
+
+.item[data-disabled],
+.checkboxItem[data-disabled],
+.radioItem[data-disabled],
+.subTrigger[data-disabled] {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.itemIndicator {
+  position: absolute;
+  left: 0.25rem;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-left: 0;
+}
+
+.label {
+  padding: 0.25rem 1.5rem;
+  color: var(--secondary-text);
+  user-select: none;
+}
+
+.separator {
+  height: 1px;
+  background-color: rgb(0 0 0 / 20%);
+  margin: 5px;
+}
+
+@keyframes sub-fade-in {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes sub-fade-out {
+  from {
+    opacity: 1;
+  }
+
+  to {
+    opacity: 0;
+  }
+}
+
+.subContent[data-state="open"] {
+  animation: sub-fade-in 0.25s ease;
+}
+
+.subContent[data-state="closed"] {
+  animation: sub-fade-out 0.25s ease;
+}
