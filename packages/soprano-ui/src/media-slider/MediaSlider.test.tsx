@@ -1,11 +1,13 @@
 import { render, screen } from "@testing-library/react";
 import { MediaSlider } from "./MediaSlider";
 
-const ResizeObserverMock = vi.fn(() => ({
-  observe: vi.fn(),
-  unobserve: vi.fn(),
-  disconnect: vi.fn(),
-}));
+const ResizeObserverMock = vi.fn(function () {
+  return {
+    observe: vi.fn(),
+    unobserve: vi.fn(),
+    disconnect: vi.fn(),
+  };
+});
 
 vi.stubGlobal("ResizeObserver", ResizeObserverMock);
 
