@@ -668,7 +668,7 @@ export default function createSpotifyPlayer(
               uri: playlist.id,
               name: playlist.name,
               permissions,
-              artworkUri: playlist.images[0]?.url,
+              artworkUri: playlist.images?.[0]?.url,
               creatorName: playlist.owner.display_name ?? undefined,
             },
           ];
