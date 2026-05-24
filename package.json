@@ -27,7 +27,9 @@
     "tauri": "bun run --cwd packages/aria-player tauri",
     "test": "bun run --cwd packages/aria-player test",
     "lint": "bun --filter '*' lint",
-    "format": "bun --filter '*' format"
+    "format": "bun --filter '*' format",
+    "ui:storybook": "bun run --cwd packages/soprano-ui storybook",
+    "ui:test": "bun run --cwd packages/soprano-ui test"
   },
   "prettier": {
     "semi": true,
