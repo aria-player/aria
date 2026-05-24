@@ -329,7 +329,7 @@ export default function createSpotifyPlayer(
     }
     const product = (profileResponse as unknown as Record<string, unknown>)
       .product;
-    if (product === undefined) return false;
+    if (product === undefined) return true;
     if (product === "free" || product === "open") {
       host.showAlert({
         heading: i18n.t("spotify-player:errorDialog.premiumRequiredHeading"),
@@ -499,39 +499,25 @@ export default function createSpotifyPlayer(
       const artists = Array.from(artistIds);
       const artistMetadata: ArtistMetadata[] = [];
       const artistGenreMapping: Record<string, string[]> = {};
-      const artistBatchSize = 50;
-      for (
-        let i = 0;
-        i < artists.length;
-        i += artistBatchSize * maxConcurrentRequests
-      ) {
-        const requestsInBatch = Math.min(
-          maxConcurrentRequests,
-          Math.ceil((artists.length - i) / artistBatchSize)
+      for (let i = 0; i < artists.length; i += maxConcurrentRequests) {
+        const batch = artists.slice(i, i + maxConcurrentRequests);
+        const batchResults = await Promise.all(
+          batch.map(
+            (id) =>
+              spotifyRequest(
+                `/artists/${id}`
+              ) as Promise<SpotifyApi.ArtistObjectFull>
+          )
         );
-        const promises = [];
-        for (let j = 0; j < requestsInBatch; j++) {
-          const batchIds = artists
-            .slice(i + j * artistBatchSize, i + (j + 1) * artistBatchSize)
-            .join(",");
-          promises.push(
-            spotifyRequest(
-              `/artists?ids=${batchIds}`
-            ) as Promise<SpotifyApi.MultipleArtistsResponse>
-          );
-        }
-        const batchResults = await Promise.all(promises);
-        for (const artistResponse of batchResults) {
-          if (artistResponse && artistResponse.artists) {
-            for (const artist of artistResponse.artists) {
-              artistGenreMapping[artist.id] = artist.genres;
-              artistMetadata.push({
-                uri: artist.uri,
-                name: artist.name,
-                artworkUri: artist.images?.[0]?.url,
-              });
-            }
-            incrementProgress(artistResponse.artists.length);
+        for (const artist of batchResults) {
+          if (artist) {
+            artistGenreMapping[artist.id] = artist.genres;
+            artistMetadata.push({
+              uri: artist.uri,
+              name: artist.name,
+              artworkUri: artist.images?.[0]?.url,
+            });
+            incrementProgress(1);
           }
         }
       }
@@ -588,14 +574,22 @@ export default function createSpotifyPlayer(
   async function fetchArtistGenres(
     artistIds: string[]
   ): Promise<Record<string, string[]>> {
+    const maxConcurrentRequests = 5;
+    const delayMs = 200;
     const artistGenreMapping: Record<string, string[]> = {};
-    for (let i = 0; i < artistIds.length; i += 50) {
-      const batchIds = artistIds.slice(i, i + 50).join(",");
-      const artistResponse = (await spotifyRequest(
-        `/artists?ids=${batchIds}`
-      )) as SpotifyApi.MultipleArtistsResponse;
-      if (artistResponse?.artists) {
-        for (const artist of artistResponse.artists) {
+    for (let i = 0; i < artistIds.length; i += maxConcurrentRequests) {
+      if (i > 0) await new Promise((resolve) => setTimeout(resolve, delayMs));
+      const batch = artistIds.slice(i, i + maxConcurrentRequests);
+      const results = await Promise.all(
+        batch.map(
+          (id) =>
+            spotifyRequest(
+              `/artists/${id}`
+            ) as Promise<SpotifyApi.ArtistObjectFull>
+        )
+      );
+      for (const artist of results) {
+        if (artist) {
           artistGenreMapping[artist.id] = artist.genres;
         }
       }
@@ -841,7 +835,7 @@ export default function createSpotifyPlayer(
     return new Promise<void>((resolve) => {
       const onPlaybackStateChanged = (event: Spotify.PlaybackState) => {
         if (
-          (event.track_window.current_track.linked_from.uri ??
+          (event.track_window.current_track.linked_from?.uri ??
             event.track_window.current_track.uri) == track.uri &&
           event.loading == false
         ) {
@@ -1040,77 +1034,25 @@ export default function createSpotifyPlayer(
       };
     },
 
-    async getArtistTopTracks(
-      uri: string,
-      startIndex: number,
-      stopIndex: number
-    ) {
-      const artistId = uri.split(":").pop();
-      if (!artistId) {
-        throw new Error(`Invalid Spotify artist URI: ${uri}`);
-      }
-
-      const topTracksResponse = (await spotifyRequest(
-        `/artists/${artistId}/top-tracks?market=from_token`
-      )) as SpotifyApi.ArtistsTopTracksResponse;
-
-      if (!topTracksResponse?.tracks) {
-        return [];
-      }
-
-      const requestedTracks = topTracksResponse.tracks.slice(
-        startIndex,
-        Math.min(stopIndex, 10)
-      );
-      const tracks: TrackMetadata[] = [];
-      const artistIds = new Set<string>();
-
-      for (const track of requestedTracks) {
-        if (track.restrictions?.reason) continue;
-        tracks.push(getTrackMetadata(track, track.album, undefined));
-        track.artists.forEach((artist) => artistIds.add(artist.id));
-        track.album.artists.forEach((artist) => artistIds.add(artist.id));
-      }
-
-      if (getConfig().fetchGenres === true) {
-        const artists = Array.from(artistIds);
-        const artistGenreMapping = await fetchArtistGenres(artists);
-
-        return tracks.map((track) => {
-          const albumArtistIds =
-            topTracksResponse.tracks
-              .find((t) => t.uri === track.uri)
-              ?.album.artists.map((artist) => artist.id) ?? [];
-          const formattedGenres = getUniqueGenresFromArtists(
-            albumArtistIds,
-            artistGenreMapping
-          );
-          return {
-            ...track,
-            genre: formattedGenres,
-          };
-        });
-      }
-
-      return tracks;
-    },
-
     async getArtistAlbums(uri: string, startIndex: number, stopIndex: number) {
       const artistId = uri.split(":").pop();
       if (!artistId) {
         throw new Error(`Invalid Spotify artist URI: ${uri}`);
       }
 
-      const limit = stopIndex - startIndex;
-      const albumsResponse = (await spotifyRequest(
-        `/artists/${artistId}/albums?include_groups=album,single&limit=${limit}&offset=${startIndex}`
-      )) as SpotifyApi.ArtistsAlbumsResponse;
-
-      if (!albumsResponse?.items) {
-        return [];
+      const maxLimit = 10;
+      const allItems: SpotifyApi.AlbumObjectSimplified[] = [];
+      for (let offset = startIndex; offset < stopIndex; offset += maxLimit) {
+        const limit = Math.min(maxLimit, stopIndex - offset);
+        const albumsResponse = (await spotifyRequest(
+          `/artists/${artistId}/albums?include_groups=album,single&limit=${limit}&offset=${offset}`
+        )) as SpotifyApi.ArtistsAlbumsResponse;
+        if (!albumsResponse?.items) break;
+        allItems.push(...albumsResponse.items);
+        if (albumsResponse.items.length < limit) break;
       }
 
-      return albumsResponse.items.map((album) => ({
+      return allItems.map((album) => ({
         uri: album.uri,
         name: album.name,
         artist: album.artists.map((artist) => artist.name),
@@ -1127,66 +1069,74 @@ export default function createSpotifyPlayer(
 
     addTracksToRemoteLibrary: async (tracks: TrackUri[]) => {
       if (!getConfig().accessToken) return;
-      const uniqueIds = Array.from(
-        new Set(tracks.map((track) => track.split(":").pop()).filter(Boolean))
-      ) as string[];
-      if (uniqueIds.length === 0) return;
-      for (let i = 0; i < uniqueIds.length; i += 50) {
-        const batch = uniqueIds.slice(i, i + 50);
-        await spotifyRequest("/me/tracks", "PUT", { ids: batch });
+      const uniqueUris = Array.from(new Set(tracks));
+      if (uniqueUris.length === 0) return;
+      for (let i = 0; i < uniqueUris.length; i += 40) {
+        const batch = uniqueUris.slice(i, i + 40).join(",");
+        await spotifyRequest(
+          `/me/library?uris=${encodeURIComponent(batch)}`,
+          "PUT"
+        );
       }
     },
 
     removeTracksFromRemoteLibrary: async (tracks: TrackUri[]) => {
       if (!getConfig().accessToken) return;
-      const uniqueIds = Array.from(
-        new Set(tracks.map((track) => track.split(":").pop()).filter(Boolean))
-      ) as string[];
-      if (uniqueIds.length === 0) return;
-      for (let i = 0; i < uniqueIds.length; i += 50) {
-        const batch = uniqueIds.slice(i, i + 50);
-        await spotifyRequest("/me/tracks", "DELETE", { ids: batch });
+      const uniqueUris = Array.from(new Set(tracks));
+      if (uniqueUris.length === 0) return;
+      for (let i = 0; i < uniqueUris.length; i += 40) {
+        const batch = uniqueUris.slice(i, i + 40).join(",");
+        await spotifyRequest(
+          `/me/library?uris=${encodeURIComponent(batch)}`,
+          "DELETE"
+        );
       }
     },
 
     get searchTracks() {
       if (!getConfig().accessToken) return undefined;
       return async (query: string, startIndex: number, stopIndex: number) => {
-        const limit = stopIndex - startIndex;
-        const searchResponse = (await spotifyRequest(
-          `/search?q=${encodeURIComponent(query)}&type=track&limit=${limit}&offset=${startIndex}`
-        )) as SpotifyApi.SearchResponse;
-
-        if (!searchResponse?.tracks?.items) {
-          return [];
-        }
-
+        const apiLimit = 10;
         const tracks: TrackMetadata[] = [];
+        const rawTracks: SpotifyApi.TrackObjectFull[] = [];
         const artistIds = new Set<string>();
 
-        for (const track of searchResponse.tracks.items) {
-          if (track.restrictions?.reason) continue;
-          tracks.push(getTrackMetadata(track, track.album, undefined));
-          track.artists.forEach((artist) => artistIds.add(artist.id));
-          track.album.artists.forEach((artist) => artistIds.add(artist.id));
+        for (let offset = startIndex; offset < stopIndex; offset += apiLimit) {
+          const limit = Math.min(apiLimit, stopIndex - offset);
+          const searchResponse = (await spotifyRequest(
+            `/search?q=${encodeURIComponent(query)}&type=track&limit=${limit}&offset=${offset}`
+          )) as SpotifyApi.SearchResponse;
+
+          if (!searchResponse?.tracks?.items?.length) break;
+
+          for (const track of searchResponse.tracks.items) {
+            if (track.restrictions?.reason) continue;
+            tracks.push(getTrackMetadata(track, track.album, undefined));
+            rawTracks.push(track);
+            track.artists.forEach((artist) => artistIds.add(artist.id));
+            track.album.artists.forEach((artist) => artistIds.add(artist.id));
+          }
+
+          if (searchResponse.tracks.items.length < limit) break;
         }
 
-        if (getConfig().fetchGenres === true) {
-          const artists = Array.from(artistIds);
-          const artistGenreMapping = await fetchArtistGenres(artists);
+        if (!tracks.length) return [];
 
+        if (getConfig().fetchGenres === true) {
+          const artistGenreMapping = await fetchArtistGenres(
+            Array.from(artistIds)
+          );
           return tracks.map((track) => {
             const albumArtistIds =
-              searchResponse.tracks?.items
+              rawTracks
                 .find((t) => t.uri === track.uri)
                 ?.album.artists.map((artist) => artist.id) ?? [];
-            const formattedGenres = getUniqueGenresFromArtists(
-              albumArtistIds,
-              artistGenreMapping
-            );
             return {
               ...track,
-              genre: formattedGenres,
+              genre: getUniqueGenresFromArtists(
+                albumArtistIds,
+                artistGenreMapping
+              ),
             };
           });
         }
@@ -1198,16 +1148,21 @@ export default function createSpotifyPlayer(
     get searchAlbums() {
       if (!getConfig().accessToken) return undefined;
       return async (query: string, startIndex: number, stopIndex: number) => {
-        const limit = stopIndex - startIndex;
-        const searchResponse = (await spotifyRequest(
-          `/search?q=${encodeURIComponent(query)}&type=album&limit=${limit}&offset=${startIndex}`
-        )) as SpotifyApi.SearchResponse;
+        const apiLimit = 10;
+        const allItems: SpotifyApi.AlbumObjectSimplified[] = [];
 
-        if (!searchResponse?.albums?.items) {
-          return [];
+        for (let offset = startIndex; offset < stopIndex; offset += apiLimit) {
+          const limit = Math.min(apiLimit, stopIndex - offset);
+          const searchResponse = (await spotifyRequest(
+            `/search?q=${encodeURIComponent(query)}&type=album&limit=${limit}&offset=${offset}`
+          )) as SpotifyApi.SearchResponse;
+
+          if (!searchResponse?.albums?.items?.length) break;
+          allItems.push(...searchResponse.albums.items);
+          if (searchResponse.albums.items.length < limit) break;
         }
 
-        return searchResponse.albums.items.map((album) => ({
+        return allItems.map((album) => ({
           uri: album.uri,
           name: album.name,
           artist: album.artists.map((artist) => artist.name),
@@ -1226,16 +1181,21 @@ export default function createSpotifyPlayer(
     get searchArtists() {
       if (!getConfig().accessToken) return undefined;
       return async (query: string, startIndex: number, stopIndex: number) => {
-        const limit = stopIndex - startIndex;
-        const searchResponse = (await spotifyRequest(
-          `/search?q=${encodeURIComponent(query)}&type=artist&limit=${limit}&offset=${startIndex}`
-        )) as SpotifyApi.SearchResponse;
+        const apiLimit = 10;
+        const allItems: SpotifyApi.ArtistObjectFull[] = [];
 
-        if (!searchResponse?.artists?.items) {
-          return [];
+        for (let offset = startIndex; offset < stopIndex; offset += apiLimit) {
+          const limit = Math.min(apiLimit, stopIndex - offset);
+          const searchResponse = (await spotifyRequest(
+            `/search?q=${encodeURIComponent(query)}&type=artist&limit=${limit}&offset=${offset}`
+          )) as SpotifyApi.SearchResponse;
+
+          if (!searchResponse?.artists?.items?.length) break;
+          allItems.push(...searchResponse.artists.items);
+          if (searchResponse.artists.items.length < limit) break;
         }
 
-        return searchResponse.artists.items.map((artist) => ({
+        return allItems.map((artist) => ({
           uri: artist.uri,
           name: artist.name,
           artworkUri: artist.images?.[0]?.url,
@@ -1246,23 +1206,28 @@ export default function createSpotifyPlayer(
     get searchPlaylists() {
       if (!getConfig().accessToken) return undefined;
       return async (query: string, startIndex: number, stopIndex: number) => {
-        const limit = stopIndex - startIndex;
-        const searchResponse = (await spotifyRequest(
-          `/search?q=${encodeURIComponent(query)}&type=playlist&limit=${limit}&offset=${startIndex}`
-        )) as SpotifyApi.SearchResponse;
+        const apiLimit = 10;
+        const allItems: SpotifyApi.PlaylistObjectSimplified[] = [];
 
-        if (!searchResponse?.playlists?.items) {
-          return [];
+        for (let offset = startIndex; offset < stopIndex; offset += apiLimit) {
+          const limit = Math.min(apiLimit, stopIndex - offset);
+          const searchResponse = (await spotifyRequest(
+            `/search?q=${encodeURIComponent(query)}&type=playlist&limit=${limit}&offset=${offset}`
+          )) as SpotifyApi.SearchResponse;
+
+          if (!searchResponse?.playlists?.items?.length) break;
+          allItems.push(
+            ...searchResponse.playlists.items.filter((p) => p != null)
+          );
+          if (searchResponse.playlists.items.length < limit) break;
         }
 
-        return searchResponse.playlists.items
-          .filter((playlist) => playlist != null)
-          .map((playlist) => ({
-            id: playlist.id,
-            name: playlist.name,
-            artworkUri: playlist.images?.[0]?.url,
-            creatorName: playlist.owner.display_name ?? undefined,
-          }));
+        return allItems.map((playlist) => ({
+          id: playlist.id,
+          name: playlist.name,
+          artworkUri: playlist.images?.[0]?.url,
+          creatorName: playlist.owner.display_name ?? undefined,
+        }));
       };
     },
 
@@ -1322,7 +1287,7 @@ export default function createSpotifyPlayer(
         return { uris: allUris, dates: allDates, total };
       }
       const response = (await spotifyRequest(
-        `/playlists/${id}/tracks?limit=${limit}&offset=${startIndex}&fields=total,items(added_at,item(uri))`
+        `/playlists/${id}/items?limit=${limit}&offset=${startIndex}&fields=total,items(added_at,item(uri))`
       )) as SpotifyApi.PlaylistTrackResponse;
       if (!response || !response.items) {
         return { uris: [], dates: [], total: 0 };
@@ -1343,36 +1308,37 @@ export default function createSpotifyPlayer(
 
     deletePlaylist: async (id: string) => {
       await spotifyWriteRequest(
-        `/playlists/${encodeURIComponent(id)}/followers`,
+        `/me/library?uris=${encodeURIComponent(`spotify:playlist:${id}`)}`,
         "DELETE"
       );
     },
 
     getCustomPlaylistActions: (id, permissions) => {
-      if (permissions === "manage" || id === LIKED_SONGS_PLAYLIST_ID) return [];
+      const rawId = id.includes(":") ? id.split(":").slice(1).join(":") : id;
+      if (permissions === "manage" || rawId === LIKED_SONGS_PLAYLIST_ID)
+        return [];
       return [
         {
           label: i18n.t("spotify-player:playlists.unfollow"),
           onClick: async (playlistId: string) => {
+            const rawPlaylistId = playlistId.includes(":")
+              ? playlistId.split(":").slice(1).join(":")
+              : playlistId;
             await spotifyWriteRequest(
-              `/playlists/${encodeURIComponent(playlistId)}/followers`,
+              `/me/library?uris=${encodeURIComponent(`spotify:playlist:${rawPlaylistId}`)}`,
               "DELETE"
             );
-            host.removePlaylists([playlistId]);
+            host.removePlaylists([rawPlaylistId]);
           },
         },
       ];
     },
 
     createPlaylist: async (name: string) => {
-      const profile = (await spotifyRequest(
-        "/me"
-      )) as SpotifyApi.CurrentUsersProfileResponse;
-      const response = (await spotifyRequest(
-        `/users/${encodeURIComponent(profile.id)}/playlists`,
-        "POST",
-        { name, description: "" }
-      )) as { id: string };
+      const response = (await spotifyRequest("/me/playlists", "POST", {
+        name,
+        description: "",
+      })) as { id: string };
       return response.id;
     },
 
@@ -1383,7 +1349,7 @@ export default function createSpotifyPlayer(
     addPlaylistTracks: async (id: string, uris: string[]) => {
       for (let i = 0; i < uris.length; i += 100) {
         await spotifyWriteRequest(
-          `/playlists/${encodeURIComponent(id)}/tracks`,
+          `/playlists/${encodeURIComponent(id)}/items`,
           "POST",
           { uris: uris.slice(i, i + 100) }
         );
@@ -1392,18 +1358,17 @@ export default function createSpotifyPlayer(
 
     removePlaylistTracks: async (id: string, uris: string[]) => {
       if (id === LIKED_SONGS_PLAYLIST_ID) {
-        const batchSize = 50;
-        for (let i = 0; i < uris.length; i += batchSize) {
-          const ids = uris
-            .slice(i, i + batchSize)
-            .map((uri) => uri.split(":")[2])
-            .join(",");
-          await spotifyWriteRequest(`/me/tracks?ids=${ids}`, "DELETE");
+        for (let i = 0; i < uris.length; i += 40) {
+          const batch = uris.slice(i, i + 40).join(",");
+          await spotifyWriteRequest(
+            `/me/library?uris=${encodeURIComponent(batch)}`,
+            "DELETE"
+          );
         }
       } else {
         for (let i = 0; i < uris.length; i += 100) {
           await spotifyWriteRequest(
-            `/playlists/${encodeURIComponent(id)}/tracks`,
+            `/playlists/${encodeURIComponent(id)}/items`,
             "DELETE",
             { tracks: uris.slice(i, i + 100).map((uri) => ({ uri })) }
           );
@@ -1418,7 +1383,7 @@ export default function createSpotifyPlayer(
       rangeLength: number
     ) => {
       await spotifyWriteRequest(
-        `/playlists/${encodeURIComponent(id)}/tracks`,
+        `/playlists/${encodeURIComponent(id)}/items`,
         "PUT",
         {
           range_start: rangeStart,
@@ -1430,24 +1395,23 @@ export default function createSpotifyPlayer(
 
     getTracksByUri: async (uris: string[]) => {
       const tracks: TrackMetadata[] = [];
-      const batchSize = 50;
+      const maxConcurrentRequests = 5;
+      const delayMs = 200;
 
-      for (let i = 0; i < uris.length; i += batchSize) {
-        const batchUris = uris.slice(i, i + batchSize);
-        const trackIds = batchUris.map((uri) => uri.split(":")[2]).join(",");
-
-        const response = (await spotifyRequest(
-          `/tracks?ids=${trackIds}`
-        )) as SpotifyApi.MultipleTracksResponse;
-
-        if (response && response.tracks) {
-          for (const track of response.tracks) {
-            if (!track || track.restrictions?.reason) {
-              continue;
-            }
-
-            tracks.push(getTrackMetadata(track, track.album, undefined));
-          }
+      for (let i = 0; i < uris.length; i += maxConcurrentRequests) {
+        if (i > 0) await new Promise((resolve) => setTimeout(resolve, delayMs));
+        const batch = uris.slice(i, i + maxConcurrentRequests);
+        const results = await Promise.all(
+          batch.map(
+            (uri) =>
+              spotifyRequest(
+                `/tracks/${uri.split(":")[2]}`
+              ) as Promise<SpotifyApi.SingleTrackResponse>
+          )
+        );
+        for (const track of results) {
+          if (!track || track.restrictions?.reason) continue;
+          tracks.push(getTrackMetadata(track, track.album, undefined));
         }
       }
 

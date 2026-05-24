@@ -192,7 +192,8 @@ export default function ArtistView() {
   ]);
 
   const rowData = useMemo(() => {
-    if (!orderedTracks.length) return artistTracks.slice(0, 5);
+    if (!orderedTracks.length)
+      return isExternalArtistView ? [] : artistTracks.slice(0, 5);
     const state = store.getState();
     return orderedTracks
       .map((trackId) => ({
@@ -200,7 +201,7 @@ export default function ArtistView() {
         itemId: trackId,
       }))
       .slice(0, 5);
-  }, [artistTracks, orderedTracks]);
+  }, [artistTracks, orderedTracks, isExternalArtistView]);
 
   const viewAllSongs = () => {
     if (!artistId) return;
