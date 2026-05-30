@@ -7,9 +7,14 @@
   border-width: 1px;
   border-color: var(--artwork-border);
   border-style: solid;
+  transition: transform 0.15s ease;
 
   &:hover {
     cursor: pointer;
+  }
+
+  &:active {
+    transform: scale(0.97);
   }
 }
 

@@ -1,5 +1,8 @@
 import { useAppDispatch, useAppSelector } from "../../app/hooks";
-import { AlbumGridItem } from "./subviews/AlbumGridItem";
+import {
+  AlbumGridItem,
+  type AlbumOverlayTransitionDetails,
+} from "./subviews/AlbumGridItem";
 import styles from "./AlbumGrid.module.css";
 import { useTranslation } from "react-i18next";
 import {
@@ -42,6 +45,8 @@ type AlbumGridItemProps = CellComponentProps<{
   loadingSpinnerRowIndex: number | null;
   displayAlbumLimit: number;
   displayAlbums: ReturnType<typeof selectVisibleAlbums>;
+  containerRef: React.RefObject<HTMLDivElement | null>;
+  onTransition: (data: AlbumOverlayTransitionDetails) => void;
 }>;
 
 const ALBUMS_BATCH_SIZE = 20;
@@ -52,6 +57,16 @@ export default function AlbumGrid() {
   const { onScroll } = useScrollDetection();
 
   const gridRef = useRef<GridImperativeAPI | null>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const [transitionDetails, setTransitionDetails] =
+    useState<AlbumOverlayTransitionDetails | null>(null);
+
+  const handleTransition = useCallback(
+    (data: AlbumOverlayTransitionDetails) => {
+      setTransitionDetails(data);
+    },
+    []
+  );
   const { t } = useTranslation();
   const selectedItem = useAppSelector(selectVisibleSelectedTrackGroup);
   const visibleViewType = useAppSelector(selectVisibleViewType);
@@ -354,6 +369,8 @@ export default function AlbumGrid() {
     loadingSpinnerRowIndex,
     displayAlbumLimit,
     displayAlbums,
+    containerRef: cellContainerRef,
+    onTransition,
   }: AlbumGridItemProps) => {
     const index = rowIndex * columnCount + columnIndex;
     const shouldRenderAlbum = index < displayAlbumLimit;
@@ -389,14 +406,18 @@ export default function AlbumGrid() {
     return (
       <div key={album.albumId ?? index} style={style}>
         <div className={`album-grid-item ${styles.gridItem}`}>
-          <AlbumGridItem album={album} />
+          <AlbumGridItem
+            album={album}
+            containerRef={cellContainerRef}
+            onTransition={onTransition}
+          />
         </div>
       </div>
     );
   };
 
   return (
-    <div className={`album-grid ${styles.grid}`}>
+    <div ref={containerRef} className={`album-grid ${styles.grid}`}>
       {totalItemCount > 0 ? (
         <AutoSizer
           renderProp={({ height, width }) => {
@@ -469,6 +490,8 @@ export default function AlbumGrid() {
                     loadingSpinnerRowIndex,
                     displayAlbumLimit,
                     displayAlbums,
+                    containerRef,
+                    onTransition: handleTransition,
                   }}
                 />
               </div>
@@ -483,7 +506,10 @@ export default function AlbumGrid() {
           <LoadingSpinner />
         </div>
       )}
-      {selectedItem && visibleViewType != View.Artist && <AlbumGridOverlay />}
+      <AlbumGridOverlay
+        transitionDetails={transitionDetails}
+        onTransitionConsumed={() => setTransitionDetails(null)}
+      />
     </div>
   );
 }

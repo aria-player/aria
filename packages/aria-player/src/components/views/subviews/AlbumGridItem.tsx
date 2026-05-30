@@ -12,15 +12,48 @@ import { LibraryView } from "../../../app/view";
 import { normalizeArtists } from "../../../app/utils";
 import { selectArtistDelimiter } from "../../../features/config/configSlice";
 import { AlbumDetails } from "../../../features/albums/albumsTypes";
+import { useRef } from "react";
 
-export function AlbumGridItem({ album }: { album: AlbumDetails }) {
+export type AlbumOverlayTransitionDetails = {
+  albumId: string;
+  origin: { x: string; y: string };
+};
+
+export function AlbumGridItem({
+  album,
+  containerRef,
+  onTransition,
+}: {
+  album: AlbumDetails;
+  containerRef?: React.RefObject<HTMLDivElement | null>;
+  onTransition?: (data: AlbumOverlayTransitionDetails) => void;
+}) {
   const dispatch = useAppDispatch();
   const visiblePlaylist = useAppSelector(selectVisiblePlaylist);
   const pluginHandle = getSourceHandle(album.source);
   const visibleViewType = useAppSelector(selectVisibleViewType);
   const delimiter = useAppSelector(selectArtistDelimiter);
+  const albumArtRef = useRef<HTMLButtonElement>(null);
 
   function goToAlbum() {
+    if (albumArtRef.current && containerRef?.current && album.albumId) {
+      const buttonRect = albumArtRef.current.getBoundingClientRect();
+      const containerRect = containerRef.current.getBoundingClientRect();
+      const rem = parseFloat(
+        getComputedStyle(document.documentElement).fontSize
+      );
+      const panelLeft = containerRect.left + 3.5 * rem;
+      const panelTop = containerRect.top + 3 * rem;
+      const cx = buttonRect.left + buttonRect.width / 2;
+      const cy = buttonRect.top + buttonRect.height / 2;
+      onTransition?.({
+        albumId: album.albumId,
+        origin: {
+          x: `${Math.round(cx - panelLeft)}px`,
+          y: `${Math.round(cy - panelTop)}px`,
+        },
+      });
+    }
     const path = visiblePlaylist?.id
       ? `playlist/${visiblePlaylist.id}/${encodeURIComponent(album.albumId)}`
       : `${visibleViewType == LibraryView.Albums ? "albums" : "album"}/${encodeURIComponent(album.albumId)}`;
@@ -39,7 +72,7 @@ export function AlbumGridItem({ album }: { album: AlbumDetails }) {
 
   return (
     <div className={styles.albumGridItem}>
-      <button className={styles.albumArt} onClick={goToAlbum}>
+      <button ref={albumArtRef} className={styles.albumArt} onClick={goToAlbum}>
         <AlbumArt album={album} />
       </button>
       <div className={styles.albumInfo}>
