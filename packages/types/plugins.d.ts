@@ -93,9 +93,13 @@ export interface BaseCallbacks {
    */
   getData: () => object;
   /**
-   * Display a dialog containing an alert, such as a plugin configuration error.
+   * Display a dialog containing an alert, such as a plugin configuration error, that the user must explicitly dismiss.
    */
   showAlert: (alert: Alert) => void;
+  /**
+   * Display a dismissible dialog. The user can close it by clicking outside or pressing Escape.
+   */
+  showDialog: (alert: Alert) => void;
   /**
    * Open a URL allowing the user to authenticate with an external service via OAuth.
    *

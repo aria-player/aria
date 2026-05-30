@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useState } from "react";
 import { SpotifyConfig } from "./createSpotifyPlayer";
 import SpotifySetupDialog from "./SpotifySetupDialog";
+import { Dialog } from "soprano-ui";
 
 export default function QuickStart(props: {
   authenticate: (showLibrarySetupDialog?: boolean) => void;
@@ -28,7 +29,11 @@ export default function QuickStart(props: {
 
   return (
     <div className={styles.quickStart}>
-      {showSetupDialog && (
+      <Dialog
+        open={showSetupDialog}
+        onOpenChange={(open) => !open && setShowSetupDialog(false)}
+        title={t("setup.heading")}
+      >
         <SpotifySetupDialog
           redirectUri={props.redirectUri}
           initialClientId={
@@ -40,7 +45,7 @@ export default function QuickStart(props: {
           onClose={() => setShowSetupDialog(false)}
           i18n={props.i18n}
         />
-      )}
+      </Dialog>
       <button
         className={styles.loginButton}
         onClick={() => setShowSetupDialog(true)}

@@ -8,6 +8,7 @@ import { i18n } from "i18next";
 import SpotifySetupDialog from "./SpotifySetupDialog";
 import LibraryItemsConfig, { LibraryItemSelection } from "./LibraryItemsConfig";
 import LibrarySetupDialog from "./LibrarySetupDialog";
+import { Dialog } from "soprano-ui";
 
 export function showLibrarySetupDialog({
   host,
@@ -94,7 +95,11 @@ export default function LibraryConfig(props: {
 
   return (
     <div>
-      {showSetupDialog && (
+      <Dialog
+        open={showSetupDialog}
+        onOpenChange={(open) => !open && setShowSetupDialog(false)}
+        title={t("setup.heading")}
+      >
         <SpotifySetupDialog
           redirectUri={props.redirectUri}
           initialClientId={
@@ -104,7 +109,7 @@ export default function LibraryConfig(props: {
           onClose={() => setShowSetupDialog(false)}
           i18n={props.i18n}
         />
-      )}
+      </Dialog>
       <h4 className="settings-heading">{t("settings.heading")}</h4>
       {config.accessToken && (
         <LibraryItemsConfig

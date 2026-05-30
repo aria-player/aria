@@ -31,7 +31,7 @@ import ViewContainer from "./components/views/ViewContainer";
 import SearchPage from "./components/pages/SearchPage";
 import { Toaster } from "sonner";
 import Header from "./components/header/Header";
-import PluginAlertDialog from "./components/views/subviews/PluginAlertDialog";
+import PluginDialog from "./components/views/subviews/PluginDialog";
 import { QueuePage } from "./components/pages/QueuePage";
 import SearchResultsPage from "./components/pages/SearchResultsPage";
 import AllResultsPage from "./components/pages/search/AllResultsPage";
@@ -147,7 +147,7 @@ function App() {
                   : setMobileSidebarOpen(true)
               }
             />
-            <PluginAlertDialog />
+            <PluginDialog />
             {routes}
           </main>
         </div>
@@ -169,7 +169,7 @@ function App() {
           <Panel minSize={44}>
             <main className={`main-view ${styles.outlet}`}>
               <Header />
-              <PluginAlertDialog />
+              <PluginDialog />
               {routes}
             </main>
           </Panel>

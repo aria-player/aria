@@ -36,3 +36,20 @@ export type {
   MenuItemRadioGroup,
   MenubarMenu,
 } from "./shared/menu-types";
+
+export { AlertDialog } from "./alert-dialog/AlertDialog";
+export type { AlertDialogProps } from "./alert-dialog/AlertDialog";
+
+export { Dialog, DialogRoot, DialogBackdrop } from "./dialog/Dialog";
+export type {
+  DialogProps,
+  DialogAction,
+  DialogRootProps,
+  DialogBackdropProps,
+} from "./dialog/Dialog";
+export {
+  DialogTitle,
+  DialogDescription,
+  DialogClose,
+  DialogTrigger,
+} from "./dialog/primitives";

@@ -32,7 +32,7 @@ import {
   seek,
   getElapsedPlayerTime,
 } from "../player/playerTime";
-import { showAlert } from "./pluginsAlerts";
+import { showPluginAlert, showPluginDialog } from "./pluginDialogs";
 import { addArtists, removeArtists } from "../artists/artistsSlice";
 import { addAlbums, removeAlbums } from "../albums/albumsSlice";
 import {
@@ -185,7 +185,10 @@ export const getBaseCallbacks = (pluginId: PluginId): BaseCallbacks => {
     updateData: (data: object) => handleUpdateData(pluginId, data),
     getData: () => store.getState().plugins.pluginData[pluginId] ?? {},
     showAlert: (alert) => {
-      showAlert(alert);
+      showPluginAlert(alert);
+    },
+    showDialog: (alert) => {
+      showPluginDialog(alert);
     },
     openAuthenticationUrl: (url: string) => {
       if (isTauri()) {
