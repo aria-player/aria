@@ -1334,16 +1334,24 @@ export default function createSpotifyPlayer(
       ];
     },
 
-    createPlaylist: async (name: string) => {
-      const response = (await spotifyRequest("/me/playlists", "POST", {
-        name,
-        description: "",
-      })) as { id: string };
-      return response.id;
+    get createPlaylist() {
+      return !getConfig().accessToken
+        ? undefined
+        : async (name: string) => {
+            const response = (await spotifyRequest("/me/playlists", "POST", {
+              name,
+              description: "",
+            })) as { id: string };
+            return response.id;
+          };
     },
 
-    refreshPlaylists: async () => {
-      await loadPlaylists();
+    get refreshPlaylists() {
+      return !getConfig().accessToken
+        ? undefined
+        : async () => {
+            await loadPlaylists();
+          };
     },
 
     addPlaylistTracks: async (id: string, uris: string[]) => {

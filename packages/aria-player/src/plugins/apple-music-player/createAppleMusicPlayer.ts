@@ -1188,23 +1188,31 @@ export default function createAppleMusicPlayer(
       return fetchPlaylistUris(id, startIndex, stopIndex);
     },
 
-    createPlaylist: async (name: string) => {
-      const response = await appleMusicPost("v1/me/library/playlists", {
-        attributes: { name },
-      });
-      const responseData = (await response.json()) as {
-        data?: Array<{ id?: string }>;
-      };
-      const playlistId = responseData.data?.[0]?.id;
-      if (!playlistId) {
-        throw new Error("Apple Music playlist creation returned no ID.");
-      }
-      await loadPlaylists();
-      return playlistId;
+    get createPlaylist() {
+      return !getConfig().loggedIn
+        ? undefined
+        : async (name: string) => {
+            const response = await appleMusicPost("v1/me/library/playlists", {
+              attributes: { name },
+            });
+            const responseData = (await response.json()) as {
+              data?: Array<{ id?: string }>;
+            };
+            const playlistId = responseData.data?.[0]?.id;
+            if (!playlistId) {
+              throw new Error("Apple Music playlist creation returned no ID.");
+            }
+            await loadPlaylists();
+            return playlistId;
+          };
     },
 
-    refreshPlaylists: async () => {
-      await loadPlaylists();
+    get refreshPlaylists() {
+      return !getConfig().loggedIn
+        ? undefined
+        : async () => {
+            await loadPlaylists();
+          };
     },
 
     addPlaylistTracks: async (id: string, uris: string[]) => {
