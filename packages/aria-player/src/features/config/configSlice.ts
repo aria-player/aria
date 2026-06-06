@@ -11,6 +11,7 @@ import {
 } from "../../themes/themes";
 import { checkCompatibility } from "../../app/utils";
 import { t } from "i18next";
+import { showConfirmation } from "../../app/dialogs";
 import { ArtistDelimiterType } from "../artists/artistsTypes";
 
 export interface ConfigState {
@@ -58,8 +59,9 @@ export const installThemesFromFiles = createAppAsyncThunk(
           if (
             !checkCompatibility(themeFormatVersion, themeData.formatVersion)
           ) {
-            const confirmed = await confirm(
-              t("settings.appearance.confirmInstallIncompatibleTheme")
+            const confirmed = await showConfirmation(
+              t("settings.appearance.confirmInstallIncompatibleTheme"),
+              { confirmLabel: t("settings.appearance.install") }
             );
             if (!confirmed) return;
           }

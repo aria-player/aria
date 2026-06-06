@@ -5,6 +5,7 @@ import { pluginFormatVersion } from "../../../plugins/plugins";
 import { themeFormatVersion } from "../../../themes/themes";
 import { isTauri } from "../../../app/utils";
 import { checkForUpdates } from "../../../app/updater";
+import { showConfirmation } from "../../../app/dialogs";
 
 export function AboutPage() {
   const { t } = useTranslation();
@@ -49,7 +50,13 @@ export function AboutPage() {
         <button
           className="settings-button"
           onClick={async () => {
-            const confirmed = await confirm(t("settings.about.confirmReset"));
+            const confirmed = await showConfirmation(
+              t("settings.about.confirmReset"),
+              {
+                confirmLabel: t("settings.about.resetApplication"),
+                destructive: true,
+              }
+            );
             if (confirmed) {
               await localforage.clear();
               window.location.reload();

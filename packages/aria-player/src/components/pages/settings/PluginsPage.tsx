@@ -16,6 +16,7 @@ import {
 } from "../../../features/plugins/pluginsSlice";
 import { defaultPluginInfo, optionalPlugins } from "../../../plugins/plugins";
 import RemoveIcon from "../../../assets/trash-can-solid.svg?react";
+import { showConfirmation } from "../../../app/dialogs";
 
 export function PluginsPage() {
   const { t } = useTranslation();
@@ -77,10 +78,11 @@ export function PluginsPage() {
                 checked={enabledPlugins.includes(plugin)}
                 onClick={async () => {
                   if (enabledPlugins.includes(plugin)) {
-                    const confirmed = await confirm(
+                    const confirmed = await showConfirmation(
                       t("settings.plugins.confirmDisable", {
                         plugin: plugins[plugin].name,
-                      })
+                      }),
+                      { confirmLabel: t("settings.plugins.disable") }
                     );
                     if (!confirmed) {
                       return;
@@ -98,10 +100,14 @@ export function PluginsPage() {
               {!Object.keys(defaultPluginInfo).includes(plugin) && (
                 <button
                   onClick={async () => {
-                    const confirmed = await confirm(
+                    const confirmed = await showConfirmation(
                       t("settings.plugins.confirmUninstall", {
                         plugin: plugins[plugin].name,
-                      })
+                      }),
+                      {
+                        confirmLabel: t("settings.plugins.uninstall"),
+                        destructive: true,
+                      }
                     );
                     if (!confirmed) return;
                     dispatch(uninstallPlugin(plugin));

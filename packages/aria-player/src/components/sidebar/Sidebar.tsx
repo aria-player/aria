@@ -32,6 +32,7 @@ import { setQueueToNewSource } from "../../features/player/playerSlice";
 import { selectSortedTrackList } from "../../features/genericSelectors";
 import { useMenuActions } from "../../hooks/useMenuActions";
 import { store } from "../../app/store";
+import { showConfirmation } from "../../app/dialogs";
 import { push, replace } from "redux-first-history";
 import { BASEPATH } from "../../app/constants";
 import {
@@ -490,12 +491,17 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
         onSelect: async () => {
           if (!item) return;
           if (isExternalPlaylist) {
-            const confirmed = confirm(
+            const confirmed = await showConfirmation(
               t("sidebar.playlists.menu.confirmDeleteExternal", {
                 name: item.name,
                 provider:
                   pluginInfo[playlist!.provider!]?.name ?? playlist!.provider,
-              })
+              }),
+              {
+                confirmLabel: t("sidebar.playlists.menu.delete"),
+                destructive: true,
+                scope: "window",
+              }
             );
             if (!confirmed) return;
             dispatch(startPlaylistOperation(itemId, "delete"));
@@ -522,8 +528,13 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void } = {}) {
             return;
           }
           if ((item.children?.length ?? 0) > 0) {
-            const confirmed = confirm(
-              t("sidebar.playlists.menu.confirmDelete")
+            const confirmed = await showConfirmation(
+              t("sidebar.playlists.menu.confirmDelete"),
+              {
+                confirmLabel: t("sidebar.playlists.menu.delete"),
+                destructive: true,
+                scope: "window",
+              }
             );
             if (confirmed) {
               dispatch(deletePlaylistItem({ id: itemId, isFolder: true }));

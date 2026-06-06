@@ -23,6 +23,7 @@ import ThemePreview from "./ThemePreview";
 import RemoveIcon from "../../../assets/trash-can-solid.svg?react";
 import { ColorPicker, IColor, useColor } from "react-color-palette";
 import GearIcon from "../../../assets/gear-solid.svg?react";
+import { showConfirmation } from "../../../app/dialogs";
 
 export function AppearancePage() {
   const { t } = useTranslation();
@@ -146,10 +147,14 @@ export function AppearancePage() {
               {!Object.keys(defaultThemes).includes(theme) && (
                 <button
                   onClick={async () => {
-                    const confirmed = await confirm(
-                      t("settings.appearance.confirmDelete", {
+                    const confirmed = await showConfirmation(
+                      t("settings.appearance.confirmRemove", {
                         theme: themes[theme].name,
-                      })
+                      }),
+                      {
+                        confirmLabel: t("settings.appearance.remove"),
+                        destructive: true,
+                      }
                     );
                     if (!confirmed) return;
                     dispatch(removeTheme(theme));

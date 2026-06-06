@@ -7,6 +7,7 @@ import { i18n } from "i18next";
 import en_us from "./locales/en_us/translation.json";
 import QuickStart from "./QuickStart";
 import { createWebAudioBackend } from "../../app/audio";
+import { showConfirmation } from "../../app/dialogs";
 
 export type WebPlayerData = {
   folder: string;
@@ -143,8 +144,9 @@ export default function createWebPlayer(
     async loadAndPlayTrack(track: Track): Promise<void> {
       let file = fileHandles[track.uri];
       if (!file) {
-        const confirmed = await confirm(
-          t("web-player:fileNotLoaded", { folder })
+        const confirmed = await showConfirmation(
+          t("web-player:fileNotLoaded", { folder }),
+          { confirmLabel: t("web-player:config.chooseFolder") }
         );
         if (!confirmed) throw new Error("Re-selection cancelled");
         await pickDirectory();

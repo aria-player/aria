@@ -9,6 +9,7 @@ import QuickStart from "./QuickStart";
 import { LibraryConfig } from "./LibraryConfig";
 import Attribution from "./Attribution";
 import { createWebAudioBackend } from "../../app/audio";
+import { showConfirmation } from "../../app/dialogs";
 
 export type TauriPlayerData = {
   folders: Record<string, string[]>;
@@ -168,10 +169,11 @@ export default function createTauriPlayer(
   };
 
   async function removeFolder(folderPath: string) {
-    const confirmed = await confirm(
+    const confirmed = await showConfirmation(
       t("tauri-player:config.confirmRemove", {
         folder: folderPath,
-      })
+      }),
+      { confirmLabel: t("tauri-player:config.remove"), destructive: true }
     );
     if (!confirmed) return;
     host.removeTracks(folders[folderPath]);

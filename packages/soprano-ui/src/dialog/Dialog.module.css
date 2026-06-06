@@ -114,7 +114,6 @@
   padding: 0.5rem 1rem;
   font-size: 0.9rem;
   font-weight: 500;
-  cursor: pointer;
 }
 
 .actions button:disabled {
@@ -124,4 +123,15 @@
 
 .actions button:hover:not(:disabled) {
   background-color: var(--button-background-hover);
+}
+
+.actions button[data-variant="destructive"] {
+  background-color: var(--button-destructive);
+  border: none;
+  color: var(--button-text-selected);
+}
+
+.actions button[data-variant="destructive"]:hover:not(:disabled) {
+  background-color: var(--button-destructive-hover);
+  border: none;
 }

@@ -48,6 +48,7 @@ function App() {
   const [mobileSidebarClosing, setMobileSidebarClosing] = useState(false);
   const isMobileSidebarOpen = isMobileBrowser && mobileSidebarOpen;
   const sidebarPanelRef = useRef<PanelImperativeHandle | null>(null);
+  const [dialogRegion, setDialogRegion] = useState<HTMLElement | null>(null);
 
   const closeMobileSidebar = () => {
     setMobileSidebarClosing(true);
@@ -125,7 +126,7 @@ function App() {
       {platform == Platform.Mac && fullscreen === false && <MacTitleBar />}
       {platform == Platform.Windows && <WindowsMenuBar />}
       {isMobileBrowser ? (
-        <div className={styles.mobileContent}>
+        <div className={styles.mobileContent} ref={setDialogRegion}>
           {mobileSidebarOpen && (
             <>
               <div
@@ -147,33 +148,35 @@ function App() {
                   : setMobileSidebarOpen(true)
               }
             />
-            <PluginDialog />
+            <PluginDialog region={dialogRegion} />
             {routes}
           </main>
         </div>
       ) : (
-        <Group
-          orientation="horizontal"
-          onLayoutChanged={handleSidebarLayoutChanged}
-        >
-          <Panel
-            panelRef={sidebarPanelRef}
-            defaultSize={sidebarWidth || 220}
-            minSize={44}
-            groupResizeBehavior="preserve-pixel-size"
-            style={{ overflow: "hidden" }}
+        <div className={styles.content} ref={setDialogRegion}>
+          <Group
+            orientation="horizontal"
+            onLayoutChanged={handleSidebarLayoutChanged}
           >
-            <Sidebar />
-          </Panel>
-          <Separator className="resize-handle" />
-          <Panel minSize={44}>
-            <main className={`main-view ${styles.outlet}`}>
-              <Header />
-              <PluginDialog />
-              {routes}
-            </main>
-          </Panel>
-        </Group>
+            <Panel
+              panelRef={sidebarPanelRef}
+              defaultSize={sidebarWidth || 220}
+              minSize={44}
+              groupResizeBehavior="preserve-pixel-size"
+              style={{ overflow: "hidden" }}
+            >
+              <Sidebar />
+            </Panel>
+            <Separator className="resize-handle" />
+            <Panel minSize={44}>
+              <main className={`main-view ${styles.outlet}`}>
+                <Header />
+                <PluginDialog region={dialogRegion} />
+                {routes}
+              </main>
+            </Panel>
+          </Group>
+        </div>
       )}
       <Footer />
     </div>

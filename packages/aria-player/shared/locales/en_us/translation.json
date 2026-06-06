@@ -20,8 +20,8 @@
         "addFolder": "Add new folder...",
         "rename": "Rename...",
         "delete": "Delete",
-        "confirmDelete": "Deleting this folder will also delete all of its contents. Are you sure?",
-        "confirmDeleteExternal": "Are you sure you want to delete '{{name}}'? This will also remove it from {{provider}}.",
+        "confirmDelete": "Deleting this folder will also delete all of its contents.",
+        "confirmDeleteExternal": "Deleting '{{name}}' will also remove it from {{provider}}.",
         "addExternalPlaylist": "Add new {{provider}} playlist...",
         "refreshExternalPlaylists": "Refresh {{provider}} playlists",
         "play": "Play"
@@ -195,14 +195,16 @@
       "subtitle": "Adjust the theme and layout of the application.",
       "theme": "Theme",
       "installFromFile": "Install from file...",
-      "confirmDelete": "Are you sure you want to delete '{{theme}}'?",
+      "confirmRemove": "Are you sure you want to remove '{{theme}}'?",
+      "remove": "Remove",
       "window": "Window",
       "windowsControls": "Use system window controls",
       "navigation": "Navigation",
       "alwaysShowNavigation": "Always show navigation buttons",
       "accent": "Accent color",
       "customAccent": "Pick custom accent color",
-      "confirmInstallIncompatibleTheme": "This theme is not compatible with the current version of Aria and may not appear correctly. Are you sure you want to install it?"
+      "confirmInstallIncompatibleTheme": "This theme is not compatible with the current version of Aria and may not appear correctly. Are you sure you want to install it?",
+      "install": "Install"
     },
     "plugins": {
       "subtitle": "Manage plugins to provide additional functionality.",
@@ -212,9 +214,11 @@
       "uninstall": "Uninstall",
       "confirmUninstall": "Are you sure you want to uninstall '{{plugin}}'?",
       "confirmDisable": "Are you sure you want to disable '{{plugin}}'?",
+      "disable": "Disable",
       "pluginConfig": "Plugin configuration",
       "noPlugins": "No plugins available",
-      "confirmInstallIncompatiblePlugin": "This plugin is not compatible with the current version of Aria and may not function correctly. Are you sure you want to install it?"
+      "confirmInstallIncompatiblePlugin": "This plugin is not compatible with the current version of Aria and may not function correctly. Are you sure you want to install it?",
+      "install": "Install"
     },
     "about": {
       "subtitle": "View information about the application.",
@@ -401,5 +405,10 @@
   "upToDateDialog": {
     "title": "Up to date",
     "message": "You are running the latest version of Aria."
+  },
+  "confirmDialog": {
+    "heading": "Are you sure?",
+    "confirm": "OK",
+    "cancel": "Cancel"
   }
 }

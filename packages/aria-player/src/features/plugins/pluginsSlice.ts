@@ -14,6 +14,7 @@ import { checkCompatibility, isTauri } from "../../app/utils";
 import JSZip from "jszip";
 import { defaultPluginInfo, pluginFormatVersion } from "../../plugins/plugins";
 import { t } from "i18next";
+import { showConfirmation } from "../../app/dialogs";
 
 type PluginsState = {
   installedPluginInfo: Record<PluginId, PluginInfo>;
@@ -67,8 +68,9 @@ export const installPluginsFromFiles = createAppAsyncThunk(
         const mainFileName = info.main;
         if (mainFileName) {
           if (!checkCompatibility(pluginFormatVersion, info.formatVersion)) {
-            const confirmed = await confirm(
-              t("settings.plugins.confirmInstallIncompatiblePlugin")
+            const confirmed = await showConfirmation(
+              t("settings.plugins.confirmInstallIncompatiblePlugin"),
+              { confirmLabel: t("settings.plugins.install") }
             );
             if (!confirmed) return;
           }
