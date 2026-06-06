@@ -37,6 +37,7 @@ export type SpotifyConfig = {
 };
 
 export const LIKED_SONGS_PLAYLIST_ID = "liked-songs";
+const TOKEN_EXPIRY_BUFFER = 60 * 1000;
 
 export default function createSpotifyPlayer(
   host: SourceCallbacks & ExternalPlaylistsCallbacks,
@@ -48,31 +49,16 @@ export default function createSpotifyPlayer(
   let requestTimeout: NodeJS.Timeout | null;
   let requestingTrack = false;
   let hasTransferredPlayback = false;
-  let tokenRefreshInterval: NodeJS.Timeout | null = null;
+  let refreshPromise: Promise<void> | null = null;
 
   const getConfig = () => host.getData() as SpotifyConfig;
 
   initialize();
 
-  function startTokenRefreshInterval() {
-    if (tokenRefreshInterval) return;
-    tokenRefreshInterval = setInterval(
-      () => {
-        if (getConfig().refreshToken) {
-          refreshToken().catch((error) =>
-            console.error("Spotify token refresh failed:", error)
-          );
-        }
-      },
-      55 * 60 * 1000
-    );
-  }
-
   async function initialize() {
     const config = getConfig();
     if (config.accessToken) {
       setupSpotifyPlayer();
-      startTokenRefreshInterval();
       if (config.disableInitialSync) return;
       const hasSubscription = await checkForSubscription();
       if (!hasSubscription) return;
@@ -200,13 +186,22 @@ export default function createSpotifyPlayer(
   async function getOrRefreshAccessToken() {
     const expiryTime = getConfig().tokenExpiry;
     if (!expiryTime) return;
-    if (Date.now() > Number(expiryTime)) {
+    if (Date.now() > Number(expiryTime) - TOKEN_EXPIRY_BUFFER) {
       await refreshToken();
     }
     return getConfig().accessToken;
   }
 
-  async function refreshToken() {
+  function refreshToken() {
+    if (!refreshPromise) {
+      refreshPromise = performTokenRefresh().finally(() => {
+        refreshPromise = null;
+      });
+    }
+    return refreshPromise;
+  }
+
+  async function performTokenRefresh() {
     const refresh_token = getConfig()?.refreshToken;
     if (!refresh_token) return;
     const response = await fetch("https://accounts.spotify.com/api/token", {
@@ -214,7 +209,9 @@ export default function createSpotifyPlayer(
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
-      body: `grant_type=refresh_token&refresh_token=${refresh_token}&client_id=${getClientId()}`,
+      body: `grant_type=refresh_token&refresh_token=${encodeURIComponent(
+        refresh_token
+      )}&client_id=${getClientId()}`,
     });
     const responseBody = await response.json();
     if (!response.ok) {
@@ -224,7 +221,7 @@ export default function createSpotifyPlayer(
     host.updateData({
       ...getConfig(),
       accessToken: responseBody.access_token,
-      refreshToken: responseBody.refresh_token,
+      refreshToken: responseBody.refresh_token ?? getConfig().refreshToken,
       tokenExpiry: Date.now() + responseBody.expires_in * 1000,
     });
   }
@@ -763,7 +760,6 @@ export default function createSpotifyPlayer(
         tokenExpiry: Date.now() + responseBody.expires_in * 1000,
       });
       setupSpotifyPlayer();
-      startTokenRefreshInterval();
       const hasSubscription = await checkForSubscription();
       if (!hasSubscription) return;
       await fetchAndStoreLibraryInfo();
@@ -780,10 +776,6 @@ export default function createSpotifyPlayer(
   }
 
   function logout() {
-    if (tokenRefreshInterval) {
-      clearInterval(tokenRefreshInterval);
-      tokenRefreshInterval = null;
-    }
     if (player) {
       player.disconnect();
     }
