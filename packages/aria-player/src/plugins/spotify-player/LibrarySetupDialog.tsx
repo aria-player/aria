@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { i18n } from "i18next";
 import { useTranslation } from "react-i18next";
+import { DialogDescription } from "soprano-ui";
 import styles from "./spotify.module.css";
 import LibraryItemsConfig, { LibraryItemSelection } from "./LibraryItemsConfig";
 
@@ -26,7 +27,9 @@ export default function LibrarySetupDialog({
 
   return (
     <>
-      <p className={styles.setupDescription}>{t("librarySetup.description")}</p>
+      <DialogDescription className={styles.setupDescription}>
+        {t("librarySetup.description")}
+      </DialogDescription>
       <LibraryItemsConfig
         selection={selection}
         likedSongsCount={likedSongsCount}

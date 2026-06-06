@@ -18,12 +18,10 @@ export default function PluginDialog() {
     setState(null);
   }
 
-  const body =
-    typeof state?.message === "string" ? (
-      <p style={{ margin: 0 }}>{state.message}</p>
-    ) : (
-      state?.message && <state.message />
-    );
+  const description =
+    state && typeof state.message === "string" ? state.message : undefined;
+  const Message =
+    state && typeof state.message !== "string" ? state.message : null;
 
   if (state?.variant === "dialog") {
     return (
@@ -31,9 +29,10 @@ export default function PluginDialog() {
         open
         onOpenChange={(open) => !open && handleClose()}
         title={state.heading}
+        description={description}
         actions={[{ label: state.closeLabel, onClick: handleClose }]}
       >
-        {body}
+        {Message && <Message />}
       </Dialog>
     );
   }
@@ -43,10 +42,11 @@ export default function PluginDialog() {
       open={!!state}
       onOpenChange={(open) => !open && handleClose()}
       title={state?.heading ?? ""}
+      description={description}
       confirmLabel={state?.closeLabel}
       onConfirm={handleClose}
     >
-      {body}
+      {Message && <Message />}
     </AlertDialog>
   );
 }

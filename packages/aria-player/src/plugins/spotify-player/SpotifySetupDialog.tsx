@@ -2,6 +2,7 @@ import { useState, ChangeEvent } from "react";
 import styles from "./spotify.module.css";
 import { Trans, useTranslation } from "react-i18next";
 import { i18n } from "i18next";
+import { DialogDescription } from "soprano-ui";
 import { isTauri } from "../../app/utils";
 import { open } from "@tauri-apps/plugin-shell";
 import CopyIcon from "../../assets/copy-regular.svg?react";
@@ -27,7 +28,9 @@ export default function SpotifySetupDialog(props: {
 
   return (
     <>
-      <div className={styles.setupDescription}>{t("setup.description")}</div>
+      <DialogDescription className={styles.setupDescription}>
+        {t("setup.description")}
+      </DialogDescription>
       <ol className={styles.setupSteps}>
         <li>
           <Trans

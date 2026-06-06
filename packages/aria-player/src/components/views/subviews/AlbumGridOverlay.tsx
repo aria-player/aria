@@ -80,6 +80,7 @@ export default function AlbumGridOverlay({
       <DialogBackdrop
         className={`album-grid-overlay-background ${styles.overlay}`}
         aria-label={displayAlbum?.name ?? t("labels.album")}
+        aria-describedby={undefined}
       >
         <div
           className={`album-grid-overlay-foreground ${styles.content}`}
