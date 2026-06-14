@@ -6,10 +6,26 @@ import { themeFormatVersion } from "../../../themes/themes";
 import { isTauri } from "../../../app/utils";
 import { checkForUpdates } from "../../../app/updater";
 import { showConfirmation } from "../../../app/dialogs";
+import { exportAppData, importAppData } from "../../../app/dataTransfer";
 
 export function AboutPage() {
   const { t } = useTranslation();
 
+  const showDataFilePicker = () => {
+    const input = document.createElement("input");
+    input.type = "file";
+    input.accept = "application/json,.json";
+    input.style.display = "none";
+    input.onchange = (event) => {
+      const file = (event.target as HTMLInputElement).files?.[0];
+      if (file) {
+        importAppData(file);
+      }
+    };
+    document.body.appendChild(input);
+    input.click();
+    document.body.removeChild(input);
+  };
   return (
     <div className={styles.page}>
       <h3 className={styles.title}>{t("settings.sections.about")}</h3>
@@ -43,6 +59,19 @@ export function AboutPage() {
               {t("settings.about.checkForUpdates")}
             </button>
           )}
+        </div>
+      </section>
+      <section className="settings-section">
+        <h4 className="settings-heading">
+          {t("settings.about.libraryBackup")}
+        </h4>
+        <div className={styles.buttonRow}>
+          <button className="settings-button" onClick={() => exportAppData()}>
+            {t("settings.about.exportToFile")}
+          </button>
+          <button className="settings-button" onClick={showDataFilePicker}>
+            {t("settings.about.importFromFile")}
+          </button>
         </div>
       </section>
       <section className="settings-section">

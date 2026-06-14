@@ -227,6 +227,12 @@
       "pluginFormatVersion": "Plugin format version: {{version}}",
       "themeFormatVersion": "Theme format version: {{version}}",
       "checkForUpdates": "Check for updates",
+      "libraryBackup": "Library backup",
+      "exportToFile": "Export to file...",
+      "importFromFile": "Import from file...",
+      "confirmImport": "Importing will replace all current data and settings. Continue?",
+      "import": "Import",
+      "importError": "The selected file is not a valid library backup.",
       "reset": "Factory reset",
       "resetApplication": "Reset application",
       "confirmReset": "Are you sure you want to reset? All data and settings will be deleted."
