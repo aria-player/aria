@@ -36,7 +36,7 @@ You can also use Aria [online](https://aria-player.github.io/aria/). The web ver
 - [x] Initial streaming plugins
 - [x] Plugin development documentation
 - [x] Search sources for songs, artists, and albums
-- [ ] Playlist import, export, and sync
+- [x] Playlist import, export, and sync
 - [ ] Theme asset support (embedding images/fonts)
 - [ ] In-app plugin/theme browser
 - [ ] Metadata editing
