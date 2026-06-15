@@ -51,6 +51,9 @@ export default function createSpotifyPlayer(
   let hasTransferredPlayback = false;
   let refreshPromise: Promise<void> | null = null;
 
+  const PLAY_ATTEMPTS = 3;
+  const PLAY_CONFIRM_TIMEOUT = 5000;
+
   const getConfig = () => host.getData() as SpotifyConfig;
 
   initialize();
@@ -809,38 +812,115 @@ export default function createSpotifyPlayer(
     });
   }
 
-  async function requestTrack(track: TrackMetadata) {
-    requestingTrack = true;
-    await player?.pause();
-    const response = await spotifyRequest(
-      `/me/player/play?device_id=${deviceId}`,
-      "PUT",
-      { uris: [track.uri] }
-    );
-    if (response instanceof Response && response.status === 404) {
-      deviceId = await waitForDeviceId();
-      hasTransferredPlayback = false;
-      await spotifyRequest(`/me/player/play?device_id=${deviceId}`, "PUT", {
-        uris: [track.uri],
-      });
-    }
-    return new Promise<void>((resolve) => {
-      const onPlaybackStateChanged = (event: Spotify.PlaybackState) => {
-        if (
-          (event.track_window.current_track.linked_from?.uri ??
-            event.track_window.current_track.uri) == track.uri &&
-          event.loading == false
-        ) {
-          player?.removeListener(
-            "player_state_changed",
-            onPlaybackStateChanged
-          );
-          requestingTrack = false;
-          resolve();
+  async function transferPlayback() {
+    if (hasTransferredPlayback || !deviceId) return;
+    await spotifyRequest("/me/player", "PUT", {
+      device_ids: [deviceId],
+    }).catch((error) => {
+      console.error("Error setting device ID:", error);
+    });
+    hasTransferredPlayback = true;
+  }
+
+  async function sendPlayCommand(uri: TrackUri): Promise<boolean> {
+    for (let attempt = 0; attempt < PLAY_ATTEMPTS; attempt++) {
+      const token = await getOrRefreshAccessToken();
+      if (!token) return false;
+      let response: Response;
+      try {
+        response = await fetch(
+          `https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`,
+          {
+            method: "PUT",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ uris: [uri] }),
+          }
+        );
+      } catch {
+        await delay(500 * (attempt + 1));
+        continue;
+      }
+      if (response.ok) return true;
+      if (response.status === 401) {
+        await refreshToken();
+        continue;
+      }
+      if (response.status === 404) {
+        try {
+          deviceId = await waitForDeviceId();
+        } catch {
+          return false;
         }
+        hasTransferredPlayback = false;
+        await transferPlayback();
+        continue;
+      }
+      if (response.status === 429) {
+        const retryAfter = response.headers.get("Retry-After");
+        await delay(retryAfter ? parseInt(retryAfter, 10) * 1000 : 1000);
+        continue;
+      }
+      if (response.status >= 500) {
+        await delay(500 * (attempt + 1));
+        continue;
+      }
+      return false;
+    }
+    return false;
+  }
+
+  function playbackMatches(
+    state: Spotify.PlaybackState | null,
+    uri: TrackUri
+  ): boolean {
+    if (!state || state.loading) return false;
+    const playingUri =
+      state.track_window.current_track.linked_from?.uri ??
+      state.track_window.current_track.uri;
+    return playingUri === uri;
+  }
+
+  function confirmPlayback(uri: TrackUri): Promise<boolean> {
+    return new Promise<boolean>((resolve) => {
+      let settled = false;
+      const finish = (confirmed: boolean) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(timer);
+        player?.removeListener("player_state_changed", onPlaybackStateChanged);
+        resolve(confirmed);
       };
+      const onPlaybackStateChanged = (event: Spotify.PlaybackState) => {
+        if (playbackMatches(event, uri)) finish(true);
+      };
+      const timer = setTimeout(async () => {
+        const state = (await player?.getCurrentState()) ?? null;
+        finish(playbackMatches(state, uri));
+      }, PLAY_CONFIRM_TIMEOUT);
       player?.addListener("player_state_changed", onPlaybackStateChanged);
     });
+  }
+
+  async function requestTrack(track: TrackMetadata) {
+    requestingTrack = true;
+    try {
+      await player?.pause();
+      const confirmed =
+        (await sendPlayCommand(track.uri)) &&
+        (await confirmPlayback(track.uri));
+      if (!confirmed) {
+        throw new Error(`Spotify playback not started for ${track.uri}`);
+      }
+    } finally {
+      requestingTrack = false;
+    }
+  }
+
+  function delay(ms: number) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
   }
 
   return {
@@ -870,25 +950,16 @@ export default function createSpotifyPlayer(
     Attribution: (props) => Attribution({ ...props, i18n }),
 
     async loadAndPlayTrack(track: TrackMetadata) {
-      if (!hasTransferredPlayback && deviceId) {
-        await spotifyRequest("/me/player", "PUT", {
-          device_ids: [deviceId],
-        }).catch((error) => {
-          console.error("Error setting device ID:", error);
-        });
-        hasTransferredPlayback = true;
-      }
+      await transferPlayback();
       if (!requestingTrack) {
         return await requestTrack(track);
-      } else {
-        return new Promise<void>((resolve) => {
-          if (requestTimeout) clearTimeout(requestTimeout);
-          requestTimeout = setTimeout(async () => {
-            await requestTrack(track);
-            resolve();
-          }, 500);
-        });
       }
+      return new Promise<void>((resolve, reject) => {
+        if (requestTimeout) clearTimeout(requestTimeout);
+        requestTimeout = setTimeout(() => {
+          requestTrack(track).then(resolve, reject);
+        }, 500);
+      });
     },
 
     async getTrack(uri: TrackUri) {
