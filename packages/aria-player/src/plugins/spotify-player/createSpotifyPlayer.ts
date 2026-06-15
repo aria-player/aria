@@ -771,6 +771,7 @@ export default function createSpotifyPlayer(
       reauthorizing = false;
       refreshTokenInvalid = false;
       setupSpotifyPlayer();
+      player?.connect();
       const hasSubscription = await checkForSubscription();
       if (!hasSubscription) return;
       await fetchAndStoreLibraryInfo();
