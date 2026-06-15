@@ -50,6 +50,8 @@ export default function createSpotifyPlayer(
   let requestingTrack = false;
   let hasTransferredPlayback = false;
   let refreshPromise: Promise<void> | null = null;
+  let reauthorizing = false;
+  let refreshTokenInvalid = false;
 
   const PLAY_ATTEMPTS = 3;
   const PLAY_CONFIRM_TIMEOUT = 5000;
@@ -219,8 +221,12 @@ export default function createSpotifyPlayer(
     const responseBody = await response.json();
     if (!response.ok) {
       console.error("Failed to refresh token:", responseBody);
+      if (response.status === 400) {
+        refreshTokenInvalid = true;
+      }
       throw new Error(`Failed to refresh token. Status: ${response.status}`);
     }
+    refreshTokenInvalid = false;
     host.updateData({
       ...getConfig(),
       accessToken: responseBody.access_token,
@@ -762,6 +768,8 @@ export default function createSpotifyPlayer(
         refreshToken: responseBody.refresh_token,
         tokenExpiry: Date.now() + responseBody.expires_in * 1000,
       });
+      reauthorizing = false;
+      refreshTokenInvalid = false;
       setupSpotifyPlayer();
       const hasSubscription = await checkForSubscription();
       if (!hasSubscription) return;
@@ -774,6 +782,7 @@ export default function createSpotifyPlayer(
         startLibraryLoad();
       }
     } catch (error) {
+      reauthorizing = false;
       console.error("Error exchanging code for token:", error);
     }
   }
@@ -950,6 +959,14 @@ export default function createSpotifyPlayer(
     Attribution: (props) => Attribution({ ...props, i18n }),
 
     async loadAndPlayTrack(track: TrackMetadata) {
+      const token = await getOrRefreshAccessToken().catch(() => undefined);
+      if (!token) {
+        if (refreshTokenInvalid && !reauthorizing) {
+          reauthorizing = true;
+          authenticate(false);
+        }
+        throw new Error("Spotify authentication required");
+      }
       await transferPlayback();
       if (!requestingTrack) {
         return await requestTrack(track);
