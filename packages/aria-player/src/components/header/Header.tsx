@@ -23,6 +23,7 @@ import { BASEPATH } from "../../app/constants";
 import { selectAllAlbums } from "../../features/genericSelectors";
 import { GridContext } from "../../contexts/GridContext";
 import { selectAlwaysShowNavigation } from "../../features/config/configSlice";
+import HeaderActions from "./HeaderActions";
 
 export default function Header({
   onMobileSidebarToggle,
@@ -145,6 +146,7 @@ export default function Header({
                 })}
         </h1>
       )}
+      <HeaderActions />
     </header>
   );
 }

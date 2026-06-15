@@ -13,6 +13,7 @@ import {
   addTracksToPlaylist,
   cleanupPlaylistConfigs,
   deletePlaylistItem,
+  removeExternalPlaylists,
   selectPlaylistById,
   selectPlaylistConfigById,
   selectPlaylistsLayoutItemById,
@@ -114,6 +115,7 @@ export function setupPlaylistsListeners() {
   listenForAction(
     isAnyOf(
       deletePlaylistItem,
+      removeExternalPlaylists,
       ((action) =>
         // Check after undo in case createPlaylist is undone with playlist open
         action.type === ActionTypes.UNDO ||

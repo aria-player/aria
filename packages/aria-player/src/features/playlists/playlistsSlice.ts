@@ -619,7 +619,7 @@ export const playlistsSlice = createSlice({
       if (existingPlaylist) {
         playlistsAdapter.updateOne(state.playlists, {
           id,
-          changes: { name, creatorName, provider, permissions, artworkUri },
+          changes: { name, creatorName, provider, artworkUri },
         });
       } else {
         playlistsAdapter.addOne(state.playlists, {

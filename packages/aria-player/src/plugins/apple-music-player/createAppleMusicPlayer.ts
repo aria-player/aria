@@ -1215,6 +1215,18 @@ export default function createAppleMusicPlayer(
           };
     },
 
+    get addPlaylistToRemoteLibrary() {
+      return !getConfig().loggedIn
+        ? undefined
+        : async (id: string) => {
+            if (isLibraryPlaylistId(id)) return;
+            await appleMusicPost(
+              `v1/me/library?ids[playlists]=${encodeURIComponent(id)}`
+            );
+            await loadPlaylists();
+          };
+    },
+
     addPlaylistTracks: async (id: string, uris: string[]) => {
       if (!isLibraryPlaylistId(id) || uris.length === 0) return;
       const batchSize = 100;

@@ -49,6 +49,6 @@
   },
   "playOnSpotify": "Play on Spotify",
   "playlists": {
-    "unfollow": "Unfollow"
+    "removeFromLibrary": "Remove from library"
   }
 }

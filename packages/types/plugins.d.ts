@@ -583,6 +583,10 @@ export interface ExternalPlaylistsHandle extends BaseHandle {
     id: PlaylistId,
     permissions: PlaylistPermissions
   ) => PlaylistAction[];
+  /**
+   * Add a playlist to the library managed by this source.
+   */
+  addPlaylistToRemoteLibrary?: (id: PlaylistId) => Promise<void>;
 }
 
 /**

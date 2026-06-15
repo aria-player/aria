@@ -58,6 +58,7 @@
     "deletedExternalPlaylistItem": "Deleted '{{name}}' from {{provider}}",
     "renameExternalPlaylistError": "Couldn't rename '{{name}}'",
     "deleteExternalPlaylistError": "Couldn't delete '{{name}}'",
+    "addPlaylistToLibraryError": "Couldn't add '{{name}}' to your library",
     "createExternalPlaylistError": "Couldn't create playlist",
     "refreshExternalPlaylistsError": "Couldn't refresh playlists",
     "addToExternalPlaylistError": "Couldn't add to '{{playlist}}'",
@@ -253,6 +254,9 @@
     "menu": "Menu",
     "forward": "Forward",
     "back": "Back"
+  },
+  "playlists": {
+    "addToLibrary": "Add to library"
   },
   "menu": {
     "noActions": "(No actions)",

@@ -1307,11 +1307,11 @@ export default function createSpotifyPlayer(
 
     getCustomPlaylistActions: (id, permissions) => {
       const rawId = id.includes(":") ? id.split(":").slice(1).join(":") : id;
-      if (permissions === "manage" || rawId === LIKED_SONGS_PLAYLIST_ID)
+      if (permissions !== "write" || rawId === LIKED_SONGS_PLAYLIST_ID)
         return [];
       return [
         {
-          label: i18n.t("spotify-player:playlists.unfollow"),
+          label: i18n.t("spotify-player:playlists.removeFromLibrary"),
           onClick: async (playlistId: string) => {
             const rawPlaylistId = playlistId.includes(":")
               ? playlistId.split(":").slice(1).join(":")
@@ -1324,6 +1324,18 @@ export default function createSpotifyPlayer(
           },
         },
       ];
+    },
+
+    get addPlaylistToRemoteLibrary() {
+      return !getConfig().accessToken
+        ? undefined
+        : async (id: string) => {
+            await spotifyWriteRequest(
+              `/me/library?uris=${encodeURIComponent(`spotify:playlist:${id}`)}`,
+              "PUT"
+            );
+            await loadPlaylists();
+          };
     },
 
     get createPlaylist() {
