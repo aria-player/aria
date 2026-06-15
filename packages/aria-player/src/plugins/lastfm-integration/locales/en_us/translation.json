@@ -2,7 +2,9 @@
   "settings": {
     "connectButton": "Connect to Last.fm",
     "connected": "Connected as {{username}}",
-    "disconnectButton": "Disconnect from Last.fm"
+    "disconnectButton": "Disconnect from Last.fm",
+    "sourcesHeading": "Last.fm sources",
+    "sourcesNote": "If a source is already connected to your Last.fm account, uncheck it to avoid duplicate scrobbles."
   },
   "error": {
     "authFailed": "Login failed",

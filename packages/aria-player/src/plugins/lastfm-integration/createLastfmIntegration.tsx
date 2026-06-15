@@ -6,7 +6,14 @@ import {
   IntegrationHandle,
   Track,
 } from "../../../../types";
-import { authenticate, LastfmData, logout, trackRequest } from "./api";
+import {
+  authenticate,
+  getEnabledSources,
+  LastfmData,
+  logout,
+  STREAMING_SOURCES,
+  trackRequest,
+} from "./api";
 
 export default function createLastfmIntegration(
   host: IntegrationCallbacks,
@@ -15,6 +22,9 @@ export default function createLastfmIntegration(
   i18n.addResourceBundle("en-US", "lastfm-integration", en_us);
 
   const getConfig = () => host.getData() as LastfmData;
+  const isSourceEnabled = (source: string) =>
+    !STREAMING_SOURCES.includes(source) ||
+    getEnabledSources(getConfig()).includes(source);
 
   let currentTrack: Track | null = null;
   let trackStartedAt = 0;
@@ -62,6 +72,11 @@ export default function createLastfmIntegration(
 
     onPlay(metadata: Track) {
       tryScrobble();
+      if (!isSourceEnabled(metadata.source)) {
+        currentTrack = null;
+        isPlaying = false;
+        return;
+      }
       currentTrack = metadata;
       trackStartedAt = Math.floor(Date.now() / 1000);
       resumedAt = Date.now();

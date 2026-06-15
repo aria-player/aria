@@ -7,7 +7,14 @@ import { BASEPATH } from "../../app/constants";
 export type LastfmData = {
   sessionKey?: string;
   username?: string;
+  enabledSources?: string[];
 };
+
+export const STREAMING_SOURCES = ["spotify-player", "apple-music-player"];
+export const DEFAULT_ENABLED_SOURCES = ["apple-music-player"];
+
+export const getEnabledSources = (config: LastfmData) =>
+  config.enabledSources ?? DEFAULT_ENABLED_SOURCES;
 
 const apiUrl = "https://ws.audioscrobbler.com/2.0/";
 const apiKey = import.meta.env.VITE_LASTFM_API_KEY;
