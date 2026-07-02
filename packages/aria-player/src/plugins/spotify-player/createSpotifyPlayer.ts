@@ -55,6 +55,7 @@ export default function createSpotifyPlayer(
 
   const PLAY_ATTEMPTS = 3;
   const PLAY_CONFIRM_TIMEOUT = 5000;
+  const REQUEST_ATTEMPTS = 3;
 
   const getConfig = () => host.getData() as SpotifyConfig;
 
@@ -240,9 +241,9 @@ export default function createSpotifyPlayer(
     method = "GET",
     body?: Record<string, string | string[]>
   ) {
-    const token = await getOrRefreshAccessToken();
+    let token = await getOrRefreshAccessToken();
     if (!token) return;
-    for (let attempt = 0; attempt < 2; attempt++) {
+    for (let attempt = 0; attempt < REQUEST_ATTEMPTS; attempt++) {
       const response = await fetch(`https://api.spotify.com/v1${endpoint}`, {
         method,
         headers: {
@@ -251,15 +252,22 @@ export default function createSpotifyPlayer(
         },
         body: body ? JSON.stringify(body) : undefined,
       });
-      if (response.status === 429) {
+      const canRetry = attempt < REQUEST_ATTEMPTS - 1;
+      if (response.status === 401 && canRetry) {
+        await refreshToken().catch(() => {});
+        token = getConfig().accessToken ?? token;
+        continue;
+      }
+      if (response.status === 429 && canRetry) {
         const retryAfter = response.headers.get("Retry-After");
-        const waitTime = retryAfter ? parseInt(retryAfter, 10) * 1000 : 1000;
-        await new Promise((resolve) => setTimeout(resolve, waitTime));
-        if (attempt === 0) {
-          continue;
-        }
-        return;
-      } else if (
+        await delay(retryAfter ? parseInt(retryAfter, 10) * 1000 : 1000);
+        continue;
+      }
+      if (response.status >= 500 && canRetry) {
+        await delay(500 * (attempt + 1));
+        continue;
+      }
+      if (
         response.status !== 204 &&
         response.headers.get("content-type")?.includes("application/json")
       ) {
@@ -633,8 +641,7 @@ export default function createSpotifyPlayer(
     };
 
     const profile = (await spotifyRequest("/me")) as
-      | SpotifyApi.CurrentUsersProfileResponse
-      | undefined;
+      SpotifyApi.CurrentUsersProfileResponse | undefined;
     const currentUserId = profile?.id;
 
     const playlistsLimit = 50;
@@ -986,9 +993,7 @@ export default function createSpotifyPlayer(
         throw new Error(`Invalid Spotify track URI: ${uri}`);
       }
       const trackResponse = (await spotifyRequest(`/tracks/${trackId}`)) as
-        | SpotifyApi.SingleTrackResponse
-        | Response
-        | undefined;
+        SpotifyApi.SingleTrackResponse | Response | undefined;
       if (
         !trackResponse ||
         trackResponse instanceof Response ||
@@ -1355,7 +1360,7 @@ export default function createSpotifyPlayer(
             `/me/tracks?limit=${batchLimit}&offset=${batchOffset}`
           )) as SpotifyApi.UsersSavedTracksResponse;
           if (!response || !response.items)
-            return { uris: [], dates: [], total: 0 };
+            throw new Error("Failed to fetch Spotify liked songs.");
           total = response.total;
           const items = response.items.filter((item) => item.track);
           allUris.push(...items.map((item) => item.track.uri));
@@ -1371,7 +1376,7 @@ export default function createSpotifyPlayer(
         `/playlists/${id}/items?limit=${limit}&offset=${startIndex}&fields=total,items(added_at,item(uri))`
       )) as SpotifyApi.PlaylistTrackResponse;
       if (!response || !response.items) {
-        return { uris: [], dates: [], total: 0 };
+        throw new Error("Failed to fetch Spotify playlist tracks.");
       }
       const items = response.items.filter((item) => item.item);
       const uris = items.map((item) => item.item!.uri);

@@ -1,0 +1,25 @@
+.container {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.message {
+  color: var(--empty-list-text);
+  font-style: italic;
+}
+
+.retry {
+  font-size: 0.8rem;
+  padding: 0;
+  color: var(--accent-color);
+
+  &:hover {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+}

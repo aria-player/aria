@@ -41,6 +41,7 @@ import {
   removePlaylistTrackUris,
   reorderPlaylistTrackUris,
   selectCachedPlaylistTrackUris,
+  setPlaylistTrackLoadError,
   setPlaylistTrackUrisPage,
 } from "../cache/cacheSlice";
 import { selectTrackById } from "../tracks/tracksSlice";
@@ -282,15 +283,20 @@ export const initExternalPlaylist = createAppAsyncThunk(
     const plugin = pluginHandles[provider];
     if (!plugin?.getPlaylistTracks) return;
     const rawId = parseExternalPlaylistId(playlistId)?.rawId ?? playlistId;
-    const { uris, dates, total } = await plugin.getPlaylistTracks(
-      rawId,
-      0,
-      PLAYLIST_URI_PAGE_SIZE
-    );
-    dispatch(
-      initPlaylistTrackUris({ playlistId, uris, dates, total, offset: 0 })
-    );
-    return { uris, total };
+    try {
+      const { uris, dates, total } = await plugin.getPlaylistTracks(
+        rawId,
+        0,
+        PLAYLIST_URI_PAGE_SIZE
+      );
+      dispatch(
+        initPlaylistTrackUris({ playlistId, uris, dates, total, offset: 0 })
+      );
+      return { uris, total };
+    } catch (error) {
+      dispatch(setPlaylistTrackLoadError({ playlistId }));
+      throw error;
+    }
   }
 );
 
@@ -329,15 +335,20 @@ export const fetchPlaylistTracks = createAppAsyncThunk(
     let offset = 0;
     let total = Infinity;
     const allUris: TrackUri[] = [];
-    while (offset < total) {
-      const result = await plugin.getPlaylistTracks(
-        rawId,
-        offset,
-        offset + PLAYLIST_URI_PAGE_SIZE
-      );
-      total = result.total;
-      allUris.push(...result.uris);
-      offset += PLAYLIST_URI_PAGE_SIZE;
+    try {
+      while (offset < total) {
+        const result = await plugin.getPlaylistTracks(
+          rawId,
+          offset,
+          offset + PLAYLIST_URI_PAGE_SIZE
+        );
+        total = result.total;
+        allUris.push(...result.uris);
+        offset += PLAYLIST_URI_PAGE_SIZE;
+      }
+    } catch (error) {
+      dispatch(setPlaylistTrackLoadError({ playlistId }));
+      throw error;
     }
     const state = getState();
     const availableTrackIds = allUris

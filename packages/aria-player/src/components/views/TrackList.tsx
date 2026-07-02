@@ -96,6 +96,7 @@ import { addTracks, selectTrackById } from "../../features/tracks/tracksSlice";
 import { TrackMetadata } from "../../../../types/tracks";
 import { useLocation } from "react-router-dom";
 import LoadingSpinner from "./subviews/LoadingSpinner";
+import PlaylistLoadError from "./subviews/PlaylistLoadError";
 import {
   fetchPlaylistTracks,
   fetchPlaylistTrackUrisPage,
@@ -103,9 +104,11 @@ import {
   PLAYLIST_URI_PAGE_SIZE,
 } from "../../features/playlists/playlistsSlice";
 import {
+  clearPlaylistTrackLoadError,
   selectCachedArtistTopTracks,
   selectCachedPlaylistTrackUris,
   selectCachedSearchTracks,
+  selectPlaylistTrackLoadError,
   updateCachedArtistTopTracks,
   updateCachedSearchTracks,
 } from "../../features/cache/cacheSlice";
@@ -114,6 +117,7 @@ const EXTERNAL_TRACKS_BATCH_SIZE = 20;
 const EXTERNAL_TRACKS_CACHE_OVERFLOW = 20;
 const EXTERNAL_TRACKS_CONCURRENT_REQUESTS = 4;
 const PLAYLIST_METADATA_LOOKAHEAD = 40;
+const INITIAL_PLAYLIST_METADATA_COUNT = 25;
 
 export const TrackList = () => {
   const dispatch = useAppDispatch();
@@ -179,8 +183,16 @@ export const TrackList = () => {
   const [fetchedPlaylistId, setFetchedPlaylistId] = useState<string | null>(
     null
   );
+  const playlistLoadError = useAppSelector((state) =>
+    currentPlaylistId
+      ? selectPlaylistTrackLoadError(state, currentPlaylistId)
+      : false
+  );
+  const hasPlaylistLoadError =
+    isExternalPlaylist && playlistLoadError && cachedPlaylistUris == null;
   const isProviderPlaylistInitializing =
     isExternalPlaylist &&
+    !hasPlaylistLoadError &&
     (cachedPlaylistUris == null || fetchedPlaylistId !== currentPlaylistId);
 
   const tracksEntities = useAppSelector(
@@ -286,17 +298,62 @@ export const TrackList = () => {
     dispatch,
   ]);
 
+  const fetchInitialTrackMetadata = useCallback(async () => {
+    if (
+      !isExternalPlaylist ||
+      !provider ||
+      !playlistSourceHandle?.getTracksByUri ||
+      !cachedPlaylistUris
+    )
+      return;
+    const entities = store.getState().tracks.tracks.entities;
+    const urisToFetch: string[] = [];
+    const count = Math.min(
+      cachedPlaylistUris.total,
+      INITIAL_PLAYLIST_METADATA_COUNT
+    );
+    for (let i = 0; i < count; i++) {
+      const uri = cachedPlaylistUris.uris[i];
+      if (
+        uri &&
+        !entities[getTrackId(provider, uri)] &&
+        !fetchingTrackUris.current.has(uri)
+      ) {
+        urisToFetch.push(uri);
+        fetchingTrackUris.current.add(uri);
+      }
+    }
+    if (urisToFetch.length === 0) return;
+    const tracks = await playlistSourceHandle.getTracksByUri(urisToFetch);
+    if (tracks?.length) {
+      dispatch(addTracks({ source: provider, tracks, addToLibrary: false }));
+    }
+  }, [
+    isExternalPlaylist,
+    provider,
+    playlistSourceHandle,
+    cachedPlaylistUris,
+    dispatch,
+  ]);
+
   useEffect(() => {
-    if (!isGridReady || !isExternalPlaylist || !cachedPlaylistUris) return;
-    fetchVisibleTrackMetadata().then(() =>
+    if (
+      !isGridReady ||
+      !isExternalPlaylist ||
+      !cachedPlaylistUris ||
+      fetchedPlaylistId === currentPlaylistId
+    )
+      return;
+    fetchInitialTrackMetadata().then(() =>
       setFetchedPlaylistId(currentPlaylistId ?? null)
     );
   }, [
     isGridReady,
     isExternalPlaylist,
     cachedPlaylistUris,
-    fetchVisibleTrackMetadata,
     currentPlaylistId,
+    fetchedPlaylistId,
+    fetchInitialTrackMetadata,
   ]);
 
   const useInfiniteRowModel =
@@ -652,8 +709,7 @@ export const TrackList = () => {
       menus
         .find((m: JsonMenuItem) => m.id === "view")
         ?.submenu?.find((s: JsonMenuItem) => s.id === "columns") as
-        | JsonMenuItem
-        | undefined
+        JsonMenuItem | undefined
     )?.submenu;
 
     const headerContextArea = document.querySelector(".ag-header");
@@ -786,6 +842,10 @@ export const TrackList = () => {
 
   const handleBodyScroll = (event: BodyScrollEvent) => {
     setScrollY(event.top);
+    if (isExternalPlaylist) fetchVisibleTrackMetadata();
+  };
+
+  const handleModelUpdated = () => {
     if (isExternalPlaylist) fetchVisibleTrackMetadata();
   };
 
@@ -989,38 +1049,40 @@ export const TrackList = () => {
     createDatasource,
   ]);
 
-  useEffect(() => {
+  const loadExternalPlaylistTracks = useCallback(() => {
     if (!provider || !currentPlaylistId) return;
     const plugin = getExternalPlaylistsHandle(provider);
     if (!plugin) return;
+    const playlistId = currentPlaylistId;
+    dispatch(clearPlaylistTrackLoadError({ playlistId }));
     if (canFetchPlaylistTracksByUri) {
-      dispatch(
-        initExternalPlaylist({ playlistId: currentPlaylistId, provider })
-      ).then((result) => {
-        if (result.meta.requestStatus !== "fulfilled") return;
-        const { total } = result.payload as { uris: string[]; total: number };
-        let offset = PLAYLIST_URI_PAGE_SIZE;
-        const fetchNext = () => {
-          if (offset >= total) return;
-          dispatch(
-            fetchPlaylistTrackUrisPage({
-              playlistId: currentPlaylistId,
-              provider,
-              offset,
-            })
-          ).then(() => {
-            offset += PLAYLIST_URI_PAGE_SIZE;
-            fetchNext();
-          });
-        };
-        fetchNext();
-      });
-    } else {
-      dispatch(
-        fetchPlaylistTracks({ playlistId: currentPlaylistId, provider })
+      dispatch(initExternalPlaylist({ playlistId, provider })).then(
+        (result) => {
+          if (result.meta.requestStatus !== "fulfilled" || !result.payload) {
+            return;
+          }
+          const { total } = result.payload as { uris: string[]; total: number };
+          let offset = PLAYLIST_URI_PAGE_SIZE;
+          const fetchNext = () => {
+            if (offset >= total) return;
+            dispatch(
+              fetchPlaylistTrackUrisPage({ playlistId, provider, offset })
+            ).then(() => {
+              offset += PLAYLIST_URI_PAGE_SIZE;
+              fetchNext();
+            });
+          };
+          fetchNext();
+        }
       );
+    } else {
+      dispatch(fetchPlaylistTracks({ playlistId, provider }));
     }
   }, [provider, currentPlaylistId, canFetchPlaylistTracksByUri, dispatch]);
+
+  useEffect(() => {
+    loadExternalPlaylistTracks();
+  }, [loadExternalPlaylistTracks]);
 
   const infiniteModelProps = useMemo(() => {
     if (!useInfiniteRowModel) return {};
@@ -1040,6 +1102,9 @@ export const TrackList = () => {
       style={{ width: "100%", height: "100%", position: "relative" }}
     >
       {isProviderPlaylistInitializing && <LoadingSpinner />}
+      {hasPlaylistLoadError && (
+        <PlaylistLoadError onRetry={loadExternalPlaylistTracks} />
+      )}
       <div
         className={`${scrollY <= 1 ? "ag-overrides-scroll-top" : ""}`}
         style={{
@@ -1070,6 +1135,7 @@ export const TrackList = () => {
           onColumnResized={handleColumnMovedOrResized}
           onColumnVisible={handleColumnVisible}
           onCellContextMenu={handleCellContextMenu}
+          onModelUpdated={handleModelUpdated}
           onRowDragEnd={handleRowDragEnd}
           focusGridInnerElement={handleFocusGridInnerElement}
           tabToNextHeader={handleTabToNextHeader}

@@ -211,8 +211,7 @@ export default function createAppleMusicPlayer(
         .get("content-type")
         ?.includes("application/json")
         ? ((await response.json().catch(() => undefined)) as
-            | { errors?: Array<{ title?: string; detail?: string }> }
-            | undefined)
+            { errors?: Array<{ title?: string; detail?: string }> } | undefined)
         : undefined;
       const firstError = responseBody?.errors?.[0];
       const message =
@@ -265,22 +264,18 @@ export default function createAppleMusicPlayer(
     const basePath = isLibraryPlaylistId(playlistId)
       ? `v1/me/library/playlists/${playlistId}/tracks`
       : `v1/catalog/${musicKit.storefrontId}/playlists/${playlistId}/tracks`;
-    try {
-      const response = (await musicKit.api.music(
-        `${basePath}?limit=${limit}&offset=${startIndex}`
-      )) as {
-        data: MusicKit.Relationship<MusicKit.Songs | MusicKit.MusicVideos>;
-      };
-      const tracks = response.data?.data ?? [];
-      const total = response.data?.meta?.total ?? tracks.length;
-      const uris = tracks
-        .filter((track) => !(track.type as string).includes("music-video"))
-        .map((track) => getPlaylistTrackUri(track))
-        .filter((uri): uri is string => uri != null && uri !== "");
-      return { uris, total };
-    } catch {
-      return { uris: [], total: 0 };
-    }
+    const response = (await musicKit.api.music(
+      `${basePath}?limit=${limit}&offset=${startIndex}`
+    )) as {
+      data: MusicKit.Relationship<MusicKit.Songs | MusicKit.MusicVideos>;
+    };
+    const tracks = response.data?.data ?? [];
+    const total = response.data?.meta?.total ?? tracks.length;
+    const uris = tracks
+      .filter((track) => !(track.type as string).includes("music-video"))
+      .map((track) => getPlaylistTrackUri(track))
+      .filter((uri): uri is string => uri != null && uri !== "");
+    return { uris, total };
   }
 
   async function fetchUserLibrary() {
@@ -411,8 +406,7 @@ export default function createAppleMusicPlayer(
     albumData: {
       id: string;
       attributes?:
-        | MusicKit.Albums["attributes"]
-        | MusicKit.LibraryAlbums["attributes"];
+        MusicKit.Albums["attributes"] | MusicKit.LibraryAlbums["attributes"];
     },
     dateAdded: number | undefined
   ): TrackMetadata {

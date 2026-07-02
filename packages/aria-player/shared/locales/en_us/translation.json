@@ -86,6 +86,8 @@
     "addTracksToPlaylist": "Add {{count}} tracks to '{{playlist}}'",
     "emptyPlaylist": "Playlist is empty",
     "emptyQueue": "Queue is empty",
+    "playlistLoadError": "Couldn't load playlist",
+    "retry": "Try again",
     "addToRemoteLibrary": "Add to {{source}} library",
     "removeFromRemoteLibrary": "Remove from {{source}} library",
     "playNamedTrack": "Play '{{title}}'",

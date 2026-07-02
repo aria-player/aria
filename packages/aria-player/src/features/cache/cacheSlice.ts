@@ -45,6 +45,7 @@ export interface CacheState {
       total: number;
     }
   >;
+  playlistTrackLoadErrors: Record<string, boolean>;
 }
 
 const initialState: CacheState = {
@@ -58,6 +59,7 @@ const initialState: CacheState = {
     playlists: {},
   },
   playlistTrackUris: {},
+  playlistTrackLoadErrors: {},
 };
 
 export const cacheSlice = createSlice({
@@ -190,6 +192,7 @@ export const cacheSlice = createSlice({
           dates: datesByPosition,
           total,
         };
+        delete state.playlistTrackLoadErrors[playlistId];
       },
       prepare: (payload: {
         playlistId: string;
@@ -268,6 +271,18 @@ export const cacheSlice = createSlice({
       const movedDates = entry.dates.splice(rangeStart, rangeLength);
       entry.dates.splice(insertIndex, 0, ...movedDates);
     },
+    setPlaylistTrackLoadError: (
+      state,
+      action: PayloadAction<{ playlistId: string }>
+    ) => {
+      state.playlistTrackLoadErrors[action.payload.playlistId] = true;
+    },
+    clearPlaylistTrackLoadError: (
+      state,
+      action: PayloadAction<{ playlistId: string }>
+    ) => {
+      delete state.playlistTrackLoadErrors[action.payload.playlistId];
+    },
     clearCache: (state) => {
       state.fetchedAlbums = [];
       state.artistTopTracks = {};
@@ -279,6 +294,7 @@ export const cacheSlice = createSlice({
         playlists: {},
       };
       state.playlistTrackUris = {};
+      state.playlistTrackLoadErrors = {};
     },
     removeCachedTracks: (
       state,
@@ -332,6 +348,8 @@ export const {
   setPlaylistTrackUrisPage,
   removePlaylistTrackUris,
   reorderPlaylistTrackUris,
+  setPlaylistTrackLoadError,
+  clearPlaylistTrackLoadError,
   clearCache,
   removeCachedTracks,
 } = cacheSlice.actions;
@@ -365,5 +383,10 @@ export const selectCachedPlaylistTrackUris = (
   state: RootState,
   playlistId: string
 ) => state.cache.playlistTrackUris[playlistId] ?? null;
+
+export const selectPlaylistTrackLoadError = (
+  state: RootState,
+  playlistId: string
+) => state.cache.playlistTrackLoadErrors[playlistId] ?? false;
 
 export default cacheSlice.reducer;
