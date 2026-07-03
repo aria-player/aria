@@ -598,7 +598,12 @@ export const selectVisiblePlaylists = createSelector(
     if (visibleSource) {
       const externalPlaylistsHandle = getExternalPlaylistsHandle(visibleSource);
       if (!externalPlaylistsHandle?.searchPlaylists) {
-        return [];
+        return searchPlaylists(
+          selectSearchablePlaylists(state).filter(
+            (playlist) => playlist.provider === visibleSource
+          ),
+          debouncedSearch
+        );
       }
       const cacheKey = getExternalSearchCacheKey(
         visibleSource,

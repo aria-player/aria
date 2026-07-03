@@ -52,6 +52,8 @@ export default function createSpotifyPlayer(
   let refreshPromise: Promise<void> | null = null;
   let reauthorizing = false;
   let refreshTokenInvalid = false;
+  const playlistTracksByUri = new Map<string, TrackMetadata>();
+  const pendingPlaylistLoads = new Set<Promise<unknown>>();
 
   const PLAY_ATTEMPTS = 3;
   const PLAY_CONFIRM_TIMEOUT = 5000;
@@ -662,6 +664,7 @@ export default function createSpotifyPlayer(
           if (!playlist) return [];
           const isOwner =
             currentUserId != null && playlist.owner.id === currentUserId;
+          if (!isOwner && !playlist.collaborative) return [];
           if (isOwner) {
             ownPlaylistsCount++;
           } else {
@@ -701,6 +704,63 @@ export default function createSpotifyPlayer(
       });
       host.updatePlaylists([likedSongsPlaylist, ...allPlaylists]);
     }
+  }
+
+  async function loadPlaylistTracksPage(
+    id: string,
+    startIndex: number,
+    stopIndex: number
+  ) {
+    if (startIndex === 0) playlistTracksByUri.clear();
+    const limit = stopIndex - startIndex;
+    if (id === LIKED_SONGS_PLAYLIST_ID) {
+      const likedSongsLimit = 50;
+      const allUris: string[] = [];
+      const allDates: (number | undefined)[] = [];
+      let total = 0;
+      for (
+        let batchOffset = startIndex;
+        batchOffset < stopIndex;
+        batchOffset += likedSongsLimit
+      ) {
+        const batchLimit = Math.min(likedSongsLimit, stopIndex - batchOffset);
+        const response = (await spotifyRequest(
+          `/me/tracks?limit=${batchLimit}&offset=${batchOffset}`
+        )) as SpotifyApi.UsersSavedTracksResponse;
+        if (!response || !response.items)
+          throw new Error("Failed to fetch Spotify liked songs");
+        total = response.total;
+        const items = response.items.filter((item) => item.track);
+        allUris.push(...items.map((item) => item.track.uri));
+        allDates.push(
+          ...items.map((item) =>
+            item.added_at ? new Date(item.added_at).getTime() : undefined
+          )
+        );
+      }
+      return { uris: allUris, dates: allDates, total };
+    }
+    const response = (await spotifyRequest(
+      `/playlists/${id}/items?limit=${limit}&offset=${startIndex}&fields=total,items(added_at,item(uri,type,name,duration_ms,track_number,disc_number,restrictions,artists(name,uri),album(uri,name,release_date,images,artists(name,uri))))`
+    )) as SpotifyApi.PlaylistTrackResponse;
+    if (!response || !response.items) {
+      throw new Error("Failed to fetch Spotify playlist tracks.");
+    }
+    const items = response.items.filter((item) => item.item);
+    const uris = items.map((item) => item.item!.uri);
+    const dates = items.map((item) =>
+      item.added_at ? new Date(item.added_at).getTime() : undefined
+    );
+    for (const playlistItem of items) {
+      const track = playlistItem.item;
+      if (track && track.type === "track" && !track.restrictions?.reason) {
+        playlistTracksByUri.set(
+          track.uri,
+          getTrackMetadata(track, track.album, undefined)
+        );
+      }
+    }
+    return { uris, dates, total: response.total };
   }
 
   async function authenticate(showLibrarySetupDialog = true) {
@@ -1289,34 +1349,6 @@ export default function createSpotifyPlayer(
       };
     },
 
-    get searchPlaylists() {
-      if (!getConfig().accessToken) return undefined;
-      return async (query: string, startIndex: number, stopIndex: number) => {
-        const apiLimit = 10;
-        const allItems: SpotifyApi.PlaylistObjectSimplified[] = [];
-
-        for (let offset = startIndex; offset < stopIndex; offset += apiLimit) {
-          const limit = Math.min(apiLimit, stopIndex - offset);
-          const searchResponse = (await spotifyRequest(
-            `/search?q=${encodeURIComponent(query)}&type=playlist&limit=${limit}&offset=${offset}`
-          )) as SpotifyApi.SearchResponse;
-
-          if (!searchResponse?.playlists?.items?.length) break;
-          allItems.push(
-            ...searchResponse.playlists.items.filter((p) => p != null)
-          );
-          if (searchResponse.playlists.items.length < limit) break;
-        }
-
-        return allItems.map((playlist) => ({
-          id: playlist.id,
-          name: playlist.name,
-          artworkUri: playlist.images?.[0]?.url,
-          creatorName: playlist.owner.display_name ?? undefined,
-        }));
-      };
-    },
-
     pause() {
       player?.pause();
     },
@@ -1339,51 +1371,11 @@ export default function createSpotifyPlayer(
       player?.seek(Math.round(time));
     },
 
-    getPlaylistTracks: async (
-      id: string,
-      startIndex: number,
-      stopIndex: number
-    ) => {
-      const limit = stopIndex - startIndex;
-      if (id === LIKED_SONGS_PLAYLIST_ID) {
-        const likedSongsLimit = 50;
-        const allUris: string[] = [];
-        const allDates: (number | undefined)[] = [];
-        let total = 0;
-        for (
-          let batchOffset = startIndex;
-          batchOffset < stopIndex;
-          batchOffset += likedSongsLimit
-        ) {
-          const batchLimit = Math.min(likedSongsLimit, stopIndex - batchOffset);
-          const response = (await spotifyRequest(
-            `/me/tracks?limit=${batchLimit}&offset=${batchOffset}`
-          )) as SpotifyApi.UsersSavedTracksResponse;
-          if (!response || !response.items)
-            throw new Error("Failed to fetch Spotify liked songs.");
-          total = response.total;
-          const items = response.items.filter((item) => item.track);
-          allUris.push(...items.map((item) => item.track.uri));
-          allDates.push(
-            ...items.map((item) =>
-              item.added_at ? new Date(item.added_at).getTime() : undefined
-            )
-          );
-        }
-        return { uris: allUris, dates: allDates, total };
-      }
-      const response = (await spotifyRequest(
-        `/playlists/${id}/items?limit=${limit}&offset=${startIndex}&fields=total,items(added_at,item(uri))`
-      )) as SpotifyApi.PlaylistTrackResponse;
-      if (!response || !response.items) {
-        throw new Error("Failed to fetch Spotify playlist tracks.");
-      }
-      const items = response.items.filter((item) => item.item);
-      const uris = items.map((item) => item.item!.uri);
-      const dates = items.map((item) =>
-        item.added_at ? new Date(item.added_at).getTime() : undefined
-      );
-      return { uris, dates, total: response.total };
+    getPlaylistTracks: (id: string, startIndex: number, stopIndex: number) => {
+      const load = loadPlaylistTracksPage(id, startIndex, stopIndex);
+      pendingPlaylistLoads.add(load);
+      load.finally(() => pendingPlaylistLoads.delete(load)).catch(() => {});
+      return load;
     },
 
     renamePlaylist: async (id: string, name: string) => {
@@ -1500,28 +1492,53 @@ export default function createSpotifyPlayer(
     },
 
     getTracksByUri: async (uris: string[]) => {
-      const tracks: TrackMetadata[] = [];
+      const scanCache = () => {
+        const hits = new Map<string, TrackMetadata>();
+        const misses: { uri: string; id: string }[] = [];
+        for (const uri of uris) {
+          const cached = playlistTracksByUri.get(uri);
+          if (cached) {
+            hits.set(uri, cached);
+          } else if (uri.startsWith("spotify:track:")) {
+            misses.push({ uri, id: uri.split(":")[2] });
+          }
+        }
+        return { hits, misses };
+      };
+
+      let { hits: resolved, misses: missing } = scanCache();
+      if (missing.length > 0 && pendingPlaylistLoads.size > 0) {
+        await Promise.allSettled([...pendingPlaylistLoads]);
+        ({ hits: resolved, misses: missing } = scanCache());
+      }
+
       const maxConcurrentRequests = 5;
       const delayMs = 200;
-
-      for (let i = 0; i < uris.length; i += maxConcurrentRequests) {
+      for (let i = 0; i < missing.length; i += maxConcurrentRequests) {
         if (i > 0) await new Promise((resolve) => setTimeout(resolve, delayMs));
-        const batch = uris.slice(i, i + maxConcurrentRequests);
+        const batch = missing.slice(i, i + maxConcurrentRequests);
         const results = await Promise.all(
           batch.map(
-            (uri) =>
+            ({ id }) =>
               spotifyRequest(
-                `/tracks/${uri.split(":")[2]}`
+                `/tracks/${id}`
               ) as Promise<SpotifyApi.SingleTrackResponse>
           )
         );
-        for (const track of results) {
-          if (!track || track.restrictions?.reason) continue;
-          tracks.push(getTrackMetadata(track, track.album, undefined));
-        }
+        results.forEach((track, index) => {
+          if (!track || track.type !== "track" || track.restrictions?.reason) {
+            return;
+          }
+          resolved.set(
+            batch[index].uri,
+            getTrackMetadata(track, track.album, undefined)
+          );
+        });
       }
 
-      return tracks;
+      return uris
+        .map((uri) => resolved.get(uri))
+        .filter((track): track is TrackMetadata => track != null);
     },
 
     dispose() {
